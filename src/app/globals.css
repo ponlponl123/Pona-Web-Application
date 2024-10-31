@@ -1,0 +1,152 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary: #f0abfc;
+  --background-rgb: 255, 255, 255;
+  --foreground-rgb: 23, 23, 23;
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background-rgb: 10, 10, 10;
+    --background: #0a0a0a;
+    --foreground-rgb: 237, 237, 237;
+    --foreground: #ededed;
+  }
+}
+
+* {
+  transition: .24s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+*:active {
+  transition: .048s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font-ponlponl123-article), sans-serif;
+}
+
+main#app {
+  width: 100%;
+  min-height: 100vh;
+}
+
+.main-bg {
+  background: linear-gradient(0deg, rgb(var(--background-rgb)), rgb(var(--background-rgb), 0.64)), url(./../../public/backdrop.png) center no-repeat;
+  background-size: cover;
+}
+
+.status-block {
+  @apply w-full max-w-screen-lg drop-shadow-lg rounded-3xl p-6 flex flex-col;
+  background-color: rgb(var(--foreground-rgb), 0.04);
+}
+
+.service-list {
+  @apply flex justify-between items-center p-4 bg-white rounded-xl;
+}
+.service-list > h1 {
+  width: 100%;
+  font-size: 14px;
+  font-family: var(--font-geist-mono);
+}
+
+.service-status-badge {
+  @apply bg-opacity-25 rounded-full text-medium m-auto py-1 px-2 bg-gray-700 text-gray-700;
+}
+.service-status-badge::before { content: "Unknown" }
+
+.service-status-badge.operational {
+  @apply bg-opacity-25 bg-green-700 text-green-700;
+}
+.service-status-badge.operational::before { content: "Operational" }
+
+.service-status-badge.degraded {
+  @apply bg-opacity-25 bg-orange-400 text-orange-400;
+}
+.service-status-badge.degraded::before { content: "Degraded" }
+
+.service-status-badge.down {
+  @apply bg-opacity-25 bg-red-700 text-red-700;
+}
+.service-status-badge.down::before { content: "Down" }
+
+.btn {
+  @apply relative flex items-center justify-center active:opacity-90 mx-2 min-w-24
+}
+
+.btn > svg {
+  @apply absolute select-none w-full h-full object-fill;
+  transform: scale(108%);
+  -webkit-user-drag: none;
+  -moz-window-dragging: no-drag;
+}
+
+.btn > div {
+  @apply flex flex-row items-center justify-center gap-2 z-10 py-4 px-8 text-xl
+}
+
+.btn:active {
+  transform: scale(98%);
+}
+
+.btn.btn-size-small > div {
+  @apply px-4 py-2 text-lg
+}
+
+.btn.btn-size-large > div {
+  @apply px-8 py-3 text-2xl
+}
+
+/* .btn.btn-size-small > svg {
+  transform: scaleY(-64%);
+}
+
+.btn.btn-size-large > svg {
+  transform: scaleX(128%);
+} */
+
+.btn:not(.btn-rounded) > div {
+  @apply px-6
+}
+
+.btn.btn-normal > svg  * {
+  @apply fill-black
+}
+
+.btn.btn-invert > svg  * {
+  @apply fill-white
+}
+
+.btn.btn-border > svg *,
+.btn.btn-primary > svg *,
+.btn.btn-text > svg * {
+  @apply fill-fuchsia-300
+}
+
+.btn.btn-text > svg * {
+  @apply opacity-0
+}
+
+.btn.btn-normal:hover > svg * {
+  @apply fill-gray-900
+}
+
+.btn.btn-invert:hover > svg * {
+  @apply fill-gray-100
+}
+
+.btn.btn-border:hover > svg * ,
+.btn.btn-primary:hover > svg * {
+  @apply fill-fuchsia-200
+}
+
+.btn.btn-text:hover > svg * {
+  @apply opacity-25
+}
