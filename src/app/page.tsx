@@ -1,6 +1,6 @@
 "use client";
 import MyButton from '@/components/button';
-import { Leaf, Cookie } from "@phosphor-icons/react/dist/ssr";
+import { Confetti, Cookie } from "@phosphor-icons/react/dist/ssr";
 import { useLanguageContext } from '@/contexts/languageContext';
 import { Select, SelectItem } from "@nextui-org/react";
 import { minds } from '@/data/minds';
@@ -17,7 +17,7 @@ export default function Home() {
           <div className='bg-white bg-opacity-30 rounded-2xl flex flex-col gap-2 p-4 max-sm:p-3 backdrop-blur-sm max-sm:text-sm max-sm:absolute max-sm:bottom-24'>
             <h1 className='flex gap-3 items-center text-xl mb-0 max-sm:text-lg'>
               <Cookie
-                alt="Next.js logo"
+                alt="Cookie!"
                 weight='regular'
                 className='max-sm:h-6 max-sm:w-6'
                 size={32}
@@ -61,9 +61,9 @@ export default function Home() {
               rel="noopener noreferrer"
             >
               <MyButton variant="primary" effect='confetti'>
-                <Leaf
+                <Confetti
                   weight="fill"
-                  alt="Leaf"
+                  alt="Confetti"
                 />
                 {language.data.home.actions.invite}
               </MyButton>

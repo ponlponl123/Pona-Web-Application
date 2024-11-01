@@ -28,10 +28,37 @@
             "app": "Explore Pona Controller!"
         }
     },
+    "app": {
+        "title": "Dashboard",
+        "dashboard": {
+            "title": "Welcome back, [user]!"
+        }
+    },
     "redirect": {
         "title": "Redirecting..",
         "description": "if redirecting not working, u can [clickme]!",
         "clickme": "click me"
+    },
+    "callback": {
+        "success": {
+            "title": "Awesome! ( ͡• ͜ʖ ͡• )",
+            "description": "Everything went well, the party will start soon... 🎉"
+        },
+        "processing": {
+            "title": "Casting spells... ✨",
+            "description": "Checking key compatibility. Once the process is complete, we'll redirect you to the application.."
+        },
+        "failed": {
+            "title": "What's going on? ⊙﹏⊙∥",
+            "description": "Discord handshake failed",
+            "actions": {
+                "tryagain": "Try again"
+            }
+        },
+        "unknown": {
+            "title": "Huh?.. (´。＿。｀)",
+            "description": "I've never seen anything like this before (unknown state)"
+        }
     },
     "not_found": {
         "title": "Sorry to disappoint you :(",

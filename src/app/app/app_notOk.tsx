@@ -22,7 +22,7 @@ function App_notOk() {
                   {language.data.app_notok.actions.refresh}
                 </MyButton>
               </Link>
-              <Link href={'/discord'} className='mt-4'>
+              <Link href={'https://ponlponl123.com/discord'} className='mt-4'>
                 <MyButton variant='invert' size='medium'>
                   <Bird />
                   {language.data.app_notok.actions.support}

@@ -16,7 +16,7 @@ function App_notOk() {
             <h1 className='font-bold text-3xl max-sm:text-center'>{language.data.app_notready.title}</h1>
             <p className='text-lg max-sm:text-center'>{language.data.app_notready.description}</p>
             <div className='flex flex-wrap sm:gap-3 max-sm:justify-center'>
-              <Link href={'/discord'} className='mt-4'>
+              <Link href={'https://ponlponl123.com/discord'} className='mt-4'>
                 <MyButton variant='invert' size='medium'>
                   <Bird />
                   {language.data.app_notready.actions.support}
