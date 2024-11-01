@@ -14,11 +14,12 @@ export default function Home() {
     <main className="w-full min-h-screen main-bg">
       <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
         <main className="w-full max-w-screen-lg flex flex-col gap-8 row-start-2 items-center sm:items-start">
-          <div className='bg-white bg-opacity-30 rounded-2xl flex flex-col gap-2 p-4'>
-            <h1 className='flex gap-3 items-center text-xl mb-0'>
+          <div className='bg-white bg-opacity-30 rounded-2xl flex flex-col gap-2 p-4 max-sm:p-3 backdrop-blur-sm max-sm:text-sm max-sm:absolute max-sm:bottom-24'>
+            <h1 className='flex gap-3 items-center text-xl mb-0 max-sm:text-lg'>
               <Cookie
                 alt="Next.js logo"
                 weight='regular'
+                className='max-sm:h-6 max-sm:w-6'
                 size={32}
               />
               {language.data.cookie.title}

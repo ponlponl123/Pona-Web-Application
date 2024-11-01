@@ -7,7 +7,7 @@ type size = 'small' | 'medium' | 'large';
 type style = 'normal' | 'rounded';
 type effect = 'confetti';
 
-function Button({ children, variant = 'normal', style = 'normal', size = 'medium', effect = undefined, onClick }: { children?: React.ReactNode, variant?: variant, style?: style, size?: size, effect?: effect | undefined, onClick?: () => void }) {
+function Button({ children, variant = 'normal', style = 'normal', size = 'medium', effect = undefined, onClick, className = '' }: { children?: React.ReactNode, variant?: variant, style?: style, size?: size, effect?: effect | undefined, onClick?: () => void, className?: string }) {
     
     let handleEffect = (event: React.MouseEvent<HTMLButtonElement>): unknown => { return event };
 
@@ -34,7 +34,7 @@ function Button({ children, variant = 'normal', style = 'normal', size = 'medium
     }
 
     return (
-        <button className={`btn btn-${style} btn-${variant} btn-size-${size} group`} type='button' onClick={Clicked}>
+        <button className={`btn btn-${style} btn-${variant} btn-size-${size} group ${className}`} type='button' onClick={Clicked}>
             {
                 style === 'rounded' ?
                     variant === 'border' ?

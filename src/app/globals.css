@@ -102,6 +102,14 @@ main#app {
   transform: scale(98%);
 }
 
+.btn.btn-icon {
+  @apply min-w-4
+}
+
+.btn.btn-icon > div {
+  @apply p-3
+}
+
 .btn.btn-size-small > div {
   @apply px-4 py-2 text-lg
 }
@@ -109,14 +117,6 @@ main#app {
 .btn.btn-size-large > div {
   @apply px-8 py-3 text-2xl
 }
-
-/* .btn.btn-size-small > svg {
-  transform: scaleY(-64%);
-}
-
-.btn.btn-size-large > svg {
-  transform: scaleX(128%);
-} */
 
 .btn:not(.btn-rounded) > div {
   @apply px-6
@@ -172,5 +172,63 @@ main#app {
 }
 
 footer {
-  @apply row-start-3 flex gap-6 flex-wrap items-center justify-center h-24 -mt-24 w-full relative p-6;
+  @apply flex gap-6 items-center justify-center min-h-24 -mt-24 w-full relative p-6;
+}
+
+footer a {
+  @apply flex items-center gap-2 hover:underline hover:underline-offset-4;
+}
+
+footer > div {
+  @apply row-start-3 w-full flex flex-wrap gap-6 items-center justify-center;
+}
+
+footer > div:first-child,
+footer > div:last-child {
+  @apply w-1/4;
+}
+
+footer > div:first-child {
+  @apply justify-start;
+}
+
+footer > div:last-child {
+  @apply justify-end;
+}
+
+header {
+  z-index: 90;
+}
+
+@media (max-width: 767px) {
+  header nav.nav-opened-false {
+    @apply invisible pointer-events-none opacity-0;
+  }
+  header nav > div:not(.header) {
+    @apply flex flex-col items-center gap-5
+  }
+  header nav > div:nth-child(2) {
+    @apply h-full
+  }
+  header nav > div {
+    @apply w-full items-stretch px-6
+  }
+  header nav button {
+    @apply w-full;
+  }
+  header nav a {
+    @apply w-full;
+  }
+  header nav {
+    @apply fixed top-0 left-0 w-full h-full bg-white flex flex-col p-6 pt-0;
+  }
+  header.nav-opened-true {
+    @apply fixed;
+  }
+}
+
+@media (max-width: 640px) {
+  .service-list > h1 {
+    @apply text-xs;
+  }
 }
