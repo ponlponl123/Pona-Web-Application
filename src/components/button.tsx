@@ -29,7 +29,6 @@ function Button({ children, variant = 'normal', style = 'normal', size = 'medium
     }
 
     const Clicked = (event: React.MouseEvent<HTMLButtonElement>): void => {
-        event.preventDefault();
         handleEffect(event);
         if (onClick) onClick();
     }
