@@ -19,11 +19,11 @@ export default async function clusterInfo(): Promise<false | ClusterInfo> {
         });
         if ( handshakeRequest.status === 200 ) return handshakeRequest.data as ClusterInfo;
         else {
-            console.error('Failed to handshake with Pona! API:', handshakeRequest.status);
+            // console.error('Failed to handshake with Pona! API:', handshakeRequest.status);
             return false;
         }
-    } catch (err: unknown) {
-        console.error('Failed to handshake with Pona! API:', err);
+    } catch {
+        // console.error('Failed to handshake with Pona! API:', err);
         return false;
     }
 }

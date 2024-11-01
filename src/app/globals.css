@@ -19,7 +19,12 @@
   }
 }
 
-* {
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary) var(--background);
+}
+
+*:not([data-slot="popover"]) {
   transition: .24s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
@@ -39,7 +44,7 @@ main#app {
 }
 
 .main-bg {
-  background: linear-gradient(0deg, rgb(var(--background-rgb)), rgb(var(--background-rgb), 0.64)), url(./../../public/backdrop.png) center no-repeat;
+  background: linear-gradient(0deg, rgb(var(--background-rgb)), rgb(var(--background-rgb), 0.48)), url(./../../public/backdrop.png) center no-repeat;
   background-size: cover;
 }
 
@@ -49,7 +54,8 @@ main#app {
 }
 
 .service-list {
-  @apply flex justify-between items-center p-4 bg-white rounded-xl;
+  @apply flex justify-between items-center p-4 rounded-xl;
+  background-color: rgb(var(--background-rgb));
 }
 .service-list > h1 {
   width: 100%;
@@ -116,11 +122,25 @@ main#app {
   @apply px-6
 }
 
-.btn.btn-normal > svg  * {
+.btn.btn-normal > div,
+.btn.btn-primary > div {
+  @apply text-white
+}
+
+.btn.btn-invert > div {
+  @apply text-black
+}
+
+.btn.btn-text > div,
+.btn.btn-border > div {
+  @apply text-fuchsia-400
+}
+
+.btn.btn-normal > svg * {
   @apply fill-black
 }
 
-.btn.btn-invert > svg  * {
+.btn.btn-invert > svg * {
   @apply fill-white
 }
 
@@ -149,4 +169,8 @@ main#app {
 
 .btn.btn-text:hover > svg * {
   @apply opacity-25
+}
+
+footer {
+  @apply row-start-3 flex gap-6 flex-wrap items-center justify-center h-24 -mt-24 w-full relative p-6;
 }

@@ -1,57 +1,79 @@
+"use client";
 import MyButton from '@/components/button';
-import MyRoundedButton from '@/components/rounded-button';
 import { Leaf, Cookie } from "@phosphor-icons/react/dist/ssr";
+import { useLanguageContext } from '@/contexts/languageContext';
+import { Select, SelectItem } from "@nextui-org/react";
+import { minds } from '@/data/minds';
 import Link from "next/link";
 
 export default function Home() {
+  const { language } = useLanguageContext();
+  const date = new Date();
+  const hours = date.getHours();
   return (
     <main className="w-full min-h-screen main-bg">
       <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
         <main className="w-full max-w-screen-lg flex flex-col gap-8 row-start-2 items-center sm:items-start">
-          <div className='bg-white bg-opacity-30 rounded-2xl flex flex-col gap-2 p-4 -mt-24'>
-            <h1 className='flex gap-3 items-center text-2xl mb-0'>
+          <div className='bg-white bg-opacity-30 rounded-2xl flex flex-col gap-2 p-4'>
+            <h1 className='flex gap-3 items-center text-xl mb-0'>
               <Cookie
                 alt="Next.js logo"
                 weight='regular'
                 size={32}
               />
-              Cookie!
+              {language.data.cookie.title}
             </h1>
-            <p>This application will using cookie for authorize some services</p>
+            <p>{language.data.cookie.description}</p>
           </div>
-          <h1 className='text-6xl'>Pona!</h1>
-          <ol className="list-inside list-decimal text-sm text-center sm:text-left">
-            <li className="mb-2">
-              Get started by editing{" "}
-              <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-                src/app/page.tsx
-              </code>
-              .
+          <h1 className='text-5xl whitespace-pre' style={{lineHeight: "78px"}}>{
+            (hours > 4 && hours < 10) ? language.data.home.welcome_message.morning :
+            (hours > 9 && hours < 16) ? language.data.home.welcome_message.morning :
+            (hours > 15 && hours < 20) ? language.data.home.welcome_message.morning :
+            language.data.home.welcome_message.night
+          }</h1>
+          <ol className="list-inside text-sm text-center sm:text-left list-none -mt-6 mb-2">
+            <li className="mb-2 text-xl">{language.data.home.mindselector.title}</li>
+            <li>
+              <div>
+                <Select
+                  className="max-w-xs"
+                  disabledKeys={["sweet"]}
+                  size='sm'
+                  label={language.data.home.mindselector.label}
+                >
+                  {
+                    minds.map((mind) => (
+                      <SelectItem
+                        key={mind.key}
+                        startContent={mind.startContent}
+                      >{language.data.mind[mind.key as keyof typeof language.data.mind]}</SelectItem>
+                    ))
+                  }
+                </Select>
+              </div>
             </li>
-            <li>Save and see your changes instantly.</li>
           </ol>
 
           <div className="flex gap-4 items-center flex-col sm:flex-row">
             <Link
               href="/invite"
-              target="_blank"
               rel="noopener noreferrer"
             >
-              <MyButton style="primary">
+              <MyButton variant="primary" effect='confetti'>
                 <Leaf
                   weight="fill"
                   alt="Leaf"
                 />
-                Invite Pona!
+                {language.data.home.actions.invite}
               </MyButton>
             </Link>
             <Link
               href="/app"
               rel="noopener noreferrer"
             >
-              <MyRoundedButton style="invert" size="medium">
-                Explore Pona Controller!
-              </MyRoundedButton>
+              <MyButton variant="invert" style='rounded' size="medium">
+                {language.data.home.actions.app}
+              </MyButton>
             </Link>
           </div>
         </main>

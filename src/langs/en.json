@@ -1,0 +1,87 @@
+{
+    "key": "en-US",
+    "label": "English",
+    "country": "us",
+    "cookie": {
+        "title": "Cookie!",
+        "description": "This application will using cookie for authorize some services"
+    },
+    "header": {
+        "actions": {
+            "login": "Login with Discord",
+            "invite": "Add pona to my server"
+        }
+    },
+    "home": {
+        "welcome_message": {
+            "morning": "☀️ Good morning!\nHow are you today? (≧∇≦)ﾉ",
+            "afternoon": "🌤️ It's afternoon already!\nIf you're tired, take a break o((>ω< ))o",
+            "evening": "🍰 It's evening already. Don't forget to eat your fill O(∩_∩)O",
+            "night": "🌙 Good night\nHave a nice dream (∪.∪ )...zzz"
+        },
+        "mindselector": {
+            "title": "Choose the emotion that expresses your feelings!",
+            "label": "I feel"
+        },
+        "actions": {
+            "invite": "Invite Pona!",
+            "app": "Explore Pona Controller!"
+        }
+    },
+    "redirect": {
+        "title": "Redirecting..",
+        "description": "if redirecting not working, u can [clickme]!",
+        "clickme": "click me"
+    },
+    "not_found": {
+        "title": "Sorry to disappoint you :(",
+        "description": "The page you are looking for may have moved to another location or may be hidden ^0^",
+        "actions": {
+            "app": "Get into pona app",
+            "home": "Back to home"
+        }
+    },
+    "app_notok": {
+        "title": "Can't handshake with application :(",
+        "description": "Our app has traveled to another planet. 🪐 We haven't returned home yet. Wait a moment. We'll come back and tell you some fun stories! ( •̀ ω •́ )✧",
+        "actions": {
+            "refresh": "Refresh",
+            "support": "Support"
+        }
+    },
+    "app_notready": {
+        "title": "There's a surprise waiting for you!",
+        "description": "We are preparing a special surprise for you. This new feature will definitely wow you. Stay tuned! (/≧▽≦)/",
+        "actions": {
+            "support": "Support",
+            "status": "Visit Pona! Status"
+        }
+    },
+    "footer": {
+        "links": {
+            "github": "Github",
+            "apidocs": "API Docs",
+            "support": "Support",
+            "status": "Pona! Status",
+            "legal": "Legal"
+        },
+        "settings": {
+            "lang": {
+                "label": "Language"
+            }
+        }
+    },
+    "mind": {
+        "stressed": "Stressed",
+        "tried": "Tired",
+        "sad": "Sad",
+        "fear": "Fear",
+        "alone": "Lonely",
+        "hungry": "Hungry",
+        "hot": "Hot",
+        "cold": "Cold",
+        "happy": "Fun",
+        "sweet": "Sweet~ (this one is not allowed to be pressed! ;_;)",
+        "cool": "Cool"
+    }
+}

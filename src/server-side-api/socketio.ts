@@ -11,11 +11,11 @@ export default async function handshake(): Promise<boolean> {
         });
         if ( handshakeRequest.status === 200 ) return true;
         else {
-            console.error('Failed to handshake with Pona! Web Socket:', handshakeRequest.status);
+            // console.error('Failed to handshake with Pona! Web Socket:', handshakeRequest.status);
             return false;
         }
-    } catch (err: unknown) {
-        console.error('Failed to handshake with Pona! Web Socket:', err);
+    } catch {
+        // console.error('Failed to handshake with Pona! Web Socket:', err);
         return false;
     }
 }

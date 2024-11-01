@@ -1,11 +1,13 @@
+"use client"
 import React from 'react'
 import Link from 'next/link';
 import MyButton from '@/components/button'
-import MyRoundedButton from '@/components/rounded-button'
+import { useLanguageContext } from '@/contexts/languageContext';
 import { DiscordLogo, Confetti } from "@phosphor-icons/react/dist/ssr";
 
 function Header() {
     const navOpened = false;
+    const { language } = useLanguageContext();
 
     return (
         <header className='absolute w-full h-20 p-6 px-12 flex items-center justify-center gap-3'>
@@ -23,16 +25,16 @@ function Header() {
 
                     </div>
                     <div className='flex gap-3'>
-                        <Link href={'/app'}>
-                            <MyRoundedButton size='small' style='text'>
+                        <Link href='/app' rel="noopener noreferrer">
+                            <MyButton size='small' variant='text' style='rounded'>
                                 <DiscordLogo weight='fill' />
-                                Login with Discord
-                            </MyRoundedButton>
+                                { language.data.header.actions.login }
+                            </MyButton>
                         </Link>
-                        <Link href={'/invite'}>
-                            <MyButton size='small' style='primary'>
+                        <Link href='/invite' rel="noopener noreferrer">
+                            <MyButton size='small' variant='primary' effect='confetti'>
                                 <Confetti weight='fill' />
-                                Add pona to my server
+                                { language.data.header.actions.invite }
                             </MyButton>
                         </Link>
                     </div>
