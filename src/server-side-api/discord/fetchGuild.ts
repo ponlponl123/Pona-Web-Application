@@ -1,0 +1,58 @@
+"use server";
+import axios from "axios";
+import { EndpointHTTP, EndpointKey } from "../endpoint";
+const API_ENDPOINT = 'https://discord.com/api/v10';
+
+export interface GuildInfo {
+    id: string;
+    name: string;
+    icon: string | null;
+    banner: string | null;
+    memberCount: number;
+    ownerId: string;
+    iconURL: string | null;
+    nameAcronym: string;
+    bannerURL: string | null;
+}
+
+export async function fetchGuilds(key: string, keyType: string): Promise<false | GuildInfo[]> {
+    try {
+        const guildsFromUser = await axios.get(API_ENDPOINT + '/users/@me/guilds', {
+            headers: {
+                Authorization: `${keyType} ${key}`,
+                'Content-Type': 'application/x-www-form-urlencoded',
+                "User-Agent": "Pona! Application (OpenPonlponl123.com/v1)"
+            }
+        })
+        if ( guildsFromUser.status === 200 ) {
+            try {
+                const guilds = await axios.get(EndpointHTTP + '/v1/guilds', {
+                    headers: {
+                        Authorization: `Pona! ${EndpointKey}`,
+                        'Content-Type': 'application/json',
+                        "User-Agent": "Pona! Application (OpenPonlponl123.com/v1)"
+                    },
+                    data: guildsFromUser.data.map((guild: GuildInfo) => guild.id)
+                })
+                if ( guildsFromUser.status === 200 ) {
+                    return guilds.data.guilds as GuildInfo[]
+                }
+            } catch { return false }
+        }
+    } catch { return false }
+    return false;
+}
+
+export async function fetchGuild(guildId: string): Promise<false | GuildInfo> {
+    try {
+        const guild = await axios.get(EndpointHTTP + '/v1/guild/' + guildId, {
+            headers: {
+                Authorization: `Pona! ${EndpointKey}`,
+                'Content-Type': 'application/json',
+                "User-Agent": "Pona! Application (OpenPonlponl123.com/v1)"
+            }
+        })
+        if ( guild.status === 200 ) return guild.data.guild
+    } catch { return false }
+    return false;
+}

@@ -8,8 +8,44 @@ import { DiscordLogo, Confetti, Hamburger, Question, Gear, Leaf } from "@phospho
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Avatar } from '@nextui-org/react';
 import { usePathname } from 'next/navigation';
 import PonaIcon from '@/app/favicon.ico';
+import { getCookie } from 'cookies-next';
 import Scrollbar from '../scrollbar';
 import Image from 'next/image';
+
+function UserAccountAction({className, minimize = false}: {className?: string, minimize?: boolean}) {
+    const { userInfo, revokeUserAccessToken } = useDiscordUserInfo();
+    return (
+        userInfo &&
+        <Dropdown placement="bottom-start">
+            <DropdownTrigger>
+                <button type='button' className={`${className} outline-none ${!minimize ? 'bg-white bg-opacity-10 backdrop-blur-md rounded-2xl px-3 py-2 flex gap-3 items-center justify-center w-fit' : ''}`}>
+                    <Avatar className='h-8 w-8' src={`https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}.png`} />
+                    {
+                        !minimize &&
+                        <div className='flex flex-col items-start'>
+                            <h1 className='text-base font-bold tracking-wider leading-none'>{userInfo.global_name}</h1>
+                            <span className='text-xs'>@{userInfo.username}</span>
+                        </div>
+                    }
+                </button>
+            </DropdownTrigger>
+            <DropdownMenu aria-label="User Actions" variant="flat">
+                <DropdownItem key="profile" className="h-14 gap-2">
+                    <p className="font-bold">Signed in as</p>
+                    <p className="font-bold">@{userInfo.username}</p>
+                </DropdownItem>
+                <DropdownItem key="app" startContent={'🏓'} href='/app'>Playground</DropdownItem>
+                <DropdownItem key="configurations" startContent={<Gear weight='fill' />} href='/app/setting'>Configurations</DropdownItem>
+                <DropdownItem key="help_and_feedback" startContent={<Question weight='fill' />} href='https://ponlponl123.com/discord' target='_blank'>
+                    Help & Feedback
+                </DropdownItem>
+                <DropdownItem key="logout" startContent={<Leaf weight='fill' />} color="danger" onClick={()=>{revokeUserAccessToken(getCookie('LOGIN_') as string)}}>
+                    Log Out
+                </DropdownItem>
+            </DropdownMenu>
+        </Dropdown>
+    )
+}
 
 function Header() {
     const pathname = usePathname();
@@ -33,11 +69,14 @@ function Header() {
                         }</h1>
                     </Link>
                 </div>
-                <MyButton className='md:hidden btn-icon z-20 m-0' style='rounded' variant='text' onClick={()=>{
-                    setNavOpened((value)=>!value);
-                }}>
-                    <Hamburger size={26} weight={ navOpened ? 'fill' : 'regular' } />
-                </MyButton>
+                <div className='z-20 flex gap-4'>
+                    <MyButton className='md:hidden btn-icon m-0' style='rounded' variant='text' onClick={()=>{
+                        setNavOpened((value)=>!value);
+                    }}>
+                        <Hamburger size={26} weight={ navOpened ? 'fill' : 'regular' } />
+                    </MyButton>
+                    <UserAccountAction minimize={true} className='md:hidden'/>
+                </div>
                 <nav className={`nav-opened-${navOpened}`}>
                     <div className='md:hidden w-full h-28 border-b mb-6 header' style={{borderColor: 'rgb(var(--foreground-rgb),0.1)'}}>
                         
@@ -45,7 +84,7 @@ function Header() {
                     <div className='flex gap-3'>
                         {
                             (isApp && userInfo) && (
-                                <Scrollbar userInfo={userInfo} nav={true} />
+                                <Scrollbar userInfo={userInfo} nav={true} onPushLocation={()=>{setNavOpened(false)}} />
                             )
                         }
                     </div>
@@ -68,33 +107,7 @@ function Header() {
                         </Link>
                         {
                             userInfo && (
-                                <>
-                                    <Dropdown placement="bottom-start">
-                                        <DropdownTrigger>
-                                            <button type='button' className='bg-white bg-opacity-10 backdrop-blur-md rounded-2xl px-3 py-2 flex gap-3 items-center justify-center outline-none w-fit'>
-                                                <Avatar className='h-8 w-8' src={`https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}.png`} />
-                                                <div className='flex flex-col items-start'>
-                                                    <h1 className='text-base font-bold tracking-wider leading-none'>{userInfo.global_name}</h1>
-                                                    <span className='text-xs'>@{userInfo.username}</span>
-                                                </div>
-                                            </button>
-                                        </DropdownTrigger>
-                                        <DropdownMenu aria-label="User Actions" variant="flat">
-                                            <DropdownItem key="profile" className="h-14 gap-2">
-                                                <p className="font-bold">Signed in as</p>
-                                                <p className="font-bold">@{userInfo.username}</p>
-                                            </DropdownItem>
-                                            <DropdownItem key="app" startContent={'🏓'} href='/app'>Playground</DropdownItem>
-                                            <DropdownItem key="configurations" startContent={<Gear weight='fill' />} href='/app/setting'>Configurations</DropdownItem>
-                                            <DropdownItem key="help_and_feedback" startContent={<Question weight='fill' />} href='https://ponlponl123.com/discord' target='_blank'>
-                                                Help & Feedback
-                                            </DropdownItem>
-                                            <DropdownItem key="logout" startContent={<Leaf weight='fill' />} color="danger">
-                                                Log Out
-                                            </DropdownItem>
-                                        </DropdownMenu>
-                                    </Dropdown>
-                                </>
+                                <UserAccountAction className='max-md:hidden'/>
                             )
                         }
                     </div>

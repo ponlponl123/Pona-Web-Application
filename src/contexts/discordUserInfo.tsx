@@ -1,14 +1,16 @@
-import { getCookie, setCookie } from "cookies-next";
-import { UserInfo as UserInfoType, fetchByAccessToken } from "@/server-side-api/discord/fetchUser";
+import { getCookie, setCookie, deleteCookie } from "cookies-next";
+import { UserInfo as UserInfoType, fetchByAccessToken, revokeUserAccessToken as removeAccessToken } from "@/server-side-api/discord/fetchUser";
 import { useContext, createContext, useState, useEffect } from "react";
 
 const discordUserInfo = createContext<{
     userInfo: UserInfoType | null;
     setUserAccessToken: (key: string, type: string) => void;
+    revokeUserAccessToken: (key: string) => void;
     loading: boolean;
 }>({
     userInfo: null,
     setUserAccessToken: () => {},
+    revokeUserAccessToken: () => {},
     loading: true
 })
 
@@ -36,8 +38,15 @@ export const DiscordUserInfoProvider = ({children}: { children: React.ReactNode 
         setLoading(false);
     }
 
+    const revokeUserAccessToken = async (key: string) => {
+        await removeAccessToken(key);
+        deleteCookie('LOGIN_');
+        deleteCookie('LOGIN_TYPE_');
+        window.location.replace('/');
+    }
+
     return (
-        <discordUserInfo.Provider value={{ userInfo, setUserAccessToken, loading }}>
+        <discordUserInfo.Provider value={{ userInfo, setUserAccessToken, revokeUserAccessToken, loading }}>
             {children}
         </discordUserInfo.Provider>
     )

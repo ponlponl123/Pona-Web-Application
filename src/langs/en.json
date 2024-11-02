@@ -29,9 +29,26 @@
         }
     },
     "app": {
-        "title": "Dashboard",
-        "dashboard": {
+        "title": "Control Panel",
+        "welcome": {
+            
+        },
+        "updates": {
+            "name": "Updates"
+        },
+        "home": {
+            "name": "Home",
             "title": "Welcome back, [user]!"
+        },
+        "guilds": {
+            "name": "Guilds",
+            "title": "The server you and Pona join together.",
+            "setting": {
+                "name": "Guild Settings"
+            }
+        },
+        "setting": {
+            "name": "Setting"
         }
     },
     "redirect": {

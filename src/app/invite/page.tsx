@@ -10,7 +10,7 @@ function Page() {
     const { userInfo } = useDiscordUserInfo();
     const clientId = process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID;
     const invite_pona = `https://discord.com/oauth2/authorize?client_id=${clientId}`;
-    const invite_pona_with_oauth = `https://discord.com/oauth2/authorize?client_id=${clientId}&permissions=690008452688&response_type=code&redirect_uri=https%3A%2F%2Fpona.ponlponl123.com%2Fapp%2Fcallback%3Ffrom%3Dinvite&integration_type=0&scope=guilds+identify+bot`;
+    const invite_pona_with_oauth = `https://discord.com/oauth2/authorize?client_id=${clientId}&permissions=690008452688&response_type=code&redirect_uri=https%3A%2F%2Fpona.ponlponl123.com%2Fapp%2Fcallback%3Ffrom%3Dinvite&integration_type=0&scope=guilds+guilds.members.read+identify+bot`;
     const invite_link = userInfo ? invite_pona : invite_pona_with_oauth;
     
     React.useEffect(()=>{

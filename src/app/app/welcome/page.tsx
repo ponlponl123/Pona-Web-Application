@@ -1,9 +1,12 @@
 "use client";
 import React from 'react';
 import confetti from 'canvas-confetti';
+import MyButton from '@/components/button';
 import { useDiscordUserInfo } from '@/contexts/discordUserInfo';
+import { useRouter } from 'next/navigation';
 
 function Page() {
+    const router = useRouter();
     const { userInfo } = useDiscordUserInfo();
 
     React.useEffect(() => {
@@ -29,11 +32,12 @@ function Page() {
     }, [])
 
     return (
-        <main>
+        <main id='app-panel'>
             <div className='min-h-36 max-h-96 h-screen w-full'><div className='absolute w-full min-h-36 max-h-96 h-screen top-0 left-0 welcome-banner'></div></div>
-            <h1 className='text-3xl'>👋 Hello {userInfo?.global_name}!, Welcome to the Pona Web Application!</h1><br />
-            <p>This is a sample page for your Pona application.</p>
-            <p>Feel free to customize and build upon this page as needed.</p>
+            <main id='app-workspace' className='max-w-screen-xl mx-auto flex flex-col items-center'>
+                <h1 className='text-6xl -mt-12 text-center' style={{lineHeight: '74px'}}>👋 Hello {userInfo?.global_name}!,<br/>Welcome to the Pona Web Application!</h1><br />
+                <MyButton onClick={()=>router.push('/app')} className='m-auto'>Get started</MyButton>
+            </main>
         </main>
     )
 }

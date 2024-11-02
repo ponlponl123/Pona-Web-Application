@@ -7,15 +7,23 @@
   --background-rgb: 255, 255, 255;
   --foreground-rgb: 23, 23, 23;
   --background: #ffffff;
+  --bg-tailwind: rgb(255, 255, 255, var(--tw-bg-opacity));
+  --fg-tailwind: rgb(23, 23, 23, var(--tw-bg-opacity));
   --foreground: #171717;
+  --app-background: #f1f1f1;
+  --app-background-rgb: 241, 241, 241;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
+    --bg-tailwind: rgb(10, 10, 10, var(--tw-bg-opacity));
+    --fg-tailwind: rgb(237, 237, 237, var(--tw-bg-opacity));
     --background-rgb: 10, 10, 10;
     --background: #0a0a0a;
     --foreground-rgb: 237, 237, 237;
     --foreground: #ededed;
+    --app-background: #171717;
+    --app-background-rgb: 23, 23, 23;
   }
   * {
     @apply dark;
@@ -52,9 +60,20 @@ main.scrollbar > a > button {
   @apply w-full
 }
 
+main.scrollbar > div,
+main.scrollbar > div > main {
+  @apply w-full flex flex-col gap-2
+}
+
 main.scrollbar > button,
-main.scrollbar > a > button {
+main.scrollbar > a > button,
+main.scrollbar > div > button,
+main.scrollbar > div > main > button {
   @apply text-start justify-start
+}
+
+main#app-workspace {
+  @apply lg:px-12 lg:pt-16 max-lg:pt-24 max-lg:px-6 lg:max-w-screen-xl w-full mx-auto;
 }
 
 .main-bg {
@@ -63,7 +82,23 @@ main.scrollbar > a > button {
 }
 
 .welcome-banner {
-  background: url(./../../public/welcome_banner.png) center no-repeat;
+  background:  linear-gradient(0deg, rgb(var(--app-background-rgb)), rgb(var(--app-background-rgb), 0.24)), url(./../../public/welcome_banner.png) center no-repeat;
+  background-size: cover;
+}
+
+.apphome-banner.evening,
+.apphome-banner.morning {
+  background:  linear-gradient(0deg, rgb(var(--app-background-rgb)), rgb(var(--app-background-rgb), 0.24)), url(./../../public/app/PonaWebViewMorning.png) center no-repeat;
+  background-size: cover;
+}
+
+.apphome-banner.afternoon {
+  background:  linear-gradient(0deg, rgb(var(--app-background-rgb)), rgb(var(--app-background-rgb), 0.24)), url(./../../public/app/PonaWebViewAfternoon.png) center no-repeat;
+  background-size: cover;
+}
+
+.apphome-banner.night {
+  background:  linear-gradient(0deg, rgb(var(--app-background-rgb)), rgb(var(--app-background-rgb), 0.24)), url(./../../public/app/PonaWebViewNight.png) center no-repeat;
   background-size: cover;
 }
 
@@ -239,10 +274,15 @@ header {
     @apply w-full;
   }
   header nav {
-    @apply fixed top-0 left-0 w-full h-full bg-white flex flex-col p-6 pt-0;
+    @apply fixed top-0 left-0 w-full h-full flex flex-col p-6 pt-0;
+    background-color: rgb(var(--background-rgb))
   }
   header.nav-opened-true {
     @apply fixed;
+  }
+  footer > div:first-child, footer > div {
+    width: 100% !important;
+    justify-content: center !important;
   }
 }
 

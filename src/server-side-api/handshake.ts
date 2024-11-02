@@ -1,12 +1,12 @@
 "use server";
 import axios from 'axios';
+import { EndpointHTTP, EndpointKey } from './endpoint';
 
 export default async function handshake(): Promise<boolean> {
     try {
-        const env = process.env;
-        const handshakeRequest = await axios.get(`${env.PONA_APPLICATION_ENDPOINT}:${env.PONA_APPLICATION_ENDPOINT_PORT}/`, {
+        const handshakeRequest = await axios.get(EndpointHTTP, {
             headers: {
-                'Authorization': `Pona! ${env.PONA_APPLICATION_ENDPOINT_KEY}`,
+                'Authorization': `Pona! ${EndpointKey}`,
             },
         });
         if ( handshakeRequest.status === 200 ) return true;

@@ -12,8 +12,8 @@ function Footer() {
   const { language, setLanguage } = useLanguageContext();
   return (
     <footer className={`max-md:flex-col ${pathname.startsWith('/app') && 'm-0'}`}>
-      <div className='max-md:order-1'>
-
+      <div className='max-md:order-1 w-fit'>
+        <span className='opacity-50 text-xs max-md:text-center'>© 2024 Pona! Application - Ponlponl123 Projects And the Ponlponl123.com Design are trademarks, services marks, and/or registered trademarks of Ponlponl123.com</span>
       </div>
       <div>
         <Link
