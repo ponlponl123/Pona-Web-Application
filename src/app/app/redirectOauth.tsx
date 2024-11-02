@@ -6,7 +6,8 @@ import { Compass } from '@phosphor-icons/react/dist/ssr';
 function RedirectOauth() {
     const { language } = useLanguageContext();
     const clientId = process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID;
-    const login_oauth = `https://discord.com/oauth2/authorize?client_id=${clientId}&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fapp%2Fcallback&scope=identify+guilds+guilds.members.read`;
+    const redirect_uri = process.env.NEXT_PUBLIC_DISCORD_REDIRECT_ENDPOINT || 'https://pona.ponlponl123.com/app/callback';
+    const login_oauth = `https://discord.com/oauth2/authorize?client_id=${clientId}&response_type=code&redirect_uri=${encodeURIComponent(redirect_uri)}&scope=identify+guilds+guilds.members.read`;
     
     React.useEffect(() => {
         window.location.replace(login_oauth);
