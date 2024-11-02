@@ -61,7 +61,7 @@ export async function authorizeUserAccessToken(key: string): Promise<false | Log
                     username: clientId,
                     password: clientSecret,
                 }
-            })            
+            })
             if ( token.status === 200 && token.data.access_token ) return {
                 key: token.data.access_token,
                 type: token.data.token_type
