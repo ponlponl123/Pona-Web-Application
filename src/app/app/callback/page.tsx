@@ -1,5 +1,5 @@
 "use client";
-import React from 'react'
+import React, { Suspense } from 'react'
 import { authorizeUserAccessToken } from '@/server-side-api/discord/fetchUser';
 import { MagicWand, Confetti } from '@phosphor-icons/react/dist/ssr';
 import { useLanguageContext } from '@/contexts/languageContext';
@@ -10,7 +10,7 @@ import { setCookie } from 'cookies-next';
 import confetti from 'canvas-confetti';
 import Link from 'next/link';
 
-function Page() {
+function PageContent() {
     const params = useSearchParams();
     const code = params.get('code');
     const redirectFrom = params.get('from');
@@ -97,6 +97,14 @@ function Page() {
             </div>
         )
     )
+}
+
+function Page() {
+    return (
+        <Suspense fallback={<Spinner />}>
+            <PageContent />
+        </Suspense>
+    );
 }
 
 export default Page
