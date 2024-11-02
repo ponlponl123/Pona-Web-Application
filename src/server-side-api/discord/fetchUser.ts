@@ -45,7 +45,7 @@ export async function fetchByAccessToken(key: string, keyType: string): Promise<
 export async function authorizeUserAccessToken(key: string): Promise<false | Login> {
     const clientId = process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID as string;
     const clientSecret = process.env.DISCORD_CLIENT_SECRET as string;
-    const redirect_uri = process.env.NEXT_PUBLIC_DISCORD_REDIRECT_ENDPOINT as string;
+    const redirect_uri = process.env.NEXT_PUBLIC_DISCORD_REDIRECT_ENDPOINT || 'https://pona.ponlponl123.com/app/callback';
     if ( typeof key === "string" && clientId && clientSecret ) {
         try {
             const params = new URLSearchParams();
