@@ -50,7 +50,7 @@ export async function authorizeUserAccessToken(key: string, type: 'auth_only' | 
         try {
             const params = new URLSearchParams();
             params.append('grant_type', 'authorization_code');
-            params.append('redirect_uri', `${redirect_uri}${type === 'invite' && '?from=invite'}`);
+            params.append('redirect_uri', `${redirect_uri}${(type === 'invite') ? '?from=invite' : ''}`);
             params.append('code', key);
             const token = await axios.post(API_ENDPOINT + '/oauth2/token', params, {
                 headers: {
