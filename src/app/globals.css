@@ -168,6 +168,12 @@ main#app-workspace {
   @apply px-4 py-2 text-lg
 }
 
+@media (max-width: 480px) {
+  .btn.btn-responsive > div {
+    @apply px-4 py-2 text-lg
+  }
+}
+
 .btn.btn-size-large > div {
   @apply px-8 py-3 text-2xl
 }

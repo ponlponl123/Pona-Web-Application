@@ -14,6 +14,12 @@ const config: Config = {
         background: "var(--bg-tailwind)",
         foreground: "var(--fg-tailwind)",
       },
+      screens: {
+        'miniscreen': '480px',
+        'tablet': '640px',
+        'laptop': '1024px',
+        'desktop': '1280px',
+      },
     },
   },
   darkMode: "class",

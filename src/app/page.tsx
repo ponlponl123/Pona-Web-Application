@@ -14,7 +14,7 @@ export default function Home() {
     <main className="w-full min-h-screen main-bg">
       <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
         <main className="w-full max-w-screen-lg flex flex-col gap-8 row-start-2 items-center sm:items-start">
-          <div className='bg-white bg-opacity-30 rounded-2xl flex flex-col gap-2 p-4 max-sm:p-3 backdrop-blur-sm max-sm:text-sm max-sm:absolute max-sm:bottom-24'>
+          <div className='bg-white bg-opacity-30 max-miniscreen:hidden rounded-2xl flex flex-col gap-2 p-4 max-sm:p-3 backdrop-blur-sm max-sm:text-sm max-sm:absolute max-sm:bottom-24'>
             <h1 className='flex gap-3 items-center text-xl mb-0 max-sm:text-lg'>
               <Cookie
                 alt="Cookie!"
@@ -26,18 +26,18 @@ export default function Home() {
             </h1>
             <p>{language.data.cookie.description}</p>
           </div>
-          <h1 className='text-5xl whitespace-pre' style={{lineHeight: "78px"}}>{
+          <h1 className='text-5xl leading-relaxed max-md:text-4xl  max-sm:text-center max-sm:text-3xl max-miniscreen:text-2xl max-sm:leading-10 whitespace-pre'>{
             (hours > 4 && hours < 10) ? language.data.home.welcome_message.morning :
             (hours > 9 && hours < 16) ? language.data.home.welcome_message.morning :
             (hours > 15 && hours < 20) ? language.data.home.welcome_message.morning :
             language.data.home.welcome_message.night
           }</h1>
           <ol className="list-inside text-sm text-center sm:text-left list-none -mt-6 mb-2">
-            <li className="mb-2 text-xl">{language.data.home.mindselector.title}</li>
+            <li className="mb-2 text-xl max-md:text-lg max-miniscreen:text-base">{language.data.home.mindselector.title}</li>
             <li>
               <div>
                 <Select
-                  className="max-w-xs"
+                  className="max-w-xs max-miniscreen:scale-75"
                   disabledKeys={["sweet"]}
                   size='sm'
                   label={language.data.home.mindselector.label}
@@ -60,7 +60,7 @@ export default function Home() {
               href="/invite"
               rel="noopener noreferrer"
             >
-              <MyButton variant="primary" effect='confetti'>
+              <MyButton variant="primary" effect='confetti' className='btn-responsive'>
                 <Confetti
                   weight="fill"
                   alt="Confetti"
@@ -72,7 +72,7 @@ export default function Home() {
               href="/app"
               rel="noopener noreferrer"
             >
-              <MyButton variant="invert" style='rounded' size="medium">
+              <MyButton variant="invert" style='rounded' size="medium" className='btn-responsive'>
                 {language.data.home.actions.app}
               </MyButton>
             </Link>
