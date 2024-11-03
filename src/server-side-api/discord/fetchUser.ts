@@ -42,7 +42,7 @@ export async function fetchByAccessToken(key: string, keyType: string): Promise<
     return false;
 }
 
-export async function authorizeUserAccessToken(key: string): Promise<false | Login> {
+export async function authorizeUserAccessToken(key: string, type: 'auth_only' | 'invite'): Promise<false | Login> {
     const clientId = process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID as string;
     const clientSecret = process.env.DISCORD_CLIENT_SECRET as string;
     const redirect_uri = process.env.NEXT_PUBLIC_DISCORD_REDIRECT_ENDPOINT || 'https://pona.ponlponl123.com/app/callback';
@@ -50,7 +50,7 @@ export async function authorizeUserAccessToken(key: string): Promise<false | Log
         try {
             const params = new URLSearchParams();
             params.append('grant_type', 'authorization_code');
-            params.append('redirect_uri', redirect_uri);
+            params.append('redirect_uri', `${redirect_uri}${type === 'invite' && '?from=invite'}`);
             params.append('code', key);
             const token = await axios.post(API_ENDPOINT + '/oauth2/token', params, {
                 headers: {

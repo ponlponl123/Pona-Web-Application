@@ -2,6 +2,9 @@
     "key": "en-US",
     "label": "English",
     "country": "us",
+    "extensions": {
+        "experiment": "Experiment"
+    },
     "cookie": {
         "title": "Cookie!",
         "description": "This application will using cookie for authorize some services"
@@ -10,6 +13,13 @@
         "actions": {
             "login": "Login with Discord",
             "invite": "Add pona to my server"
+        },
+        "account": {
+            "signinas": "Signed in as",
+            "playground": "Playground",
+            "setting": "Configurations",
+            "support": "Help & Feedback",
+            "logout": "Log Out"
         }
     },
     "home": {
@@ -43,9 +53,22 @@
         "guilds": {
             "name": "Guilds",
             "title": "The server you and Pona join together.",
+            "stats": {
+                "title": "Stats",
+                "queue": "Queue",
+                "members": "Members in voice channel",
+                "usage": "Usage",
+                "analysis": "Average usage"
+            },
+            "player": {
+                "name": "Player"
+            },
             "setting": {
                 "name": "Guild Settings"
             }
+        },
+        "playlist": {
+            "name": "My Playlists"
         },
         "setting": {
             "name": "Setting"

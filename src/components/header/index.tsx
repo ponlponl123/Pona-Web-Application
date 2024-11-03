@@ -14,6 +14,7 @@ import Image from 'next/image';
 
 function UserAccountAction({className, minimize = false}: {className?: string, minimize?: boolean}) {
     const { userInfo, revokeUserAccessToken } = useDiscordUserInfo();
+    const { language } = useLanguageContext();
     return (
         userInfo &&
         <Dropdown placement="bottom-start">
@@ -31,17 +32,13 @@ function UserAccountAction({className, minimize = false}: {className?: string, m
             </DropdownTrigger>
             <DropdownMenu aria-label="User Actions" variant="flat">
                 <DropdownItem key="profile" className="h-14 gap-2">
-                    <p className="font-bold">Signed in as</p>
+                    <p className="font-bold">{language.data.header.account.signinas}</p>
                     <p className="font-bold">@{userInfo.username}</p>
                 </DropdownItem>
-                <DropdownItem key="app" startContent={'🏓'} href='/app'>Playground</DropdownItem>
-                <DropdownItem key="configurations" startContent={<Gear weight='fill' />} href='/app/setting'>Configurations</DropdownItem>
-                <DropdownItem key="help_and_feedback" startContent={<Question weight='fill' />} href='https://ponlponl123.com/discord' target='_blank'>
-                    Help & Feedback
-                </DropdownItem>
-                <DropdownItem key="logout" startContent={<Leaf weight='fill' />} color="danger" onClick={()=>{revokeUserAccessToken(getCookie('LOGIN_') as string)}}>
-                    Log Out
-                </DropdownItem>
+                <DropdownItem key="app" startContent={'🏓'} href='/app'>{language.data.header.account.playground}</DropdownItem>
+                <DropdownItem key="configurations" startContent={<Gear weight='fill' />} href='/app/setting'>{language.data.header.account.setting}</DropdownItem>
+                <DropdownItem key="help_and_feedback" startContent={<Question weight='fill' />} href='https://ponlponl123.com/discord' target='_blank'>{language.data.header.account.support}</DropdownItem>
+                <DropdownItem key="logout" startContent={<Leaf weight='fill' />} color="danger" onClick={()=>{revokeUserAccessToken(getCookie('LOGIN_') as string)}}>{language.data.header.account.logout}</DropdownItem>
             </DropdownMenu>
         </Dropdown>
     )

@@ -24,7 +24,7 @@ function Authorize() {
           initialized.current = true
           if ( code && code.length > 0 ) {
               async function auth(code: string) {
-                  const authorized = await authorizeUserAccessToken(code);
+                  const authorized = await authorizeUserAccessToken(code, redirectFrom ? 'invite' : 'auth_only');
                   if ( authorized ) {
                       setAuthenticatedState('success');
                       setCookie('LOGIN_', authorized.key);

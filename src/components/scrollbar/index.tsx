@@ -1,7 +1,7 @@
 "use client"
 import React from 'react'
 import { UserInfo } from '@/server-side-api/discord/fetchUser'
-import { House, Confetti, Gear, Planet, CaretLeft, Wrench } from '@phosphor-icons/react/dist/ssr'
+import { House, Confetti, Gear, Planet, CaretLeft, Wrench, Guitar, Playlist } from '@phosphor-icons/react/dist/ssr'
 import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo'
 import { useLanguageContext } from '@/contexts/languageContext'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -45,6 +45,7 @@ function Scrollbar({ userInfo, nav = false, onPushLocation }: { userInfo: UserIn
                                 <>
                                     <ActivationLink onClick={handlePushLocation} href='/app' icon={House}>{language.data.app.home.name}</ActivationLink>
                                     <ActivationLink onClick={handlePushLocation} href='/app/guilds' icon={Confetti}>{language.data.app.guilds.name}</ActivationLink>
+                                    <ActivationLink onClick={handlePushLocation} href='/app/playlists' icon={Playlist}>{language.data.app.playlist.name}</ActivationLink>
                                     <ActivationLink onClick={handlePushLocation} href='/app/updates' icon={Wrench}>{language.data.app.updates.name}</ActivationLink>
                                 </>
                             ) : guild && (
@@ -56,6 +57,7 @@ function Scrollbar({ userInfo, nav = false, onPushLocation }: { userInfo: UserIn
                                         </div>
                                     </ActivationLink>
                                     <ActivationLink onClick={handlePushLocation} href={`/app/g/${guild.id}`} icon={House}>{language.data.app.home.name}</ActivationLink>
+                                    <ActivationLink onClick={handlePushLocation} href={`/app/g/${guild.id}/player`} icon={Guitar}>{language.data.app.guilds.player.name}</ActivationLink>
                                     <ActivationLink onClick={handlePushLocation} href={`/app/g/${guild.id}/setting`} icon={Gear}>{language.data.app.guilds.setting.name}</ActivationLink>
                                 </>
                             )
