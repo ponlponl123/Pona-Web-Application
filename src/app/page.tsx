@@ -28,8 +28,8 @@ export default function Home() {
           </div>
           <h1 className='text-5xl leading-relaxed max-md:text-4xl  max-sm:text-center max-sm:text-3xl max-miniscreen:text-2xl max-sm:leading-10 whitespace-pre'>{
             (hours > 4 && hours < 10) ? language.data.home.welcome_message.morning :
-            (hours > 9 && hours < 16) ? language.data.home.welcome_message.morning :
-            (hours > 15 && hours < 20) ? language.data.home.welcome_message.morning :
+            (hours > 9 && hours < 16) ? language.data.home.welcome_message.afternoon :
+            (hours > 15 && hours < 20) ? language.data.home.welcome_message.evening :
             language.data.home.welcome_message.night
           }</h1>
           <ol className="list-inside text-sm text-center sm:text-left list-none -mt-6 mb-2">
