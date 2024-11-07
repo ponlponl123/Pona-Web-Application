@@ -24,14 +24,20 @@ function ManagerChart() {
                 )
                 SELECT time, ping
                 FROM numbered_rows
-                WHERE (row_num - 1) % 30 = 0
+                WHERE (row_num - 1) % 15 = 0
                 LIMIT 128;
             `);
             if (result) {
                 const results: [mysql2.QueryResult, DatasetRow[]] = JSON.parse(result);
                 const dataSet: dataset[] = (results[0] as dataset[]).map(field => {
                     return {
-                        time: new Date(field.time).toLocaleString(undefined, {day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: 'numeric'}),
+                        time: new Date(field.time).toLocaleString([], {
+                            day: 'numeric', 
+                            month: 'short', 
+                            year: 'numeric', 
+                            hour: 'numeric', 
+                            minute: 'numeric'
+                        }),
                         ping: field.ping
                     }
                 })
