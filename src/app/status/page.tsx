@@ -106,17 +106,17 @@ function Status() {
                             <h1 className='text-3xl'>Regions Loads</h1>
                             <div className='flex flex-col gap-4 mt-4'>
                                 <div className='service-list'><h1>AP-TH_TH-10.0</h1>
-                                <div className={`service-status-badge degraded`}></div></div>
+                                <div className={`service-status-badge unknown`}></div></div>
                                 <div className='service-list'><h1>AP-TH_TH-11.4</h1>
                                 <div className={`service-status-badge operational`}></div></div>
                                 <div className='service-list'><h1>AP-TH_TH-11.6</h1>
-                                <div className={`service-status-badge operational`}></div></div>
+                                <div className={`service-status-badge down`}></div></div>
                                 <div className='service-list'><h1>AP-SG_1</h1>
                                 <div className={`service-status-badge`}></div></div>
                             </div>
                         </div>
                         <div className='status-block'>
-                            <h1 className='text-3xl'>Active Manager</h1>
+                            <h1 className='text-3xl'>Application Response time (ms)</h1>
                             <div className='w-full h-full relative'>
                                 <ManagerChart />
                             </div>
