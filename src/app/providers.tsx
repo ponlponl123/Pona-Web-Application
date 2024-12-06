@@ -6,6 +6,7 @@ import { DiscordUserInfoProvider } from '@/contexts/discordUserInfo';
 import { DiscordGuildInfoProvider } from '@/contexts/discordGuildInfo';
 import PageAnimatePresence from "@/components/HOC/PageAnimatePresence";
 import { usePathname } from 'next/navigation';
+import Snowfall from 'react-snowfall';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -14,9 +15,16 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <LanguageProvider>
         <DiscordUserInfoProvider>
           <DiscordGuildInfoProvider>
-          {
-            pathname.startsWith('/app') ? children : <PageAnimatePresence>{children}</PageAnimatePresence>
-          }
+            <Snowfall
+              snowflakeCount={12}
+              speed={[0.5, 3]}
+              wind={[-0.5, 1]}
+              radius={[0.5, 3]}
+              style={{zIndex: 99}}
+            />
+            {
+              pathname.startsWith('/app') ? children : <PageAnimatePresence>{children}</PageAnimatePresence>
+            }
           </DiscordGuildInfoProvider>
         </DiscordUserInfoProvider>
       </LanguageProvider>
