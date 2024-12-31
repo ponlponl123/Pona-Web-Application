@@ -1,15 +1,21 @@
 "use client";
 import MyButton from '@/components/button';
-import { Confetti, Cookie } from "@phosphor-icons/react/dist/ssr";
+import { ClockCountdown, Confetti, Cookie } from "@phosphor-icons/react/dist/ssr";
 import { useLanguageContext } from '@/contexts/languageContext';
 import { Select, SelectItem } from "@nextui-org/react";
 import { minds } from '@/data/minds';
 import Link from "next/link";
 
+import confetti from 'canvas-confetti';
+import CountdownTimer from '@/components/timer';
+
 export default function Home() {
   const { language } = useLanguageContext();
   const date = new Date();
   const hours = date.getHours();
+
+  const newYearIn = new Date(date.getFullYear()+1, 0, 1).getTime() - date.getTime();
+
   return (
     <main className="w-full min-h-screen main-bg">
       <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
@@ -78,6 +84,39 @@ export default function Home() {
             </Link>
           </div>
         </main>
+        {
+          (newYearIn/1000) < (24 * 60 * 60) &&
+          (
+            <div id='newYearTimer' className='flex gap-2 items-center justify-center z-40 fixed bottom-4 left-1/2 -translate-x-1/2 p-3 bg-white bg-opacity-60 border-white border-2 rounded-full max-sm:hidden backdrop-blur-sm'>
+              <ClockCountdown size={18} />
+              <p className='text-sm font-bold max-sm:text-xxs'>Happy New Year in <CountdownTimer timeLeft={Math.floor(newYearIn/1000)} onEnd={() => {
+                const duration = 15 * 1000;
+                const animationEnd = Date.now() + duration;
+                const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+    
+                document.getElementById('newYearTimer')?.classList.add('opacity-0');
+                document.getElementById('newYearTimer')?.classList.add('bottom-0');
+                document.getElementById('newYearTimer')?.classList.add('pointer-events-none');
+                
+                function randomInRange(min: number, max: number) {
+                  return Math.random() * (max - min) + min;
+                }
+                
+                const interval = setInterval(function() {
+                  const timeLeft = animationEnd - Date.now();
+                
+                  if (timeLeft <= 0) {
+                    return clearInterval(interval);
+                  }
+                
+                  const particleCount = 50 * (timeLeft / duration);
+                  confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } });
+                  confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } });
+                }, 250);
+              }} /></p>
+            </div>
+          )
+        }
       </div>
     </main>
   );
