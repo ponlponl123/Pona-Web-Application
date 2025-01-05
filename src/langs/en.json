@@ -71,7 +71,10 @@
             "name": "My Playlists"
         },
         "setting": {
-            "name": "Setting"
+            "name": "Setting",
+            "layout": {
+                "title": "Layout"
+            }
         }
     },
     "redirect": {

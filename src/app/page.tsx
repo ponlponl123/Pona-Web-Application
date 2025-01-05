@@ -15,6 +15,7 @@ export default function Home() {
   const hours = date.getHours();
 
   const newYearIn = new Date(date.getFullYear()+1, 0, 1).getTime() - date.getTime();
+  const newYearEvent = (date.getDate() < 7 && date.getMonth() === 0);
 
   return (
     <main className="w-full min-h-screen main-bg">
@@ -85,11 +86,11 @@ export default function Home() {
           </div>
         </main>
         {
-          (newYearIn/1000) < (24 * 60 * 60) &&
+          (((newYearIn/1000) < (24 * 60 * 60)) || newYearEvent) &&
           (
             <div id='newYearTimer' className='flex gap-2 items-center justify-center z-40 fixed bottom-4 left-1/2 -translate-x-1/2 p-3 bg-white bg-opacity-60 border-white border-2 rounded-full max-sm:hidden backdrop-blur-sm'>
               <ClockCountdown size={18} />
-              <p className='text-sm font-bold max-sm:text-xxs'>Happy New Year in <CountdownTimer timeLeft={Math.floor(newYearIn/1000)} onEnd={() => {
+              <p className='text-sm font-bold max-sm:text-xxs'>Happy New Year in <CountdownTimer timeLeft={!newYearEvent ? Math.floor(newYearIn/1000) : 0} onEnd={() => {
                 const duration = 15 * 1000;
                 const animationEnd = Date.now() + duration;
                 const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
