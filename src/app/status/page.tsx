@@ -8,11 +8,15 @@ import ManagerChart from '@/components/status/managerChart';
 import handshake from '@/server-side-api/handshake';
 import socketio from '@/server-side-api/socketio';
 import clusterInfo, { ClusterInfo } from '@/server-side-api/clusterInfo';
+import { Button } from '@nextui-org/react';
+
+export type viewType = '24h' | '12h' | '9h' | '6h' | '3h' | '1h' | '45min' | '30min' | '15min';
 
 function Status() {
     const [ fetching, setFetching ] = React.useState<boolean>(false);
     const [ lastRefresh, setLastRefresh ] = React.useState<Date | null>(null);
     const [ overallStatus, setOverallStatus ] = React.useState<'operational' | 'degraded' | 'down' | 'unknown'>('unknown');
+    const [viewMode, setViewMode] = React.useState<viewType>('6h');
 
     const [ handshakeStatus, setHandshakeStatus ] = React.useState<boolean | null>(null);
     const [ websocketStatus, setWebsocketStatus ] = React.useState<boolean | null>(null);
@@ -117,8 +121,16 @@ function Status() {
                         </div>
                         <div className='status-block'>
                             <h1 className='text-3xl'>Application Response time (ms)</h1>
+                            <div className='flex flex-wrap items-center justify-start gap-2 mt-2'>
+                                {
+                                    // create all viewType buttons
+                                    ['24h', '12h', '9h', '6h', '3h', '1h', '45min', '30min', '15min'].map((mode, index) => (
+                                        <Button key={index} variant={(viewMode === mode) ? 'solid' : 'ghost'} color={(viewMode === mode) ? 'primary' : 'default'} size='sm' radius='full' onClick={()=>{setViewMode(mode as viewType)}}>{mode}</Button>
+                                    ))
+                                }
+                            </div>
                             <div className='w-full h-full relative'>
-                                <ManagerChart />
+                                <ManagerChart mode={viewMode} />
                             </div>
                         </div>
                     </div>

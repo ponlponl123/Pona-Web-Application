@@ -1,33 +1,48 @@
 "use client";
 import React from 'react'
 import { AreaChart, Area, XAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
+import { viewType } from '@/app/status/page';
 
-interface dataset {
+type ShardData = {
+    [key: string]: number;
+};
+
+type Dataset = {
     time: string;
-    ping: string;
-}
+    shards: ShardData;
+};
 
-function ManagerChart() {
-    const [data, setData] = React.useState<dataset[]>([]);
+function ManagerChart({ mode }: { mode?: viewType }) {
+    const [data, setData] = React.useState<Dataset[]>([]);
+    const sliceDataSet = mode === '24h' ? 1 : mode === '12h' ? 2 : mode === '9h' ? 3 : mode === '6h' ? 4 : mode === '3h' ? 8 : mode === '1h' ? 12 : mode === '45min' ? 16 : mode === '30min' ? 24 : mode === '15min' ? 48 : 1;
 
     React.useEffect(() => {
         async function fetchData() {
             const result = await fetch('/api/services/timelapse');
             if (result.ok) {
                 const res = await result.json();
-                setData(res.timelapse)
+                setData(res.timelapse.slice(0, res.timelapse.length/sliceDataSet).reverse())
             }
         }
         fetchData();
-    }, [setData]);
+    }, [setData, sliceDataSet]);
+
+    // Extract unique shard IDs
+    const shardIds = Array.from(new Set(data.flatMap(d => Object.keys(d.shards))));
+
+    // Transform data for recharts
+    const chartData = data.map(d => ({
+        time: d.time,
+        ...d.shards
+    }));
     
     return (
         <ResponsiveContainer width="100%" height="100%" minHeight={256}>
-            <AreaChart data={data} width={500} height={400} margin={{
+            <AreaChart data={chartData} width={500} height={400} margin={{
                 top: 24,
                 right: 12,
                 left: 12,
-                bottom: 0
+                bottom: 12
             }}>
                 <defs>
                     <linearGradient id="colorManager" x1="0" y1="0" x2="0" y2="1">
@@ -38,7 +53,16 @@ function ManagerChart() {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="time" />
                 <Tooltip />
-                <Area type="monotone" dataKey="ping" stroke="#f0abfc" fillOpacity={1} fill="url(#colorManager)" />
+                {shardIds.map(shardId => (
+                    <Area
+                        key={shardId}
+                        type="monotone"
+                        dataKey={shardId}
+                        stroke="#f0abfc"
+                        fillOpacity={1}
+                        fill="url(#colorManager)"
+                    />
+                ))}
             </AreaChart>
         </ResponsiveContainer>
     )

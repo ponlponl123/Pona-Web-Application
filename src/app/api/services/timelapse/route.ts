@@ -3,7 +3,10 @@ import query from '@/server-side-api/database/query';
 
 interface dataset {
   time: string;
-  ping: string;
+  shards: {
+    id: number;
+    ping: string;
+  }[]
 }
 
 export interface DatasetRow extends RowDataPacket, dataset {}
@@ -11,14 +14,18 @@ export interface DatasetRow extends RowDataPacket, dataset {}
 export async function GET() {
   const result = await query(`
     WITH numbered_rows AS (
-        SELECT time, pingtomaster AS ping,
-            ROW_NUMBER() OVER (ORDER BY id DESC) AS row_num
-        FROM pona_heartbeat_interval
+      SELECT time, pingtomaster AS ping, shardid,
+        UNIX_TIMESTAMP(time) DIV 300 AS time_slot,
+        ROW_NUMBER() OVER (PARTITION BY UNIX_TIMESTAMP(time) DIV 300, shardid ORDER BY time DESC) AS rn
+      FROM pona_heartbeat_interval
+      WHERE time >= NOW() - INTERVAL 24 HOUR
     )
-    SELECT time, ping
+    SELECT FROM_UNIXTIME(time_slot * 300) AS time,
+      CONCAT('{', GROUP_CONCAT(CONCAT('"', shardid, '": ', ping)), '}') AS shards
     FROM numbered_rows
-    WHERE (row_num - 1) % 15 = 0
-    LIMIT 128;
+    WHERE rn = 1
+    GROUP BY time_slot
+    ORDER BY time_slot DESC;
   `);
   if (result) {
     const results: [mysql2.QueryResult, DatasetRow[]] = JSON.parse(result);
@@ -31,7 +38,7 @@ export async function GET() {
           hour: 'numeric', 
           minute: 'numeric'
         }),
-        ping: field.ping
+        shards: JSON.parse(String(field.shards))
       }
     })
     return Response.json({

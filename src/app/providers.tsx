@@ -10,18 +10,23 @@ import Snowfall from 'react-snowfall';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const date = new Date();
   return (
     <NextUIProvider>
       <LanguageProvider>
         <DiscordUserInfoProvider>
           <DiscordGuildInfoProvider>
-            <Snowfall
-              snowflakeCount={12}
-              speed={[0.5, 3]}
-              wind={[-0.5, 1]}
-              radius={[0.5, 3]}
-              style={{zIndex: 99}}
-            />
+            {
+              date.getMonth() === 11 && (
+                <Snowfall
+                  snowflakeCount={12}
+                  speed={[0.5, 3]}
+                  wind={[-0.5, 1]}
+                  radius={[0.5, 3]}
+                  style={{zIndex: 99}}
+                />
+              )
+            }
             {
               pathname.startsWith('/app') ? children : <PageAnimatePresence>{children}</PageAnimatePresence>
             }
