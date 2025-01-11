@@ -7,6 +7,7 @@ import ManagerChart from '@/components/status/managerChart';
 
 import handshake from '@/server-side-api/handshake';
 import socketio from '@/server-side-api/socketio';
+import lavalink from '@/server-side-api/lavalink';
 import clusterInfo, { ClusterInfo } from '@/server-side-api/clusterInfo';
 import { Button } from '@nextui-org/react';
 
@@ -20,24 +21,29 @@ function Status() {
 
     const [ handshakeStatus, setHandshakeStatus ] = React.useState<boolean | null>(null);
     const [ websocketStatus, setWebsocketStatus ] = React.useState<boolean | null>(null);
+    const [ lavalinkStatus, setLavalinkStatus ] = React.useState<boolean | null>(null);
     const [ clusterInfoStatus, setClusterInfoStatus ] = React.useState<false | ClusterInfo | null>(null);
 
     function setOverallServiceStatus(
         handshake: boolean,
         websocket: boolean,
+        lavalink: boolean,
         cluster: false | ClusterInfo
     ) {
         setHandshakeStatus(handshake);
         setWebsocketStatus(websocket);
+        setLavalinkStatus(lavalink);
         setClusterInfoStatus(cluster);
         if (
             !handshake &&
             !websocket &&
+            !lavalink &&
             !cluster
         ) return setOverallStatus('down');
         if (
             !handshake ||
             !websocket ||
+            !lavalink ||
             !cluster
         ) return setOverallStatus('degraded');
         return setOverallStatus('operational');
@@ -49,11 +55,13 @@ function Status() {
 
         const handshakeReq = await handshake();
         const socketioReq = await socketio();
+        const lavalinkReq = await lavalink();
         const clusterInfoReq = await clusterInfo();
 
         setOverallServiceStatus(
             handshakeReq,
             socketioReq,
+            lavalinkReq,
             clusterInfoReq
         );
         
@@ -94,11 +102,11 @@ function Status() {
                             <div className='service-list'><h1>Web Socket Connections</h1>
                             <div className={`service-status-badge ${websocketStatus ? 'operational' : websocketStatus === null ? 'unknown' : 'down'}`}></div></div>
                             <div className='service-list'><h1>Lavalink Connection</h1>
-                            <div className={`service-status-badge operational`}></div></div>
+                            <div className={`service-status-badge ${lavalinkStatus ? 'operational' : lavalinkStatus === null ? 'unknown' : 'down'}`}></div></div>
                             <div className='service-list'><h1>Cloudflare Workers</h1>
                             <div className={`service-status-badge operational`}></div></div>
                             <div className='service-list'><h1>Shards Connection</h1>
-                            <div className={`service-status-badge operational`}></div></div>
+                            <div className={`service-status-badge ${(clusterInfoStatus && clusterInfoStatus.totalShards > 0) ? 'operational' : clusterInfoStatus === null ? 'unknown' : 'down'}`}></div></div>
                             <div className='service-list'><h1>Cluster Connections</h1>
                             <div className={`service-status-badge ${(clusterInfoStatus && clusterInfoStatus.totalShards > 0) ? 'operational' : clusterInfoStatus === null ? 'unknown' : 'down'}`}></div></div>
                             <div className='service-list'><h1>Discord Gateway Connection</h1>
@@ -124,7 +132,7 @@ function Status() {
                             <div className='flex flex-wrap items-center justify-start gap-2 mt-2'>
                                 {
                                     // create all viewType buttons
-                                    ['24h', '12h', '9h', '6h', '3h', '1h', '45min', '30min', '15min'].map((mode, index) => (
+                                    ['24h', '12h', '9h', '6h', '3h', '1h'].map((mode, index) => (
                                         <Button key={index} variant={(viewMode === mode) ? 'solid' : 'ghost'} color={(viewMode === mode) ? 'primary' : 'default'} size='sm' radius='full' onClick={()=>{setViewMode(mode as viewType)}}>{mode}</Button>
                                     ))
                                 }

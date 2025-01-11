@@ -12,6 +12,7 @@
     "react-is": "^19.0.0-rc-69d4b800-20241021"
   },
   "dependencies": {
+    "@euax/color-palette-generator": "^1.0.2",
     "@nextui-org/react": "^2.4.8",
     "@phosphor-icons/react": "^2.1.7",
     "axios": "^1.7.7",
@@ -24,7 +25,8 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-snowfall": "^2.2.0",
-    "recharts": "^2.13.2"
+    "recharts": "^2.13.2",
+    "socket.io-client": "^4.8.1"
   },
   "devDependencies": {
     "@svgr/webpack": "^8.1.0",

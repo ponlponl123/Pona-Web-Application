@@ -51,9 +51,10 @@ function Header() {
     const { userInfo } = useDiscordUserInfo();
 
     const isApp = pathname.startsWith('/app');
+    const isIndex = (pathname === '/');
 
     return (
-        <header className={`nav-opened-${navOpened} absolute w-full h-20 p-6 px-8 flex items-center justify-center gap-3`}>
+        <header className={`nav-opened-${navOpened} ${!isIndex ? 'max-md:backdrop-blur-md':''} absolute w-full h-20 p-6 px-8 flex items-center justify-center gap-3`}>
             <div className={`w-full ${!isApp && 'max-w-5xl'} h-full flex items-center justify-between gap-6`}>
                 <div className='flex gap-2 z-20 active:scale-95'>
                     <Link href={isApp ? '/app' : '/'} onClick={()=>{setNavOpened(false)}}>

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Providers } from "./providers";
 import localFont from "next/font/local";
 import NextTopLoader from 'nextjs-toploader';
-import "./globals.css";
+import "@/styles/globals.css";
 
 import Header from '@/components/header';
 import Footer from '@/components/footer';

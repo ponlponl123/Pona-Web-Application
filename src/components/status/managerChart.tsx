@@ -36,6 +36,17 @@ function ManagerChart({ mode }: { mode?: viewType }) {
         ...d.shards
     }));
     
+    function getRandomColor(seed: string): string {
+        let hash = 0;
+        for (let i = 0; i < seed.length; i++) {
+            hash = seed.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        const color = (hash & 0x00FFFFFF)
+            .toString(16)
+            .toUpperCase();
+        return "#" + "00000".substring(0, 6 - color.length) + color;
+    }
+    
     return (
         <ResponsiveContainer width="100%" height="100%" minHeight={256}>
             <AreaChart data={chartData} width={500} height={400} margin={{
@@ -53,16 +64,37 @@ function ManagerChart({ mode }: { mode?: viewType }) {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="time" />
                 <Tooltip />
-                {shardIds.map(shardId => (
-                    <Area
-                        key={shardId}
-                        type="monotone"
-                        dataKey={shardId}
-                        stroke="#f0abfc"
-                        fillOpacity={1}
-                        fill="url(#colorManager)"
-                    />
-                ))}
+                {shardIds.map((shardId, index) => {
+                    if ( index === 0 )
+                        return (
+                            <Area
+                                key={shardId}
+                                type="monotone"
+                                dataKey={shardId}
+                                stroke="#f0abfc"
+                                fillOpacity={1}
+                                fill="url(#colorManager)"
+                            />
+                        );
+                    return (
+                        <React.Fragment key={shardId}>
+                            <defs>
+                                <linearGradient id={`colorManager-${shardId}`} x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor={getRandomColor(shardId)} stopOpacity={0.64}/>
+                                    <stop offset="95%" stopColor={getRandomColor(shardId)} stopOpacity={0.06}/>
+                                </linearGradient>
+                            </defs>
+                            <Area
+                                key={shardId}
+                                type="monotone"
+                                dataKey={shardId}
+                                stroke={getRandomColor(shardId)}
+                                fillOpacity={1}
+                                fill={`url(#colorManager-${shardId})`}
+                            />
+                        </React.Fragment>
+                    );
+                })}
             </AreaChart>
         </ResponsiveContainer>
     )

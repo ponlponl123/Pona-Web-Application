@@ -1,0 +1,160 @@
+@import "themes/nextui.css";
+@import "themes/chocolate.css";
+@import "themes/latte.css";
+
+:root,
+.nextui-light, [data-theme="nextui-light"],
+.chocolate-light, [data-theme="chocolate-light"],
+.latte-light, [data-theme="latte-light"],
+.light, .default-light, [data-theme="light"] {
+  color-scheme: light;
+  --background-rgb: 255, 255, 255;
+  --foreground-rgb: 23, 23, 23;
+  --background: hsl(0, 0%, 100%);
+  --foreground: hsl(0, 0%, 9%);
+  --app-background: hsl(0, 0%, 95%);
+  --app-background-rgb: 241, 241, 241;
+}
+
+.light, .default-light, [data-theme="light"],
+.dark, .default-dark, [data-theme="dark"] {
+  --default: hsl(0, 0%, 54%);
+  --primary: hsl(320, 96%, 86%);
+  --secondary: hsl(202, 100%, 50%);
+  --success: hsl(148, 100%, 64%);
+  --warning: hsl(36, 100%, 64%);
+  --danger: hsl(0, 54%, 66%);
+  --divider: hsla(0, 0%, 7%, 0.15);
+  --focus: hsl(212, 100%, 47%);
+}
+.light, [data-theme="light"] {
+  --foreground: hsl(327, 50%, 24%) !important;
+  --app-background-rgb: 251, 234, 234 !important;
+}
+.dark, [data-theme="dark"] {
+  --background: hsl(333, 38%, 13%) !important;
+  --foreground: hsl(308, 100%, 90%) !important;
+  --app-background: hsl(328, 100%, 8%) !important;
+  --app-background-rgb: 14, 6, 6 !important;
+}
+
+.nextui-dark, [data-theme="nextui-dark"],
+.chocolate-dark, [data-theme="chocolate-dark"],
+.latte-dark, [data-theme="latte-dark"],
+.dark, .default-dark, [data-theme="dark"] {
+  color-scheme: dark;
+  --background-rgb: 10, 10, 10;
+  --foreground-rgb: 237, 237, 237;
+  --background: hsl(0, 0%, 4%);
+  --foreground: hsl(0, 0%, 93%);
+  --app-background: hsl(0, 0%, 9%);
+  --app-background-rgb: 23, 23, 23;
+}
+
+* {
+  @apply text-foreground;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    @apply default-dark;
+  }
+  * {
+    @apply dark;
+  }
+}
+
+.theme-preview {
+  @apply w-80 h-48 border-3 border-foreground-300 rounded-xl mt-6 mx-auto;
+}
+.theme-preview > .tp-header {
+  @apply w-full h-8 flex gap-2 p-3;
+}
+.theme-preview > .tp-body {
+  @apply w-full flex flex-col gap-2 pt-4 px-6;
+  height: calc(100% - 32px - 40px)
+}
+.theme-preview > .tp-footer {
+  @apply w-full h-10 flex flex-col items-center justify-center gap-1 p-3;
+}
+.theme-preview .tp-chip {
+  @apply w-4 h-3 bg-foreground-600 rounded-full;
+}
+.theme-preview .tp-chip.tp-chip-2-10 {
+  @apply w-8 h-3;
+}
+.theme-preview .tp-chip.tp-chip-3-10 {
+  @apply w-14 h-3;
+}
+.theme-preview .tp-chip.tp-chip-4-10 {
+  @apply w-24 h-3;
+}
+.theme-preview .tp-chip.tp-chip-6-10 {
+  @apply w-32 h-3;
+}
+.theme-preview .tp-chip.tp-foreground {
+  @apply bg-foreground-300;
+}
+.theme-preview .tp-chip.tp-secondary {
+  @apply bg-secondary;
+}
+.theme-preview .tp-chip.tp-warning {
+  @apply bg-warning;
+}
+.theme-preview .tp-chip.tp-sm {
+  @apply h-2;
+}
+.theme-preview .tp-chip.tp-xs {
+  @apply h-1;
+}
+.theme-preview .tp-dot {
+  @apply w-3 h-3 bg-foreground-400 rounded-full;
+}
+.theme-preview .tp-dot.tp-dot-primary {
+  @apply bg-primary;
+}
+.theme-preview .tp-dot.tp-dot-success {
+  @apply bg-success;
+}
+.theme-preview .tp-dot.tp-dot-danger {
+  @apply bg-danger;
+}
+
+button.theme-dot {
+  @apply w-8 h-8 rounded-full border-2 border-foreground-400 flex items-center justify-center bg-transparent;
+  padding: 3px
+}
+
+button.theme-dot.active {
+  @apply border-primary border-3;
+}
+
+button.theme-dot > div {
+  @apply w-full h-full rounded-full bg-foreground-300 overflow-hidden flex flex-row rotate-45;
+}
+
+button.theme-dot > div > div {
+  @apply w-1/2 h-full flex flex-col;
+}
+
+button.theme-dot > div > div::before,
+button.theme-dot > div > div::after {
+  content: "";
+  @apply w-full h-1/2;
+}
+button.theme-dot > div > :nth-child(1)::before {
+  @apply bg-background;
+}
+button.theme-dot > div > :nth-child(1)::after {
+  @apply bg-foreground;
+}
+button.theme-dot > div > :nth-child(2)::before {
+  @apply bg-primary;
+}
+button.theme-dot > div > :nth-child(2)::after {
+  @apply bg-secondary;
+}
+
+button.theme-dot > div > :nth-child(1) {
+  background-color: rgb(var(--background-rgb));
+}

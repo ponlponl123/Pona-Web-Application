@@ -16,7 +16,7 @@ function ActivationLink({ href, children, icon, onClick, className }: { href?: s
         if (href) router.push(href);
     }
     return (
-        <Button onClick={clicked} className={className} startContent={iconContent} variant={isHere ? 'solid' : 'light'} size='lg'>{children}</Button>
+        <Button onClick={clicked} className={className} startContent={iconContent} variant={isHere ? 'flat' : 'light'} size='lg'>{children}</Button>
     )
 }
 

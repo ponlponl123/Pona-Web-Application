@@ -50,11 +50,14 @@
             "name": "Home",
             "title": "Welcome back, [user]!"
         },
+        "overview": {
+            "name": "Overview"
+        },
         "guilds": {
             "name": "Guilds",
             "title": "The server you and Pona join together.",
             "stats": {
-                "title": "Stats",
+                "title": "Stats (in the last 7 days)",
                 "queue": "Queue",
                 "members": "Members in voice channel",
                 "usage": "Usage",
@@ -73,7 +76,19 @@
         "setting": {
             "name": "Setting",
             "layout": {
-                "title": "Layout"
+                "title": "Layout",
+                "theme": {
+                    "title": "Theme",
+                    "day": "Day Theme",
+                    "night": "Night Theme"
+                },
+                "theme_sync": {
+                    "title": "Sync with system",
+                    "description": "Automatically updates the theme based on your system time zone"
+                }
+            },
+            "dev_mode": {
+                "title": "Dev Zone"
             }
         }
     },

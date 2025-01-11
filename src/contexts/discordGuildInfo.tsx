@@ -1,6 +1,7 @@
 import { usePathname } from "next/navigation";
 import { GuildInfo, fetchGuild } from "@/server-side-api/discord/fetchGuild";
 import { useContext, createContext, useState, useEffect } from "react";
+import { getCookie } from "cookies-next";
 
 const discordGuildInfo = createContext<{
     guild: GuildInfo | undefined;
@@ -15,9 +16,11 @@ export const DiscordGuildInfoProvider = ({children}: { children: React.ReactNode
     const pathname = usePathname();
 
     useEffect(() => {
+        const currentAccessToken = getCookie('LOGIN_');
+        const currentAccessTokenType = getCookie('LOGIN_TYPE_');
         if ( pathname.startsWith('/app/g/') ) {
             const guildId = pathname.split('/')[3];
-            fetchGuild(guildId)
+            fetchGuild(String(currentAccessToken), String(currentAccessTokenType), guildId)
                 .then((value) => {
                     if ( !value ) return window.location.replace('/app/guilds');
                     setGuild(value);
@@ -25,7 +28,7 @@ export const DiscordGuildInfoProvider = ({children}: { children: React.ReactNode
                 .catch(console.error);
         } else setGuild(undefined);
     }, [pathname]);
-  
+
     const setCurrentGuild = (guild: GuildInfo | undefined) => {
         setGuild(guild);
     }

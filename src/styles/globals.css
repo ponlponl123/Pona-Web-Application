@@ -1,34 +1,8 @@
+@import './themes.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --primary: #f0abfc;
-  --background-rgb: 255, 255, 255;
-  --foreground-rgb: 23, 23, 23;
-  --background: #ffffff;
-  --bg-tailwind: rgb(255, 255, 255, var(--tw-bg-opacity));
-  --fg-tailwind: rgb(23, 23, 23, var(--tw-bg-opacity));
-  --foreground: #171717;
-  --app-background: #f1f1f1;
-  --app-background-rgb: 241, 241, 241;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg-tailwind: rgb(10, 10, 10, var(--tw-bg-opacity));
-    --fg-tailwind: rgb(237, 237, 237, var(--tw-bg-opacity));
-    --background-rgb: 10, 10, 10;
-    --background: #0a0a0a;
-    --foreground-rgb: 237, 237, 237;
-    --foreground: #ededed;
-    --app-background: #171717;
-    --app-background-rgb: 23, 23, 23;
-  }
-  * {
-    @apply dark;
-  }
-}
 
 html {
   scrollbar-width: thin;
@@ -40,7 +14,7 @@ html {
 }
 
 *:active {
-  transition: .048s cubic-bezier(0.19, 1, 0.22, 1);
+  transition: .024s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
 body {
@@ -103,13 +77,16 @@ main#app-workspace {
 }
 
 .status-block {
-  @apply w-full max-w-screen-lg drop-shadow-lg rounded-3xl p-6 flex flex-col;
-  background-color: rgb(var(--foreground-rgb), 0.04);
+  @apply w-full max-w-screen-lg rounded-3xl p-6 flex flex-col border-4;
+  border-color: rgb(var(--foreground-rgb), 0.04);
 }
 
 .service-list {
   @apply flex justify-between items-center p-4 rounded-xl;
-  background-color: rgb(var(--background-rgb));
+  background-color: rgb(var(--foreground-rgb), 0);
+}
+.service-list:hover {
+  background-color: rgb(var(--foreground-rgb), 0.04);
 }
 .service-list > h1 {
   width: 100%;
@@ -123,17 +100,17 @@ main#app-workspace {
 .service-status-badge::before { content: "Unknown" }
 
 .service-status-badge.operational {
-  @apply bg-opacity-25 bg-green-700 text-green-700;
+  @apply bg-opacity-25 bg-success-700 text-success-700;
 }
 .service-status-badge.operational::before { content: "Operational" }
 
 .service-status-badge.degraded {
-  @apply bg-opacity-25 bg-orange-400 text-orange-400;
+  @apply bg-opacity-25 bg-warning-400 text-warning-400;
 }
 .service-status-badge.degraded::before { content: "Degraded" }
 
 .service-status-badge.down {
-  @apply bg-opacity-25 bg-red-700 text-red-700;
+  @apply bg-opacity-25 bg-danger-700 text-danger-700;
 }
 .service-status-badge.down::before { content: "Down" }
 
@@ -152,8 +129,8 @@ main#app-workspace {
   @apply flex flex-row items-center justify-center gap-2 z-10 py-4 px-8 text-xl
 }
 
-.btn:active {
-  transform: scale(98%);
+.btn:active, .interactive:active {
+  transform: scale(96%);
 }
 
 .btn.btn-icon {
@@ -184,7 +161,7 @@ main#app-workspace {
 
 .btn.btn-normal > div,
 .btn.btn-primary > div {
-  @apply text-white
+  @apply text-white fill-white
 }
 
 .btn.btn-invert > div {
@@ -193,7 +170,7 @@ main#app-workspace {
 
 .btn.btn-text > div,
 .btn.btn-border > div {
-  @apply text-fuchsia-400
+  @apply text-primary-200
 }
 
 .btn.btn-normal > svg * {
@@ -207,7 +184,7 @@ main#app-workspace {
 .btn.btn-border > svg *,
 .btn.btn-primary > svg *,
 .btn.btn-text > svg * {
-  @apply fill-fuchsia-300
+  @apply fill-primary
 }
 
 .btn.btn-text > svg * {
@@ -224,7 +201,7 @@ main#app-workspace {
 
 .btn.btn-border:hover > svg * ,
 .btn.btn-primary:hover > svg * {
-  @apply fill-fuchsia-200
+  @apply fill-primary-200
 }
 
 .btn.btn-text:hover > svg * {
@@ -280,8 +257,8 @@ header {
     @apply w-full;
   }
   header nav {
-    @apply fixed top-0 left-0 w-full h-full flex flex-col p-6 pt-0;
-    background-color: rgb(var(--background-rgb))
+    @apply fixed top-0 left-0 w-screen h-screen flex flex-col p-6 pt-0;
+    background-color: var(--background)
   }
   header.nav-opened-true {
     @apply fixed;
