@@ -1,11 +1,17 @@
 @import "themes/nextui.css";
 @import "themes/chocolate.css";
 @import "themes/latte.css";
+@import "themes/winter.css";
+@import "themes/violet.css";
+@import "themes/cupcake.css";
 
 :root,
 .nextui-light, [data-theme="nextui-light"],
 .chocolate-light, [data-theme="chocolate-light"],
 .latte-light, [data-theme="latte-light"],
+.winter-light, [data-theme="winter-light"],
+.violet-light, [data-theme="violet-light"],
+.cupcake-light, [data-theme="cupcake-light"],
 .light, .default-light, [data-theme="light"] {
   color-scheme: light;
   --background-rgb: 255, 255, 255;
@@ -41,6 +47,7 @@
 .nextui-dark, [data-theme="nextui-dark"],
 .chocolate-dark, [data-theme="chocolate-dark"],
 .latte-dark, [data-theme="latte-dark"],
+.cupcake-dark, [data-theme="cupcake-dark"],
 .dark, .default-dark, [data-theme="dark"] {
   color-scheme: dark;
   --background-rgb: 10, 10, 10;
@@ -51,7 +58,7 @@
   --app-background-rgb: 23, 23, 23;
 }
 
-* {
+*:not(.recharts-tooltip-wrapper *, svg, svg *) {
   @apply text-foreground;
 }
 
@@ -126,7 +133,7 @@ button.theme-dot {
 }
 
 button.theme-dot.active {
-  @apply border-primary border-3;
+  @apply border-primary border-3 scale-110 shadow-primary-200 shadow-lg;
 }
 
 button.theme-dot > div {

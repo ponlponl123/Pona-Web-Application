@@ -1,0 +1,19 @@
+.cupcake-light, [data-theme="cupcake-light"],
+.cupcake-dark, [data-theme="cupcake-dark"] {
+  --default: hsl(0, 27%, 85%);
+  --primary: hsl(338, 66%, 85%);
+  --secondary: hsl(0, 28%, 77%);
+  --success: hsl(78, 65%, 85%);
+  --warning: hsl(27, 85%, 81%);
+  --danger: hsl(0, 100%, 76%);
+}
+.cupcake-dark, [data-theme="cupcake-dark"] {
+  --background: hsl(330, 24%, 10%) !important;
+  --foreground: hsl(4, 100%, 94%) !important;
+  --app-background: hsl(323, 16%, 15%);
+  --app-background-rgb: 46, 33, 41 !important;
+}
+.cupcake-light, [data-theme="cupcake-light"] {
+  --foreground: hsl(314, 11%, 23%) !important;
+  --app-background-rgb: 255, 234, 250 !important;
+}

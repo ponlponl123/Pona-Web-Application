@@ -1,0 +1,13 @@
+.winter-light, [data-theme="winter-light"] {
+  --default: hsl(210, 31%, 80%);
+  --primary: hsl(213, 44%, 57%);
+  --secondary: hsl(210, 82%, 76%);
+  --success: hsl(137, 17%, 59%);
+  --warning: hsl(25, 30%, 78%);
+  --danger: hsl(234, 35%, 43%);
+}
+
+.winter-light, [data-theme="winter-light"] {
+  --foreground: hsl(206, 22%, 25%) !important;
+  --app-background-rgb: 234, 252, 255 !important;
+}

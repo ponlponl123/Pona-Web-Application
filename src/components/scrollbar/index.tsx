@@ -1,7 +1,7 @@
 "use client"
 import React from 'react'
 import { UserInfo } from '@/server-side-api/discord/fetchUser'
-import { House, Confetti, Gear, Planet, CaretLeft, Wrench, Guitar, Playlist, ChartPieSlice } from '@phosphor-icons/react/dist/ssr'
+import { House, Confetti, Gear, Planet, CaretLeft, Wrench, Guitar, Playlist, ChartPieSlice, Palette, Bug } from '@phosphor-icons/react/dist/ssr'
 import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo'
 import { useLanguageContext } from '@/contexts/languageContext'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -23,6 +23,7 @@ function Scrollbar({ userInfo, nav = false, onPushLocation }: { userInfo: UserIn
     const { language } = useLanguageContext();
     const { guild } = useDiscordGuildInfo();
     const inGuild = pathname.startsWith('/app/g/');
+    const inSetting = pathname.startsWith('/app/setting');
     const handlePushLocation = () => {
         if (onPushLocation) onPushLocation()
     }
@@ -30,7 +31,7 @@ function Scrollbar({ userInfo, nav = false, onPushLocation }: { userInfo: UserIn
     return (
         <main className={`scrollbar ${!nav ? 'w-80 h-screen max-md:hidden p-6 pt-24 flex flex-col gap-2' : 'md:hidden w-full flex flex-col gap-2'}`}>
             <AnimatePresence mode="wait">
-                <motion.div key={String(inGuild)}>
+                <motion.div key={String(`${inGuild} ${inSetting}`)}>
                     <FrozenRoute>
                         <motion.main
                             variants={variants}
@@ -41,7 +42,12 @@ function Scrollbar({ userInfo, nav = false, onPushLocation }: { userInfo: UserIn
                             key="Menu"
                         >
                         {
-                            !inGuild ? (
+                            inSetting ? (
+                                <>
+                                    <ActivationLink onClick={handlePushLocation} href={`#layout`} icon={Palette}>{language.data.app.setting.layout.title}</ActivationLink>
+                                    <ActivationLink onClick={handlePushLocation} href={`#devzone`} icon={Bug}>{language.data.app.setting.dev_mode.title}</ActivationLink>
+                                </>
+                            ) : !inGuild ? (
                                 <>
                                     <ActivationLink onClick={handlePushLocation} href='/app' icon={House}>{language.data.app.home.name}</ActivationLink>
                                     <ActivationLink onClick={handlePushLocation} href='/app/guilds' icon={Confetti}>{language.data.app.guilds.name}</ActivationLink>
@@ -74,7 +80,32 @@ function Scrollbar({ userInfo, nav = false, onPushLocation }: { userInfo: UserIn
                     </>
                 )
             }
-            <ActivationLink onClick={handlePushLocation} href='/app/setting' icon={Gear}>{language.data.app.setting.name}</ActivationLink>
+            <AnimatePresence mode="wait">
+                <motion.div key={String(`${inSetting}`)}>
+                    <FrozenRoute>
+                        <motion.main
+                            variants={variants}
+                            initial="hidden"
+                            exit="exit"
+                            animate="enter"
+                            transition={{ type: 'linear', duration: 0.12 }}
+                            key="Bottom-Menu"
+                        >
+                            {
+                                inSetting ? (
+                                    <>
+                                        <ActivationLink onClick={handlePushLocation} href={`/app`} icon={CaretLeft}>{language.data.app.setting.back}</ActivationLink>
+                                    </>
+                                ) : (
+                                    <>
+                                        <ActivationLink onClick={handlePushLocation} href='/app/setting' icon={Gear}>{language.data.app.setting.name}</ActivationLink>
+                                    </>
+                                )
+                            }
+                        </motion.main>
+                    </FrozenRoute>
+                </motion.div>
+            </AnimatePresence>
         </main>
     )
 }

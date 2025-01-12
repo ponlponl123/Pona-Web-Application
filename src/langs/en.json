@@ -75,6 +75,7 @@
         },
         "setting": {
             "name": "Setting",
+            "back": "Back to App",
             "layout": {
                 "title": "Layout",
                 "theme": {
