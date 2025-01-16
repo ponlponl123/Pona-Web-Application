@@ -1,8 +1,16 @@
 "use client"
 import {useState} from "react";
-import {Switch, cn} from "@nextui-org/react";
+import {Switch, SwitchProps, cn} from "@nextui-org/react";
 
-export default function Component({name, description, default_value = false, onValueChange}: {name: string, description?: string, default_value?: boolean, onValueChange?: ((value: boolean) => void) | (() => void)}) {
+interface CustomSwitchProps extends SwitchProps {
+  name: string;
+  description?: string;
+  default_value?: boolean;
+  onValueChange?: (value: boolean) => void;
+}
+
+export default function Component(props: CustomSwitchProps) {
+  const { name, description, default_value = false, onValueChange, ...otherprops } = props;
   const [isSelected, setIsSelected] = useState(default_value);
   const handleClick = () => {
     const value = !isSelected;
@@ -10,7 +18,7 @@ export default function Component({name, description, default_value = false, onV
     onValueChange?.(value);
   };
   return (
-    <Switch isSelected={isSelected} onValueChange={handleClick}
+    <Switch isSelected={isSelected} onValueChange={handleClick} {...otherprops}
       classNames={{
         base: cn(
           "inline-flex flex-row-reverse w-full max-w-full bg-content1 hover:bg-content2 items-center",

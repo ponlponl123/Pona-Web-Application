@@ -53,7 +53,7 @@ function Page() {
                       </div>
                     </div>
                     <div className='bg-foreground-100/25 w-full p-8 max-md:pt-12 rounded-3xl md:rounded-ss-lg mt-4 flex flex-col gap-4'>
-                      <Chip color="primary" className='-mt-4 -ml-4 -mb-1' size='sm' startContent={<DiscordLogo className='ml-2 mr-1' weight='fill' />}>{language.data.app.setting.account.announcement}</Chip>
+                      <Chip color="primary" className='md:-mt-4 md:-ml-4 md:-mb-1 max-md:-mt-10 max-md:ml-24 max-md:-mb-2' size='sm' startContent={<DiscordLogo className='ml-2 mr-1' weight='fill' />}>{language.data.app.setting.account.announcement}</Chip>
                       <div className='flex flex-col'>
                         <label className='block text-sm font-medium text-foreground-600'>{language.data.app.setting.account.display_name}</label>
                         <span className='text-xl'>{userInfo && userInfo.global_name}</span>
@@ -62,7 +62,7 @@ function Page() {
                         <label className='block text-sm font-medium text-foreground-600'>{language.data.app.setting.account.username}</label>
                         <span className='text-xl'>@{userInfo && userInfo.username}</span>
                       </div>
-                      <div className='flex gap-2 -mb-3'>
+                      <div className='flex flex-wrap gap-2 -mb-3'>
                         <Link isBlock showAnchorIcon color="primary" size='sm' rel='noopener' target='_blank' href='https://law.ponlponl123.com/pona#terms'>Terms of Service</Link>
                         <Link isBlock showAnchorIcon color="primary" size='sm' rel='noopener' target='_blank' href='https://law.ponlponl123.com/pona#privacy'>Privacy Policy</Link>
                       </div>
@@ -147,6 +147,7 @@ function Page() {
                 <Switch
                   name='Experimental API Routes'
                   description='Use the experimental API endpoints'
+                  isDisabled
                 />
               </section>
           </main>
