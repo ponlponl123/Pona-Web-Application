@@ -1,7 +1,7 @@
 "use client"
 import React from 'react'
 import { UserInfo } from '@/server-side-api/discord/fetchUser'
-import { House, Confetti, Gear, Planet, CaretLeft, Wrench, Guitar, Playlist, ChartPieSlice, Palette, Bug } from '@phosphor-icons/react/dist/ssr'
+import { House, Confetti, Gear, Planet, CaretLeft, Wrench, Guitar, Playlist, ChartPieSlice, Palette, Bug, StarAndCrescent, PaintBrush, SunHorizon, Keyboard } from '@phosphor-icons/react/dist/ssr'
 import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo'
 import { useLanguageContext } from '@/contexts/languageContext'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -44,7 +44,18 @@ function Scrollbar({ userInfo, nav = false, onPushLocation }: { userInfo: UserIn
                         {
                             inSetting ? (
                                 <>
-                                    <ActivationLink onClick={handlePushLocation} href={`#layout`} icon={Palette}>{language.data.app.setting.layout.title}</ActivationLink>
+                                    <span className='px-4 font-bold text-lg'>{language.data.app.setting.name}</span>
+                                    <ActivationLink onClick={handlePushLocation} href={`#account`} icon={StarAndCrescent}>{language.data.app.setting.account.title}</ActivationLink>
+                                    <div className='group-menu'>
+                                        <div className='group-title'>
+                                            <ActivationLink onClick={handlePushLocation} href={`#layout`} icon={Palette}>{language.data.app.setting.layout.title}</ActivationLink>
+                                        </div>
+                                        <div className='group-content'>
+                                            <ActivationLink onClick={handlePushLocation} href={`#layout-theme`} icon={PaintBrush}>{language.data.app.setting.layout.theme.title}</ActivationLink>
+                                            <ActivationLink onClick={handlePushLocation} href={`#layout-timeformat`} icon={SunHorizon}>{language.data.app.setting.layout.time_format.title}</ActivationLink>
+                                        </div>
+                                    </div>
+                                    <ActivationLink onClick={handlePushLocation} href={`#keybinds`} icon={Keyboard}>{language.data.app.setting.keybinds.title}</ActivationLink>
                                     <ActivationLink onClick={handlePushLocation} href={`#devzone`} icon={Bug}>{language.data.app.setting.dev_mode.title}</ActivationLink>
                                 </>
                             ) : !inGuild ? (

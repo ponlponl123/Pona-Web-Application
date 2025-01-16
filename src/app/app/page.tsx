@@ -7,9 +7,25 @@ import {Card, CardHeader, CardBody, Image} from '@nextui-org/react'
 import release010 from '@/../public/app/updates/release010.png'
 import release013 from '@/../public/app/updates/release013.png'
 import release014 from '@/../public/app/updates/release014.png'
+import release016 from '@/../public/app/updates/release016.png'
+// import release017 from '@/../public/app/updates/release017.png'
 import Link from 'next/link'
 
 const updates = [
+  // {
+  //   title: 'Pre-Release 0.1.7',
+  //   description: 'Coming soon...',
+  //   date: 'Jan 28, 2025',
+  //   releaseLink: 'https://github.com/ponlponl123/Pona-Discord-Application/releases/tag/pre-release/0.1.7',
+  //   image: release017.src
+  // },
+  {
+    title: 'Pre-Release 0.1.6',
+    description: 'New features, bug fixes, and performance improvements',
+    date: 'Jan 16, 2025',
+    releaseLink: 'https://github.com/ponlponl123/Pona-Discord-Application/releases/tag/pre-release/0.1.6',
+    image: release016.src
+  },
   {
     title: 'Pre-Release 0.1.4',
     description: 'New features, bug fixes, and performance improvements',

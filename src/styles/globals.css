@@ -9,7 +9,7 @@ html {
   scrollbar-color: var(--primary) var(--background);
 }
 
-*:not([data-slot="popover"], div[style]) {
+*:not([data-slot="popover"], div[style], .disable-default-transition) {
   transition: .24s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
@@ -113,6 +113,34 @@ main#app-workspace {
   @apply bg-opacity-25 bg-danger-700 text-danger-700;
 }
 .service-status-badge.down::before { content: "Down" }
+
+.group-menu {
+  @apply w-full max-w-screen-lg rounded-2xl flex flex-col gap-2 relative overflow-hidden;
+  background-color: rgb(var(--foreground-rgb), 0);
+}
+.group-menu > .group-title,
+.group-menu > .group-content {
+  @apply flex flex-col gap-2;
+}
+.group-menu > .group-title > *,
+.group-menu > .group-content > * {
+  @apply w-full justify-start;
+}
+.group-menu.active {
+  @apply bg-foreground-50/50 gap-0;
+}
+.group-menu.active > .group-title > * {
+  @apply justify-center;
+}
+.group-menu.active > .group-title > :last-child {
+  @apply rounded-b-md;
+}
+.group-menu:not(.active) > .group-content {
+  @apply absolute opacity-0 pointer-events-none -mt-4 left-2 top-12;
+}
+.group-menu.active > .group-content {
+  @apply p-2;
+}
 
 .btn {
   @apply relative flex items-center justify-center active:opacity-90 mx-2 min-w-24

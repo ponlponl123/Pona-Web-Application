@@ -44,7 +44,8 @@
             
         },
         "updates": {
-            "name": "Updates"
+            "name": "Updates",
+            "latest": "Latest version"
         },
         "home": {
             "name": "Home",
@@ -58,24 +59,35 @@
             "title": "The server you and Pona join together.",
             "stats": {
                 "title": "Stats (in the last 7 days)",
+                "announcement": "Here are some simulated statistics for our Lab test!",
                 "queue": "Queue",
                 "members": "Members in voice channel",
                 "usage": "Usage",
                 "analysis": "Average usage"
             },
             "player": {
-                "name": "Player"
+                "name": "Player",
+                "dev": "Player are currently not available, but don't worry! We're working on it 💪✨"
             },
             "setting": {
-                "name": "Guild Settings"
+                "name": "Guild Settings",
+                "dev": "Guild settings are currently not available, but don't worry! We're working on it 💪✨"
             }
         },
         "playlist": {
-            "name": "My Playlists"
+            "name": "My Playlists",
+            "create": "Create My Playlists",
+            "no_playlist": "My playlist doesn't exist"
         },
         "setting": {
             "name": "Setting",
             "back": "Back to App",
+            "account": {
+                "title": "Account",
+                "announcement": "Connected with Discord!",
+                "display_name": "Display Name",
+                "username": "Username"
+            },
             "layout": {
                 "title": "Layout",
                 "theme": {
@@ -86,7 +98,27 @@
                 "theme_sync": {
                     "title": "Sync with system",
                     "description": "Automatically updates the theme based on your system time zone"
+                },
+                "time_format": {
+                    "title": "Time Format",
+                    "auto": {
+                        "title": "Auto",
+                        "description": "The system will automatically change the time format for you."
+                    },
+                    "12": {
+                        "title": "12-hour",
+                        "description": "12-hour time format (e.g. 2:00 PM)"
+                    },
+                    "24": {
+                        "title": "24-hour",
+                        "description": "24-hour time format (e.g. 14:00)"
+                    }
                 }
+            },
+            "keybinds": {
+                "title": "Keybinds",
+                "announcement": "Keybinds feature is not available yet, but it is in development in Lab! Stay tuned!",
+                "move": "Move"
             },
             "dev_mode": {
                 "title": "Dev Zone"

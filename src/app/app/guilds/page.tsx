@@ -41,8 +41,13 @@ function Page() {
                             </div>
                         ) : (guilds as GuildInfo[]).length > 0 ? (
                             (guilds as GuildInfo[]).map(guild => {
+                                const uri = `/app/g/${guild.id}`;
+                                const onClick = () => {
+                                    router.push(uri);
+                                    setCurrentGuild(guild);
+                                }
                                 return (
-                                    <Button key={guild.id} onClick={()=>{router.push(`/app/g/${guild.id}`);setCurrentGuild(guild)}} className='w-full rounded-2xl py-12' style={{backgroundColor: 'rgb(var(--background-rgb))'}}>
+                                    <Button key={guild.id} onClick={onClick} href={uri} className='w-full rounded-3xl py-12' style={{backgroundColor: 'rgb(var(--background-rgb))'}}>
                                         <div className='w-full p-2 flex items-center justify-center gap-3 max-h-none'>
                                             <Avatar src={guild.iconURL as string} className='h-16 w-16' />
                                             <div className='flex flex-col gap-1'>

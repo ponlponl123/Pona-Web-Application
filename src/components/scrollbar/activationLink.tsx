@@ -10,9 +10,11 @@ function ActivationLink({ href, children, icon, onClick, className }: { href?: s
     const sections = useRef<NodeListOf<HTMLElement> | null>(null);
     const pathname = usePathname();
     const isSection = href?.startsWith('#');
-    const app = document.querySelector('#app-content');
+    const app = useRef<HTMLElement | null>(null);
+    const button = useRef<HTMLButtonElement | null>(null);
     const [activeSection, setActiveSection] = useState<string | null>(null);
-    const isHere = isSection ? activeSection === href?.substring(1) : pathname === href;
+    const [activeSectionGroup, setActiveSectionGroup] = useState<boolean>(false);
+    const isHere = isSection ? (activeSectionGroup || activeSection === href?.substring(1)) : pathname === href;
     const Icon = icon;
     const iconContent = Icon ? <Icon weight={isHere ? 'fill' : 'regular'} /> : null;
 
@@ -20,19 +22,27 @@ function ActivationLink({ href, children, icon, onClick, className }: { href?: s
         if (isSection) {
             event.preventDefault();
             const sectionElement = document.querySelector(`#${href?.substring(1)}`);
-            sectionElement?.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+            if (sectionElement && app.current) {
+                const appTop = app.current.getBoundingClientRect().top;
+                const offset = sectionElement.id.match(/(-)/g) ? 156 : 96;
+                const sectionTop = sectionElement.getBoundingClientRect().top - offset;
+                app.current.scrollTo({
+                    top: sectionTop - appTop + app.current.scrollTop,
+                    behavior: 'smooth'
+                });
+            }
         }
         if (onClick) onClick();
         if (!isSection && href) router.push(href);
     };
 
     const handleScroll = useCallback(() => {
-        if (app) {
-            const pageYOffset = app.scrollTop;
+        if (app.current) {
+            const pageYOffset = app.current.scrollTop;
             let newActiveSection: string | null = null;
 
             sections.current?.forEach((section: HTMLElement) => {
-                const sectionOffsetTop = section.offsetTop;
+                const sectionOffsetTop = section.offsetTop - 256;
                 const sectionHeight = section.offsetHeight;
 
                 if (pageYOffset >= sectionOffsetTop && pageYOffset < sectionOffsetTop + sectionHeight) {
@@ -40,26 +50,43 @@ function ActivationLink({ href, children, icon, onClick, className }: { href?: s
                 }
             });
 
-            setActiveSection(newActiveSection);
+            setActiveSection(() => {
+                if ( button.current?.parentElement && button.current.parentElement?.parentElement && button.current.parentElement.parentElement.classList.contains('group-menu') ) {
+                    if (String(newActiveSection).split('-')[0] === href?.substring(1).split('-')[0])
+                    {
+                        button.current.parentElement.parentElement.classList.add('active');
+                        if ( !href.match(/(-)/g) ) setActiveSectionGroup(true);
+                        else setActiveSectionGroup(false);
+                    }
+                    else
+                    {
+                        button.current.parentElement.parentElement.classList.remove('active');
+                        if ( !href?.match(/(-)/g) ) setActiveSectionGroup(false);
+                    }
+                }
+                return newActiveSection;
+            });
         }
-    }, []);
+    }, [href]);
 
     useEffect(() => {
         if (isSection) {
-            const app = document.querySelector('#app-content');
-            if (app) {
+            app.current = document.querySelector('#app-content');
+            if (app.current) {
                 sections.current = document.querySelectorAll('[data-section]');
-                app.addEventListener('scroll', handleScroll);
+                app.current.addEventListener('scroll', handleScroll);
+
+                handleScroll();
 
                 return () => {
-                    app.removeEventListener('scroll', handleScroll);
+                    app.current?.removeEventListener('scroll', handleScroll);
                 };
             }
         }
     }, [isSection, handleScroll]);
 
     return (
-        <Button onClick={clicked} className={className} color='primary' startContent={iconContent} variant={isHere ? 'flat' : 'light'} size='lg'>
+        <Button onClick={clicked} ref={button} className={className} color='primary' startContent={iconContent} variant={isHere ? 'flat' : 'light'} size='lg'>
             {children}
         </Button>
     );

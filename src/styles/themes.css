@@ -147,7 +147,7 @@ button.theme-dot > div > div {
 button.theme-dot > div > div::before,
 button.theme-dot > div > div::after {
   content: "";
-  @apply w-full h-1/2;
+  @apply w-full h-1/2 rounded-sm;
 }
 button.theme-dot > div > :nth-child(1)::before {
   @apply bg-background;

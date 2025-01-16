@@ -41,6 +41,7 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        "app-background": "var(--app-background)",
         // default: "var(--default)",
         // primary: "var(--primary)",
         secondary: "var(--secondary)",

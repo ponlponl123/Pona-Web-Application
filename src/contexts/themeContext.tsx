@@ -80,7 +80,7 @@ export function ThemeDot({theme, active, onClick}: {theme: Themes, active?: bool
 
 export function ThemePreview({theme}: {theme: Themes}) {
   return (
-    <div className={`theme-preview ${theme}`} data-theme={theme} style={{backgroundColor:'rgb(var(--background-rgb))'}}>
+    <div className={`theme-preview bg-background ${theme}`} data-theme={theme}>
       <div className="tp-header">
         <div className="tp-chip tp-chip-2-10"></div>
         <div className="tp-chip tp-chip-2-10"></div>

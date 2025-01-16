@@ -3,7 +3,7 @@ import React from 'react'
 import Image from "next/image";
 import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo';
 import defaultBanner from '@/../public/app/default.png';
-import { Chip, Spinner, Tooltip } from '@nextui-org/react';
+import { Alert, Chip, Spinner, Tooltip, Image as NextUIimage } from '@nextui-org/react';
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis, ResponsiveContainer, BarChart, Legend, Bar, PieChart, Pie } from 'recharts';
 import { useLanguageContext } from '@/contexts/languageContext';
 
@@ -55,12 +55,12 @@ function Page() {
               <h1 className='text-base'>{guild.id}</h1>
               <h1 className='text-3xl mb-4'>{guild.name}</h1>
               <div className='guild-profile flex flex-col'>
-                <div className='bg-foreground-50 w-full h-48 rounded-3xl overflow-hidden'>
-                  <Image alt={guild.name as string} src={guild.bannerURL || defaultBanner.src as string} width={854} height={480}
+                <div className='bg-foreground-50 w-full h-48 rounded-3xl max-md:overflow-hidden max-md:h-32'>
+                  <NextUIimage isBlurred alt={guild.name as string} src={guild.bannerURL || defaultBanner.src as string} width={"100%"} height={192}
                     className='w-full h-full object-cover'
                   />
                 </div>
-                <div className='flex px-12 -mt-12'>
+                <div className='flex px-12 -mt-12 z-10'>
                   <div className='overflow-hidden rounded-full outline outline-4' style={{outlineColor: 'var(--app-background)'}}>
                     <Image alt={guild.name as string} src={guild.iconURL || defaultBanner.src as string} width={96} height={96}
                       className='w-24 h-24 object-cover'
@@ -69,7 +69,8 @@ function Page() {
                 </div>
               </div>
               <section className='p-8 flex flex-col gap-4'>
-                <h1 className='text-3xl mb-4'>{language.data.app.guilds.stats.title} <Chip color="warning" variant="bordered">{language.data.extensions.experiment}</Chip></h1>
+                <h1 className='text-3xl'>{language.data.app.guilds.stats.title} <Chip color="warning" variant="bordered">{language.data.extensions.experiment}</Chip></h1>
+                <Alert className='mb-4' radius='full' color='primary' variant='flat' title={language.data.app.guilds.stats.announcement} />
                 <div className='flex max-lg:flex-wrap gap-6 w-full'>
                   <div className='w-full h-fit'>
                     <h1 className='text-2xl mb-4 px-8'>{language.data.app.guilds.stats.queue}</h1>

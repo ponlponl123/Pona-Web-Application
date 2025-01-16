@@ -10,4 +10,5 @@
 .violet-light, [data-theme="violet-light"] {
   --foreground: hsl(261, 22%, 25%) !important;
   --app-background-rgb: 242, 234, 255 !important;
+  --app-background: rgb(var(--app-background-rgb)) !important;
 }

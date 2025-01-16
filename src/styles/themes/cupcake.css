@@ -16,4 +16,5 @@
 .cupcake-light, [data-theme="cupcake-light"] {
   --foreground: hsl(314, 11%, 23%) !important;
   --app-background-rgb: 255, 234, 250 !important;
+  --app-background: rgb(var(--app-background-rgb)) !important;
 }

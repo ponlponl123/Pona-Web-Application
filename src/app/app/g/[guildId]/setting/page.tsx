@@ -3,6 +3,7 @@ import React from 'react'
 import { Spinner } from '@nextui-org/react';
 import { useLanguageContext } from '@/contexts/languageContext';
 import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo';
+import { Gear, Wrench } from '@phosphor-icons/react/dist/ssr';
 
 function Page() {
   const { guild } = useDiscordGuildInfo();
@@ -15,7 +16,11 @@ function Page() {
           guild ? (
             <>
               <h1 className='text-base'>{guild.name}</h1>
-              <h1 className='text-4xl mt-4'>{language.data.app.guilds.setting.name}</h1>
+              <h1 className='text-5xl mt-4 flex items-center gap-4'><Gear weight='fill' size={48} /> {language.data.app.guilds.setting.name}</h1>
+              <div className='w-full max-w-screen-lg mt-16 gap-4 flex flex-col items-center justify-center text-center' style={{minHeight: '48vh'}}>
+                <Wrench size={64} weight='bold' />
+                <h1 className='text-4xl max-w-xl'>{language.data.app.guilds.setting.dev}</h1>
+              </div>
             </>
           ) : (
             <>

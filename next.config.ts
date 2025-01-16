@@ -33,6 +33,9 @@ const nextConfig: NextConfig = {
     },
   },
   reactStrictMode: false,
+  compiler: {
+    styledComponents: true,
+  },
 };
 
 export default nextConfig;
