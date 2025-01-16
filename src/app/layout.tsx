@@ -36,7 +36,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${ponlponl123Article.variable} ${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${ponlponl123Article.variable} ${geistSans.variable} ${geistMono.variable} antialiased overflow-x-hidden`}
       >
         <NextTopLoader
           color="#ff80c6"
