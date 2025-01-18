@@ -18,9 +18,8 @@ function ActivationLink({ href, children, icon, onClick, className }: { href?: s
     const Icon = icon;
     const iconContent = Icon ? <Icon weight={isHere ? 'fill' : 'regular'} /> : null;
 
-    const clicked = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const clicked = () => {
         if (isSection) {
-            event.preventDefault();
             const sectionElement = document.querySelector(`#${href?.substring(1)}`);
             if (sectionElement && app.current) {
                 const appTop = app.current.getBoundingClientRect().top;

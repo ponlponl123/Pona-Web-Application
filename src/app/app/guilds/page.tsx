@@ -9,6 +9,7 @@ import { getCookie } from 'cookies-next';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo';
+import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 
 function Page() {
     const router = useRouter();
@@ -42,30 +43,15 @@ function Page() {
                         ) : (guilds as GuildInfo[]).length > 0 ? (
                             (guilds as GuildInfo[]).map(guild => {
                                 const uri = `/app/g/${guild.id}`;
-                                const onClick = () => {
-                                    router.push(uri);
-                                    setCurrentGuild(guild);
-                                }
                                 return (
-                                    <Button key={guild.id} onClick={onClick} href={uri} className='w-full rounded-3xl py-12' style={{backgroundColor: 'rgb(var(--background-rgb))'}}>
-                                        <div className='w-full p-2 flex items-center justify-center gap-3 max-h-none'>
-                                            <Avatar src={guild.iconURL as string} className='h-16 w-16' />
-                                            <div className='flex flex-col gap-1'>
-                                                <h1 className='text-2xl leading-8'>{guild.name}</h1>
-                                                <span className='text-base text-start'>{guild.id}</span>
-                                            </div>
-                                            <div className='m-auto mr-4'>
-                                                <CaretRight size={18} />
-                                            </div>
-                                        </div>
-                                    </Button>
+                                    <GuildButton key={guild.id} guild={guild} uri={uri} router={router} setCurrentGuild={setCurrentGuild} />
                                 )
                             })
                         ) : (
                             <div className='w-full h-full flex flex-col justify-center items-center m-auto gap-3 my-24'>
                                 <Ghost size={48} />
-                                <h1 className='text-3xl'>ไม่พบ Guilds</h1>
-                                <span>หรือว่าปาร์ตี้ยังไม่เริ่มกันนะ!?, งั้นเรามาเริ่มปาร์ตี้กันเลยดีกว่า!</span>
+                                <h1 className='text-3xl'>{language.data.app.guilds.not_found.title}</h1>
+                                <span>{language.data.app.guilds.not_found.description}</span>
                                 <div className='flex mt-3'>
                                     <Link href='/invite' rel="noopener noreferrer">
                                         <MyButton size='small' variant='primary' effect='confetti'>
@@ -80,6 +66,32 @@ function Page() {
                 </section>
             </main>
         </main>
+    )
+}
+
+export function GuildButton({ guild, uri, router, setCurrentGuild }: { guild: GuildInfo, uri: string, router: AppRouterInstance, setCurrentGuild: (guild: GuildInfo) => void }) {
+    const [loading, setLoading] = React.useState<boolean>(false);
+    const onClick = () => {
+        setLoading(true);
+        router.push(uri);
+        setCurrentGuild(guild);
+    }
+    return (
+        <Button onClick={onClick} href={uri} className='w-full py-12 group' style={{backgroundColor: 'rgb(var(--background-rgb))', borderRadius: '32px'}}>
+            <div className='w-full p-2 flex items-center justify-center gap-3 max-h-none'>
+                <div className='flex flex-col items-center justify-center h-16 w-16 relative'>
+                    <Avatar src={guild.iconURL as string} className={`${loading?'h-12 w-12':'h-16 w-16'}`} />
+                    <Spinner color='primary' size='lg' classNames={{base: 'w-14 h-14',wrapper: 'w-14 h-14'}} className={`absolute ${!loading?'hidden':''}`} />
+                </div>
+                <div className='flex flex-col gap-1'>
+                    <h1 className='text-2xl leading-8'>{guild.name}</h1>
+                    <span className='text-base text-start'>{guild.id}</span>
+                </div>
+                <div className='m-auto mr-4'>
+                    <CaretRight className='group-hover:translate-x-1 group-active:-translate-x-1' size={18} />
+                </div>
+            </div>
+        </Button>
     )
 }
 

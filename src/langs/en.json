@@ -57,6 +57,10 @@
         "guilds": {
             "name": "Guilds",
             "title": "The server you and Pona join together.",
+            "not_found": {
+                "title": "Guilds not found",
+                "description": "Or the party hasn't started yet!? Then let's make our party!"
+            },
             "stats": {
                 "title": "Stats (in the last 7 days)",
                 "announcement": "Here are some simulated statistics for our Lab test!",

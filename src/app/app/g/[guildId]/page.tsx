@@ -1,6 +1,5 @@
 "use client"
 import React from 'react'
-import Image from "next/image";
 import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo';
 import defaultBanner from '@/../public/app/default.png';
 import { Alert, Chip, Spinner, Tooltip, Image as NextUIimage } from '@nextui-org/react';
@@ -56,13 +55,27 @@ function Page() {
               <h1 className='text-3xl mb-4'>{guild.name}</h1>
               <div className='guild-profile flex flex-col'>
                 <div className='bg-foreground-50 w-full h-48 rounded-3xl max-md:overflow-hidden max-md:h-32'>
-                  <NextUIimage isBlurred alt={guild.name as string} src={guild.bannerURL || defaultBanner.src as string} width={"100%"} height={192}
-                    className='w-full h-full object-cover'
-                  />
+                  {
+                    guild.bannerURL ? (
+                      <>
+                        <NextUIimage isBlurred alt={guild.name as string} src={guild.bannerURL+'?size=480'} width={"100%"} height={192}
+                          className='w-full h-full object-cover'
+                        />
+                      </>
+                    ) : (
+                      <>
+                        <div className='w-full h-full overflow-hidden rounded-3xl'>
+                          <NextUIimage alt={guild.name as string} src={guild.iconURL+'?size=320' || defaultBanner.src as string} width={"100%"} height={192}
+                            className='w-full h-full object-cover blur-2xl'
+                          />
+                        </div>
+                      </>
+                    )
+                  }
                 </div>
                 <div className='flex px-12 -mt-12 z-10'>
                   <div className='overflow-hidden rounded-full outline outline-4' style={{outlineColor: 'var(--app-background)'}}>
-                    <Image alt={guild.name as string} src={guild.iconURL || defaultBanner.src as string} width={96} height={96}
+                    <NextUIimage alt={guild.name as string} src={guild.iconURL+'?size=128' || defaultBanner.src as string} width={96} height={96}
                       className='w-24 h-24 object-cover'
                     />
                   </div>
