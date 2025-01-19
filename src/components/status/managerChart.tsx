@@ -11,6 +11,17 @@ type Dataset = {
     time: string;
     shards: ShardData;
 };
+    
+export function getRandomColor(seed: string): string {
+    let hash = 0;
+    for (let i = 0; i < seed.length; i++) {
+        hash = seed.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const color = (hash & 0x00FFFFFF)
+        .toString(16)
+        .toUpperCase();
+    return "#" + "00000".substring(0, 6 - color.length) + color;
+}
 
 function ManagerChart({ mode }: { mode?: viewType }) {
     const [data, setData] = React.useState<Dataset[]>([]);
@@ -36,17 +47,6 @@ function ManagerChart({ mode }: { mode?: viewType }) {
         ...d.shards
     }));
     
-    function getRandomColor(seed: string): string {
-        let hash = 0;
-        for (let i = 0; i < seed.length; i++) {
-            hash = seed.charCodeAt(i) + ((hash << 5) - hash);
-        }
-        const color = (hash & 0x00FFFFFF)
-            .toString(16)
-            .toUpperCase();
-        return "#" + "00000".substring(0, 6 - color.length) + color;
-    }
-    
     return (
         <ResponsiveContainer width="100%" height="100%" minHeight={256}>
             <AreaChart data={chartData} width={500} height={400} margin={{
@@ -63,7 +63,7 @@ function ManagerChart({ mode }: { mode?: viewType }) {
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="time" />
-                <Tooltip />
+                <Tooltip contentStyle={{backgroundColor:'var(--app-background)',borderRadius:'16px',border:'none',padding:'1em 1.4em'}} />
                 {shardIds.map((shardId, index) => {
                     if ( index === 0 )
                         return (

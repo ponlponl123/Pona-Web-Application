@@ -1,8 +1,8 @@
 "use client"
 import React, { ChangeEvent } from 'react'
-import { GithubLogo, Atom, Bird, Cube, Gavel, SmileyWink } from "@phosphor-icons/react/dist/ssr";
+import { GithubLogo, Atom, Bird, Cube, Gavel, SmileyWink, Sunglasses, PersonSimpleRun, Coffee } from "@phosphor-icons/react/dist/ssr";
 import { useLanguageContext } from '@/contexts/languageContext';
-import { Select, SelectItem, Avatar } from "@nextui-org/react";
+import { Select, SelectItem, Avatar, Tooltip } from "@nextui-org/react";
 import { langs, languageKeys } from '@/utils/i18n';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -13,8 +13,8 @@ function Footer() {
   return (
     <footer className={`max-md:flex-col ${pathname.startsWith('/app') && 'm-0'}`}>
       <div className='max-md:order-1 w-fit'>
-        <span className='opacity-50 text-xs max-md:text-center'>© 2024 Pona! Application - Ponlponl123 Projects And the Ponlponl123.com Design are trademarks, services marks, and/or registered trademarks of Ponlponl123.com</span>
-        <span className='opacity-50 text-xs max-md:text-center flex gap-1 items-center'>Icons by PhosphorIcons <SmileyWink size={12} /></span>
+        <span className='opacity-50 text-xs max-md:text-center'>© 2024 - 2025 Pona! Application - Ponlponl123 Projects And the Ponlponl123.com Design are trademarks, services marks, and/or registered trademarks of Ponlponl123.com</span>
+        <span className='opacity-30 text-xs max-md:text-center flex flex-wrap gap-1 items-center'>PhosphorIcons <SmileyWink size={12} />, Framer Motion <PersonSimpleRun size={12} />, NextUI <Sunglasses size={12} /></span>
       </div>
       <div>
         <Link
@@ -23,7 +23,7 @@ function Footer() {
           rel="noopener noreferrer"
         >
           <GithubLogo
-            alt="Github icon"
+            alt="Github"
           />
           {language.data.footer.links.github}
         </Link>
@@ -65,6 +65,19 @@ function Footer() {
           />
           {language.data.footer.links.legal}
         </Link>
+        <Tooltip className="capitalize" color="primary" size='sm' content={language.data.footer.links.a_coffee}>
+          <a title={language.data.footer.links.a_coffee} className='group'>
+            <Coffee
+              alt="Coffee"
+              className='group-hover:hidden'
+            />
+            <Coffee
+              alt="A cup of Coffee"
+              weight='fill'
+              className='hidden group-hover:block'
+            />
+          </a>
+        </Tooltip>
       </div>
       <div className='max-md:-order-1'>
         <Select

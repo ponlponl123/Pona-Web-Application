@@ -3,7 +3,8 @@
     "label": "English",
     "country": "us",
     "extensions": {
-        "experiment": "Experiment"
+        "experiment": "Experiment",
+        "comingsoon": "Coming Soon"
     },
     "cookie": {
         "title": "Cookie!",
@@ -62,11 +63,14 @@
                 "description": "Or the party hasn't started yet!? Then let's make our party!"
             },
             "stats": {
-                "title": "Stats (in the last 7 days)",
+                "title": "Statistics",
+                "in": "(in the last [day] days)",
                 "announcement": "Here are some simulated statistics for our Lab test!",
                 "queue": "Queue",
                 "members": "Members in voice channel",
                 "usage": "Usage",
+                "genre": "Music genre",
+                "top_artist": "Most artist",
                 "analysis": "Average usage"
             },
             "player": {
@@ -185,7 +189,8 @@
             "apidocs": "API Docs",
             "support": "Support",
             "status": "Pona! Status",
-            "legal": "Legal"
+            "legal": "Legal",
+            "a_coffee": "A Coffee?"
         },
         "settings": {
             "lang": {

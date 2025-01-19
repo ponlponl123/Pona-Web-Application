@@ -31,7 +31,7 @@ function Scrollbar({ userInfo, nav = false, onPushLocation }: { userInfo: UserIn
     return (
         <main className={`scrollbar ${!nav ? 'w-80 h-screen max-md:hidden p-6 pt-24 flex flex-col gap-2' : 'md:hidden w-full flex flex-col gap-2'}`}>
             <AnimatePresence mode="wait">
-                <motion.div key={String(`${inGuild} ${inSetting}`)}>
+                <motion.div className='max-h-full overflow-x-hidden overflow-y-auto scroll-smooth' style={{scrollbarWidth: 'thin'}} key={String(`${inGuild} ${inSetting}`)}>
                     <FrozenRoute>
                         <motion.main
                             variants={variants}
