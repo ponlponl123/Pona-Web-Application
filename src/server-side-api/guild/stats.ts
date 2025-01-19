@@ -1,7 +1,6 @@
 "use server";
 import axios from 'axios';
 import { EndpointHTTP, EndpointKey } from '../endpoint';
-import { default_data } from '@/data/guild/stats';
 
 type chennelid = {
   [key: string]: number;
@@ -27,12 +26,46 @@ interface ChartItem {
   channels: chennelid
 }
 
-function calculateActiveIntervals(rawData: Period[], mydata: Interval[]): Interval[] {
+function calculateActiveIntervals(rawData: Period[]): Interval[] {
+  const data = [
+    {
+      "date": "00:00 - 02:59",
+      "played": 0,
+    },
+    {
+      "date": "03:00 - 05:59",
+      "played": 0,
+    },
+    {
+      "date": "06:00 - 08:59",
+      "played": 0,
+    },
+    {
+      "date": "09:00 - 11:59",
+      "played": 0,
+    },
+    {
+      "date": "12:00 - 14:59",
+      "played": 0,
+    },
+    {
+      "date": "15:00 - 17:59",
+      "played": 0,
+    },
+    {
+      "date": "18:00 - 20:59",
+      "played": 0,
+    },
+    {
+      "date": "21:00 - 23:59",
+      "played": 0,
+    }
+  ] as Interval[];
   rawData.forEach((period: Period) => {
     const start = new Date(period.start_time);
     const end = new Date(period.end_time);
 
-    mydata.forEach((interval: Interval) => {
+    data.forEach((interval: Interval) => {
       const intervalHour = parseInt(interval.date.split(":")[0]);
       const intervalStart = new Date(start);
       intervalStart.setUTCHours(intervalHour, 0, 0, 0);
@@ -48,7 +81,7 @@ function calculateActiveIntervals(rawData: Period[], mydata: Interval[]): Interv
     });
   });
 
-  return mydata;
+  return data;
 }
 
 function generateAllTimestamps(): string[] {
@@ -101,7 +134,7 @@ export default async function guild_stats(guildid: string): Promise<string | nul
           }
         });
         if ( Req.status === 200 && Req.data.active ) {
-          const averageUsage = calculateActiveIntervals(Req.data.active, default_data as Interval[]);
+          const averageUsage = calculateActiveIntervals(Req.data.active);
           const membersInChannel = convertToChartFormat(Req.data.history as DatasetItem[]);
           return JSON.stringify({active: averageUsage, members: membersInChannel});
         }
