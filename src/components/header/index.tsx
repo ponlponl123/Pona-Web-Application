@@ -76,7 +76,7 @@ function Header() {
                     <UserAccountAction minimize={true} className='md:hidden'/>
                 </div>
                 <nav className={`nav-opened-${navOpened}`}>
-                    <div className='md:hidden w-full h-28 border-b mb-6 header' style={{borderColor: 'rgb(var(--foreground-rgb),0.1)'}}>
+                    <div className='md:hidden w-full h-28 border-b mb-6 header border-foreground/10'>
                         
                     </div>
                     <div className='flex gap-3'>

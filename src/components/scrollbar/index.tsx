@@ -6,7 +6,7 @@ import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo'
 import { useLanguageContext } from '@/contexts/languageContext'
 import { AnimatePresence, motion } from 'framer-motion'
 import ActivationLink from './activationLink'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import FrozenRoute from '../HOC/FrozenRoute'
 import { Avatar } from '@nextui-org/react'
 
@@ -24,9 +24,18 @@ function Scrollbar({ userInfo, nav = false, onPushLocation }: { userInfo: UserIn
     const { guild } = useDiscordGuildInfo();
     const inGuild = pathname.startsWith('/app/g/');
     const inSetting = pathname.startsWith('/app/setting');
+    const router = useRouter();
     const handlePushLocation = () => {
         if (onPushLocation) onPushLocation()
     }
+    const handleBackNavigation = () => {
+        const previousPath = document.referrer;
+        if (previousPath && previousPath.includes(window.location.origin)) {
+            router.back();
+        } else {
+            router.push('/app');
+        }
+    };
 
     return (
         <main className={`scrollbar ${!nav ? 'w-80 h-screen max-md:hidden p-6 pt-24 flex flex-col gap-2' : 'md:hidden w-full flex flex-col gap-2'}`}>
@@ -87,7 +96,7 @@ function Scrollbar({ userInfo, nav = false, onPushLocation }: { userInfo: UserIn
             {
                 isOwner && (
                     <>
-            <ActivationLink onClick={handlePushLocation} href='/app/stats' icon={Planet}>Stats</ActivationLink>
+                        <ActivationLink onClick={handlePushLocation} href='/app/stats' icon={Planet}>Stats</ActivationLink>
                     </>
                 )
             }
@@ -105,7 +114,7 @@ function Scrollbar({ userInfo, nav = false, onPushLocation }: { userInfo: UserIn
                             {
                                 inSetting ? (
                                     <>
-                                        <ActivationLink onClick={handlePushLocation} href={`/app`} icon={CaretLeft}>{language.data.app.setting.back}</ActivationLink>
+                                        <ActivationLink onClick={handleBackNavigation} icon={CaretLeft}>{language.data.app.setting.back}</ActivationLink>
                                     </>
                                 ) : (
                                     <>

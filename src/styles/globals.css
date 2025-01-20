@@ -292,8 +292,7 @@ header {
     @apply w-full;
   }
   header nav {
-    @apply fixed top-0 left-0 w-screen h-screen flex flex-col p-6 pt-0;
-    background-color: var(--background)
+    @apply fixed top-0 left-0 w-screen h-screen flex flex-col p-6 pt-0 bg-background;
   }
   header.nav-opened-true {
     @apply fixed;

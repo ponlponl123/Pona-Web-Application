@@ -94,21 +94,23 @@ button.theme-dot > div > div {
 button.theme-dot > div > div::before,
 button.theme-dot > div > div::after {
   content: "";
-  @apply w-full h-1/2 rounded-sm;
+  @apply w-full h-1/2;
+  filter: blur(1px);
 }
 button.theme-dot > div > :nth-child(1)::before {
-  @apply bg-background;
+  @apply bg-background hidden;
 }
 button.theme-dot > div > :nth-child(1)::after {
   @apply bg-foreground;
+  filter: blur(10px);
 }
 button.theme-dot > div > :nth-child(2)::before {
-  @apply bg-primary;
+  @apply bg-primary ;
 }
 button.theme-dot > div > :nth-child(2)::after {
-  @apply bg-secondary;
+  @apply bg-secondary ;
 }
 
 button.theme-dot > div > :nth-child(1) {
-  background-color: rgb(var(--background-rgb));
+  @apply bg-background;
 }
