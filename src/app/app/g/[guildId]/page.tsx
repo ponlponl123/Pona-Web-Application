@@ -104,7 +104,7 @@ function Page() {
                   }
                 </div>
                 <div className='flex px-12 -mt-12 z-10'>
-                  <div className='overflow-hidden rounded-full outline outline-4' style={{outlineColor: 'var(--app-background)'}}>
+                  <div className='overflow-hidden rounded-full outline outline-4' style={{outlineColor: 'hsl(var(--pona-app-background))'}}>
                     <NextUIimage alt={guild.name as string} src={guild.iconURL+'?size=128' || defaultBanner.src as string} width={96} height={96}
                       className='w-24 h-24 object-cover'
                     />
@@ -120,7 +120,7 @@ function Page() {
                       <BarChart width={730} height={250} data={activeStats ? activeStats : default_data as ActiveUsageChart[]}>
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="date" />
-                        <Tooltip contentStyle={{backgroundColor:'var(--app-background)',borderRadius:'16px',border:'none',padding:'1em 1.4em'}} />
+                        <Tooltip contentStyle={{backgroundColor:'hsl(var(--pona-app-background))',borderRadius:'16px',border:'none',padding:'1em 1.4em'}} />
                         <Bar dataKey="played" fill="#8884d8" />
                       </BarChart>
                     </ResponsiveContainer>
@@ -135,7 +135,7 @@ function Page() {
                         <XAxis dataKey="date" />
                         <YAxis />
                         <CartesianGrid strokeDasharray="3 3" />
-                        <Tooltip contentStyle={{ backgroundColor: 'var(--app-background)', borderRadius: '16px', border: 'none', padding: '1em 1.4em' }} />
+                        <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--pona-app-background))', borderRadius: '16px', border: 'none', padding: '1em 1.4em' }} />
                         {memberInChannel &&
                           Object.keys(channelColors).map((channel) => (
                             <Line

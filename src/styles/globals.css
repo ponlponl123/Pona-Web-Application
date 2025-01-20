@@ -6,7 +6,7 @@
 
 html {
   scrollbar-width: thin;
-  scrollbar-color: var(--primary) var(--background);
+  scrollbar-color: hsl(var(--pona-app-primary)) hsl(var(--pona-app-background));
 }
 
 *:not([data-slot="popover"], div[style], .disable-default-transition) {
@@ -18,8 +18,7 @@ html {
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
+  @apply bg-background text-foreground;
   font-family: var(--font-ponlponl123-article), sans-serif;
 }
 
@@ -51,42 +50,40 @@ main#app-workspace {
 }
 
 .main-bg {
-  background: linear-gradient(0deg, rgb(var(--background-rgb)), rgb(var(--background-rgb), 0.48)), url(./../../public/backdrop.png) center no-repeat;
+  background: linear-gradient(0deg, hsl(var(--pona-app-background)), hsl(var(--pona-app-background) / 0.48)), url(./../../public/backdrop.png) center no-repeat;
   background-size: cover;
 }
 
 .welcome-banner {
-  background:  linear-gradient(0deg, rgb(var(--app-background-rgb)), rgb(var(--app-background-rgb), 0.24)), url(./../../public/welcome_banner.png) center no-repeat;
+  background:  linear-gradient(0deg, hsl(var(--pona-app-playground-background)), hsl(var(--pona-app-playground-background) / 0.24)), url(./../../public/welcome_banner.png) center no-repeat;
   background-size: cover;
 }
 
 .apphome-banner.evening,
 .apphome-banner.morning {
-  background:  linear-gradient(0deg, rgb(var(--app-background-rgb)), rgb(var(--app-background-rgb), 0.24)), url(./../../public/app/PonaWebViewMorning.png) center no-repeat;
+  background:  linear-gradient(0deg, hsl(var(--pona-app-playground-background)), hsl(var(--pona-app-playground-background) / 0.24)), url(./../../public/app/PonaWebViewMorning.png) center no-repeat;
   background-size: cover;
 }
 
 .apphome-banner.afternoon {
-  background:  linear-gradient(0deg, rgb(var(--app-background-rgb)), rgb(var(--app-background-rgb), 0.24)), url(./../../public/app/PonaWebViewAfternoon.png) center no-repeat;
+  background:  linear-gradient(0deg, hsl(var(--pona-app-playground-background)), hsl(var(--pona-app-playground-background) / 0.24)), url(./../../public/app/PonaWebViewAfternoon.png) center no-repeat;
   background-size: cover;
 }
 
 .apphome-banner.night {
-  background:  linear-gradient(0deg, rgb(var(--app-background-rgb)), rgb(var(--app-background-rgb), 0.24)), url(./../../public/app/PonaWebViewNight.png) center no-repeat;
+  background:  linear-gradient(0deg, hsl(var(--pona-app-playground-background)), hsl(var(--pona-app-playground-background) / 0.24)), url(./../../public/app/PonaWebViewNight.png) center no-repeat;
   background-size: cover;
 }
 
 .status-block {
-  @apply w-full max-w-screen-lg rounded-3xl p-6 flex flex-col border-4;
-  border-color: rgb(var(--foreground-rgb), 0.04);
+  @apply w-full max-w-screen-lg rounded-3xl p-6 flex flex-col border-4 border-foreground/20;
 }
 
 .service-list {
-  @apply flex justify-between items-center p-4 rounded-xl;
-  background-color: rgb(var(--foreground-rgb), 0);
+  @apply flex justify-between items-center p-4 rounded-xl bg-foreground/0;
 }
 .service-list:hover {
-  background-color: rgb(var(--foreground-rgb), 0.04);
+  @apply bg-foreground/20;
 }
 .service-list > h1 {
   width: 100%;

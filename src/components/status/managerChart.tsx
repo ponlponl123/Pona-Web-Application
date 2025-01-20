@@ -63,7 +63,7 @@ function ManagerChart({ mode }: { mode?: viewType }) {
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="time" />
-                <Tooltip contentStyle={{backgroundColor:'var(--app-background)',borderRadius:'16px',border:'none',padding:'1em 1.4em'}} />
+                <Tooltip contentStyle={{backgroundColor:'hsl(var(--pona-app-playground-background))',borderRadius:'16px',border:'none',padding:'1em 1.4em'}} />
                 {shardIds.map((shardId, index) => {
                     if ( index === 0 )
                         return (

@@ -133,7 +133,7 @@ function Status() {
                                 {
                                     // create all viewType buttons
                                     ['24h', '12h', '9h', '6h', '3h', '1h'].map((mode, index) => (
-                                        <Button key={index} variant={(viewMode === mode) ? 'solid' : 'ghost'} color={(viewMode === mode) ? 'primary' : 'default'} size='sm' radius='full' onClick={()=>{setViewMode(mode as viewType)}}>{mode}</Button>
+                                        <Button key={index} variant={(viewMode === mode) ? 'solid' : 'ghost'} color='primary' size='sm' radius='full' onClick={()=>{setViewMode(mode as viewType)}}>{mode}</Button>
                                     ))
                                 }
                             </div>

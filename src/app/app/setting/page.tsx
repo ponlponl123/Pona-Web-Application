@@ -1,7 +1,7 @@
 "use client";
 import React from 'react'
 import { useLanguageContext } from '@/contexts/languageContext'
-import { Bug, DiscordLogo, Keyboard, MoonStars, PaintBrush, Palette, StarAndCrescent, SunHorizon, Tree } from '@phosphor-icons/react/dist/ssr'
+import { Bug, DiscordLogo, Info, Keyboard, MoonStars, PaintBrush, Palette, StarAndCrescent, SunHorizon, Tree } from '@phosphor-icons/react/dist/ssr'
 import Switch from '@/components/switch'
 import { Alert, Chip, Image, Link, RadioGroup } from '@nextui-org/react'
 import { DynamicTheme, ThemeDot, ThemePreview, themes, ThemeUpdate, useThemeContext } from '@/contexts/themeContext';
@@ -33,8 +33,7 @@ function Page() {
                   </div>
                   <div className='flex gap-6 z-10 relative px-12 max-md:px-6'>
                     <div className='flex flex-col items-center max-md:absolute max-md:left-12'>
-                      <div className='-translate-y-1/2 outline outline-8 outline-app-background rounded-full block overflow-hidden min-w-32 w-32 h-32 max-md:outline-4 max-md:min-w-24 max-md:w-24 max-md:h-24'
-                        style={{outlineColor: "rgb(var(--app-background-rgb))"}}>
+                      <div className='-translate-y-1/2 outline outline-8 outline-playground-background rounded-full block overflow-hidden min-w-32 w-32 h-32 max-md:outline-4 max-md:min-w-24 max-md:w-24 max-md:h-24'>
                         <Image
                           alt={`${userInfo && userInfo.global_name} Avatar`}
                           src={userInfo ? `https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}.png?size=128` : ''}
@@ -139,7 +138,7 @@ function Page() {
               </section>
               <section className='w-full min-h-full my-6 flex flex-col gap-6 pb-12' id='keybinds' data-section>
                 <h1 className='text-5xl flex items-center gap-4 pt-4'><Keyboard weight='fill' />{language.data.app.setting.keybinds.title}</h1>
-                <Alert radius='full' color='primary' variant='flat' title={language.data.app.setting.keybinds.announcement} />
+                <Chip color="primary" variant='flat' size='lg' startContent={<Info weight='fill' className='ml-2 mr-1' />}>{language.data.app.setting.keybinds.announcement}</Chip>
                 <div className='flex flex-col gap-4' id='keybinds-list' data-section></div>
               </section>
               <section className='w-full min-h-full my-6 flex flex-col gap-6 pb-12' id='devzone' data-section>

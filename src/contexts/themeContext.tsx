@@ -8,8 +8,8 @@ export type Themes =
   'nextui-light' | 'nextui-dark' |
   'chocolate-light' | 'chocolate-dark' |
   'latte-light' | 'latte-dark' |
-  'winter-light' |
-  'violet-light' |
+  'winter-light' | 'winter-dark' |
+  'violet-light' | 'violet-dark' |
   'cupcake-light' | 'cupcake-dark';
 export interface DynamicTheme {
   sync: boolean;
@@ -17,8 +17,8 @@ export interface DynamicTheme {
   day: Themes;
   night: Themes;
 }
-export const themes: Themes[] = ['light', 'nextui-light', 'chocolate-light', 'latte-light', 'winter-light', 'violet-light', 'cupcake-light', 'dark', 'nextui-dark', 'chocolate-dark', 'latte-dark', 'cupcake-dark'];
-export const dark_themes: typeof themes = ['dark', 'nextui-dark', 'chocolate-dark', 'chocolate-dark', 'cupcake-dark'];
+export const themes: Themes[] = ['light', 'nextui-light', 'chocolate-light', 'latte-light', 'winter-light', 'violet-light', 'cupcake-light', 'dark', 'nextui-dark', 'chocolate-dark', 'latte-dark', 'winter-dark', 'violet-dark', 'cupcake-dark'];
+export const dark_themes: typeof themes = ['dark', 'nextui-dark', 'chocolate-dark', 'chocolate-dark', 'winter-dark', 'violet-dark', 'cupcake-dark'];
 export const light_themes: typeof themes = ['light', 'nextui-light', 'chocolate-light', 'latte-light', 'winter-light', 'violet-light', 'cupcake-light'];
 export const defaultDynamicTheme: DynamicTheme = {sync: true, single: themes[0], day: light_themes[0], night: dark_themes[0]};
 

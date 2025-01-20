@@ -14,7 +14,7 @@ export function GuildButton({ guild, uri, setCurrentGuild }: { guild: GuildInfo,
       setCurrentGuild(guild);
   }
   return (
-    <Button onClick={onClick} href={uri} className='w-full py-12 group' style={{backgroundColor: 'rgb(var(--background-rgb))', borderRadius: '32px'}}>
+    <Button onClick={onClick} href={uri} className='w-full py-12 group bg-foreground/10' style={{borderRadius: '32px'}}>
       <div className='w-full p-2 flex items-center justify-center gap-3 max-h-none'>
         <div className='flex flex-col items-center justify-center h-16 w-16 relative'>
           <Avatar src={guild.iconURL as string} className={`${loading?'h-12 w-12':'h-16 w-16'}`} />

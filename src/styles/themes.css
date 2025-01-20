@@ -1,61 +1,8 @@
-@import "themes/nextui.css";
-@import "themes/chocolate.css";
-@import "themes/latte.css";
-@import "themes/winter.css";
-@import "themes/violet.css";
-@import "themes/cupcake.css";
-
-:root,
-.nextui-light, [data-theme="nextui-light"],
-.chocolate-light, [data-theme="chocolate-light"],
-.latte-light, [data-theme="latte-light"],
-.winter-light, [data-theme="winter-light"],
-.violet-light, [data-theme="violet-light"],
-.cupcake-light, [data-theme="cupcake-light"],
-.light, .default-light, [data-theme="light"] {
+:root {
   color-scheme: light;
-  --background-rgb: 255, 255, 255;
-  --foreground-rgb: 23, 23, 23;
-  --background: hsl(0, 0%, 100%);
-  --foreground: hsl(0, 0%, 9%);
-  --app-background: hsl(0, 0%, 95%);
-  --app-background-rgb: 241, 241, 241;
-}
-
-.light, .default-light, [data-theme="light"],
-.dark, .default-dark, [data-theme="dark"] {
-  --default: hsl(0, 0%, 54%);
-  --primary: hsl(320, 96%, 86%);
-  --secondary: hsl(202, 100%, 50%);
-  --success: hsl(148, 100%, 64%);
-  --warning: hsl(36, 100%, 64%);
-  --danger: hsl(0, 54%, 66%);
-  --divider: hsla(0, 0%, 7%, 0.15);
-  --focus: hsl(212, 100%, 47%);
-}
-.light, [data-theme="light"] {
-  --foreground: hsl(327, 50%, 24%) !important;
-  --app-background-rgb: 251, 234, 234 !important;
 }
 .dark, [data-theme="dark"] {
-  --background: hsl(333, 38%, 13%) !important;
-  --foreground: hsl(308, 100%, 90%) !important;
-  --app-background: hsl(328, 100%, 8%) !important;
-  --app-background-rgb: 14, 6, 6 !important;
-}
-
-.nextui-dark, [data-theme="nextui-dark"],
-.chocolate-dark, [data-theme="chocolate-dark"],
-.latte-dark, [data-theme="latte-dark"],
-.cupcake-dark, [data-theme="cupcake-dark"],
-.dark, .default-dark, [data-theme="dark"] {
   color-scheme: dark;
-  --background-rgb: 10, 10, 10;
-  --foreground-rgb: 237, 237, 237;
-  --background: hsl(0, 0%, 4%);
-  --foreground: hsl(0, 0%, 93%);
-  --app-background: hsl(0, 0%, 9%);
-  --app-background-rgb: 23, 23, 23;
 }
 
 *:not(.recharts-tooltip-wrapper *, svg, svg *) {
@@ -64,7 +11,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    @apply default-dark;
+    @apply dark;
   }
   * {
     @apply dark;
