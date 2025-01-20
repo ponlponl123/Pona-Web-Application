@@ -3,7 +3,7 @@ import React from 'react'
 import { useLanguageContext } from '@/contexts/languageContext'
 import { Bug, DiscordLogo, Info, Keyboard, MoonStars, PaintBrush, Palette, StarAndCrescent, SunHorizon, Tree } from '@phosphor-icons/react/dist/ssr'
 import Switch from '@/components/switch'
-import { Alert, Chip, Image, Link, RadioGroup } from '@nextui-org/react'
+import { Chip, Image, Link, RadioGroup } from '@nextui-org/react'
 import { DynamicTheme, ThemeDot, ThemePreview, themes, ThemeUpdate, useThemeContext } from '@/contexts/themeContext';
 import { useDiscordUserInfo } from '@/contexts/discordUserInfo';
 import { numberToHexColor } from '@/utils/colorUtils';
