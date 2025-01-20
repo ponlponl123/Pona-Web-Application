@@ -9,15 +9,6 @@
   @apply text-foreground;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    @apply dark;
-  }
-  * {
-    @apply dark;
-  }
-}
-
 .theme-preview {
   @apply w-80 h-48 border-3 border-foreground-300 rounded-xl mt-6 mx-auto;
 }
