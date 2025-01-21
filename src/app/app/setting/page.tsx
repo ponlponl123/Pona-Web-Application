@@ -3,7 +3,7 @@ import React from 'react'
 import { useLanguageContext } from '@/contexts/languageContext'
 import { Bug, DiscordLogo, Info, Keyboard, MoonStars, PaintBrush, Palette, StarAndCrescent, SunHorizon, Tree } from '@phosphor-icons/react/dist/ssr'
 import Switch from '@/components/switch'
-import { Chip, Image, Link, RadioGroup } from '@nextui-org/react'
+import { Avatar, Chip, Image, Link, RadioGroup } from '@nextui-org/react'
 import { DynamicTheme, ThemeDot, ThemePreview, themes, ThemeUpdate, useThemeContext } from '@/contexts/themeContext';
 import { useDiscordUserInfo } from '@/contexts/discordUserInfo';
 import { numberToHexColor } from '@/utils/colorUtils';
@@ -26,7 +26,7 @@ function Page() {
                       isBlurred
                       alt={`${userInfo && userInfo.global_name} Banner`}
                       src={userInfo ? `https://cdn.discordapp.com/banners/${userInfo.id}/${userInfo.banner}.png?size=1024` : ''}
-                      className='object-cover object-center'
+                      className='object-cover object-center bg-primary'
                       width="100%"
                       height={280}
                     />
@@ -34,12 +34,11 @@ function Page() {
                   <div className='flex gap-6 z-10 relative px-12 max-md:px-6'>
                     <div className='flex flex-col items-center max-md:absolute max-md:left-12'>
                       <div className='-translate-y-1/2 outline outline-8 outline-playground-background rounded-full block overflow-hidden min-w-32 w-32 h-32 max-md:outline-4 max-md:min-w-24 max-md:w-24 max-md:h-24'>
-                        <Image
+                        <Avatar
                           alt={`${userInfo && userInfo.global_name} Avatar`}
                           src={userInfo ? `https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}.png?size=128` : ''}
-                          className='object-cover object-center max-md:w-24 max-md:h-24'
-                          width={128}
-                          height={128}
+                          name={userInfo ? userInfo.username : 'Me'}
+                          className='object-cover object-center max-md:w-24 max-md:h-24 bg-primary w-32 h-32'
                         />
                       </div>
                       <div className='flex gap-4 -mt-12 z-10 max-md:hidden'>

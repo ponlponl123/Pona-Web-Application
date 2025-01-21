@@ -1,4 +1,4 @@
-import { PoanConfigThemes, PonaThemeColors } from "../themes.config";
+import { PonaConfigThemes, PonaThemeColors } from "../themes.config";
 import nextuiColorPalette from "./utils/nextui-color-palette-gen";
 
 const colorPalette: Partial<PonaThemeColors> = {
@@ -11,7 +11,7 @@ const colorPalette: Partial<PonaThemeColors> = {
   focus: "#006FEE",
 }
 
-const nextui: PoanConfigThemes = {
+const nextui: PonaConfigThemes = {
   "nextui-light": {
     extend: "light",
     colors: {

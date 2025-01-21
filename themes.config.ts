@@ -17,11 +17,11 @@ export type PoanConfigTheme = ConfigTheme & {
   colors: Partial<PonaThemeColors>;
 }
 
-export type PoanConfigThemes = ConfigThemes & {
+export type PonaConfigThemes = ConfigThemes & {
   [x: string]: PoanConfigTheme;
 }
 
-const themes: PoanConfigThemes = {
+const themes: PonaConfigThemes = {
   ..._default,
   ...chocolate,
   ...latte,

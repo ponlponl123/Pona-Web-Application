@@ -2,7 +2,7 @@
 import React from 'react'
 import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo';
 import defaultBanner from '@/../public/app/default.png';
-import { Spinner, Image as NextUIimage, Chip } from '@nextui-org/react';
+import { Spinner, Image as NextUIimage, Chip, Avatar } from '@nextui-org/react';
 import { CartesianGrid, XAxis, YAxis, ResponsiveContainer, BarChart, Legend, Bar, Tooltip, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, PieChart, Pie, Line, LineChart } from 'recharts';
 import { useLanguageContext } from '@/contexts/languageContext';
 import { default_data, default_member_data, data, data01, data02 } from '@/data/guild/stats';
@@ -92,21 +92,24 @@ function Page() {
                   {
                     guild.bannerURL ? (
                       <NextUIimage isBlurred alt={guild.name as string} src={guild.bannerURL+'?size=480'} width={"100%"} height={192}
-                        className='w-full h-full object-cover'
+                        className='w-full h-full object-cover bg-primary'
                       />
                     ) : (
                       <div className='w-full h-full overflow-hidden rounded-3xl'>
                         <NextUIimage alt={guild.name as string} src={guild.iconURL+'?size=320' || defaultBanner.src as string} width={"100%"} height={192}
-                          className='w-full h-full object-cover blur-2xl'
+                          className='w-full h-full object-cover blur-2xl bg-primary'
                         />
                       </div>
                     )
                   }
                 </div>
                 <div className='flex px-12 -mt-12 z-10'>
-                  <div className='overflow-hidden rounded-full outline outline-4' style={{outlineColor: 'hsl(var(--pona-app-background))'}}>
-                    <NextUIimage alt={guild.name as string} src={guild.iconURL+'?size=128' || defaultBanner.src as string} width={96} height={96}
-                      className='w-24 h-24 object-cover'
+                  <div className='overflow-hidden rounded-full outline outline-4 outline-playground-background'>
+                    <Avatar
+                      alt={`${guild && guild.name} Avatar`}
+                      src={guild.iconURL+'?size=128' || defaultBanner.src as string}
+                      name={guild ? guild.name : 'Guild'}
+                      className='w-24 h-24 object-cover bg-primary'
                     />
                   </div>
                 </div>
@@ -114,7 +117,7 @@ function Page() {
               <section className='p-8 flex flex-col gap-4'>
                 <h1 className='text-3xl flex gap-3 items-center'>{language.data.app.guilds.stats.title} <Chip color='secondary' size='sm'>{language.data.app.guilds.stats.in.replace("[day]", "7")}</Chip></h1>
                 <div className='flex max-lg:flex-wrap gap-6 w-full'>
-                  <div className='w-full h-fit'>
+                  <div className='w-full h-fit bg-primary-100/20 py-4 rounded-3xl'>
                     <h1 className='text-2xl mb-4 px-8'>{language.data.app.guilds.stats.analysis}</h1>
                     <ResponsiveContainer width={'100%'} height={256} className="px-4">
                       <BarChart width={730} height={250} data={activeStats ? activeStats : default_data as ActiveUsageChart[]}>
@@ -125,7 +128,7 @@ function Page() {
                       </BarChart>
                     </ResponsiveContainer>
                   </div>
-                  <div className='w-full h-fit'>
+                  <div className='w-full h-fit bg-primary-100/20 py-4 rounded-3xl'>
                     <h1 className='text-2xl mb-4 px-8'>{language.data.app.guilds.stats.members}</h1>
                     <ResponsiveContainer width={'100%'} height={256}>
                       <LineChart
