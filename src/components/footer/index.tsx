@@ -81,6 +81,7 @@ function Footer() {
       </div>
       <div className='max-md:-order-1'>
         <Select
+          color='default'
           className="w-32"
           size='sm'
           label={language.data.footer.settings.lang.label}
@@ -92,7 +93,7 @@ function Footer() {
           {
             langs.map((lang) => {
               return (
-                <SelectItem
+                <SelectItem color='default'
                   key={lang.key}
                   startContent={<Avatar alt={lang.key} className="w-4 h-4" src={`https://flagcdn.com/${lang.country}.svg`} />}
                 >{lang.label}</SelectItem>

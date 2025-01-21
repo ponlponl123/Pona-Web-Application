@@ -1,6 +1,7 @@
 "use server";
 import axios from 'axios';
 import { EndpointHTTP, EndpointKey } from '../endpoint';
+import { fetchGuild } from '../discord/fetchGuild';
 
 type chennelid = {
   [key: string]: number;
@@ -124,21 +125,23 @@ function convertToChartFormat(dataset: DatasetItem[]): ChartItem[] {
   return chartItems;
 }
 
-export default async function guild_stats(guildid: string): Promise<string | null> {
+export default async function guild_stats({token, type}: {token: string, type: string}, guildid: string): Promise<string | null> {
     try {
-        const Req = await axios.get(`${EndpointHTTP}/v1/guild/${guildid}/stats`, {
-          headers: {
-            'Authorization': `Pona! ${EndpointKey}`,
-            'Content-Type': 'application/json',
-            "User-Agent": "Pona! Application (OpenPonlponl123.com/v1)"
-          }
-        });
-        if ( Req.status === 200 && Req.data.active ) {
-          const averageUsage = calculateActiveIntervals(Req.data.active);
-          const membersInChannel = convertToChartFormat(Req.data.history as DatasetItem[]);
-          return JSON.stringify({active: averageUsage, members: membersInChannel});
+      const guild = await fetchGuild(token, type, guildid);
+      if ( !guild ) return null;
+      const Req = await axios.get(`${EndpointHTTP}/v1/guild/${guild.id}/stats`, {
+        headers: {
+          'Authorization': `Pona! ${EndpointKey}`,
+          'Content-Type': 'application/json',
+          "User-Agent": "Pona! Application (OpenPonlponl123.com/v1)"
         }
-        return null;
+      });
+      if ( Req.status === 200 && Req.data.active ) {
+        const averageUsage = calculateActiveIntervals(Req.data.active);
+        const membersInChannel = convertToChartFormat(Req.data.history as DatasetItem[]);
+        return JSON.stringify({active: averageUsage, members: membersInChannel});
+      }
+      return null;
     } catch (err) {
         console.error('Failed to get Guild Active Usage Stats:', err);
         return null;

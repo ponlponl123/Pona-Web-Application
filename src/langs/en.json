@@ -46,7 +46,8 @@
         },
         "updates": {
             "name": "Updates",
-            "latest": "Latest version"
+            "latest": "Latest version",
+            "subscription": "Subscribe"
         },
         "home": {
             "name": "Home",

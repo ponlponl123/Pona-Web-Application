@@ -9,6 +9,7 @@ import { default_data, default_member_data, data, data01, data02 } from '@/data/
 
 import guild_stats from '@/server-side-api/guild/stats';
 import { getRandomColor } from '@/components/status/managerChart';
+import { getCookie } from 'cookies-next';
 
 interface ActiveUsageChart {
   date: string;
@@ -31,10 +32,13 @@ function Page() {
   const [activeStats, setActiveStats] = React.useState<ActiveUsageChart[] | null>(null);
   const [memberInChannel, setMemberInChannel] = React.useState<MemberInChannel[] | null>(null);
 
+  const token = getCookie('LOGIN_') as string | undefined;
+  const tokenType = getCookie('LOGIN_TYPE_') as string | undefined;
+
   React.useEffect(() => {
-    if (guild && guild.id) {
-      async function fetchActiveStats(guildId: string) {
-        const res = await guild_stats(guildId);
+    if (token && tokenType && guild && guild.id) {
+      async function fetchActiveStats(token: string, tokenType: string, guildId: string) {
+        const res = await guild_stats({token: token, type: tokenType}, guildId);
         if (!res) {
           // console.error('No response from guild_stats API');
           return;
@@ -61,9 +65,9 @@ function Page() {
         setActiveStats(data.active);
         setMemberInChannel(aggregatedMembers);
       }
-      fetchActiveStats(guild.id);
+      fetchActiveStats(token, tokenType, guild.id);
     }
-  }, [guild]);  
+  }, [guild, token, tokenType]);  
 
   const channelColors = React.useMemo(() => {
     const colors: { [key: string]: string } = {};
