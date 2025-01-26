@@ -1,5 +1,6 @@
 import type { Config } from "tailwindcss";
 import { nextui } from "@nextui-org/react";
+import Typography from "@tailwindcss/typography";
 import themes from "./themes.config";
 
 const config: Config = {
@@ -25,6 +26,7 @@ const config: Config = {
   },
   darkMode: "class",
   plugins: [
+    Typography,
     nextui({
       prefix: "pona-app",
       addCommonColors: true,

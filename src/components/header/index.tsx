@@ -51,10 +51,12 @@ function Header() {
     const { userInfo } = useDiscordUserInfo();
 
     const isApp = pathname.startsWith('/app');
+    const isInGuild = (isApp && pathname.split('/').includes('g') && typeof Number(pathname.split('/')[3]) === 'number');
+    const guildPath = isInGuild ? pathname.split('/')[4] : '';
     const isIndex = (pathname === '/');
 
     return (
-        <header className={`nav-opened-${navOpened} ${!isIndex ? 'max-md:backdrop-blur-md':''} absolute w-full h-20 p-6 px-8 flex items-center justify-center gap-3`}>
+        <header className={`nav-opened-${navOpened} ${!isIndex ? 'max-md:backdrop-blur-md':''} pona-header absolute w-full h-20 p-6 px-8 flex items-center justify-center gap-3`}>
             <div className={`w-full ${!isApp && 'max-w-5xl'} h-full flex items-center justify-between gap-6`}>
                 <div className='flex gap-2 z-20 active:scale-95'>
                     <Link href={isApp ? '/app' : '/'} onClick={()=>{setNavOpened(false)}}>
@@ -97,15 +99,25 @@ function Header() {
                                 </Link>
                             )
                         }
-                        <Link href='/invite' rel="noopener noreferrer">
-                            <MyButton size='small' variant='primary' effect='confetti' onClick={()=>{setNavOpened(false)}}>
-                                <Confetti weight='fill' />
-                                { language.data.header.actions.invite }
-                            </MyButton>
-                        </Link>
                         {
-                            userInfo && (
-                                <UserAccountAction className='max-md:hidden'/>
+                            (userInfo && isInGuild && guildPath === 'player') ? (
+                                <>
+                                    <UserAccountAction minimize={true}/>
+                                </>
+                            ) : (
+                                <>
+                                    <Link href='/invite' rel="noopener noreferrer">
+                                        <MyButton size='small' variant='primary' effect='confetti' onClick={()=>{setNavOpened(false)}}>
+                                            <Confetti weight='fill' />
+                                            { language.data.header.actions.invite }
+                                        </MyButton>
+                                    </Link>
+                                    {
+                                        userInfo && (
+                                            <UserAccountAction className='max-md:hidden'/>
+                                        )
+                                    }
+                                </>
                             )
                         }
                     </div>

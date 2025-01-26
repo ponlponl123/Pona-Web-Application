@@ -20,16 +20,15 @@ export const DiscordUserInfoProvider = ({children}: { children: React.ReactNode 
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
-      const currentAccessToken = getCookie('LOGIN_');
-      const currentAccessTokenType = getCookie('LOGIN_TYPE_');
-      if ( currentAccessToken && currentAccessTokenType && currentAccessToken !== 'false' ) setUserAccInfo(currentAccessToken, currentAccessTokenType);
-      else setLoading(false);
+        const currentAccessToken = getCookie('LOGIN_');
+        const currentAccessTokenType = getCookie('LOGIN_TYPE_');
+        if ( currentAccessToken && currentAccessTokenType && currentAccessToken !== 'false' ) setUserAccInfo(currentAccessToken, currentAccessTokenType);
+        else setLoading(false);
     }, []);
-  
     const setUserAccessToken = async (key: string, type: string) => {
-      setCookie('LOGIN_', key);
-      setCookie('LOGIN_TYPE_', type);
-      setUserAccInfo(key, type);
+        setCookie('LOGIN_', key);
+        setCookie('LOGIN_TYPE_', type);
+        setUserAccInfo(key, type);
     };
 
     const setUserAccInfo = async (key: string, keyType: string) => {

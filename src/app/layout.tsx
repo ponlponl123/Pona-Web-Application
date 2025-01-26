@@ -28,11 +28,10 @@ export const metadata: Metadata = {
   description: "Pona! is a useful discord application and free to use.",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
+export default function RootLayout(props: {
   children: React.ReactNode;
-}>) {
+  modal: React.ReactNode;
+}) {
   return (
     <html lang="en">
       <body
@@ -52,10 +51,12 @@ export default function RootLayout({
         <Providers>
           <Header />
           <main id="app">
-            {children}
+            {props.children}
           </main>
           <Footer />
         </Providers>
+        {props.modal}
+        <div id="modal-root" />
       </body>
     </html>
   );

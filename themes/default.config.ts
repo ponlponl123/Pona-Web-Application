@@ -29,6 +29,15 @@ const _default: PonaConfigThemes = {
       ...nextuiColorPalette({name: "playground-background", baseColor: "#171717"}),
     },
   },
+  'amoled-dark': {
+    extend: 'dark',
+    colors: {
+      ...colorPalette,
+      ...nextuiColorPalette({name: "foreground", baseColor: "#ededed"}),
+      ...nextuiColorPalette({name: "background", baseColor: "#000000"}),
+      ...nextuiColorPalette({name: "playground-background", baseColor: "#000000"}),
+    },
+  },
 }
 
 export default _default;

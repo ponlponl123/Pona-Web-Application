@@ -1,8 +1,15 @@
 :root {
   color-scheme: light;
+  --mapfilter: grayscale(1);
 }
 .dark, [data-theme="dark"] {
   color-scheme: dark;
+  --mapfilter: invert(1) grayscale(1);
+}
+
+.map-layer, .leaflet-tile-container {
+  filter: var(--mapfilter);
+  -webkit-filter: var(--mapfilter);
 }
 
 *:not(.recharts-tooltip-wrapper *, svg, svg *) {

@@ -59,9 +59,7 @@ function Page() {
   
           return { ...entry, channels: consolidatedChannels };
         });
-  
-        console.log("Aggregated Members:", aggregatedMembers); // Add logging to verify aggregation
-  
+    
         setActiveStats(data.active);
         setMemberInChannel(aggregatedMembers);
       }

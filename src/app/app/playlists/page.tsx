@@ -1,7 +1,7 @@
 "use client";
 import React from 'react'
 import { useLanguageContext } from '@/contexts/languageContext'
-import { MagnifyingGlass, Playlist } from '@phosphor-icons/react/dist/ssr';
+import { MagnifyingGlass, Playlist, Plus } from '@phosphor-icons/react/dist/ssr';
 import { Button } from '@nextui-org/react';
 
 function Page() {
@@ -11,7 +11,7 @@ function Page() {
             <main id="app-workspace">
                 <div className='flex mt-6 justify-between gap-12 flex-wrap items-center max-w-screen-lg'>
                     <h1 className='text-5xl flex gap-4 items-center'><Playlist size={48} weight='fill' /> {language.data.app.playlist.name}</h1>
-                    <Button color="primary" radius='full' size='lg' isDisabled>{language.data.app.playlist.create}</Button>
+                    <Button color="primary" radius='full' size='lg' isDisabled><Plus weight='bold' /> {language.data.app.playlist.create}</Button>
                 </div>
                 <div className='w-full max-w-screen-lg mt-16 gap-4 flex flex-col items-center justify-center text-center' style={{minHeight: '72vh'}} id='playlists'>
                     <MagnifyingGlass size={64} weight='bold' />

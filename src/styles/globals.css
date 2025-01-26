@@ -1,4 +1,5 @@
 @import './themes.css';
+@import './markdown.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -9,7 +10,12 @@ html {
   scrollbar-color: hsl(var(--pona-app-primary)) hsl(var(--pona-app-background));
 }
 
-*:not([data-slot="popover"], div[style], .disable-default-transition) {
+*:not(
+  [data-slot="popover"],
+  div[style],
+  .disable-default-transition,
+  .leaflet-pane .leaflet-marker-draggable
+) {
   transition: .24s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
@@ -112,8 +118,7 @@ main#app-workspace {
 .service-status-badge.down::before { content: "Down" }
 
 .group-menu {
-  @apply w-full max-w-screen-lg rounded-2xl flex flex-col gap-2 relative overflow-hidden;
-  background-color: rgb(var(--foreground-rgb), 0);
+  @apply w-full max-w-screen-lg rounded-2xl bg-transparent flex flex-col gap-2 relative overflow-hidden;
 }
 .group-menu > .group-title,
 .group-menu > .group-content {
@@ -124,7 +129,7 @@ main#app-workspace {
   @apply w-full justify-start;
 }
 .group-menu.active {
-  @apply bg-foreground-50/50 gap-0;
+  @apply bg-foreground-100/20 gap-0;
 }
 .group-menu.active > .group-title > * {
   @apply justify-center;
@@ -243,61 +248,61 @@ main#app-workspace {
   @apply opacity-25
 }
 
-footer {
-  @apply flex gap-6 items-center justify-center min-h-24 -mt-24 w-full relative p-6;
+footer.pona-footer {
+  @apply flex gap-6 items-center justify-center min-h-24 w-full relative p-6;
 }
 
-footer a {
+footer.pona-footer a {
   @apply flex items-center gap-2 hover:underline hover:underline-offset-4;
 }
 
-footer > div {
+footer.pona-footer > div {
   @apply row-start-3 w-full flex flex-wrap gap-6 items-center justify-center;
 }
 
-footer > div:first-child,
-footer > div:last-child {
+footer.pona-footer > div:first-child,
+footer.pona-footer > div:last-child {
   @apply w-1/4;
 }
 
-footer > div:first-child {
+footer.pona-footer > div:first-child {
   @apply justify-start;
 }
 
-footer > div:last-child {
+footer.pona-footer > div:last-child {
   @apply justify-end;
 }
 
-header {
+header.pona-header {
   z-index: 90;
 }
 
 @media (max-width: 767px) {
-  header nav.nav-opened-false {
+  header.pona-header nav.nav-opened-false {
     @apply invisible pointer-events-none opacity-0;
   }
-  header nav > div:not(.header) {
+  header.pona-header nav > div:not(.header) {
     @apply flex flex-col items-center gap-5
   }
-  header nav > div:nth-child(2) {
+  header.pona-header nav > div:nth-child(2) {
     @apply h-full
   }
-  header nav > div {
+  header.pona-header nav > div {
     @apply w-full items-stretch px-6
   }
-  header nav button {
+  header.pona-header nav button {
     @apply w-full;
   }
-  header nav a {
+  header.pona-header nav a {
     @apply w-full;
   }
-  header nav {
+  header.pona-header nav {
     @apply fixed top-0 left-0 w-screen h-screen flex flex-col p-6 pt-0 bg-background;
   }
-  header.nav-opened-true {
+  header.pona-header.nav-opened-true {
     @apply fixed;
   }
-  footer > div:first-child, footer > div {
+  footer.pona-footer > div:first-child, footer > div {
     width: 100% !important;
     justify-content: center !important;
   }

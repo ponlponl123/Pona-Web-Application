@@ -5,6 +5,7 @@ const API_ENDPOINT = 'https://discord.com/api/v10';
 export interface UserInfo {
     id: string;
     username: string;
+    email: string;
     avatar: string;
     discriminator: string;
     public_flags: number;

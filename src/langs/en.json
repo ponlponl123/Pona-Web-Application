@@ -47,11 +47,161 @@
         "updates": {
             "name": "Updates",
             "latest": "Latest version",
-            "subscription": "Subscribe"
+            "subscription": {
+                "title": "Subscribe",
+                "notify": {
+                    "email": "Email",
+                    "discord": "Discord DMs"
+                },
+                "modal": {
+                    "title": "Notification about updates",
+                    "checklist": "Where can we notify you?",
+                    "body1": "You will be notified when there are new updates available. We will send you an email to your inbox!",
+                    "body2": "Or you can 🌟 starred[link]on github to get every updates such as commits, pull requests, and more!",
+                    "repo": "Pona! Repository",
+                    "notnow": "Not now",
+                    "update": "Update and close",
+                    "letnotify": "Let's notify me!",
+                    "close": "Close"
+                }
+            },
+            "translate": {
+                "pre-release": "Pre-Release",
+                "release": "Release"
+            },
+            "version": "Version",
+            "error": {
+                "title": "An error occurred",
+                "description": "Unable to get list of patch notes"
+            }
         },
         "home": {
             "name": "Home",
-            "title": "Welcome back, [user]!"
+            "title": "Welcome back, [user]!",
+            "weather": {
+                "status": {
+                    "wmo-code": {
+                        "0": "Clear skies",
+                        "1": "Clear skies",
+                        "2": "Partly cloudy",
+                        "3": "Partly cloudy",
+                        "4": "Smoky",
+                        "5": "Hazy",
+                        "6": "Dusty",
+                        "7": "Windy",
+                        "8": "Windy",
+                        "9": "Windy",
+                        "10": "Misty",
+                        "11": "Shallow fog",
+                        "12": "Continuous fog",
+                        "13": "Lightning",
+                        "14": "Distant rain",
+                        "15": "Distant rain",
+                        "16": "Nearby rain",
+                        "17": "Thunderstorm",
+                        "18": "Squalls",
+                        "19": "Tornado",
+                        "20": "Drizzle",
+                        "21": "Rain",
+                        "22": "Snow",
+                        "23": "Rain and snow",
+                        "24": "Freezing rain",
+                        "25": "Rain showers",
+                        "26": "Snow showers",
+                        "27": "Hail showers",
+                        "28": "Fog",
+                        "29": "Thunderstorm",
+                        "30": "Duststorm",
+                        "31": "Duststorm",
+                        "32": "Duststorm",
+                        "33": "Severe duststorm",
+                        "34": "Severe duststorm",
+                        "35": "Severe duststorm",
+                        "36": "Blowing snow",
+                        "37": "Drifting snow",
+                        "38": "Blowing snow",
+                        "39": "Drifting snow",
+                        "40": "Distant fog",
+                        "41": "Patchy fog",
+                        "42": "Thinning fog",
+                        "43": "Thick fog",
+                        "44": "Fog",
+                        "45": "Thick fog",
+                        "46": "Thickening fog",
+                        "47": "Thick fog",
+                        "48": "Rime fog",
+                        "49": "Rime fog",
+                        "50": "Light drizzle",
+                        "51": "Drizzle",
+                        "52": "Moderate drizzle",
+                        "53": "Drizzle",
+                        "54": "Heavy drizzle",
+                        "55": "Drizzle",
+                        "56": "Freezing drizzle",
+                        "57": "Heavy freezing drizzle",
+                        "58": "Drizzle and rain",
+                        "59": "Heavy drizzle and rain",
+                        "60": "Light rain",
+                        "61": "Rain",
+                        "62": "Moderate rain",
+                        "63": "Rain",
+                        "64": "Heavy rain",
+                        "65": "Rain",
+                        "66": "Freezing rain",
+                        "67": "Heavy freezing rain",
+                        "68": "Rain and snow",
+                        "69": "Heavy rain and snow",
+                        "70": "Light snow",
+                        "71": "Snow",
+                        "72": "Moderate snow",
+                        "73": "Snow",
+                        "74": "Heavy snow",
+                        "75": "Snow",
+                        "76": "Diamond dust",
+                        "77": "Snow grains",
+                        "78": "Star-like snow",
+                        "79": "Ice pellets",
+                        "80": "Light rain shower",
+                        "81": "Rain shower",
+                        "82": "Heavy rain shower",
+                        "83": "Mixed rain and snow shower",
+                        "84": "Heavy mixed rain and snow shower",
+                        "85": "Light snow shower",
+                        "86": "Snow shower",
+                        "87": "Snow pellets",
+                        "88": "Heavy snow pellets",
+                        "89": "Hail shower",
+                        "90": "Heavy hail shower",
+                        "91": "Light rain with thunder",
+                        "92": "Heavy rain with thunder",
+                        "93": "Light snow with thunder",
+                        "94": "Heavy snow with thunder",
+                        "95": "Thunderstorm",
+                        "96": "Thunderstorm with hail",
+                        "97": "Heavy thunderstorm",
+                        "98": "Duststorm with thunder",
+                        "99": "Heavy thunderstorm with hail"
+                    }
+                },
+                "today_temp": "Today's Temperature",
+                "temp_status": {
+                    "little_higher_than_yesterday": "Temperatures are a little higher than yesterday, so don’t forget your sunglasses!",
+                    "higher_than_yesterday": "The temperatures are higher than yesterday! Stay cool and hydrated.",
+                    "like_yesterday": "Today feels just like yesterday! Consistency is key.",
+                    "little_lower_than_yesterday": "Temperatures are a bit lower than yesterday. Enjoy the slight coolness!",
+                    "lower_than_yesterday": "It's cooler than yesterday. Grab a cozy sweater and enjoy the weather!"
+                },
+                "dontmisssunset": "Don't miss the sunset",
+                "sunsetwillbeat": "Sunset will be at"
+            },
+            "pona_ai": {
+                "hello": "Hello!, How can i help you today?",
+                "suggests": {
+                    "surprise_me": "Surprise me",
+                    "howareutoday": "How are you today?"
+                },
+                "connecting": "Still connecting to Pona! AI service..."
+            }
         },
         "overview": {
             "name": "Overview"
@@ -75,7 +225,7 @@
                 "analysis": "Average usage"
             },
             "player": {
-                "name": "Player",
+                "name": "Pona! Music",
                 "dev": "Have a cup of coffee and listen to some great music. Player is coming soon. Come and have fun later! 🎵🍵"
             },
             "setting": {
@@ -108,6 +258,10 @@
                     "title": "Sync with system",
                     "description": "Automatically updates the theme based on your system time zone"
                 },
+                "amoled_black": {
+                    "title": "Amoled Black",
+                    "description": "When enabled, Dark theme uses a pitch-black background, which saves up to 60% on AMOLED screens! 🌙💡"
+                },
                 "time_format": {
                     "title": "Time Format",
                     "auto": {
@@ -121,6 +275,46 @@
                     "24": {
                         "title": "24-hour",
                         "description": "24-hour time format (e.g. 14:00)"
+                    }
+                },
+                "thermometer": {
+                    "title": "Thermometer",
+                    "celsius": "Celsius C°",
+                    "fahrenheit": "Fahrenheit F°"
+                }
+            },
+            "privacy": {
+                "title": "Security & Privacy Vault",
+                "description": "You can manage your privacy yourself or grant some permissions to the app to make the application experience smoother and better. We promise that your security and privacy information will be kept on your device and no data will be sent to the cloud or server unless necessary. [read_privacypolicy]",
+                "read_privacypolicy": "Read on to learn more about our privacy policy",
+                "cookie": {
+                    "title": "This app uses cookies~!",
+                    "description": "Various preference information and/or some sensitive information will be stored by cookies on your device/browser.",
+                    "ifidenied": "I do not allow cookies and delete all my data",
+                    "deletion": {
+                        "description": "If you wish to stop using the Pona! Web Application and revoke all rights, information, and relationships from the Pona! App, we will send you a final email about the information we collect before deleting it and saying goodbye to your use of our application.",
+                        "cancel": "Nevermind",
+                        "confirm": "Delete my data from Pona! App",
+                        "deleting": {
+                            "title": "Hope to see you again 👋",
+                            "placeholder": "Deleting all data from Pona! App including Pona! data on your device/browser."
+                        }
+                    }
+                },
+                "location": {
+                    "title": "Location",
+                    "description": "The app uses your location to show you information about your location, such as temperature, events, seasons, UV, humidity, wind speed and direction, and more.",
+                    "auto": {
+                        "title": "Auto",
+                        "description": "The app can only guess your location from your IP address that accesses the application or from the headers of your HTTP Request Or ask for longitude and latitude from location permissions from your browser, which can be easily inaccurate."
+                    },
+                    "custom": {
+                        "title": "Custom",
+                        "description": "Define your own location, such as a country, city, place or even a candy world!"
+                    },
+                    "surprise": {
+                        "title": "Surprise me!",
+                        "description": "The app will select interesting places or places that are suitable for sitting and working quietly that day."
                     }
                 }
             },

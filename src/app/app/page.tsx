@@ -1,53 +1,11 @@
 'use client'
 import React from 'react'
+import * as motion from 'framer-motion/client'
 import { useLanguageContext } from '@/contexts/languageContext'
 import { useDiscordUserInfo } from '@/contexts/discordUserInfo'
-import {Card, CardHeader, CardBody, Image} from '@nextui-org/react'
-
-import release010 from '@/../public/app/updates/release010.png'
-import release013 from '@/../public/app/updates/release013.png'
-import release014 from '@/../public/app/updates/release014.png'
-import release016 from '@/../public/app/updates/release016.png'
-// import release017 from '@/../public/app/updates/release017.png'
-import Link from 'next/link'
-
-const updates = [
-  // {
-  //   title: 'Pre-Release 0.1.7',
-  //   description: 'Coming soon...',
-  //   date: 'Jan 28, 2025',
-  //   releaseLink: 'https://github.com/ponlponl123/Pona-Discord-Application/releases/tag/pre-release/0.1.7',
-  //   image: release017.src
-  // },
-  {
-    title: 'Pre-Release 0.1.6',
-    description: 'New features, bug fixes, and performance improvements',
-    date: 'Jan 16, 2025',
-    releaseLink: 'https://github.com/ponlponl123/Pona-Discord-Application/releases/tag/pre-release/0.1.6',
-    image: release016.src
-  },
-  {
-    title: 'Pre-Release 0.1.4',
-    description: 'New features, bug fixes, and performance improvements',
-    date: 'Nov 3, 2024',
-    releaseLink: 'https://github.com/ponlponl123/Pona-Discord-Application/releases/tag/pre-release/0.1.4',
-    image: release014.src
-  },
-  {
-    title: 'Pre-Release 0.1.3',
-    description: 'New features, bug fixes, and performance improvements',
-    date: 'Nov 2, 2024',
-    releaseLink: 'https://github.com/ponlponl123/Pona-Discord-Application/releases/tag/pre-release/0.1.3',
-    image: release013.src
-  },
-  {
-    title: 'Pre-Release 0.1.0',
-    description: 'New features, bug fixes, and performance improvements',
-    date: 'Oct 30, 2024',
-    releaseLink: 'https://github.com/ponlponl123/Pona-Discord-Application/releases/tag/pre-release/0.1.0',
-    image: release010.src
-  },
-]
+import { Confetti, Smiley, SmileyWink } from '@phosphor-icons/react/dist/ssr'
+import { Button, Spinner } from '@nextui-org/react'
+import WeatherCard from '@/components/weathercard'
 
 function Page() {
   const { language } = useLanguageContext();
@@ -58,40 +16,97 @@ function Page() {
                 (hours > 9 && hours < 16) ? 'afternoon' :
                 (hours > 9 && hours < 20) ? 'evening' :
                 'night'
+
+  const pona_chat_suggests = [
+    {
+      "title": language.data.app.home.pona_ai.suggests.surprise_me,
+      "icon": Confetti
+    },
+    {
+      "title": language.data.app.home.pona_ai.suggests.howareutoday,
+      "icon": Smiley
+    }
+  ]
+  
   return (
     <main id="app-panel">
       <div className='min-h-36 max-h-96 h-screen w-full absolute'>
         <div className={`absolute w-full min-h-36 h-screen top-0 left-0 apphome-banner ${isNow}`} style={{maxHeight: '512px'}}></div>
       </div>
       <main id="app-workspace" className='relative z-10'>
-        <h1 className='text-2xl mb-4 mt-64'>{language.data.app.home.name}</h1>
-        <h1 className='text-5xl'>👋 {language.data.app.home.title.replace('[user]', (userInfo?.global_name as string))}</h1>
+        <h1 className='text-2xl mb-4 mt-64'>{language.data.app.home.title.replace('[user]', (userInfo?.global_name as string))}</h1>
+        <h1 className='text-5xl'>{
+          (hours > 4 && hours < 10) ? language.data.home.welcome_message.morning :
+          (hours > 9 && hours < 16) ? language.data.home.welcome_message.afternoon :
+          (hours > 15 && hours < 20) ? language.data.home.welcome_message.evening :
+          language.data.home.welcome_message.night
+        }</h1>
         <div className='mt-16'></div>
-        <h1 className='text-4xl'>Get started!</h1>
-        <div className='flex flex-wrap gap-6 p-4 mt-4'>
-          {
-            updates.map((update, index) => {
-              return (
-                <Link key={index} href={update.releaseLink} target='_blank'>
-                  <Card className="py-4" isPressable>
-                    <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
-                      <p className="text-tiny uppercase font-bold">Updates</p>
-                      <small className="text-default-500">{update.date}</small>
-                      <h4 className="font-bold text-large">{update.title}</h4>
-                    </CardHeader>
-                    <CardBody className="overflow-visible py-2">
-                      <Image
-                        alt="Card background"
-                        className="object-cover rounded-xl"
-                        src={update.image}
-                        width={270}
-                      />
-                    </CardBody>
-                  </Card>
-                </Link>
-              )
-            })
-          }
+        <div className='flex max-lg:flex-wrap items-start gap-6 p-4 mt-4 w-full'>
+          <motion.div
+            initial={{ opacity: 0, y: -12, scale: 1.06 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{
+              duration: 0.4,
+              scale: { type: "spring", visualDuration: 0.4, bounce: 0.5 },
+            }}
+            className='w-full lg:max-w-sm'
+          >
+            <WeatherCard />
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, scale: 1.06 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{
+              duration: 0.4,
+              delay: 0.2,
+              scale: { type: "spring", visualDuration: 0.4, bounce: 0.5 },
+            }}
+            className='w-full'
+          >
+            <div className='pona-chat-card w-full min-h-96 p-6 rounded-3xl flex flex-col gap-3 bg-primary-300/5'>
+              <div className='flex gap-4 items-center justify-between'>
+                <div className='flex items-center justify-center gap-4'>
+                  <SmileyWink weight='fill' size={64} />
+                  <div className='flex flex-col gap-2'>
+                    <h1 className='text-3xl'>{language.data.app.home.pona_ai.hello}</h1>
+                    <h3 className='flex flex-row flex-wrap text-sm gap-2 justify-start items-center'>
+                      {
+                        pona_chat_suggests.map((suggest, index) => (
+                          <motion.div key={index}
+                            initial={{ opacity: 0, scale: 1.96 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{
+                              duration: 0.32,
+                              delay: 0.64 + (0.32 * index),
+                              scale: { type: "spring", visualDuration: 0.4, bounce: 0.5 },
+                            }}
+                          >
+                            <Button radius='full' color='primary' size='sm' startContent={<suggest.icon weight='fill' />} className='px-2 gap-1'>{suggest.title}</Button>
+                          </motion.div>
+                        ))
+                      }
+                    </h3>
+                  </div>
+                </div>
+              </div>
+              <div className='flex flex-col gap-4'>
+                <div className='flex flex-col'>
+                  <Spinner color='primary' size='lg' className='mt-20' />
+                  <motion.span
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 0.48 }}
+                    transition={{
+                      duration: 1.6,
+                      delay: 4.8,
+                      scale: { type: "spring", visualDuration: 0.4, bounce: 0.5 },
+                    }}
+                    className='w-full text-center mt-4'
+                  >{language.data.app.home.pona_ai.connecting}</motion.span>
+                </div>
+              </div>
+            </div>
+          </motion.div>
         </div>
       </main>
     </main>
