@@ -5,12 +5,12 @@ import React, { createContext, MouseEventHandler, useContext, useEffect } from "
 
 export type Themes =
   'amoled-dark' | 'dark' | 'light' |
-  'nextui-light' | 'nextui-dark' |
-  'chocolate-light' | 'chocolate-dark' |
-  'latte-light' | 'latte-dark' |
-  'winter-light' | 'winter-dark' |
-  'violet-light' | 'violet-dark' |
-  'cupcake-light' | 'cupcake-dark';
+  'nextui-light' | 'nextui-dark' | 'amoled-nextui-dark' | 
+  'chocolate-light' | 'chocolate-dark' | 'amoled-chocolate-dark' |
+  'latte-light' | 'latte-dark' | 'amoled-latte-dark' |
+  'winter-light' | 'winter-dark' | 'amoled-winter-dark' |
+  'violet-light' | 'violet-dark' | 'amoled-violet-dark' |
+  'cupcake-light' | 'cupcake-dark' | 'amoled-cupcake-dark';
 export interface DynamicTheme {
   sync: boolean;
   isAmoled: boolean;
@@ -19,7 +19,7 @@ export interface DynamicTheme {
   night: Themes;
 }
 export const dark_amoled_themes: Themes[] = [
-  'amoled-dark'
+  'amoled-dark', 'amoled-nextui-dark', 'amoled-chocolate-dark', 'amoled-latte-dark', 'amoled-winter-dark', 'amoled-violet-dark', 'amoled-cupcake-dark'
 ];
 export const dark_themes: Themes[] = [
   'dark', 'nextui-dark', 'chocolate-dark', 'latte-dark', 'winter-dark', 'violet-dark', 'cupcake-dark'

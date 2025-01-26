@@ -30,6 +30,15 @@ const nextui: PonaConfigThemes = {
       ...nextuiColorPalette({name: "playground-background", baseColor: "#18181b"}),
     },
   },
+  'amoled-nextui-dark': {
+    extend: 'dark',
+    colors: {
+      ...colorPalette,
+      ...nextuiColorPalette({name: "foreground", baseColor: "#ECEDEE"}),
+      ...nextuiColorPalette({name: "background", baseColor: "#000000"}),
+      ...nextuiColorPalette({name: "playground-background", baseColor: "#000000"}),
+    },
+  },
 }
 
 export default nextui;

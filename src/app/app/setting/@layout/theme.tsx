@@ -1,5 +1,5 @@
 import { useLanguageContext } from '@/contexts/languageContext';
-import { dark_amoled_themes, dark_themes, DynamicTheme, fetchThemes, ThemeDot, ThemePreview, ThemeUpdate, useThemeContext } from '@/contexts/themeContext';
+import { dark_amoled_themes, dark_themes, DynamicTheme, fetchThemes, ThemeDot, ThemePreview, Themes, ThemeUpdate, useThemeContext } from '@/contexts/themeContext';
 import { Chip } from '@nextui-org/react';
 import { MoonStars, PaintBrush, Tree } from '@phosphor-icons/react/dist/ssr';
 import Switch from '@/components/switch'
@@ -74,7 +74,17 @@ function Theme() {
               description={language.data.app.setting.layout.amoled_black.description}
               default_value={currentTheme.isAmoled}
               onValueChange={(value) => {
-                setCurrentTheme((ref_value)=>{const n_theme={...ref_value,isAmoled:value};ThemeUpdate(n_theme);return n_theme})
+                setCurrentTheme((ref_value)=>{
+                  const n_theme: DynamicTheme = {
+                    ...ref_value,
+                    isAmoled:value,
+                    single: (value && !ref_value.single.startsWith('amoled-') && ref_value.single.endsWith('-dark')) ? `amoled-${ref_value.single}` as Themes : (!value && ref_value.single.startsWith('amoled-') && !ref_value.single.endsWith('-dark')) ? `${ref_value.single}` as Themes : ref_value.single,
+                    day: (value && !ref_value.day.startsWith('amoled-') && ref_value.day.endsWith('-dark')) ? `amoled-${ref_value.day}` as Themes : (!value && ref_value.day.startsWith('amoled-') && ref_value.day.endsWith('-dark')) ? ref_value.day.replace('amoled-','') as Themes : ref_value.day,
+                    night: (value && !ref_value.night.startsWith('amoled-') && ref_value.night.endsWith('-dark')) ? `amoled-${ref_value.night}` as Themes : (!value && ref_value.night.startsWith('amoled-') && ref_value.night.endsWith('-dark')) ? ref_value.night.replace('amoled-','') as Themes : ref_value.night
+                  };
+                  ThemeUpdate(n_theme);
+                  return n_theme
+                })
               }}
             />
           </>

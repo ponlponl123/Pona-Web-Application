@@ -29,6 +29,15 @@ const latte: PonaConfigThemes = {
       ...nextuiColorPalette({name: "playground-background", baseColor: "#001409"}),
     },
   },
+  'amoled-latte-dark': {
+    extend: 'dark',
+    colors: {
+      ...colorPalette,
+      ...nextuiColorPalette({name: "foreground", baseColor: "#ccffe0"}),
+      ...nextuiColorPalette({name: "background", baseColor: "#000000"}),
+      ...nextuiColorPalette({name: "playground-background", baseColor: "#000000"}),
+    },
+  },
 }
 
 export default latte;

@@ -29,6 +29,15 @@ const violet: PonaConfigThemes = {
       ...nextuiColorPalette({name: "playground-background", baseColor: "#292236"}),
     },
   },
+  'amoled-violet-dark': {
+    extend: 'dark',
+    colors: {
+      ...colorPalette,
+      ...nextuiColorPalette({name: "foreground", baseColor: "#DBCBEB"}),
+      ...nextuiColorPalette({name: "background", baseColor: "#000000"}),
+      ...nextuiColorPalette({name: "playground-background", baseColor: "#000000"}),
+    },
+  },
 }
 
 export default violet;

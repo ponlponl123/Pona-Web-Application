@@ -29,6 +29,15 @@ const cupcake: PonaConfigThemes = {
       ...nextuiColorPalette({name: "playground-background", baseColor: "#2c2028"}),
     },
   },
+  'amoled-cupcake-dark': {
+    extend: 'dark',
+    colors: {
+      ...colorPalette,
+      ...nextuiColorPalette({name: "foreground", baseColor: "#e3acbf"}),
+      ...nextuiColorPalette({name: "background", baseColor: "#000000"}),
+      ...nextuiColorPalette({name: "playground-background", baseColor: "#000000"}),
+    },
+  },
 }
 
 export default cupcake;

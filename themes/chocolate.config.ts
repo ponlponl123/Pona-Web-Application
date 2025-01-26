@@ -30,6 +30,15 @@ const chocolate: PonaConfigThemes = {
       ...nextuiColorPalette({name: "playground-background", baseColor: "#20140e"}),
     },
   },
+  'amoled-chocolate-dark': {
+    extend: 'dark',
+    colors: {
+      ...colorPalette,
+      ...nextuiColorPalette({name: "foreground", baseColor: "#c3a28e"}),
+      ...nextuiColorPalette({name: "background", baseColor: "#000000"}),
+      ...nextuiColorPalette({name: "playground-background", baseColor: "#000000"}),
+    },
+  },
 }
 
 export default chocolate;

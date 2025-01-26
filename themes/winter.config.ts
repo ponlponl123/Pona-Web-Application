@@ -29,6 +29,15 @@ const winter: PonaConfigThemes = {
       ...nextuiColorPalette({name: "playground-background", baseColor: "#27343D"}),
     },
   },
+  'amoled-winter-dark': {
+    extend: 'dark',
+    colors: {
+      ...colorPalette,
+      ...nextuiColorPalette({name: "foreground", baseColor: "#eafcff"}),
+      ...nextuiColorPalette({name: "background", baseColor: "#000000"}),
+      ...nextuiColorPalette({name: "playground-background", baseColor: "#000000"}),
+    },
+  },
 }
 
 export default winter;
