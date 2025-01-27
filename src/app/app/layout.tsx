@@ -9,7 +9,10 @@ export const metadata: Metadata = {
     description: "Pona! is a useful discord application and free to use.",
 };
 
-async function Layout({ children }: { children?: React.ReactNode }) {
+async function Layout(props: {
+    children: React.ReactNode;
+    modal: React.ReactNode;
+}) {
     const app_isOk = await handshake();
 
     return (
@@ -17,13 +20,15 @@ async function Layout({ children }: { children?: React.ReactNode }) {
             {
                 app_isOk ? (
                     <Providers>
-                        {children}
+                        {props.children}
                     </Providers>
                     // <App_notReady />
                 ) : (
                     <App_notOk />
                 )
             }
+            {props.modal}
+            <div id="modal-root" />
         </main>
     )
 }
