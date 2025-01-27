@@ -3,9 +3,9 @@ import { motion, Variants } from 'framer-motion'
 import React from 'react'
 
 const variants: Variants = {
-  hidden: { opacity: 0, x: 0, y: 24 },
+  hidden: { opacity: 0, x: 0, y: 12 },
   enter: { opacity: 1, x: 0, y: 0 },
-  exit: { opacity: 0, x: 0, y: -24 }
+  exit: { opacity: 0, x: 0, y: -12 }
 }
 
 export default function Template({ children }: { children: React.ReactNode }) {
@@ -15,7 +15,7 @@ export default function Template({ children }: { children: React.ReactNode }) {
       initial="hidden"
       exit="exit"
       animate="enter"
-      transition={{ type: 'linear', duration: 0.12 }}
+      transition={{ type: 'linear', duration: 0.24 }}
       key="PonaMusic"
     >
       {children}

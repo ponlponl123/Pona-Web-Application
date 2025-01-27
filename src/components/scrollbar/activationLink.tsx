@@ -14,13 +14,15 @@ function ActivationLink({ href, children, icon, onClick, className }: { href?: s
     const button = useRef<HTMLButtonElement | null>(null);
     const [activeSection, setActiveSection] = useState<string | null>(null);
     const [activeSectionGroup, setActiveSectionGroup] = useState<boolean>(false);
-    const isHere = ((isSection ? (activeSectionGroup || activeSection === href?.substring(1)) : pathname === href) || activeSectionGroup);
+    const group = button.current?.parentElement?.parentElement?.classList.contains('group-menu') ? button.current.parentElement.parentElement : undefined;
+    const group_title = button.current?.parentElement?.classList.contains('group-title') ? button.current.parentElement : undefined;
+    // const group_content = button.current?.parentElement?.classList.contains('group-content') ? button.current.parentElement : undefined;
+    const isHere = ((isSection ? (activeSectionGroup || activeSection === href?.substring(1)) : pathname === href) || (group?.classList.contains('active') && group_title));
     const Icon = icon;
     const iconContent = Icon ? <Icon weight={isHere ? 'fill' : 'regular'} /> : null;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const hrefIndex = href ? href.split('/') : [];
 
-    console.log(href, activeSectionGroup)
-    
     const clicked = () => {
         if (isSection) {
             const sectionElement = document.querySelector(`#${href?.substring(1)}`);
@@ -90,31 +92,30 @@ function ActivationLink({ href, children, icon, onClick, className }: { href?: s
             const group = button.current.parentElement.parentElement;
             if ( !group ) return;
             const controlby = group.getAttribute('aria-label');
-            const parentPathname = hrefIndex.map((text, index) => {
-                if ( index === 0 ) return text;
-                else if ( (index === hrefIndex.length - 1) && href.includes('player') && !href.endsWith('player') ) return;
-                else return `/${text.toLowerCase()}`;
-            }).join('').replace(',','');
-            if ( href.includes('player') ) console.log(parentPathname)
+            // const parentPathname = hrefIndex.map((text, index) => {
+            //     if ( index === 0 ) return text;
+            //     else if ( (index === hrefIndex.length - 1) && href.includes('player') && !href.endsWith('player') ) return;
+            //     else return `/${text.toLowerCase()}`;
+            // }).join('').replace(',','');
             if (controlby && pathname.includes(controlby))
             {
                 button.current.parentElement.parentElement.classList.add('active');
-                if ( href === controlby ) setActiveSectionGroup(true);
-                else setActiveSectionGroup(false);
+                // if ( href === controlby ) setActiveSectionGroup(true);
+                // else setActiveSectionGroup(false);
             }
-            else if (pathname.includes(parentPathname))
-            {
-                button.current.parentElement.parentElement.classList.add('active');
-                if ( href === parentPathname ) setActiveSectionGroup(true);
-                else setActiveSectionGroup(false);
-            }
+            // else if (pathname.includes(parentPathname))
+            // {
+                // button.current.parentElement.parentElement.classList.add('active');
+            //     if ( href === parentPathname ) setActiveSectionGroup(true);
+            //     else setActiveSectionGroup(false);
+            // }
             else
             {
                 button.current.parentElement.parentElement.classList.remove('active');
-                if ( href === controlby || href === parentPathname ) setActiveSectionGroup(false);
+                // if ( href === controlby || href === parentPathname ) setActiveSectionGroup(false);
             }
         }
-    }, [isSection, handleScroll, href, hrefIndex, pathname]);
+    }, [isSection, handleScroll, href, hrefIndex, pathname, group]);
 
     return (
         <Button onClick={clicked} ref={button} className={className} color='primary' startContent={iconContent} variant={isHere ? 'flat' : 'light'} size='lg'>

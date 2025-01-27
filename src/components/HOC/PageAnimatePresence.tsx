@@ -15,7 +15,10 @@ const PageAnimatePresence = (props: AnimationPresence) => {
   const pathname = props.customKey || pathnameFromHook
 
   return (
-    <AnimatePresence mode={props.mode || 'wait'} {...props}>
+    <AnimatePresence 
+      mode={props.mode || 'wait'}
+      {...props}
+    >
       <motion.div key={pathname}>
         <FrozenRoute>{props.children}</FrozenRoute>
       </motion.div>

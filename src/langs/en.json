@@ -47,6 +47,7 @@
         "updates": {
             "name": "Updates",
             "latest": "Latest version",
+            "follow": "Follow the updates",
             "subscription": {
                 "title": "Subscribe",
                 "notify": {
@@ -227,8 +228,11 @@
             "player": {
                 "name": "Pona! Music",
                 "dev": "Have a cup of coffee and listen to some great music. Player is coming soon. Come and have fun later! 🎵🍵",
+                "home": {
+                    "title": "Home"
+                },
                 "search": {
-                    "title": "Search for your favorite music 🎵"
+                    "title": "Search"
                 }
             },
             "setting": {
