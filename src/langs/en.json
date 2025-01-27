@@ -226,7 +226,10 @@
             },
             "player": {
                 "name": "Pona! Music",
-                "dev": "Have a cup of coffee and listen to some great music. Player is coming soon. Come and have fun later! 🎵🍵"
+                "dev": "Have a cup of coffee and listen to some great music. Player is coming soon. Come and have fun later! 🎵🍵",
+                "search": {
+                    "title": "Search for your favorite music 🎵"
+                }
             },
             "setting": {
                 "name": "Guild Settings",

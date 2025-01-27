@@ -1,17 +1,17 @@
 import axios, { HttpStatusCode } from "axios";
 import { NextRequest } from "next/server";
 import {
-  fromLatLng,
+  // fromLatLng,
   geocode,
   OutputFormat,
   RequestType,
-  setDefaults
+  // setDefaults
 } from "react-geocode";
 
-interface GeocodeResult {
-  formatted_address: string;
-  address_components: AddressComponent[];
-}
+// interface GeocodeResult {
+//   formatted_address: string;
+//   address_components: AddressComponent[];
+// }
 
 interface AddressComponent {
   long_name: string;
@@ -19,9 +19,9 @@ interface AddressComponent {
   types: string[];
 }
 
-interface GeocodeResponse {
-  results: GeocodeResult[];
-}
+// interface GeocodeResponse {
+//   results: GeocodeResult[];
+// }
 
 export async function GET(
   request: NextRequest,
@@ -89,22 +89,32 @@ export async function GET(
       data: callOpenMeteo.data
     }, {status: HttpStatusCode.Ok});
   } catch (error) {
-    if (error instanceof Error && error.message.includes('ZERO_RESULTS')) {
-      return Response.json({
-        message: 'Ok',
-        source: 'Open-Meteo',
-        city: 'Unknown',
-        state: 'Unknown',
-        country: 'Unknown',
-        address: 'Unknown',
-        error: 'No geocoding results found',
-        data: callOpenMeteo.data
-      }, {status: HttpStatusCode.Ok});
-    }
+    // if (error instanceof Error && error.message.includes('ZERO_RESULTS')) {
+    //   return Response.json({
+    //     message: 'Ok',
+    //     source: 'Open-Meteo',
+    //     city: 'Unknown',
+    //     state: 'Unknown',
+    //     country: 'Unknown',
+    //     address: 'Unknown',
+    //     error: 'No geocoding results found',
+    //     data: callOpenMeteo.data
+    //   }, {status: HttpStatusCode.Ok});
+    // }
     console.error(error);
     return Response.json({
-      message: 'Geocoding request failed',
-      error: error instanceof Error ? error.message : 'Unknown error'
-    }, {status: HttpStatusCode.InternalServerError});
+      message: 'Ok',
+      source: 'Open-Meteo',
+      city: 'Unknown',
+      state: 'Unknown',
+      country: 'Unknown',
+      address: 'Unknown',
+      error: 'No geocoding results found',
+      data: callOpenMeteo.data
+    }, {status: HttpStatusCode.Ok});
+    // return Response.json({
+    //   message: 'Geocoding request failed',
+    //   error: error instanceof Error ? error.message : 'Unknown error'
+    // }, {status: HttpStatusCode.InternalServerError});
   }
 }

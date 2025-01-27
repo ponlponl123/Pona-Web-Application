@@ -1,7 +1,7 @@
 "use client"
 import React from 'react'
 import { UserInfo } from '@/server-side-api/discord/fetchUser'
-import { House, Confetti, Gear, Planet, CaretLeft, Wrench, Playlist, ChartPieSlice, Palette, Bug, StarAndCrescent, PaintBrush, SunHorizon, Keyboard, MusicNoteSimple, Thermometer, ShieldCheckered, MapPinArea } from '@phosphor-icons/react/dist/ssr'
+import { House, Confetti, Gear, Planet, CaretLeft, Wrench, Playlist, ChartPieSlice, Palette, Bug, StarAndCrescent, PaintBrush, SunHorizon, Keyboard, MusicNoteSimple, Thermometer, ShieldCheckered, MapPinArea, MagnifyingGlass } from '@phosphor-icons/react/dist/ssr'
 import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo'
 import { useLanguageContext } from '@/contexts/languageContext'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -92,7 +92,14 @@ function Scrollbar({ userInfo, nav = false, onPushLocation }: { userInfo: UserIn
                                         </div>
                                     </ActivationLink>
                                     <ActivationLink onClick={handlePushLocation} href={`/app/g/${guild.id}`} icon={ChartPieSlice}>{language.data.app.overview.name}</ActivationLink>
-                                    <ActivationLink onClick={handlePushLocation} href={`/app/g/${guild.id}/player`} icon={MusicNoteSimple}>{language.data.app.guilds.player.name}</ActivationLink>
+                                    <div className='group-menu'>
+                                        <div className='group-title'>
+                                            <ActivationLink onClick={handlePushLocation} href={`/app/g/${guild.id}/player`} icon={MusicNoteSimple}>{language.data.app.guilds.player.name}</ActivationLink>
+                                        </div>
+                                        <div className='group-content'>
+                                            <ActivationLink onClick={handlePushLocation} href={`/app/g/${guild.id}/player/search`} icon={MagnifyingGlass}>{language.data.app.guilds.player.search.title}</ActivationLink>
+                                        </div>
+                                    </div>
                                     <ActivationLink onClick={handlePushLocation} href={`/app/g/${guild.id}/setting`} icon={Gear}>{language.data.app.guilds.setting.name}</ActivationLink>
                                 </>
                             )

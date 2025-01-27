@@ -14,10 +14,13 @@ function ActivationLink({ href, children, icon, onClick, className }: { href?: s
     const button = useRef<HTMLButtonElement | null>(null);
     const [activeSection, setActiveSection] = useState<string | null>(null);
     const [activeSectionGroup, setActiveSectionGroup] = useState<boolean>(false);
-    const isHere = isSection ? (activeSectionGroup || activeSection === href?.substring(1)) : pathname === href;
+    const isHere = ((isSection ? (activeSectionGroup || activeSection === href?.substring(1)) : pathname === href) || activeSectionGroup);
     const Icon = icon;
     const iconContent = Icon ? <Icon weight={isHere ? 'fill' : 'regular'} /> : null;
+    const hrefIndex = href ? href.split('/') : [];
 
+    console.log(href, activeSectionGroup)
+    
     const clicked = () => {
         if (isSection) {
             const sectionElement = document.querySelector(`#${href?.substring(1)}`);
@@ -33,7 +36,7 @@ function ActivationLink({ href, children, icon, onClick, className }: { href?: s
         }
         if (onClick) onClick();
         if (!isSection && href) router.push(href);
-    };
+    }
 
     const handleScroll = useCallback(() => {
         if (app.current) {
@@ -79,10 +82,39 @@ function ActivationLink({ href, children, icon, onClick, className }: { href?: s
 
                 return () => {
                     app.current?.removeEventListener('scroll', handleScroll);
-                };
+                }
             }
         }
-    }, [isSection, handleScroll]);
+        else if ( href && button.current?.parentElement && button.current.parentElement?.parentElement && button.current.parentElement.parentElement.classList.contains('group-menu') )
+        {
+            const group = button.current.parentElement.parentElement;
+            if ( !group ) return;
+            const controlby = group.getAttribute('aria-label');
+            const parentPathname = hrefIndex.map((text, index) => {
+                if ( index === 0 ) return text;
+                else if ( (index === hrefIndex.length - 1) && href.includes('player') && !href.endsWith('player') ) return;
+                else return `/${text.toLowerCase()}`;
+            }).join('').replace(',','');
+            if ( href.includes('player') ) console.log(parentPathname)
+            if (controlby && pathname.includes(controlby))
+            {
+                button.current.parentElement.parentElement.classList.add('active');
+                if ( href === controlby ) setActiveSectionGroup(true);
+                else setActiveSectionGroup(false);
+            }
+            else if (pathname.includes(parentPathname))
+            {
+                button.current.parentElement.parentElement.classList.add('active');
+                if ( href === parentPathname ) setActiveSectionGroup(true);
+                else setActiveSectionGroup(false);
+            }
+            else
+            {
+                button.current.parentElement.parentElement.classList.remove('active');
+                if ( href === controlby || href === parentPathname ) setActiveSectionGroup(false);
+            }
+        }
+    }, [isSection, handleScroll, href, hrefIndex, pathname]);
 
     return (
         <Button onClick={clicked} ref={button} className={className} color='primary' startContent={iconContent} variant={isHere ? 'flat' : 'light'} size='lg'>
