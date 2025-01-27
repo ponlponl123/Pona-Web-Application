@@ -2,7 +2,7 @@ import { useLanguageContext } from '@/contexts/languageContext';
 import { useUserSettingContext } from '@/contexts/userSettingContext';
 import { WMO_CODES_ICONS } from '@/data/wmo-code-icons';
 import { Spinner } from '@nextui-org/react';
-import { Icon as IconType, IconProps } from '@phosphor-icons/react';
+import { IconProps } from '@phosphor-icons/react';
 import { ArrowDown, ArrowUp, MapPinArea, Question } from '@phosphor-icons/react/dist/ssr';
 import React from 'react'
 
