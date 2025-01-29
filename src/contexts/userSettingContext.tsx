@@ -42,7 +42,9 @@ export const UserSettingProvider = ({ children }: { children: React.ReactNode })
 
   const setUserSetting = (setting: UserSetting) => {
     const encodedSetting = btoa(JSON.stringify(setting));
-    setCookie('USR', encodedSetting);
+    setCookie('USR', encodedSetting, {
+      expires: new Date(new Date().getTime() + 90 * 24 * 60 * 60 * 1000), // expires in 90 days
+    });
     setUserSettingState(setting);
   };
 

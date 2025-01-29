@@ -6,10 +6,12 @@ import React, { createContext, MouseEventHandler, useContext, useEffect } from "
 export type Themes =
   'amoled-dark' | 'dark' | 'light' |
   'nextui-light' | 'nextui-dark' | 'amoled-nextui-dark' | 
+  'hopeful-light' | 'hopeful-dark' | 'amoled-hopeful-dark' |
   'chocolate-light' | 'chocolate-dark' | 'amoled-chocolate-dark' |
   'latte-light' | 'latte-dark' | 'amoled-latte-dark' |
   'winter-light' | 'winter-dark' | 'amoled-winter-dark' |
   'violet-light' | 'violet-dark' | 'amoled-violet-dark' |
+  'red_rose-light' | 'red_rose-dark' | 'amoled-red_rose-dark' |
   'cupcake-light' | 'cupcake-dark' | 'amoled-cupcake-dark';
 export interface DynamicTheme {
   sync: boolean;
@@ -19,13 +21,13 @@ export interface DynamicTheme {
   night: Themes;
 }
 export const dark_amoled_themes: Themes[] = [
-  'amoled-dark', 'amoled-nextui-dark', 'amoled-chocolate-dark', 'amoled-latte-dark', 'amoled-winter-dark', 'amoled-violet-dark', 'amoled-cupcake-dark'
+  'amoled-dark', 'amoled-nextui-dark', 'amoled-hopeful-dark', 'amoled-chocolate-dark', 'amoled-latte-dark', 'amoled-winter-dark', 'amoled-violet-dark', 'amoled-red_rose-dark', 'amoled-cupcake-dark'
 ];
 export const dark_themes: Themes[] = [
-  'dark', 'nextui-dark', 'chocolate-dark', 'latte-dark', 'winter-dark', 'violet-dark', 'cupcake-dark'
+  'dark', 'nextui-dark', 'hopeful-dark', 'chocolate-dark', 'latte-dark', 'winter-dark', 'violet-dark', 'red_rose-dark', 'cupcake-dark'
 ];
 export const light_themes: Themes[] = [
-  'light', 'nextui-light', 'chocolate-light', 'latte-light', 'winter-light', 'violet-light', 'cupcake-light'
+  'light', 'nextui-light', 'hopeful-light', 'chocolate-light', 'latte-light', 'winter-light', 'violet-light', 'red_rose-light', 'cupcake-light'
 ];
 export const themes: Themes[] = [
   ...light_themes,
@@ -41,7 +43,7 @@ export const defaultDynamicTheme: DynamicTheme = {sync: true, isAmoled: false, s
 
 const ThemeContext = createContext<{
   theme: DynamicTheme;
-  setTheme: (languageKey: DynamicTheme) => void;
+  setTheme: (theme: DynamicTheme) => void;
 }>({
   theme: defaultDynamicTheme,
   setTheme: () => {},
@@ -87,9 +89,9 @@ export const useThemeContext = () => useContext(ThemeContext);
 
 export default ThemeContextProvider;
 
-export function ThemeDot({theme, active, onClick}: {theme: Themes, active?: boolean, onClick?: MouseEventHandler<HTMLButtonElement>}) {
+export function ThemeDot({theme, active, onClick, className}: {theme: Themes, active?: boolean, onClick?: MouseEventHandler<HTMLButtonElement>, className?: string}) {
   return (
-    <Tooltip className="capitalize z-10" color="default" placement="bottom" content={theme} data-theme={theme}>
+    <Tooltip className={`capitalize z-10 ${className}`} color="default" placement="bottom" content={theme} data-theme={theme}>
       <button onClick={onClick} title={theme} data-theme={theme} className={`theme-dot interactive ${theme} ${active ? 'active': ''}`}><div><div></div><div></div></div></button>
     </Tooltip>
   )

@@ -228,6 +228,17 @@
             "player": {
                 "name": "Pona! Music",
                 "dev": "Have a cup of coffee and listen to some great music. Player is coming soon. Come and have fun later! 🎵🍵",
+                "socket": {
+                    "connected": {
+
+                    },
+                    "connecting": {
+                        "title": ""
+                    },
+                    "failed": {
+
+                    }
+                },
                 "home": {
                     "title": "Home"
                 },

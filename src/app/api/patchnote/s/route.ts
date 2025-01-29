@@ -11,7 +11,9 @@ export async function GET() {
     available_notes: tags.map(t => {
       return {
         tag: t,
-        versions: fs.readdirSync(`${patch_notes_path}/${t}`)
+        versions: fs.readdirSync(`${patch_notes_path}/${t}`, {
+          withFileTypes: false
+        }).reverse()
       }
     })
   }, {status: HttpStatusCode.Ok})

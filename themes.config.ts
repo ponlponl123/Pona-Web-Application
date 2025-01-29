@@ -8,6 +8,8 @@ import winter from "./themes/winter.config";
 import violet from "./themes/violet.config";
 import cupcake from "./themes/cupcake.config";
 import nextui from "./themes/nextui.config";
+import hopeful from "./themes/hopeful.config";
+import redrose from "./themes/redrose.config";
 
 export type PonaThemeColors = ThemeColors & BaseColors & {
   "playground-background": NextUIPalette;
@@ -28,7 +30,9 @@ const themes: PonaConfigThemes = {
   ...winter,
   ...violet,
   ...cupcake,
-  ...nextui
+  ...nextui,
+  ...hopeful,
+  ...redrose
 }
 
 export default themes;

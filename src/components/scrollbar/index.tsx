@@ -81,7 +81,8 @@ function Scrollbar({ userInfo, nav = false, onPushLocation }: { userInfo: UserIn
                                     <ActivationLink onClick={handlePushLocation} href='/app' icon={House}>{language.data.app.home.name}</ActivationLink>
                                     <ActivationLink onClick={handlePushLocation} href='/app/guilds' icon={Confetti}>{language.data.app.guilds.name}</ActivationLink>
                                     <ActivationLink onClick={handlePushLocation} href='/app/playlists' icon={Playlist}>{language.data.app.playlist.name}</ActivationLink>
-                                    <ActivationLink onClick={handlePushLocation} href='/app/updates' icon={Wrench}>{language.data.app.updates.name}</ActivationLink>
+                                    <ActivationLink onClick={handlePushLocation} href='/app/updates' icon={Wrench}
+                                        isActive={pathname.includes('/app/updates')}>{language.data.app.updates.name}</ActivationLink>
                                 </>
                             ) : guild && (
                                 <>
