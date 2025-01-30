@@ -33,10 +33,12 @@ const nextConfig: NextConfig = {
     },
   },
   async rewrites() {
+    const host = process.env.PONA_APPLICATION_ENDPOINT;
+    const port = process.env.PONA_APPLICATION_ENDPOINT_PORT;
     return [
       {
         source: '/socket.io/:path*',
-        destination: `http://localhost:3006/socket.io//:path*`
+        destination: `${host}:${port}/socket.io//:path*`
       }
     ]
   },
