@@ -4,7 +4,7 @@ import Providers from './providers'
 function PlayerLayout({ children }: { children: React.ReactNode }) {
   return (
     <Providers>
-        {children}
+      {children}
     </Providers>
   )
 }

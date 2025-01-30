@@ -32,6 +32,14 @@ const nextConfig: NextConfig = {
       },
     },
   },
+  async rewrites() {
+    return [
+      {
+        source: '/socket.io/:path*',
+        destination: `http://localhost:3006/socket.io//:path*`
+      }
+    ]
+  },
   reactStrictMode: false,
   compiler: {
     styledComponents: true,
