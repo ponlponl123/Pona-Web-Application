@@ -1,7 +1,7 @@
 "use client"
 import React from 'react'
 import { UserInfo } from '@/server-side-api/discord/fetchUser'
-import { House, Confetti, Gear, Planet, CaretLeft, Wrench, Playlist, ChartPieSlice, Palette, Bug, StarAndCrescent, PaintBrush, SunHorizon, Keyboard, MusicNoteSimple, Thermometer, ShieldCheckered, MapPinArea, MagnifyingGlass, HouseSimple } from '@phosphor-icons/react/dist/ssr'
+import { House, Confetti, Gear, Planet, CaretLeft, Wrench, Playlist, ChartPieSlice, Palette, Bug, StarAndCrescent, PaintBrush, SunHorizon, Keyboard, MusicNoteSimple, Thermometer, ShieldCheckered, MapPinArea, MagnifyingGlass, HouseSimple, Sparkle } from '@phosphor-icons/react/dist/ssr'
 import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo'
 import { useLanguageContext } from '@/contexts/languageContext'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -80,6 +80,7 @@ function Scrollbar({ userInfo, nav = false, onPushLocation }: { userInfo: UserIn
                                 <>
                                     <ActivationLink onClick={handlePushLocation} href='/app' icon={House}>{language.data.app.home.name}</ActivationLink>
                                     <ActivationLink onClick={handlePushLocation} href='/app/guilds' icon={Confetti}>{language.data.app.guilds.name}</ActivationLink>
+                                    <ActivationLink onClick={handlePushLocation} href='/app/chat' icon={Sparkle}>{language.data.app.chat.name}</ActivationLink>
                                     <ActivationLink onClick={handlePushLocation} href='/app/playlists' icon={Playlist}>{language.data.app.playlist.name}</ActivationLink>
                                     <ActivationLink onClick={handlePushLocation} href='/app/updates' icon={Wrench}
                                         isActive={pathname.includes('/app/updates')}>{language.data.app.updates.name}</ActivationLink>

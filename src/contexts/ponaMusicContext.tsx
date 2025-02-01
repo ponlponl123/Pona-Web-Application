@@ -1,33 +1,27 @@
-"use client";
-import { Track } from '@/interfaces/ponaPlayer';
-import React, { createContext, useContext } from 'react';
-import { Manager, Socket } from 'socket.io-client';
-
-const ws_manager = new Manager(`${window.location.origin}`, {
-  protocols: 'http',
-  reconnectionDelayMax: 10000
-});
+"use client"
+import React, { createContext, Dispatch, SetStateAction, useContext, useState } from 'react'
+import { Manager, Socket } from 'socket.io-client'
+import { Track } from '@/interfaces/ponaPlayer'
+import { ws_manager } from '@/app/app/g/[guildId]/player/socket';
+import { useDiscordGuildInfo } from './discordGuildInfo';
 
 const PonaMusicContext = createContext<{
   socket: Socket | null;
-  setSocket: React.Dispatch<React.SetStateAction<Socket | null>>;
 
   manager: Manager;
-  setManager: React.Dispatch<React.SetStateAction<Manager>>;
+  setManager: Dispatch<SetStateAction<Manager>>;
 
   isConnected: boolean;
-  setIsConnected: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsConnected: Dispatch<SetStateAction<boolean>>;
 
   currentTrack: Track | null;
-  setCurrentTrack: React.Dispatch<React.SetStateAction<Track | null>>;
+  setCurrentTrack: Dispatch<SetStateAction<Track | null>>;
 
   transport: string;
-  setTransport: React.Dispatch<React.SetStateAction<string>>;
-  
+  setTransport: Dispatch<SetStateAction<string>>;
 }>({
   socket: null,
-  setSocket: () => {},
-  
+
   manager: ws_manager,
   setManager: () => {},
 
@@ -42,15 +36,56 @@ const PonaMusicContext = createContext<{
 });
 
 export const PonaMusicProvider = ({ children }: { children: React.ReactNode }) => {
-  const [ socket, setSocket ] = React.useState<Socket | null>(null);
-  const [ manager, setManager ] = React.useState<Manager>(ws_manager);
-  const [ isConnected, setIsConnected ] = React.useState<boolean>(false);
-  const [ currentTrack, setCurrentTrack ] = React.useState<Track | null>(null);
-  const [ transport, setTransport ] = React.useState("N/A");
+  const { guild } = useDiscordGuildInfo();
+
+  const [socket, setSocket] = useState<Socket | null>(null);
+  const [manager, setManager] = useState<Manager>(ws_manager);
+  const [isConnected, setIsConnected] = useState<boolean>(false);
+  const [currentTrack, setCurrentTrack] = useState<Track | null>(null);
+  const [transport, setTransport] = useState("N/A");
+
+  React.useEffect(() => {
+    if ( guild?.id ) {
+      const iosocket = manager.socket(`/guilds/${guild.id}`);
+
+      if ( !isConnected )
+      {
+        if ( socket && socket.connected ) {
+          setIsConnected(true);
+          return;
+        }
+        let retryCount = 0;
+        const maxRetries = 5;
+
+        const connectSocket = () => {
+          if (retryCount >= maxRetries) {
+            console.error('Max retry attempts reached. Could not connect to socket.');
+            return;
+          }
+          retryCount++;
+          iosocket.connect();
+          iosocket.on('connect', () => {
+            setIsConnected(true);
+          }).once('connect_error', (error) => {
+            console.error('Socket connection error:', error);
+            setTimeout(connectSocket, 5000);
+          });
+        };
+        connectSocket();
+        setSocket(iosocket);
+      }
+    }
+    return () => {
+      if (socket && !window.location.pathname.includes('player')) {
+        socket.off();
+        socket.close();
+      }
+    }
+  }, [guild, manager, isConnected, socket])
 
   return (
     <PonaMusicContext.Provider value={{
-      socket, setSocket,
+      socket: socket,
       manager, setManager,
       isConnected, setIsConnected,
       currentTrack, setCurrentTrack,

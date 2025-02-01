@@ -29,6 +29,7 @@
     "next": "^15.0.2",
     "nextjs-toploader": "^3.7.15",
     "react": "^19.0.0-rc.1",
+    "react-countup": "^6.5.3",
     "react-dom": "^19.0.0-rc.1",
     "react-geocode": "^1.0.0-alpha.1",
     "react-leaflet": "^5.0.0-rc.2",

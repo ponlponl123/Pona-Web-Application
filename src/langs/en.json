@@ -76,6 +76,9 @@
                 "description": "Unable to get list of patch notes"
             }
         },
+        "chat": {
+            "name": "Pona! Chat"
+        },
         "home": {
             "name": "Home",
             "title": "Welcome back, [user]!",
@@ -233,10 +236,13 @@
 
                     },
                     "connecting": {
-                        "title": ""
+                        "title": "Trying to connect to socket service..",
+                        "chip": "Connecting...",
+                        "sec": "s"
                     },
                     "failed": {
-
+                        "title": "Connection timed out.",
+                        "description": "Please try again later"
                     }
                 },
                 "home": {
