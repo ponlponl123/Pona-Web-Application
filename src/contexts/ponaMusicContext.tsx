@@ -4,6 +4,7 @@ import { Manager, Socket } from 'socket.io-client'
 import { Track } from '@/interfaces/ponaPlayer'
 import { ws_manager } from '@/app/app/g/[guildId]/player/socket';
 import { useDiscordGuildInfo } from './discordGuildInfo';
+import { getCookie } from 'cookies-next';
 
 const PonaMusicContext = createContext<{
   socket: Socket | null;
@@ -44,9 +45,17 @@ export const PonaMusicProvider = ({ children }: { children: React.ReactNode }) =
   const [currentTrack, setCurrentTrack] = useState<Track | null>(null);
   const [transport, setTransport] = useState("N/A");
 
+  const oauth_type = getCookie('LOGIN_');
+  const oauth_token = getCookie('LOGIN_');
+
   React.useEffect(() => {
     if ( guild?.id ) {
-      const iosocket = manager.socket(`/guilds/${guild.id}`);
+      const iosocket = manager.socket(`/guilds/${guild.id}`, {
+        auth: {
+          type: String(oauth_type),
+          key: String(oauth_token)
+        }
+      });
 
       if ( !isConnected )
       {
@@ -81,7 +90,7 @@ export const PonaMusicProvider = ({ children }: { children: React.ReactNode }) =
         socket.close();
       }
     }
-  }, [guild, manager, isConnected, socket])
+  }, [guild, manager, isConnected, socket, oauth_type, oauth_token])
 
   return (
     <PonaMusicContext.Provider value={{
