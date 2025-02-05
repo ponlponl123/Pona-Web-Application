@@ -1,7 +1,7 @@
 "use client"
 import React, { createContext, Dispatch, SetStateAction, useContext, useState } from 'react'
 import { Manager, Socket } from 'socket.io-client'
-import { Track } from '@/interfaces/ponaPlayer'
+import { HTTP_PonaCommonStateWithTracks } from '@/interfaces/ponaPlayer'
 import { ws_manager } from '@/app/app/g/[guildId]/player/socket';
 import { useDiscordGuildInfo } from './discordGuildInfo';
 import { getCookie } from 'cookies-next';
@@ -15,8 +15,7 @@ const PonaMusicContext = createContext<{
   isConnected: boolean;
   setIsConnected: Dispatch<SetStateAction<boolean>>;
 
-  currentTrack: Track | null;
-  setCurrentTrack: Dispatch<SetStateAction<Track | null>>;
+  ponaCommonState: HTTP_PonaCommonStateWithTracks | null;
 
   transport: string;
   setTransport: Dispatch<SetStateAction<string>>;
@@ -29,8 +28,7 @@ const PonaMusicContext = createContext<{
   isConnected: false,
   setIsConnected: () => {},
 
-  currentTrack: null,
-  setCurrentTrack: () => {},
+  ponaCommonState: null,
 
   transport: "N/A",
   setTransport: () => {}
@@ -42,7 +40,7 @@ export const PonaMusicProvider = ({ children }: { children: React.ReactNode }) =
   const [socket, setSocket] = useState<Socket | null>(null);
   const [manager, setManager] = useState<Manager>(ws_manager);
   const [isConnected, setIsConnected] = useState<boolean>(false);
-  const [currentTrack, setCurrentTrack] = useState<Track | null>(null);
+  const [ponaCommonState, setPonaCommonState] = useState<HTTP_PonaCommonStateWithTracks | null>(null);
   const [transport, setTransport] = useState("N/A");
 
   const oauth_type = getCookie('LOGIN_TYPE_');
@@ -73,6 +71,10 @@ export const PonaMusicProvider = ({ children }: { children: React.ReactNode }) =
           }
           retryCount++;
           iosocket.connect();
+          iosocket.on('handshake', (ponaState: HTTP_PonaCommonStateWithTracks | null) => {
+            setPonaCommonState(ponaState);
+            console.log('ponaState', ponaState);
+          });
           iosocket.on('connect', () => {
             setIsConnected(true);
           }).once('connect_error', (error) => {
@@ -97,7 +99,7 @@ export const PonaMusicProvider = ({ children }: { children: React.ReactNode }) =
       socket: socket,
       manager, setManager,
       isConnected, setIsConnected,
-      currentTrack, setCurrentTrack,
+      ponaCommonState,
       transport, setTransport
     }}>
       {children}

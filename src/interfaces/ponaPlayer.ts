@@ -28,7 +28,7 @@ export interface Track {
   "voiceChannel": VoiceBasedChannel,
   "current": {
       "track": string,
-      "timestamp": 1737987673770,
+      "timestamp": number,
       "uniqueId": string,
       "title": string,
       "identifier": string,
@@ -43,4 +43,32 @@ export interface Track {
       "thumbnail": string,
       "requester": GuildMember
   }
+}
+
+export interface UnresolvedTrack extends Partial<Track> {
+	[key: string]: unknown;
+	title: string;
+	author?: string;
+	duration?: number;
+	resolve(): Promise<void>;
+}
+
+export interface HTTP_PonaRepeatState {
+	track: boolean;
+	queue: boolean;
+	dynamic: boolean;
+}
+
+export interface HTTP_PonaCommonState {
+	repeat: HTTP_PonaRepeatState;
+	volume: number;
+	paused: boolean;
+	isAutoplay: boolean;
+	voiceChannel: string;
+}
+
+export interface HTTP_PonaCommonStateWithTracks {
+	pona: HTTP_PonaCommonState;
+	current: Track | UnresolvedTrack | null;
+	queue: Array<Track | UnresolvedTrack>;
 }

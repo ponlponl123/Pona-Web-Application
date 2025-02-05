@@ -3,6 +3,8 @@
     "label": "English",
     "country": "us",
     "extensions": {
+        "new": "New",
+        "beta": "Beta",
         "experiment": "Experiment",
         "comingsoon": "Coming Soon"
     },
@@ -305,6 +307,21 @@
                     "title": "Thermometer",
                     "celsius": "Celsius C°",
                     "fahrenheit": "Fahrenheit F°"
+                },
+                "animation": {
+                    "title": "Animation",
+                    "smooth": {
+                        "title": "Smooth~",
+                        "description": "Legacy Motion/Animation"
+                    },
+                    "30 fps": {
+                        "title": "30 FPS",
+                        "description": "Rendering at 30 frames per second may use less device resources and save a little battery, while still maintaining smooth motion."
+                    },
+                    "none": {
+                        "title": "None",
+                        "description": "Disabling Motion/Animation may use less device resources and save battery, but will not have any smoothness of motion."
+                    }
                 }
             },
             "privacy": {

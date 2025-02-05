@@ -5,17 +5,20 @@ import { LatLngExpression } from 'leaflet';
 
 export type TimeFormat = 'auto' | 12 | 24;
 export type Thermometer = 'c' | 'f';
+export type Animation = boolean | '30 fps';
 export type Location = 'auto' | 'surprise' | LatLngExpression;
 export interface UserSetting {
   // Layout Settings
   timeformat?: TimeFormat;
   thermometer?: Thermometer;
+  animation?: Animation;
   // Privacy Settings
   location?: Location;
 }
 export const defaultUserSetting: UserSetting = {
   timeformat: 'auto',
   thermometer: 'c',
+  animation: true,
   location: 'auto',
 }
 

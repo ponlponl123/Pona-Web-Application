@@ -1,14 +1,14 @@
 "use client"
 import React from 'react'
 import { UserInfo } from '@/server-side-api/discord/fetchUser'
-import { House, Confetti, Gear, Planet, CaretLeft, Wrench, Playlist, ChartPieSlice, Palette, Bug, StarAndCrescent, PaintBrush, SunHorizon, Keyboard, MusicNoteSimple, Thermometer, ShieldCheckered, MapPinArea, MagnifyingGlass, HouseSimple, Sparkle } from '@phosphor-icons/react/dist/ssr'
+import { House, Confetti, Gear, Planet, CaretLeft, Wrench, Playlist, ChartPieSlice, Palette, Bug, StarAndCrescent, PaintBrush, SunHorizon, Keyboard, MusicNoteSimple, Thermometer, ShieldCheckered, MapPinArea, MagnifyingGlass, HouseSimple, Sparkle, PersonSimpleRun } from '@phosphor-icons/react/dist/ssr'
 import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo'
 import { useLanguageContext } from '@/contexts/languageContext'
 import { AnimatePresence, motion } from 'framer-motion'
 import ActivationLink from './activationLink'
 import { usePathname, useRouter } from 'next/navigation'
 import FrozenRoute from '../HOC/FrozenRoute'
-import { Avatar } from '@nextui-org/react'
+import { Avatar, Chip } from '@nextui-org/react'
 
 const variants = {
     hidden: { opacity: 0, x: -12, y: 0 },
@@ -63,6 +63,7 @@ function Scrollbar({ userInfo, nav = false, onPushLocation }: { userInfo: UserIn
                                             <ActivationLink onClick={handlePushLocation} href={`#layout-theme`} icon={PaintBrush}>{language.data.app.setting.layout.theme.title}</ActivationLink>
                                             <ActivationLink onClick={handlePushLocation} href={`#layout-timeformat`} icon={SunHorizon}>{language.data.app.setting.layout.time_format.title}</ActivationLink>
                                             <ActivationLink onClick={handlePushLocation} href={`#layout-thermometer`} icon={Thermometer}>{language.data.app.setting.layout.thermometer.title}</ActivationLink>
+                                            <ActivationLink onClick={handlePushLocation} href={`#layout-animations`} icon={PersonSimpleRun}>{language.data.app.setting.layout.animation.title}</ActivationLink>
                                         </div>
                                     </div>
                                     <div className='group-menu'>
@@ -80,10 +81,10 @@ function Scrollbar({ userInfo, nav = false, onPushLocation }: { userInfo: UserIn
                                 <>
                                     <ActivationLink onClick={handlePushLocation} href='/app' icon={House}>{language.data.app.home.name}</ActivationLink>
                                     <ActivationLink onClick={handlePushLocation} href='/app/guilds' icon={Confetti}>{language.data.app.guilds.name}</ActivationLink>
-                                    <ActivationLink onClick={handlePushLocation} href='/app/chat' icon={Sparkle}>{language.data.app.chat.name}</ActivationLink>
+                                    <ActivationLink onClick={handlePushLocation} href='/app/chat' icon={Sparkle}>{language.data.app.chat.name} <Chip size='sm'>{language.data.extensions.comingsoon}</Chip></ActivationLink>
                                     <ActivationLink onClick={handlePushLocation} href='/app/playlists' icon={Playlist}>{language.data.app.playlist.name}</ActivationLink>
                                     <ActivationLink onClick={handlePushLocation} href='/app/updates' icon={Wrench}
-                                        isActive={pathname.includes('/app/updates')}>{language.data.app.updates.name}</ActivationLink>
+                                        isActive={pathname.includes('/app/updates')}>{language.data.app.updates.name} <Chip color='primary' size='sm'>{language.data.extensions.new}</Chip></ActivationLink>
                                 </>
                             ) : guild && (
                                 <>
@@ -96,7 +97,7 @@ function Scrollbar({ userInfo, nav = false, onPushLocation }: { userInfo: UserIn
                                     <ActivationLink onClick={handlePushLocation} href={`/app/g/${guild.id}`} icon={ChartPieSlice}>{language.data.app.overview.name}</ActivationLink>
                                     <div className='group-menu' aria-label={`/app/g/${guild.id}/player`}>
                                         <div className='group-title'>
-                                            <ActivationLink onClick={handlePushLocation} href={`/app/g/${guild.id}/player`} icon={MusicNoteSimple}>{language.data.app.guilds.player.name}</ActivationLink>
+                                            <ActivationLink onClick={handlePushLocation} href={`/app/g/${guild.id}/player`} icon={MusicNoteSimple}>{language.data.app.guilds.player.name} <Chip size='sm'>{language.data.extensions.beta}</Chip></ActivationLink>
                                         </div>
                                         <div className='group-content'>
                                             <ActivationLink onClick={handlePushLocation} href={`/app/g/${guild.id}/player`} icon={HouseSimple}>{language.data.app.guilds.player.home.title}</ActivationLink>

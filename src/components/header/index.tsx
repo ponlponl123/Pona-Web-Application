@@ -19,7 +19,7 @@ function UserAccountAction({className, minimize = false}: {className?: string, m
         userInfo &&
         <Dropdown placement="bottom-start">
             <DropdownTrigger>
-                <button type='button' className={`${className} outline-none ${!minimize ? 'bg-white bg-opacity-10 backdrop-blur-md rounded-2xl px-3 py-2 flex gap-3 items-center justify-center w-fit' : ''}`}>
+                <button type='button' className={`${className} outline-none ${!minimize ? 'backdrop-blur-md rounded-2xl px-3 py-2 flex gap-3 items-center justify-center w-fit' : ''}`}>
                     <Avatar className='h-8 w-8' src={`https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}.png`} />
                     {
                         !minimize &&

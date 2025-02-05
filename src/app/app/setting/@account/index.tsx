@@ -12,14 +12,13 @@ function Account() {
     <section className='w-full min-h-full my-6 flex flex-col gap-6 pb-12' id='account' data-section>
       <h1 className='text-5xl flex items-center gap-4 pt-4'><StarAndCrescent weight='fill' />{userInfo ? userInfo.global_name : language.data.app.setting.account.title}</h1>
       <div>
-        <div className='max-md:h-48 max-md:overflow-hidden rounded-3xl'>
+        <div className='rounded-3xl'>
           <Image
             isBlurred
             alt={`${userInfo && userInfo.global_name} Banner`}
             src={userInfo ? `https://cdn.discordapp.com/banners/${userInfo.id}/${userInfo.banner}.png?size=1024` : ''}
             className='object-cover object-center bg-primary'
             width="100%"
-            height={280}
           />
         </div>
         <div className='flex gap-6 z-10 relative px-12 max-md:px-6'>

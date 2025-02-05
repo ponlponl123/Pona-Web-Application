@@ -71,13 +71,16 @@ export function ThemeContextProvider ({children}: {children: React.ReactNode}) {
   const cookieTheme = getCookie('theme');
   const getTheme: DynamicTheme = cookieTheme ? (JSON.parse(String(cookieTheme)) as DynamicTheme) : defaultDynamicTheme;
   const [theme, setThemeState] = React.useState<DynamicTheme>(getTheme);
+
+  useEffect(() => {
+    ThemeUpdate(theme);
+  }, [theme]);
+
   const setTheme = (theme: DynamicTheme) => {
     ThemeUpdate(theme);
     setThemeState(theme);
   }
-  useEffect(() => {
-    ThemeUpdate(theme);
-  }, [theme])
+
   return (
     <ThemeContext.Provider value={{theme, setTheme}}>
       {children}

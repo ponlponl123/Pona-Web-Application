@@ -4,6 +4,7 @@ import React from 'react'
 import Theme from './theme';
 import TimeFormat from './timeformat';
 import Thermometer from './thermometer';
+import Animations from './animations';
 
 function Layout() {
   const { language } = useLanguageContext();
@@ -13,6 +14,7 @@ function Layout() {
       <Theme />
       <TimeFormat />
       <Thermometer />
+      <Animations />
     </section>
   )
 }
