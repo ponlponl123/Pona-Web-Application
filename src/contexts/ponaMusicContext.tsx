@@ -45,12 +45,12 @@ export const PonaMusicProvider = ({ children }: { children: React.ReactNode }) =
   const [currentTrack, setCurrentTrack] = useState<Track | null>(null);
   const [transport, setTransport] = useState("N/A");
 
-  const oauth_type = getCookie('LOGIN_');
+  const oauth_type = getCookie('LOGIN_TYPE_');
   const oauth_token = getCookie('LOGIN_');
 
   React.useEffect(() => {
     if ( guild?.id ) {
-      const iosocket = manager.socket(`/guilds/${guild.id}`, {
+      const iosocket = manager.socket(`/guild/${guild.id}`, {
         auth: {
           type: String(oauth_type),
           key: String(oauth_token)
