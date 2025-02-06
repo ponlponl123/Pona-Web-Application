@@ -8,6 +8,24 @@ export interface Band {
 export type PlayerState = "CONNECTED" | "CONNECTING" | "DISCONNECTED" | "DISCONNECTING" | "DESTROYING";
 
 export interface Track {
+  "track": string,
+  "timestamp": number,
+  "uniqueId": string,
+  "title": string,
+  "identifier": string,
+  "author": string,
+  "duration": number,
+  "isrc": string,
+  "isSeekable": true,
+  "isStream": false,
+  "uri": string,
+  "artworkUrl": string,
+  "sourceName": string,
+  "thumbnail": string,
+  "requester": GuildMember
+}
+
+export interface HTTP_PonaFetchState {
   "message": string,
   "state": PlayerState,
   "volume": number,
@@ -26,23 +44,7 @@ export interface Track {
   },
   "textChannel": TextBasedChannel,
   "voiceChannel": VoiceBasedChannel,
-  "current": {
-      "track": string,
-      "timestamp": number,
-      "uniqueId": string,
-      "title": string,
-      "identifier": string,
-      "author": string,
-      "duration": number,
-      "isrc": string,
-      "isSeekable": true,
-      "isStream": false,
-      "uri": string,
-      "artworkUrl": string,
-      "sourceName": string,
-      "thumbnail": string,
-      "requester": GuildMember
-  }
+  "current": Track
 }
 
 export interface UnresolvedTrack extends Partial<Track> {

@@ -247,6 +247,16 @@
                         "description": "Please try again later"
                     }
                 },
+                "ponaIsNotInVC": {
+                    "select": {
+                        "title": "Select voice channel",
+                        "description": "This will only show the voice channels that Pona! sees and that you are currently using.",
+                        "notfound": {
+                            "title": "No voice channels found",
+                            "description": "You need to join a voice channel to play music."
+                        }
+                    }
+                },
                 "home": {
                     "title": "Home"
                 },

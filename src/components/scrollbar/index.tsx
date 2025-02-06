@@ -9,6 +9,7 @@ import ActivationLink from './activationLink'
 import { usePathname, useRouter } from 'next/navigation'
 import FrozenRoute from '../HOC/FrozenRoute'
 import { Avatar, Chip } from '@nextui-org/react'
+import { useGlobalContext } from '@/contexts/globalContext'
 
 const variants = {
     hidden: { opacity: 0, x: -12, y: 0 },
@@ -22,6 +23,7 @@ function Scrollbar({ userInfo, nav = false, onPushLocation }: { userInfo: UserIn
     const isOwner = userInfo.id === ownerId;
     const { language } = useLanguageContext();
     const { guild } = useDiscordGuildInfo();
+    const { ponaCommonState } = useGlobalContext();
     const inGuild = pathname.startsWith('/app/g/');
     const inSetting = pathname.startsWith('/app/setting');
     const router = useRouter();
@@ -95,15 +97,19 @@ function Scrollbar({ userInfo, nav = false, onPushLocation }: { userInfo: UserIn
                                         </div>
                                     </ActivationLink>
                                     <ActivationLink onClick={handlePushLocation} href={`/app/g/${guild.id}`} icon={ChartPieSlice}>{language.data.app.overview.name}</ActivationLink>
-                                    <div className='group-menu' aria-label={`/app/g/${guild.id}/player`}>
-                                        <div className='group-title'>
-                                            <ActivationLink onClick={handlePushLocation} href={`/app/g/${guild.id}/player`} icon={MusicNoteSimple}>{language.data.app.guilds.player.name} <Chip size='sm'>{language.data.extensions.beta}</Chip></ActivationLink>
+                                    {
+                                        !(ponaCommonState && ponaCommonState.pona.voiceChannel) ?
+                                        <ActivationLink onClick={handlePushLocation} href={`/app/g/${guild.id}/player`} icon={MusicNoteSimple}>{language.data.app.guilds.player.name}</ActivationLink> :
+                                        <div className='group-menu' aria-label={`/app/g/${guild.id}/player`}>
+                                            <div className='group-title'>
+                                                <ActivationLink onClick={handlePushLocation} href={`/app/g/${guild.id}/player`} icon={MusicNoteSimple}>{language.data.app.guilds.player.name} <Chip size='sm'>{language.data.extensions.beta}</Chip></ActivationLink>
+                                            </div>
+                                            <div className='group-content'>
+                                                <ActivationLink onClick={handlePushLocation} href={`/app/g/${guild.id}/player`} icon={HouseSimple}>{language.data.app.guilds.player.home.title}</ActivationLink>
+                                                <ActivationLink onClick={handlePushLocation} href={`/app/g/${guild.id}/player/search`} icon={MagnifyingGlass}>{language.data.app.guilds.player.search.title}</ActivationLink>
+                                            </div>
                                         </div>
-                                        <div className='group-content'>
-                                            <ActivationLink onClick={handlePushLocation} href={`/app/g/${guild.id}/player`} icon={HouseSimple}>{language.data.app.guilds.player.home.title}</ActivationLink>
-                                            <ActivationLink onClick={handlePushLocation} href={`/app/g/${guild.id}/player/search`} icon={MagnifyingGlass}>{language.data.app.guilds.player.search.title}</ActivationLink>
-                                        </div>
-                                    </div>
+                                    }
                                     <ActivationLink onClick={handlePushLocation} href={`/app/g/${guild.id}/setting`} icon={Gear}>{language.data.app.guilds.setting.name}</ActivationLink>
                                 </>
                             )

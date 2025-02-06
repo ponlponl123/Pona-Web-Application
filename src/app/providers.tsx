@@ -1,6 +1,7 @@
 'use client';
 
 import { NextUIProvider } from '@nextui-org/react';
+import { GlobalProvider } from '@/contexts/globalContext';
 import ThemeContextProvider from '@/contexts/themeContext';
 import { LanguageProvider } from '@/contexts/languageContext';
 import { UserSettingProvider } from '@/contexts/userSettingContext';
@@ -20,6 +21,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
           <UserSettingProvider>
             <DiscordUserInfoProvider>
               <DiscordGuildInfoProvider>
+                <GlobalProvider>
                 {
                   date.getMonth() === 11 && (
                     <Snowfall
@@ -34,6 +36,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
                 {
                   pathname.startsWith('/app') ? children : <PageAnimatePresence>{children}</PageAnimatePresence>
                 }
+                </GlobalProvider>
               </DiscordGuildInfoProvider>
             </DiscordUserInfoProvider>
           </UserSettingProvider>

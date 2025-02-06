@@ -143,7 +143,16 @@ export default async function guild_stats({token, type}: {token: string, type: s
       }
       return null;
     } catch (err) {
-        console.error('Failed to get Guild Active Usage Stats:', err);
+        if (axios.isAxiosError(err)) {
+            console.error('Axios error occurred:', {
+                message: err.message,
+                code: err.code,
+                status: err.response?.status,
+                data: err.response?.data,
+            });
+        } else {
+            console.error('Failed to get Guild Active Usage Stats:', err);
+        }
         return null;
     }
 }

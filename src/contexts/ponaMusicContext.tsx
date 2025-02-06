@@ -5,6 +5,10 @@ import { HTTP_PonaCommonStateWithTracks } from '@/interfaces/ponaPlayer'
 import { ws_manager } from '@/app/app/g/[guildId]/player/socket';
 import { useDiscordGuildInfo } from './discordGuildInfo';
 import { getCookie } from 'cookies-next';
+import { VoiceBasedChannel } from 'discord.js';
+import { MemberVoiceChangedState } from '@/interfaces/member';
+import { usePathname } from 'next/navigation';
+import { useGlobalContext } from './globalContext';
 
 const PonaMusicContext = createContext<{
   socket: Socket | null;
@@ -14,8 +18,6 @@ const PonaMusicContext = createContext<{
 
   isConnected: boolean;
   setIsConnected: Dispatch<SetStateAction<boolean>>;
-
-  ponaCommonState: HTTP_PonaCommonStateWithTracks | null;
 
   transport: string;
   setTransport: Dispatch<SetStateAction<string>>;
@@ -28,26 +30,28 @@ const PonaMusicContext = createContext<{
   isConnected: false,
   setIsConnected: () => {},
 
-  ponaCommonState: null,
-
   transport: "N/A",
   setTransport: () => {}
 });
 
 export const PonaMusicProvider = ({ children }: { children: React.ReactNode }) => {
   const { guild } = useDiscordGuildInfo();
+  const {
+    setIsMemberInVC,
+    setPonaCommonState
+  } = useGlobalContext();
+  const pathname = usePathname();
 
   const [socket, setSocket] = useState<Socket | null>(null);
   const [manager, setManager] = useState<Manager>(ws_manager);
   const [isConnected, setIsConnected] = useState<boolean>(false);
-  const [ponaCommonState, setPonaCommonState] = useState<HTTP_PonaCommonStateWithTracks | null>(null);
   const [transport, setTransport] = useState("N/A");
 
   const oauth_type = getCookie('LOGIN_TYPE_');
   const oauth_token = getCookie('LOGIN_');
 
   React.useEffect(() => {
-    if ( guild?.id ) {
+    if ( guild && guild.id && pathname.includes('player') ) {
       const iosocket = manager.socket(`/guild/${guild.id}`, {
         auth: {
           type: String(oauth_type),
@@ -71,9 +75,25 @@ export const PonaMusicProvider = ({ children }: { children: React.ReactNode }) =
           }
           retryCount++;
           iosocket.connect();
-          iosocket.on('handshake', (ponaState: HTTP_PonaCommonStateWithTracks | null) => {
-            setPonaCommonState(ponaState);
-            console.log('ponaState', ponaState);
+          iosocket.on('handshake', (ponaState: {
+            pona?: HTTP_PonaCommonStateWithTracks,
+            isMemberInVC?: VoiceBasedChannel | null
+          }) => {
+            setPonaCommonState(ponaState.pona || null);
+            setIsMemberInVC(ponaState.isMemberInVC || null);
+          });
+          iosocket.on('player_created', (pona: HTTP_PonaCommonStateWithTracks | null) => {
+            console.log('player_created', pona);
+            setPonaCommonState(pona);
+          });
+          iosocket.on('player_destroyed', () => {
+            setPonaCommonState(null);
+            console.log('player_destroyed');
+          });
+          iosocket.on('member_state_updated', (memberVoiceState: MemberVoiceChangedState) => {
+            if ( memberVoiceState.isUserJoined && memberVoiceState.newVC ) setIsMemberInVC(memberVoiceState.newVC);
+            else if ( memberVoiceState.isUserSwitched || (memberVoiceState.oldVC && memberVoiceState.newVC) ) setIsMemberInVC(memberVoiceState.newVC);
+            else if ( memberVoiceState.isUserLeaved || !memberVoiceState.newVC ) setIsMemberInVC(null);
           });
           iosocket.on('connect', () => {
             setIsConnected(true);
@@ -84,22 +104,23 @@ export const PonaMusicProvider = ({ children }: { children: React.ReactNode }) =
         };
         connectSocket();
         setSocket(iosocket);
+        document.documentElement.classList.add('pona-music-ready');
       }
     }
     return () => {
-      if (socket && !window.location.pathname.includes('player')) {
+      if (socket && !pathname.includes('player')) {
+        document.documentElement.classList.remove('pona-music-ready');
         socket.off();
         socket.close();
       }
     }
-  }, [guild, manager, isConnected, socket, oauth_type, oauth_token])
+  }, [guild, manager, isConnected, socket, oauth_type, oauth_token, pathname, setPonaCommonState, setIsMemberInVC])
 
   return (
     <PonaMusicContext.Provider value={{
       socket: socket,
       manager, setManager,
       isConnected, setIsConnected,
-      ponaCommonState,
       transport, setTransport
     }}>
       {children}
