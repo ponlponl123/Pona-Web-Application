@@ -10,17 +10,35 @@ html {
   scrollbar-color: hsl(var(--pona-app-primary)) hsl(var(--pona-app-background));
 }
 
-*:not(
+html.animation-30fps *,
+.animation-30fps * {
+  animation-timing-function: steps(30) !important;
+  transition-timing-function: steps(30) !important
+}
+
+html.animation-disabled *:not([aria-label="Loading"],.animate-spinner-ease-spin,.animate-spinner-linear-spin),
+.animation-disabled *:not([aria-label="Loading"],.animate-spinner-ease-spin,.animate-spinner-linear-spin) {
+  animation: none !important;
+  transition: none !important
+}
+
+html:not(
+  .animation-disabled,
+  .animation-30fps
+) *:not(
   [data-slot="popover"],
   div[style],
   .disable-default-transition,
   .leaflet-pane .leaflet-marker-draggable
 ) {
-  transition: .24s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: .24s cubic-bezier(0.175, 0.885, 0.32, 1.275)
 }
 
-*:active {
-  transition: .024s cubic-bezier(0.19, 1, 0.22, 1);
+*:not(
+  .animation-disabled,
+  .animation-30fps
+):active {
+  transition: .024s cubic-bezier(0.19, 1, 0.22, 1)
 }
 
 body {

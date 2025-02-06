@@ -38,7 +38,12 @@ export const UserSettingProvider = ({ children }: { children: React.ReactNode })
     if ( userSettingFromCookie ) {
       const decodedSetting = atob(userSettingFromCookie || '');
       if (decodedSetting) {
-        setUserSettingState(JSON.parse(decodedSetting));
+        const parsedUserSetting = JSON.parse(decodedSetting) as UserSetting;
+        setUserSettingState(parsedUserSetting);
+        if ( parsedUserSetting.animation === '30 fps' )
+          document.documentElement.classList.add('animation-30fps');
+        else if ( parsedUserSetting.animation === false )
+          document.documentElement.classList.remove('animation-disabled');
       }
     } else setUserSettingState(defaultUserSetting);
   }, [setUserSettingState]);
