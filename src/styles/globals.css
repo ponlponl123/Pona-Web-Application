@@ -162,6 +162,10 @@ main#app-workspace {
   @apply p-2;
 }
 
+.pona-music-searchbox {
+  
+}
+
 .btn {
   @apply relative flex items-center justify-center active:opacity-90 mx-2 min-w-24
 }

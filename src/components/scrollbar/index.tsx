@@ -1,7 +1,7 @@
 "use client"
 import React from 'react'
 import { UserInfo } from '@/server-side-api/discord/fetchUser'
-import { House, Confetti, Gear, Planet, CaretLeft, Wrench, Playlist, ChartPieSlice, Palette, Bug, StarAndCrescent, PaintBrush, SunHorizon, Keyboard, MusicNoteSimple, Thermometer, ShieldCheckered, MapPinArea, MagnifyingGlass, HouseSimple, Sparkle, PersonSimpleRun } from '@phosphor-icons/react/dist/ssr'
+import { House, Confetti, Gear, Planet, CaretLeft, Wrench, Playlist, ChartPieSlice, Palette, Bug, StarAndCrescent, PaintBrush, SunHorizon, Keyboard, MusicNoteSimple, Thermometer, ShieldCheckered, HouseSimple, Sparkle, PersonSimpleRun, MapPinArea, ClockCounterClockwise } from '@phosphor-icons/react/dist/ssr'
 import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo'
 import { useLanguageContext } from '@/contexts/languageContext'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -40,7 +40,7 @@ function Scrollbar({ userInfo, nav = false, onPushLocation }: { userInfo: UserIn
     };
 
     return (
-        <main className={`scrollbar ${!nav ? 'w-80 h-screen max-md:hidden p-6 pt-24 flex flex-col gap-2' : 'md:hidden w-full flex flex-col gap-2'}`}>
+        <main className={`scrollbar ${!nav ? 'min-w-72 w-72 max-w-72 h-screen max-md:hidden p-6 pt-24 flex flex-col gap-2' : 'md:hidden w-full flex flex-col gap-2'}`}>
             <AnimatePresence mode="wait">
                 <motion.div className='max-h-full overflow-x-hidden overflow-y-auto scroll-smooth' style={{scrollbarWidth: 'thin'}} key={String(`${inGuild} ${inSetting}`)}>
                     <FrozenRoute>
@@ -106,7 +106,8 @@ function Scrollbar({ userInfo, nav = false, onPushLocation }: { userInfo: UserIn
                                             </div>
                                             <div className='group-content'>
                                                 <ActivationLink onClick={handlePushLocation} href={`/app/g/${guild.id}/player`} icon={HouseSimple}>{language.data.app.guilds.player.home.title}</ActivationLink>
-                                                <ActivationLink onClick={handlePushLocation} href={`/app/g/${guild.id}/player/search`} icon={MagnifyingGlass}>{language.data.app.guilds.player.search.title}</ActivationLink>
+                                                <ActivationLink onClick={handlePushLocation} href={`/app/g/${guild.id}/player/history`} icon={ClockCounterClockwise}>{language.data.app.guilds.player.history.title}</ActivationLink>
+                                                <ActivationLink onClick={handlePushLocation} href={`/app/g/${guild.id}/player/playlists`} icon={Playlist}>{language.data.app.playlist.name}</ActivationLink>
                                             </div>
                                         </div>
                                     }

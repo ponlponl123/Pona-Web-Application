@@ -11,7 +11,7 @@ function Page() {
     guild ? (
       <>
         <div className='w-full max-w-screen-lg mt-16 gap-4 flex flex-col items-center justify-center text-center'>
-          {/* Soon... :) */}
+          
         </div>
       </>
     ) : (

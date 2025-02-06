@@ -2,15 +2,17 @@
 import React from 'react'
 import Link from 'next/link';
 import MyButton from '@/components/button'
+import { useGlobalContext } from '@/contexts/globalContext';
 import { useLanguageContext } from '@/contexts/languageContext';
 import { useDiscordUserInfo } from '@/contexts/discordUserInfo';
-import { DiscordLogo, Confetti, Hamburger, Question, Gear, Leaf } from "@phosphor-icons/react/dist/ssr";
-import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Avatar } from '@nextui-org/react';
-import { usePathname } from 'next/navigation';
+import { DiscordLogo, Confetti, Hamburger, Question, Gear, Leaf, MagnifyingGlass } from "@phosphor-icons/react/dist/ssr";
+import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Avatar, Input, Button, Form } from '@nextui-org/react';
+import { usePathname, useRouter } from 'next/navigation';
 import PonaIcon from '@/app/favicon.ico';
 import { getCookie } from 'cookies-next';
 import Scrollbar from '../scrollbar';
 import Image from 'next/image';
+import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo';
 
 function UserAccountAction({className, minimize = false}: {className?: string, minimize?: boolean}) {
     const { userInfo, revokeUserAccessToken } = useDiscordUserInfo();
@@ -47,8 +49,11 @@ function UserAccountAction({className, minimize = false}: {className?: string, m
 function Header() {
     const pathname = usePathname();
     const [navOpened, setNavOpened] = React.useState<boolean>(false);
+    const router = useRouter();
+    const { guild } = useDiscordGuildInfo();
     const { language } = useLanguageContext();
     const { userInfo } = useDiscordUserInfo();
+    const { ponaCommonState } = useGlobalContext();
 
     const isApp = pathname.startsWith('/app');
     const isInGuild = (isApp && pathname.split('/').includes('g') && typeof Number(pathname.split('/')[3]) === 'number');
@@ -63,13 +68,48 @@ function Header() {
                         <h1 className='text-xl flex gap-2 items-center'>{
                             isApp ? (
                                 <>
-                                    <Image src={PonaIcon} alt='Pona! Application' width={32} height={32} /> Pona! {language.data.app.title}
+                                    <Image src={PonaIcon} alt='Pona! Application' width={32} height={32} />
+                                    {
+                                        pathname.includes('player') ?
+                                        <>
+                                            <span className='max-md:hidden md:contents'>Pona! {language.data.app.title}</span>
+                                            <span className='miniscreen:max-md:contents hidden'>{language.data.app.guilds.player.name}</span>
+                                        </> :
+                                        <>
+                                            <span className='max-sm:hidden sm:contents'>Pona! {language.data.app.title}</span>
+                                        </>
+                                    }
                                 </>
                             ) : 'Pona!'
                         }</h1>
                     </Link>
                 </div>
-                <div className='z-20 flex gap-4'>
+                <div className='z-20 flex items-center gap-4'>
+                    {
+                        (pathname.includes('player') && ponaCommonState && ponaCommonState.pona.voiceChannel) &&
+                        <div className={`${(navOpened) ? 'hidden' : 'contents'}`}>
+                            <Button
+                                className={`${(navOpened || (pathname.includes('player') && pathname.includes('search'))) ? 'hidden' : ''} miniscreen:translate-y-8 miniscreen:pointer-events-none miniscreen:opacity-0 absolute left-1/2 -translate-x-1/2 bg-black text-white`}
+                                radius='full' size='sm' onPress={()=>{
+                                    router.push(`/app/g/${guild?.id}/player/search`);
+                                }}
+                            ><MagnifyingGlass size={14} /></Button>
+                            <Form className='contents' onSubmit={(e) => {
+                                    e.preventDefault();
+                                    const data = Object.fromEntries(new FormData(e.currentTarget));
+                                    router.push(`/app/g/${guild?.id}/player/search?q=${data.name}`);
+                            }}>
+                            <Input startContent={<MagnifyingGlass size={18} className='mr-1 max-miniscreen:absolute max-miniscreen:scale-75' />} name='search'
+                                placeholder={language.data.app.guilds.player.search.search_box}
+                                className={`${(pathname.includes('player') && pathname.includes('search')) ? 'max-miniscreen:left-24 max-miniscreen:translate-x-0' : 'max-miniscreen:min-w-0 max-miniscreen:w-10 max-miniscreen:pointer-events-none max-miniscreen:opacity-0 max-miniscreen:-translate-y-8'} backdrop-blur pona-music-searchbox miniscreen:w-80 max-md:max-w-[32vw] max-md:fixed max-md:-translate-x-1/2 max-md:left-1/2 md:absolute md:left-80`}
+                                classNames={{
+                                    inputWrapper: 'max-md:rounded-full bg-foreground/10 border-2 border-foreground/10',
+                                    input: 'max-miniscreen:placeholder:opacity-0 placeholder:text-content1-foreground/40'
+                                }}
+                            ></Input>
+                            </Form>
+                        </div>
+                    }
                     <MyButton className='md:hidden btn-icon m-0' style='rounded' variant='text' onClick={()=>{
                         setNavOpened((value)=>!value);
                     }}>

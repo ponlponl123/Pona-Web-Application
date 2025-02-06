@@ -29,16 +29,18 @@ function Providers({ children }: { children: React.ReactNode }) {
 
     return (
         <>
-            <main id='app-panel' className='relative bg-gradient-to-t from-warning/40 to-primary/10 dark:from-primary/20 dark:to-secondary/10 h-screen -mb-6'>
+            <main id='app-panel' className='relative bg-gradient-to-t light:from-warning/10 to-primary/20 h-screen -mb-6 border-l-2 border-foreground/10'>
                 <div className='absolute w-full h-1/2 max-h-96 min-h-48 top-0 left-0 z-[1] opacity-40'>
                     <Image src={backdropBg || backdrop.src} alt={currentTrack?currentTrack.title:guild?.name || ''} width={"100%"} height={320}
                         className='object-cover blur-3xl scale-125 w-full h-96'
                     />
                 </div>
                 <main id='app-workspace'>
-                    <h1 className='absolute top-6 left-6 text-2xl flex items-center gap-4 z-20'>
-                        <MusicNoteSimple weight='fill' size={24} /> {language.data.app.guilds.player.name}
-                    </h1>
+                    <div className='absolute top-6 left-6 flex items-center gap-12 z-50 w-full'>
+                        <h1 className='items-center text-2xl gap-4 hidden'>
+                            <MusicNoteSimple weight='fill' size={24} /> {language.data.app.guilds.player.name}
+                        </h1>
+                    </div>
                     {
                         isConnected ?
                             !ponaCommonState?.pona.voiceChannel ?

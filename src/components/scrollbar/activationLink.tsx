@@ -19,7 +19,7 @@ function ActivationLink({ href, children, icon, onClick, className, isActive = f
     // const group_content = button.current?.parentElement?.classList.contains('group-content') ? button.current.parentElement : undefined;
     const isHere = ((isSection ? (activeSectionGroup || activeSection === href?.substring(1)) : pathname === href) || (group?.classList.contains('active') && group_title)) || isActive;
     const Icon = icon;
-    const iconContent = Icon ? <Icon weight={isHere ? 'fill' : 'regular'} /> : null;
+    const iconContent = Icon ? <Icon weight={isHere ? 'fill' : 'regular'} size={16} /> : null;
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const hrefIndex = href ? href.split('/') : [];
 

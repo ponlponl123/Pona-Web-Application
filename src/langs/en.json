@@ -260,8 +260,12 @@
                 "home": {
                     "title": "Home"
                 },
+                "history": {
+                    "title": "History"
+                },
                 "search": {
-                    "title": "Search"
+                    "title": "Search",
+                    "search_box": "Search for songs, albums, artists, podcasts"
                 }
             },
             "setting": {

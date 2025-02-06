@@ -14,7 +14,7 @@ function JoinVoiceChannelButton({voiceChannel}: {voiceChannel: VoiceBasedChannel
   const { socket } = usePonaMusicContext();
   return (
     <Button className='w-full h-max justify-start bg-primary/25 relative' color='primary' variant={loading?'shadow':'solid'}
-      startContent={<SpeakerHigh weight='fill' />} onPress={()=>{
+      startContent={<SpeakerHigh className='text-content1-foreground' weight='fill' />} onPress={()=>{
         setLoading(true);
         socket?.emit('join', guild?.id, voiceChannel.id);
       }}>
