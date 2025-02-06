@@ -101,6 +101,8 @@ function Status() {
                             <div className={`service-status-badge ${handshakeStatus ? 'operational' : handshakeStatus === null ? 'unknown' : 'down'}`}></div></div>
                             <div className='service-list'><h1>Web Socket Connections</h1>
                             <div className={`service-status-badge ${websocketStatus ? 'operational' : websocketStatus === null ? 'unknown' : 'down'}`}></div></div>
+                            <div className='service-list'><h1>Redis networks Connections</h1>
+                            <div className={`service-status-badge unknown`}></div></div>
                             <div className='service-list'><h1>Lavalink Connection</h1>
                             <div className={`service-status-badge ${lavalinkStatus ? 'operational' : lavalinkStatus === null ? 'unknown' : 'down'}`}></div></div>
                             <div className='service-list'><h1>Cloudflare Workers</h1>
