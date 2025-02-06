@@ -2,7 +2,7 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import { useLanguageContext } from '@/contexts/languageContext';
 import { Button, Chip, Progress, ScrollShadow } from '@nextui-org/react';
-import { PhoneSlash, SpeakerHigh } from '@phosphor-icons/react/dist/ssr';
+import { Island, SpeakerHigh } from '@phosphor-icons/react/dist/ssr';
 import { usePonaMusicContext } from '@/contexts/ponaMusicContext';
 import { VoiceBasedChannel } from 'discord.js';
 import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo';
@@ -67,7 +67,7 @@ function LetsPonaJoin() {
               <JoinVoiceChannelButton voiceChannel={isMemberInVC} />
             </> :
             <div className='flex flex-col gap-2 items-center justify-center h-full w-full m-auto'>
-              <PhoneSlash className='text-foreground/60' size={48} />
+              <Island className='text-foreground/60' size={48} />
               <h1 className='text-2xl text-foreground/60'>{language.data.app.guilds.player.ponaIsNotInVC.select.notfound.title}</h1>
               <span className='text-base text-foreground/30'>{language.data.app.guilds.player.ponaIsNotInVC.select.notfound.description}</span>
             </div>
