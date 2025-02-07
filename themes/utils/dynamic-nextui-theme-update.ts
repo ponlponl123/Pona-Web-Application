@@ -11,7 +11,7 @@ function DynamicNextUIThemeUpdate(theme: ColorScale): void {
     hsl.l = hsl.l*100;
     hsl.l = Math.round(hsl.l);
     hsl.h = Math.round(360*hsl.h);
-    const colorKey = `--pona-app-pona-music-accent-color${key === 'DEFAULT' ? '' : '-'+key}`;
+    const colorKey = `--pona-app-music-accent-color${key === 'DEFAULT' ? '' : '-'+key}`;
     document.documentElement.style.setProperty(colorKey, hsl.h + ', ' + hsl.s + '%, ' + hsl.l + '%');
   });
 }

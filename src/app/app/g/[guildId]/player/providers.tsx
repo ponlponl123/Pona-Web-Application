@@ -72,7 +72,7 @@ function Providers({ children }: { children: React.ReactNode }) {
                         loading='lazy' shadow='lg' isBlurred id='pona-music-thumbnail' />
                     <div className='flex flex-col justify-center items-start' style={{width:'calc(100% - 5.4rem)'}}>
                         <div className='text-xl w-full flex gap-2'>
-                            <h1 className='text-xl text-music-accent-color w-full whitespace-nowrap overflow-hidden overflow-ellipsis'>{currentTrack ? currentTrack.title : 'Music Name'}</h1>
+                            <h1 className='text-xl text-music-accent-color-foreground w-full whitespace-nowrap overflow-hidden overflow-ellipsis'>{currentTrack ? currentTrack.title : 'Music Name'}</h1>
                             {currentTrack ? <Link href={currentTrack.uri} showAnchorIcon /> : <></>}
                         </div>
                         <span className='text-sm text-foreground/40 w-full whitespace-nowrap overflow-hidden overflow-ellipsis'>{currentTrack ? currentTrack.author : 'Author'}</span>
