@@ -53,8 +53,8 @@ function Page() {
             <Image src={userInfo ? `https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}?size=64` : ''} alt={userInfo ? userInfo.global_name : 'User'} height={64}
               className='rounded-full' />
             <div className='flex flex-col items-start justify-center'>
-              <h3 className='text-lg text-foreground/60 leading-none'>{userInfo?.global_name}</h3>
-              <h1 className='text-5xl'>Listen Again</h1>
+              <h3 className='text-lg text-music-accent-color-500/60 leading-none'>{userInfo?.global_name}</h3>
+              <h1 className='text-5xl text-music-accent-color-500'>Listen Again</h1>
             </div>
           </div>
           <div className='flex gap-5'>
