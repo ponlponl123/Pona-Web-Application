@@ -13,6 +13,7 @@ import redrose from "./themes/redrose.config";
 
 export type PonaThemeColors = ThemeColors & BaseColors & {
   "playground-background": NextUIPalette;
+  "music-accent-color": NextUIPalette;
 }
 
 export type PoanConfigTheme = ConfigTheme & {

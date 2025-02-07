@@ -16,6 +16,7 @@ const _default: PonaConfigThemes = {
   light: {
     colors: {
       ...colorPalette,
+      ...nextuiColorPalette({name: "music-accent-color", baseColor: "#171717"}),
       ...nextuiColorPalette({name: "foreground", baseColor: "#171717"}),
       ...nextuiColorPalette({name: "background", baseColor: "#ffffff"}),
       ...nextuiColorPalette({name: "playground-background", baseColor: "#f2f2f2"}),
@@ -24,6 +25,7 @@ const _default: PonaConfigThemes = {
   dark: {
     colors: {
       ...colorPalette,
+      ...nextuiColorPalette({name: "music-accent-color", baseColor: "#ededed"}),
       ...nextuiColorPalette({name: "foreground", baseColor: "#ededed"}),
       ...nextuiColorPalette({name: "background", baseColor: "#0a0a0a"}),
       ...nextuiColorPalette({name: "playground-background", baseColor: "#171717"}),

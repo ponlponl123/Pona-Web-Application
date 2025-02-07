@@ -1,4 +1,5 @@
 import { TextBasedChannel, VoiceBasedChannel, GuildMember } from 'discord.js'
+import { NextUIPalette } from '../../themes/utils/nextui-color-palette-gen';
 
 export interface Band {
   band: number;
@@ -55,6 +56,10 @@ export interface UnresolvedTrack extends Partial<Track> {
 	resolve(): Promise<void>;
 }
 
+export interface Queue extends Array<Track | UnresolvedTrack>{
+  current?: Track | UnresolvedTrack | null;
+};
+
 export interface HTTP_PonaRepeatState {
 	track: boolean;
 	queue: boolean;
@@ -69,8 +74,13 @@ export interface HTTP_PonaCommonState {
 	voiceChannel: string;
 }
 
+export interface PonaMusic_AccentColor {
+  default: string;
+  palette: NextUIPalette;
+}
+
 export interface HTTP_PonaCommonStateWithTracks {
 	pona: HTTP_PonaCommonState;
 	current: Track | UnresolvedTrack | null;
-	queue: Array<Track | UnresolvedTrack>;
+	queue: Queue;
 }

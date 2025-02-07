@@ -50,11 +50,11 @@ function Page() {
       <>
         <div className='w-full max-w-screen-lg mt-16 gap-4 flex flex-col items-center justify-center text-center'>
           <div className='w-full flex gap-5'>
-            <Image src={userInfo ? `https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}?size=56` : ''} alt={userInfo ? userInfo.global_name : 'User'} height={56}
+            <Image src={userInfo ? `https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}?size=64` : ''} alt={userInfo ? userInfo.global_name : 'User'} height={64}
               className='rounded-full' />
             <div className='flex flex-col items-start justify-center'>
               <h3 className='text-lg text-foreground/60 leading-none'>{userInfo?.global_name}</h3>
-              <h1 className='text-3xl'>Listen Again</h1>
+              <h1 className='text-5xl'>Listen Again</h1>
             </div>
           </div>
           <div className='flex gap-5'>

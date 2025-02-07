@@ -1,7 +1,7 @@
 "use client"
 import React, { createContext, Dispatch, SetStateAction, useContext, useState } from 'react'
 import { Manager, Socket } from 'socket.io-client'
-import { HTTP_PonaCommonStateWithTracks } from '@/interfaces/ponaPlayer'
+import { HTTP_PonaCommonStateWithTracks, HTTP_PonaRepeatState, Queue, Track, UnresolvedTrack } from '@/interfaces/ponaPlayer'
 import { ws_manager } from '@/app/app/g/[guildId]/player/socket';
 import { useDiscordGuildInfo } from './discordGuildInfo';
 import { getCookie } from 'cookies-next';
@@ -9,6 +9,9 @@ import { VoiceBasedChannel } from 'discord.js';
 import { MemberVoiceChangedState } from '@/interfaces/member';
 import { usePathname } from 'next/navigation';
 import { useGlobalContext } from './globalContext';
+import { getAccentHEXColorFromUrl } from '@/utils/colorUtils';
+import nextuiColorPalette from '../../themes/utils/nextui-color-palette-gen';
+import DynamicNextUIThemeUpdate from '../../themes/utils/dynamic-nextui-theme-update';
 
 const PonaMusicContext = createContext<{
   socket: Socket | null;
@@ -75,20 +78,86 @@ export const PonaMusicProvider = ({ children }: { children: React.ReactNode }) =
           }
           retryCount++;
           iosocket.connect();
-          iosocket.on('handshake', (ponaState: {
+          iosocket.on('handshake', async (ponaState: {
             pona?: HTTP_PonaCommonStateWithTracks,
             isMemberInVC?: VoiceBasedChannel | null
           }) => {
+            if ( ponaState.pona?.current?.identifier ) {
+              const accentColor = await getAccentHEXColorFromUrl('/api/proxy/watch?v='+ponaState.pona?.current?.identifier);
+              const colorPalette = nextuiColorPalette({name: 'content1', baseColor: accentColor});
+              DynamicNextUIThemeUpdate(colorPalette.content1);
+            }
             setPonaCommonState(ponaState.pona || null);
             setIsMemberInVC(ponaState.isMemberInVC || null);
           });
+          iosocket.on('queue_ended', () => {
+            setPonaCommonState((value) => {
+              if (value) {
+                return { ...value, queue: [], current: null, accentColor: null };
+              }
+              return value;
+            });
+          });
+          iosocket.on('volume_updated', (volume: number) => {
+            setPonaCommonState((value) => {
+              if (value) {
+                return { ...value, pona: { ...value.pona, volume: volume } };
+              }
+              return value;
+            });
+          });
+          iosocket.on('repeat_updated', (repeatState: HTTP_PonaRepeatState) => {
+            setPonaCommonState((value) => {
+              if (value) {
+                return { ...value, pona: { ...value.pona, repeat: repeatState } };
+              }
+              return value;
+            });
+          });
+          iosocket.on('track_started', async (track: Track) => {
+            if ( track.identifier ) {
+              const accentColor = await getAccentHEXColorFromUrl('/api/proxy/watch?v='+track.identifier);
+              const colorPalette = nextuiColorPalette({name: 'content1', baseColor: accentColor});
+              DynamicNextUIThemeUpdate(colorPalette.content1);
+            }
+            setPonaCommonState((value) => {
+              if (value) {
+                return { ...value, current: track};
+              }
+              return value;
+            });
+          });
+          iosocket.on('track_updated', async (track: Track) => {
+            if ( track.identifier ) {
+              const accentColor = await getAccentHEXColorFromUrl('/api/proxy/watch?v='+track.identifier);
+              const colorPalette = nextuiColorPalette({name: 'content1', baseColor: accentColor});
+              DynamicNextUIThemeUpdate(colorPalette.content1);
+            }
+            setPonaCommonState((value) => {
+              if (value) {
+                return { ...value, current: track};
+              }
+              return value;
+            });
+          });
+          iosocket.on('queue_updated', async (queue: Queue) => {
+            if ( queue.current?.identifier ) {
+              const accentColor = await getAccentHEXColorFromUrl('/api/proxy/watch?v='+queue.current?.identifier);
+              const colorPalette = nextuiColorPalette({name: 'content1', baseColor: accentColor});
+              DynamicNextUIThemeUpdate(colorPalette.content1);
+            }
+            setPonaCommonState((value) => {
+              if (value) {
+                return { ...value, queue: queue, current: queue.current as Track | UnresolvedTrack | null};
+              }
+              return value;
+            });
+          });
           iosocket.on('player_created', (pona: HTTP_PonaCommonStateWithTracks | null) => {
-            console.log('player_created', pona);
             setPonaCommonState(pona);
           });
           iosocket.on('player_destroyed', () => {
             setPonaCommonState(null);
-            console.log('player_destroyed');
           });
           iosocket.on('member_state_updated', (memberVoiceState: MemberVoiceChangedState) => {
             if ( memberVoiceState.isUserJoined && memberVoiceState.newVC ) setIsMemberInVC(memberVoiceState.newVC);
@@ -110,6 +179,8 @@ export const PonaMusicProvider = ({ children }: { children: React.ReactNode }) =
     return () => {
       if (socket && !pathname.includes('player')) {
         document.documentElement.classList.remove('pona-music-ready');
+        setPonaCommonState(null);
+        setIsMemberInVC(null);
         socket.off();
         socket.close();
       }
