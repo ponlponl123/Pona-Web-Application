@@ -1,7 +1,7 @@
 "use client"
 import React, { useState } from 'react'
 import { UserInfo } from '@/server-side-api/discord/fetchUser'
-import { House, Confetti, Gear, Planet, CaretLeft, Wrench, Playlist, ChartPieSlice, Palette, Bug, StarAndCrescent, PaintBrush, SunHorizon, Keyboard, MusicNoteSimple, Thermometer, ShieldCheckered, HouseSimple, Sparkle, PersonSimpleRun, MapPinArea, ClockCounterClockwise } from '@phosphor-icons/react/dist/ssr'
+import { House, Confetti, Gear, Planet, CaretLeft, Wrench, Playlist, ChartPieSlice, Palette, Bug, StarAndCrescent, PaintBrush, SunHorizon, Keyboard, MusicNoteSimple, Thermometer, ShieldCheckered, HouseSimple, Sparkle, PersonSimpleRun, MapPinArea, ClockCounterClockwise, CubeTransparent } from '@phosphor-icons/react/dist/ssr'
 import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo'
 import { useLanguageContext } from '@/contexts/languageContext'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -55,6 +55,10 @@ function Scrollbar(
         }
     }
 
+    React.useState(()=>{
+        if ( !(canCollapsed && sidebarCollapsed) ) document.body.classList.remove('sidebar-collapsed');
+    })
+
     return (
         <main className={`scrollbar ${!nav ? `${(canCollapsed && sidebarCollapsed) ? 'min-w-16 w-16 max-w-16 p-2' : 'min-w-72 w-72 max-w-72 p-6' } relative h-screen max-md:hidden pt-24 flex flex-col gap-2` : 'md:hidden w-full flex flex-col gap-2'}`}>
             {
@@ -89,6 +93,7 @@ function Scrollbar(
                                         </div>
                                         <div className='group-content'>
                                             <ActivationLink iconOnly={(canCollapsed && sidebarCollapsed)} onClick={handlePushLocation} href={`#layout-theme`} icon={PaintBrush}>{language.data.app.setting.layout.theme.title}</ActivationLink>
+                                            <ActivationLink iconOnly={(canCollapsed && sidebarCollapsed)} onClick={handlePushLocation} href={`#layout-transparency`} icon={CubeTransparent}>{language.data.app.setting.layout.transparency.title}</ActivationLink>
                                             <ActivationLink iconOnly={(canCollapsed && sidebarCollapsed)} onClick={handlePushLocation} href={`#layout-timeformat`} icon={SunHorizon}>{language.data.app.setting.layout.time_format.title}</ActivationLink>
                                             <ActivationLink iconOnly={(canCollapsed && sidebarCollapsed)} onClick={handlePushLocation} href={`#layout-thermometer`} icon={Thermometer}>{language.data.app.setting.layout.thermometer.title}</ActivationLink>
                                             <ActivationLink iconOnly={(canCollapsed && sidebarCollapsed)} onClick={handlePushLocation} href={`#layout-animations`} icon={PersonSimpleRun}>{language.data.app.setting.layout.animation.title}</ActivationLink>

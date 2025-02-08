@@ -56,6 +56,16 @@ export function ThemeUpdate(theme: DynamicTheme): void {
   const setTheme = (theme: Themes) => {
     document.documentElement.setAttribute('data-theme', theme);
     document.documentElement.classList.value = theme;
+    if ( theme.includes('dark') )
+    {
+      document.documentElement.classList.remove('light');
+      document.documentElement.classList.add('dark');
+    }
+    else if ( theme.includes('light') )
+    {
+      document.documentElement.classList.add('light');
+      document.documentElement.classList.remove('dark');
+    }
   }
   if ( theme.sync )
   {

@@ -7,19 +7,24 @@ export type TimeFormat = 'auto' | 12 | 24;
 export type Thermometer = 'c' | 'f';
 export type Animation = boolean | '30 fps';
 export type Location = 'auto' | 'surprise' | LatLngExpression;
+export type PonaPlayerStyle = 'modern' | 'compact';
 export interface UserSetting {
   // Layout Settings
+  transparency?: boolean;
   timeformat?: TimeFormat;
   thermometer?: Thermometer;
   animation?: Animation;
   // Privacy Settings
   location?: Location;
+  dev_pona_player_style?: PonaPlayerStyle;
 }
 export const defaultUserSetting: UserSetting = {
+  transparency: true,
   timeformat: 'auto',
   thermometer: 'c',
   animation: true,
   location: 'auto',
+  dev_pona_player_style: 'compact',
 }
 
 const UserSettingContext = createContext<{

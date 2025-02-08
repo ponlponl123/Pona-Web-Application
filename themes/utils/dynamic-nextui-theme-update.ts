@@ -12,7 +12,7 @@ function DynamicNextUIThemeUpdate(vkey: string, theme: ColorScale): void {
     hsl.l = Math.round(hsl.l);
     hsl.h = Math.round(360*hsl.h);
     const colorKey = `${vkey}${key === 'DEFAULT' ? '' : '-'+key}`;
-    document.documentElement.style.setProperty(colorKey, hsl.h + ', ' + hsl.s + '%, ' + hsl.l + '%', 'important');
+    document.documentElement.style.setProperty(colorKey, hsl.h + ' ' + hsl.s + '% ' + hsl.l + '%', 'important');
   });
 }
 

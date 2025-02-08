@@ -1,5 +1,6 @@
 import { useDiscordUserInfo } from '@/contexts/discordUserInfo';
 import { useLanguageContext } from '@/contexts/languageContext'
+import { useUserSettingContext } from '@/contexts/userSettingContext';
 import { numberToHexColor } from '@/utils/colorUtils';
 import { Avatar, Chip, Image, Link } from '@nextui-org/react';
 import { DiscordLogo, StarAndCrescent } from '@phosphor-icons/react/dist/ssr';
@@ -8,13 +9,14 @@ import React from 'react'
 function Account() {
   const { language } = useLanguageContext();
   const { userInfo } = useDiscordUserInfo();
+  const { userSetting } = useUserSettingContext();
   return (
     <section className='w-full min-h-full my-6 flex flex-col gap-6 pb-12' id='account' data-section>
       <h1 className='text-5xl flex items-center gap-4 pt-4'><StarAndCrescent weight='fill' />{userInfo ? userInfo.global_name : language.data.app.setting.account.title}</h1>
       <div>
         <div className='rounded-3xl'>
           <Image
-            isBlurred
+            isBlurred={userSetting.transparency}
             alt={`${userInfo && userInfo.global_name} Banner`}
             src={userInfo ? `https://cdn.discordapp.com/banners/${userInfo.id}/${userInfo.banner}.png?size=1024` : ''}
             className='object-cover object-center bg-primary'

@@ -21,6 +21,7 @@ export interface Track {
   "isStream": false,
   "uri": string,
   "artworkUrl": string,
+  "highResArtworkUrl"?: string,
   "sourceName": string,
   "thumbnail": string,
   "requester": GuildMember

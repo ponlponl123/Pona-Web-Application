@@ -12,7 +12,7 @@ function Page() {
     const { language } = useLanguageContext();
     return (
       <main id="app-panel">
-          <main id="app-workspace" className='flex flex-col pb-[56vh]'>
+          <main id="app-workspace" className='flex flex-col pb-[32vh]'>
               <h1 className='text-2xl mb-4'>{language.data.app.setting.name}</h1>
               <Account />
               <Layout />

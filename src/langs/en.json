@@ -264,6 +264,9 @@
                     "track": "Track",
                     "queue": "Queue"
                 },
+                "equalizer": {
+                    "title": "Equalizer"
+                },
                 "home": {
                     "title": "Home"
                 },
@@ -308,6 +311,17 @@
                 "amoled_black": {
                     "title": "Amoled Black",
                     "description": "When enabled, Dark theme uses a pitch-black background, which saves up to 60% on AMOLED screens! 🌙💡"
+                },
+                "transparency": {
+                    "title": "Transparency Effects",
+                    "enabled": {
+                        "title": "Enabled",
+                        "description": "Enable transparency effects which makes the app look more beautiful but may consume more resources."
+                    },
+                    "disabled": {
+                        "title": "Disabled",
+                        "description": "Disables transparency effects, may save up to 50% on battery."
+                    }
                 },
                 "time_format": {
                     "title": "Time Format",

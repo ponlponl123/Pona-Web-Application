@@ -2,6 +2,7 @@ import { useLanguageContext } from '@/contexts/languageContext'
 import { Bug } from '@phosphor-icons/react/dist/ssr'
 import Switch from '@/components/switch'
 import React from 'react'
+import PonaPlayerStyle from './ponaplayerstyle';
 
 function DevZone() {
   const { language } = useLanguageContext();
@@ -13,6 +14,7 @@ function DevZone() {
         description='Use the experimental API endpoints'
         isDisabled
       />
+      <PonaPlayerStyle />
     </section>
   )
 }
