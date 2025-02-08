@@ -21,8 +21,8 @@ function Providers({ children }: { children: React.ReactNode }) {
                     </div>
                 ) : !userInfo ? <RedirectOauth/> : (
                     <main className='app flex bg-background'>
-                        <Scrollbar userInfo={userInfo} />
-                        <main id='app-content' className='w-full h-screen md:rounded-l-3xl max-md:rounded-b-3xl relative overflow-y-auto overflow-x-hidden scrollbar-hide pb-6 bg-playground-background'>
+                        <Scrollbar canCollapsed={true} userInfo={userInfo} />
+                        <main id='app-content' className='w-full md:h-screen max-md:h-[calc(100vh_+_1rem)] md:rounded-l-3xl max-md:rounded-b-3xl relative overflow-y-auto overflow-x-hidden scrollbar-hide pb-6 bg-playground-background'>
                             <PageAnimatePresence customKey={pathname} mode='wait'>
                                 {children}
                             </PageAnimatePresence>

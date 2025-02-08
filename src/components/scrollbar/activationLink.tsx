@@ -5,7 +5,7 @@ import { useRouter } from 'nextjs-toploader/app';
 import type { Icon as IconType } from '@phosphor-icons/react';
 import React, { useEffect, useRef, useState, useCallback } from 'react'
 
-function ActivationLink({ href, children, icon, onClick, className, isActive = false }: { href?: string, children: React.ReactNode, icon?: IconType, onClick?: () => void, className?: string, isActive?: boolean }) {
+function ActivationLink({ href, children, icon, onClick, className, isActive = false, iconOnly }: { href?: string, children: React.ReactNode, icon?: IconType, onClick?: () => void, className?: string, isActive?: boolean, iconOnly?: boolean | undefined }) {
     const router = useRouter();
     const sections = useRef<NodeListOf<HTMLElement> | null>(null);
     const pathname = usePathname();
@@ -118,8 +118,8 @@ function ActivationLink({ href, children, icon, onClick, className, isActive = f
     }, [isSection, handleScroll, href, hrefIndex, pathname, group]);
 
     return (
-        <Button onClick={clicked} ref={button} className={className} color='primary' startContent={iconContent} variant={isHere ? 'flat' : 'light'} size='lg'>
-            {children}
+        <Button onPress={clicked} ref={button} className={className} color='primary' startContent={!iconOnly && iconContent} variant={isHere ? 'flat' : 'light'} size='lg' isIconOnly={iconOnly}>
+            {iconOnly ? <div className='m-auto'>{iconContent}</div> : children}
         </Button>
     );
 }

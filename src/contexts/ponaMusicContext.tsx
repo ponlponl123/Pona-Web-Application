@@ -1,7 +1,7 @@
 "use client"
-import React, { createContext, Dispatch, SetStateAction, useContext, useState } from 'react'
+import React, { createContext, Dispatch, SetStateAction, useContext, useRef, useState } from 'react'
 import { Manager, Socket } from 'socket.io-client'
-import { HTTP_PonaCommonStateWithTracks, HTTP_PonaRepeatState, Queue, Track, UnresolvedTrack } from '@/interfaces/ponaPlayer'
+import { HTTP_PonaCommonStateWithTracks, HTTP_PonaRepeatState, Queue, Track } from '@/interfaces/ponaPlayer'
 import { ws_manager } from '@/app/app/g/[guildId]/player/socket';
 import { useDiscordGuildInfo } from './discordGuildInfo';
 import { getCookie } from 'cookies-next';
@@ -45,6 +45,7 @@ export const PonaMusicProvider = ({ children }: { children: React.ReactNode }) =
   } = useGlobalContext();
   const pathname = usePathname();
 
+  const initialized = useRef(false);
   const [socket, setSocket] = useState<Socket | null>(null);
   const [manager, setManager] = useState<Manager>(ws_manager);
   const [isConnected, setIsConnected] = useState<boolean>(false);
@@ -54,13 +55,14 @@ export const PonaMusicProvider = ({ children }: { children: React.ReactNode }) =
   const oauth_token = getCookie('LOGIN_');
 
   React.useEffect(() => {
-    if ( guild && guild.id && pathname.includes('player') ) {
+    if ( guild && guild.id && pathname.includes('player') && !initialized.current ) {
       const iosocket = manager.socket(`/guild/${guild.id}`, {
         auth: {
           type: String(oauth_type),
           key: String(oauth_token)
         }
       });
+      initialized.current = true;
 
       if ( !isConnected )
       {
@@ -85,7 +87,7 @@ export const PonaMusicProvider = ({ children }: { children: React.ReactNode }) =
             if ( ponaState.pona?.current?.identifier ) {
               const accentColor = await getAccentHEXColorFromUrl('/api/proxy/watch?v='+ponaState.pona?.current?.identifier);
               const colorPalette = nextuiColorPalette({name: 'content1', baseColor: accentColor});
-              DynamicNextUIThemeUpdate(colorPalette.content1);
+              DynamicNextUIThemeUpdate('--pona-app-music-accent-color', colorPalette.content1);
             }
             setPonaCommonState(ponaState.pona || null);
             setIsMemberInVC(ponaState.isMemberInVC || null);
@@ -94,6 +96,22 @@ export const PonaMusicProvider = ({ children }: { children: React.ReactNode }) =
             setPonaCommonState((value) => {
               if (value) {
                 return { ...value, queue: [], current: null, accentColor: null };
+              }
+              return value;
+            });
+          });
+          iosocket.on('track_pos_updated', (position: number) => {
+            setPonaCommonState((value) => {
+              if (value) {
+                return { ...value, pona: { ...value.pona, position: position } };
+              }
+              return value;
+            });
+          });
+          iosocket.on('pause_updated', (paused: boolean) => {
+            setPonaCommonState((value) => {
+              if (value) {
+                return { ...value, pona: { ...value.pona, paused: paused } };
               }
               return value;
             });
@@ -118,11 +136,11 @@ export const PonaMusicProvider = ({ children }: { children: React.ReactNode }) =
             if ( track.identifier ) {
               const accentColor = await getAccentHEXColorFromUrl('/api/proxy/watch?v='+track.identifier);
               const colorPalette = nextuiColorPalette({name: 'content1', baseColor: accentColor});
-              DynamicNextUIThemeUpdate(colorPalette.content1);
+              DynamicNextUIThemeUpdate('--pona-app-music-accent-color', colorPalette.content1);
             }
             setPonaCommonState((value) => {
               if (value) {
-                return { ...value, current: track};
+                return { ...value, current: track, pona: { ...value.pona, position: 0, length: track.duration }};
               }
               return value;
             });
@@ -131,11 +149,11 @@ export const PonaMusicProvider = ({ children }: { children: React.ReactNode }) =
             if ( track.identifier ) {
               const accentColor = await getAccentHEXColorFromUrl('/api/proxy/watch?v='+track.identifier);
               const colorPalette = nextuiColorPalette({name: 'content1', baseColor: accentColor});
-              DynamicNextUIThemeUpdate(colorPalette.content1);
+              DynamicNextUIThemeUpdate('--pona-app-music-accent-color', colorPalette.content1);
             }
             setPonaCommonState((value) => {
               if (value) {
-                return { ...value, current: track};
+                return { ...value, current: track, pona: { ...value.pona, length: track.duration }};
               }
               return value;
             });
@@ -144,11 +162,11 @@ export const PonaMusicProvider = ({ children }: { children: React.ReactNode }) =
             if ( queue.current?.identifier ) {
               const accentColor = await getAccentHEXColorFromUrl('/api/proxy/watch?v='+queue.current?.identifier);
               const colorPalette = nextuiColorPalette({name: 'content1', baseColor: accentColor});
-              DynamicNextUIThemeUpdate(colorPalette.content1);
+              DynamicNextUIThemeUpdate('--pona-app-music-accent-color', colorPalette.content1);
             }
             setPonaCommonState((value) => {
               if (value) {
-                return { ...value, queue: queue, current: queue.current as Track | UnresolvedTrack | null};
+                return { ...value, queue: queue};
               }
               return value;
             });
@@ -171,9 +189,12 @@ export const PonaMusicProvider = ({ children }: { children: React.ReactNode }) =
             setTimeout(connectSocket, 5000);
           });
         };
-        connectSocket();
-        setSocket(iosocket);
-        document.documentElement.classList.add('pona-music-ready');
+
+        if (!socket || !socket.connected) {
+          connectSocket();
+          setSocket(iosocket);
+          document.documentElement.classList.add('pona-music-ready');
+        }
       }
     }
     return () => {

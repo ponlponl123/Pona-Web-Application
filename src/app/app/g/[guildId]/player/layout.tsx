@@ -5,11 +5,13 @@ import { PonaMusicProvider } from '@/contexts/ponaMusicContext'
 
 function PlayerLayout({ children }: { children: React.ReactNode }) {
   return (
-    <PonaMusicProvider>
-      <Providers>
-        {children}
-      </Providers>
-    </PonaMusicProvider>
+    <React.StrictMode>
+      <PonaMusicProvider>
+        <Providers>
+          {children}
+        </Providers>
+      </PonaMusicProvider>
+    </React.StrictMode>
   )
 }
 

@@ -101,7 +101,7 @@ function Header() {
                             }}>
                             <Input startContent={<MagnifyingGlass size={18} className='mr-1 max-miniscreen:absolute max-miniscreen:scale-75' />} name='search'
                                 placeholder={language.data.app.guilds.player.search.search_box}
-                                className={`${(pathname.includes('player') && pathname.includes('search')) ? 'max-miniscreen:left-24 max-miniscreen:translate-x-0' : 'max-miniscreen:min-w-0 max-miniscreen:w-10 max-miniscreen:pointer-events-none max-miniscreen:opacity-0 max-miniscreen:-translate-y-8'} backdrop-blur pona-music-searchbox miniscreen:w-80 max-md:max-w-[32vw] max-md:fixed max-md:-translate-x-1/2 max-md:left-1/2 md:absolute md:left-80`}
+                                className={`${(pathname.includes('player') && pathname.includes('search')) ? 'max-miniscreen:left-24 max-miniscreen:translate-x-0' : 'max-miniscreen:min-w-0 max-miniscreen:w-10 max-miniscreen:pointer-events-none max-miniscreen:opacity-0 max-miniscreen:-translate-y-8'} backdrop-blur pona-music-searchbox miniscreen:w-80 max-md:max-w-[32vw] max-md:fixed max-md:-translate-x-1/2 max-md:left-1/2 md:absolute md:left-80 md:[body.sidebar-collapsed_&]:left-24`}
                                 classNames={{
                                     inputWrapper: 'max-md:rounded-full bg-foreground/10 border-2 border-foreground/10',
                                     input: 'max-miniscreen:placeholder:opacity-0 placeholder:text-content1-foreground/40'

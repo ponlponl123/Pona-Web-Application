@@ -142,6 +142,12 @@ main#app-workspace {
 .group-menu > .group-content {
   @apply flex flex-col gap-2;
 }
+.group-menu.collapsed > .group-title {
+  @apply gap-1;
+}
+.group-menu.collapsed > .group-content {
+  @apply gap-0;
+}
 .group-menu > .group-title > *,
 .group-menu > .group-content > * {
   @apply w-full justify-start;
@@ -158,8 +164,11 @@ main#app-workspace {
 .group-menu:not(.active) > .group-content {
   @apply absolute opacity-0 pointer-events-none -mt-4 left-2 top-12;
 }
-.group-menu.active > .group-content {
+.group-menu.active:not(.collapsed) > .group-content {
   @apply p-2;
+}
+.group-menu.collapsed > .group-content > * {
+  @apply scale-80;
 }
 
 .pona-music-searchbox {
@@ -297,6 +306,16 @@ footer.pona-footer > div:last-child {
 
 header.pona-header {
   z-index: 90;
+}
+
+@media not all and (max-width: 767px) {
+  .sidebar-collapsed header.pona-header > div > div h1 > img{
+    @apply w-8 h-8 -translate-x-4;
+  }
+
+  .sidebar-collapsed header.pona-header > div > div h1 > span{
+    @apply hidden;
+  }
 }
 
 @media (max-width: 767px) {

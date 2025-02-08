@@ -1,7 +1,7 @@
 import { hexToHSL } from "@/utils/colorUtils";
 import { ColorScale } from "@nextui-org/theme";
 
-function DynamicNextUIThemeUpdate(theme: ColorScale): void {
+function DynamicNextUIThemeUpdate(vkey: string, theme: ColorScale): void {
   "use client";
   Object.entries(theme).forEach(([key, value]) => {
     const hsl = hexToHSL(value);
@@ -11,8 +11,8 @@ function DynamicNextUIThemeUpdate(theme: ColorScale): void {
     hsl.l = hsl.l*100;
     hsl.l = Math.round(hsl.l);
     hsl.h = Math.round(360*hsl.h);
-    const colorKey = `--pona-app-music-accent-color${key === 'DEFAULT' ? '' : '-'+key}`;
-    document.documentElement.style.setProperty(colorKey, hsl.h + ', ' + hsl.s + '%, ' + hsl.l + '%');
+    const colorKey = `${vkey}${key === 'DEFAULT' ? '' : '-'+key}`;
+    document.documentElement.style.setProperty(colorKey, hsl.h + ', ' + hsl.s + '%, ' + hsl.l + '%', 'important');
   });
 }
 

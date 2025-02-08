@@ -257,6 +257,13 @@
                         }
                     }
                 },
+                "repeat": {
+                    "title": "Repeat Mode",
+                    "off": "Off",
+                    "on": "On",
+                    "track": "Track",
+                    "queue": "Queue"
+                },
                 "home": {
                     "title": "Home"
                 },
