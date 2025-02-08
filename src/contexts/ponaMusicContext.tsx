@@ -97,9 +97,11 @@ export const PonaMusicProvider = ({ children }: { children: React.ReactNode }) =
               DynamicNextUIThemeUpdate('--pona-app-music-accent-color', colorPalette.content1);
               document.body.setAttribute('playing', ponaState.pona.current.identifier);
 
-              // add current track to first item of queue array
-              const newQueue: Queue = [{...ponaState.pona.current },...ponaState.pona.queue];
-              ponaState.pona.queue = newQueue;
+              if ( (ponaState.pona.queue[0].uniqueId !== ponaState.pona.current.uniqueId) )
+              {
+                const newQueue: Queue = [{...ponaState.pona.current },...ponaState.pona.queue];
+                ponaState.pona.queue = newQueue;
+              }
               
               fetch('/api/proxy/maxresdefault?v='+ponaState.pona.current.identifier, { cache: 'no-store' }).then(async res => {
                 const data = await res.json();

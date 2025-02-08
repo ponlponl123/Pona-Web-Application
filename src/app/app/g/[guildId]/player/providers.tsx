@@ -35,6 +35,12 @@ function Providers({ children }: { children: React.ReactNode }) {
         guild?.iconURL ? guild.iconURL+'?size=640' : userInfo?.banner ? `https://cdn.discordapp.com/banners/${userInfo.id}/${userInfo.banner}?size=640` : userInfo?.avatar ? `https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}?size=640` :
         backdrop.src;
     
+    const [sliderValue, setSliderValue] = React.useState<number | number[]>(ponaCommonState?.pona.position || 0);
+
+    React.useEffect(() => {
+        setSliderValue(ponaCommonState?.pona.position || 0);
+    }, [ponaCommonState?.pona.position]);
+
     React.useEffect(()=>{
         if ( !currentTrack )
             setPlayerPopup(()=>{
@@ -121,23 +127,26 @@ function Providers({ children }: { children: React.ReactNode }) {
                                             <div className='flex flex-col gap-2'>
                                             {
                                                 ponaCommonState.queue.map((track, index) => {
-                                                    const trackActive = ponaCommonState.current?.identifier === track.identifier;
+                                                    const isThisTrack = ponaCommonState.current?.identifier === track.identifier;
                                                     return (
                                                         <div className={`w-full py-2 px-2.5 flex gap-4 items-center rounded-3xl group ${
-                                                            trackActive?'[.light_&]:bg-[hsl(var(--pona-app-music-accent-color-400))] [.dark_&]:bg-[hsl(var(--pona-app-music-accent-color-800))] active':''
+                                                            isThisTrack?'[.light_&]:bg-[hsl(var(--pona-app-music-accent-color-400))] [.dark_&]:bg-[hsl(var(--pona-app-music-accent-color-800))] active':''
                                                         }`} key={index}>
                                                             <div className='w-11 h-11 select-none relative overflow-hidden rounded-2xl'>
                                                                 <Image src={track.artworkUrl} alt={track.title} height={44} width={44} className={
                                                                     'object-cover rounded-lg z-0 ' + 
-                                                                    ( (!ponaCommonState.pona.paused && trackActive) ? 'brightness-50 saturate-0' : 'group-hover:brightness-50 group-hover:saturate-0' )
+                                                                    ( (!ponaCommonState.pona.paused && isThisTrack) ? 'brightness-50 saturate-0' : 'group-hover:brightness-50 group-hover:saturate-0' )
                                                                 } />
                                                                 <div className={'absolute top-0 left-0 w-full h-full bg-background/35 z-[5] ' +
-                                                                    ( (!ponaCommonState.pona.paused && trackActive) ? 'opacity-100' : 'group-hover:opacity-100 opacity-0' )
+                                                                    ( (!ponaCommonState.pona.paused && isThisTrack) ? 'opacity-100' : 'group-hover:opacity-100 opacity-0' )
                                                                 }></div>
                                                                 {
-                                                                    (!ponaCommonState.pona.paused && trackActive) ?
-                                                                    <Button className='absolute z-10 top-0 left-0 w-full h-full opacity-100' variant='light' radius='full' isIconOnly><SpeakerSimpleHigh weight='fill' /></Button> :
-                                                                    <Button className='absolute z-10 top-0 left-0 w-full h-full group-hover:opacity-100 opacity-0' variant='light' radius='full' isIconOnly><Play weight='fill' /></Button>
+                                                                    (!ponaCommonState.pona.paused && isThisTrack) ?
+                                                                    <Button className='absolute z-10 top-0 left-0 w-full h-full opacity-100' variant='light' radius='full' isIconOnly onPress={()=>{socket?.emit('pause')}}><SpeakerSimpleHigh weight='fill' /></Button> :
+                                                                    <Button className='absolute z-10 top-0 left-0 w-full h-full group-hover:opacity-100 opacity-0' variant='light' radius='full' isIconOnly onPress={()=>{
+                                                                        if ( isThisTrack ) socket?.emit('play');
+                                                                        else socket?.emit('skipto', String(index-1));
+                                                                    }}><Play weight='fill' /></Button>
                                                                 }
                                                             </div>
                                                             <div className='w-[calc(100%_-_10rem)]'>
@@ -146,7 +155,7 @@ function Providers({ children }: { children: React.ReactNode }) {
                                                             </div>
                                                             <div className='ml-auto relative w-12 h-12 flex items-center justify-center'>
                                                                 <span className='[div.active_&]:text-[hsl(var(--pona-app-music-accent-color-500)/0.64)] group-hover:opacity-0 opacity-100 pointer-events-none'>{msToTime(track.duration || 0)}</span>
-                                                                <Button className='absolute z-10 top-0 left-0 w-full h-full group-hover:opacity-100 opacity-0' variant='light' radius='full' isIconOnly><DotsThreeVertical weight='fill' /></Button>
+                                                                <Button className='absolute z-10 top-0 left-0 w-full h-full group-hover:opacity-100 opacity-0' variant='light' radius='full' isIconOnly><DotsThreeVertical weight='bold' /></Button>
                                                             </div>
                                                         </div>
                                                     )
@@ -204,22 +213,25 @@ function Providers({ children }: { children: React.ReactNode }) {
                         }
                         classNames={{
                             track: '!border-s-[hsl(var(--pona-app-music-accent-color-500))] cursor-pointer',
-                            filler: '!bg-[hsl(var(--pona-app-music-accent-color-500))] transition-all ease-linear duration-[1s]'
+                            filler: '!bg-[hsl(var(--pona-app-music-accent-color-500))] transition-all ease-linear group-active:duration-0 duration-[1s]'
                         }}
                         renderThumb={(props) => (
                             <div
                                 {...props}
-                                className="transition-all md:p-1 ease-linear duration-[1s] top-1/2 !bg-[hsl(var(--pona-app-music-accent-color-500))] shadow-medium rounded-full cursor-grab data-[dragging=true]:cursor-grabbing"
+                                className="transition-all md:p-1 ease-linear group-active:duration-0 duration-[1s] top-1/2 !bg-[hsl(var(--pona-app-music-accent-color-500))] shadow-medium rounded-full cursor-grab data-[dragging=true]:cursor-grabbing"
                             >
                                 <span className="group-hover:h-1 group-hover:w-1 transition-transform !bg-[hsl(var(--pona-app-music-accent-color-500))] rounded-full max-md:w-1 max-md:h-1 w-0 h-0 block group-data-[dragging=true]:scale-80" />
                             </div>
                         )}
-                        defaultValue={ponaCommonState?.pona.position}
+                        value={sliderValue}
                         maxValue={ponaCommonState?.pona.length}
-                        value={ponaCommonState?.pona.position}
                         minValue={0}
                         size="sm"
                         step={1}
+                        onChange={(value) => setSliderValue(value)}
+                        onChangeEnd={(value) => {
+                            socket?.emit('seek', value);
+                        }}
                     />
                     <div
                         id='pona-player'
