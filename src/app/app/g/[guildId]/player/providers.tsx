@@ -8,7 +8,7 @@ import { usePonaMusicContext } from '@/contexts/ponaMusicContext'
 import { useUserSettingContext } from '@/contexts/userSettingContext'
 
 import PageAnimatePresence from '@/components/HOC/PageAnimatePresence'
-import { CaretDown, CaretLineLeft, CaretLineRight, CaretUp, Equalizer, MusicNotes, MusicNoteSimple, Pause, Play, Repeat, RepeatOnce, SpeakerSimpleHigh } from '@phosphor-icons/react/dist/ssr'
+import { CaretDown, CaretLineLeft, CaretLineRight, CaretUp, Coffee, DotsThreeVertical, Equalizer, Heart, MusicNotes, MusicNoteSimple, Pause, Play, Repeat, RepeatOnce, SpeakerSimpleHigh } from '@phosphor-icons/react/dist/ssr'
 import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger, Image, Link, Popover, PopoverContent, PopoverTrigger, ScrollShadow, Slider, Tab, Tabs } from '@nextui-org/react'
 
 import backdrop from '@/../public/backdrop.png'
@@ -18,8 +18,10 @@ import LetsPonaJoin from './@system/lets-pona-join'
 import SocketConnecting from './@system/socket-connecting'
 import { useGlobalContext } from '@/contexts/globalContext'
 import { msToTime } from '@/utils/time'
+import { useRouter } from 'next/navigation'
 
 function Providers({ children }: { children: React.ReactNode }) {
+    const router = useRouter();
     const { guild } = useDiscordGuildInfo();
     const { language } = useLanguageContext();
     const { userInfo } = useDiscordUserInfo();
@@ -76,8 +78,8 @@ function Providers({ children }: { children: React.ReactNode }) {
                         className={
                             (
                                 userSetting.dev_pona_player_style === 'modern' ?
-                                'absolute z-40 left-2 p-8 bottom-[6.1rem] max-md:rounded-lg rounded-3xl w-[calc(100%_-_1rem)] h-[calc(100vh_-_6.8rem)] bg-gradient-to-t [html.light_&]:!from-[hsl(var(--pona-app-music-accent-color-50))] [html.dark_&]:!from-[hsl(var(--pona-app-music-accent-color-900))] transition-all ease-out duration-250' :
-                                'absolute z-40 left-2 p-8 bottom-[6.4rem] max-md:rounded-lg rounded-3xl w-[calc(100%_-_1rem)] h-[calc(100vh_-_6.8rem)] bg-gradient-to-t [html.light_&]:!from-[hsl(var(--pona-app-music-accent-color-50))] [html.dark_&]:!from-[hsl(var(--pona-app-music-accent-color-900))] transition-all ease-out duration-250'
+                                'absolute z-40 left-2 p-8 bottom-[6.1rem] max-md:rounded-lg rounded-2xl w-[calc(100%_-_1rem)] h-[calc(100vh_-_6.8rem)] transition-all ease-out duration-250 overflow-hidden' :
+                                'absolute z-40 left-2 p-8 bottom-[6.4rem] max-md:rounded-lg rounded-2xl w-[calc(100%_-_1rem)] h-[calc(100vh_-_6.8rem)] transition-all ease-out duration-250 overflow-hidden'
                             )
                             + (userSetting.transparency ? ' backdrop-blur-2xl to-playground-background/100' : ' [html.light_&]:!to-[hsl(var(--pona-app-music-accent-color-50))] [html.dark_&]:!to-[hsl(var(--pona-app-music-accent-color-800))]')
                         }
@@ -88,14 +90,26 @@ function Providers({ children }: { children: React.ReactNode }) {
                         initial={{ opacity: 0, pointerEvents: 'none', translateY: 96 }}
                         animate={{ opacity: 1, pointerEvents: 'auto', translateY: 0 }}
                         exit={{ opacity: 0, pointerEvents: 'none', translateY: 64 }}>
-                        <div className='w-full h-full flex gap-24 justify-center items-center pt-16'>
-                            <Image src={currentTrack ? currentTrack.highResArtworkUrl || currentTrack.artworkUrl : defaultImage.src} alt={currentTrack ? currentTrack.title : 'Artwork'}
-                                className={
-                                    'w-[64vh] h-[64vh] object-cover max-lg:h-12 max-lg:w-12 max-md:rounded-lg'
-                                }
-                                loading='lazy' shadow='lg' isBlurred={userSetting.transparency} id='pona-music-artwork'
-                            />
-                            <div className='w-full h-full max-w-xl' id='pona-music-queue'>
+                        {
+                            userSetting.transparency &&
+                            <Image src={currentTrack ? currentTrack.artworkUrl : defaultImage.src} alt={currentTrack ? currentTrack.title : 'Backdrop'}
+                                className='absolute -z-10 w-full h-full top-0 left-0 object-cover blur-3xl'/>
+                        }
+                        <div className={
+                            'absolute -z-10 w-full h-full top-0 left-0 ' +
+                            ( userSetting.transparency ? ' bg-gradient-to-t [html.light_&]:!from-[hsl(var(--pona-app-music-accent-color-50))] [html.dark_&]:!from-[hsl(var(--pona-app-music-accent-color-900))]' :
+                                '[html.light_&]:!bg-[hsl(var(--pona-app-music-accent-color-50))] [html.dark_&]:!bg-[hsl(var(--pona-app-music-accent-color-900))]' )
+                        }></div>
+                        <div className='w-full h-full flex gap-12 justify-evenly items-center pt-16'>
+                            <div className='w-[64vh] h-[64vh] max-2xl:w-[42vh] max-2xl:h-[42vh] max-xl:w-[26vh] max-xl:h-[26vh] max-xl:[body:not(.sidebar-collapsed)_&]:hidden max-lg:hidden max-lg:h-12 max-lg:w-12 aspect-square relative flex'>
+                                <Image src={currentTrack ? currentTrack.highResArtworkUrl || currentTrack.artworkUrl : defaultImage.src} alt={currentTrack ? currentTrack.title : 'Artwork'}
+                                    className={
+                                        'w-full h-full object-cover'
+                                    }
+                                    loading='lazy' shadow='lg' radius='lg' isBlurred={userSetting.transparency} id='pona-music-artwork'
+                                />
+                            </div>
+                            <div className='w-full h-full max-w-lg' id='pona-music-queue'>
                                 <Tabs aria-label="Options" variant='underlined' size='lg' fullWidth
                                     classNames={{
                                         tabContent: '!text-[hsl(var(--pona-app-music-accent-color-500))]',
@@ -103,30 +117,64 @@ function Providers({ children }: { children: React.ReactNode }) {
                                         panel: 'h-full max-h-full'
                                     }}>
                                     <Tab key="next" title="Next">
-                                        <ScrollShadow>
-                                        {
-                                            ponaCommonState.queue.map((track, index) => {
-                                                return (
-                                                    <div className='w-full p-2 flex gap-4 items-center' key={index}>
-                                                        <MusicNoteSimple size={24} />
-                                                        <span>{track.title}</span>
-                                                    </div>
-                                                )
-                                            })
-                                        }
+                                        <ScrollShadow className='h-full pr-2' style={{scrollbarWidth:'thin',scrollbarColor:'hsl(var(--pona-app-music-accent-color-500))'}}>
+                                            <div className='flex flex-col gap-2'>
+                                            {
+                                                ponaCommonState.queue.map((track, index) => {
+                                                    const trackActive = ponaCommonState.current?.identifier === track.identifier;
+                                                    return (
+                                                        <div className={`w-full py-2 px-2.5 flex gap-4 items-center rounded-3xl group ${
+                                                            trackActive?'[.light_&]:bg-[hsl(var(--pona-app-music-accent-color-400))] [.dark_&]:bg-[hsl(var(--pona-app-music-accent-color-800))] active':''
+                                                        }`} key={index}>
+                                                            <div className='w-11 h-11 select-none relative overflow-hidden rounded-2xl'>
+                                                                <Image src={track.artworkUrl} alt={track.title} height={44} width={44} className={
+                                                                    'object-cover rounded-lg z-0 ' + 
+                                                                    ( (!ponaCommonState.pona.paused && trackActive) ? 'brightness-50 saturate-0' : 'group-hover:brightness-50 group-hover:saturate-0' )
+                                                                } />
+                                                                <div className={'absolute top-0 left-0 w-full h-full bg-background/35 z-[5] ' +
+                                                                    ( (!ponaCommonState.pona.paused && trackActive) ? 'opacity-100' : 'group-hover:opacity-100 opacity-0' )
+                                                                }></div>
+                                                                {
+                                                                    (!ponaCommonState.pona.paused && trackActive) ?
+                                                                    <Button className='absolute z-10 top-0 left-0 w-full h-full opacity-100' variant='light' radius='full' isIconOnly><SpeakerSimpleHigh weight='fill' /></Button> :
+                                                                    <Button className='absolute z-10 top-0 left-0 w-full h-full group-hover:opacity-100 opacity-0' variant='light' radius='full' isIconOnly><Play weight='fill' /></Button>
+                                                                }
+                                                            </div>
+                                                            <div className='w-[calc(100%_-_10rem)]'>
+                                                                <h1 className='w-full [div.active_&]:text-[hsl(var(--pona-app-music-accent-color-500))] whitespace-nowrap overflow-hidden overflow-ellipsis'>{track.title}</h1>
+                                                                <span className='w-full text-xs text-foreground/40 [div.active_&]:text-[hsl(var(--pona-app-music-accent-color-500)/0.4)] whitespace-nowrap overflow-hidden overflow-ellipsis'>{track.author}</span>
+                                                            </div>
+                                                            <div className='ml-auto relative w-12 h-12 flex items-center justify-center'>
+                                                                <span className='[div.active_&]:text-[hsl(var(--pona-app-music-accent-color-500)/0.64)] group-hover:opacity-0 opacity-100 pointer-events-none'>{msToTime(track.duration || 0)}</span>
+                                                                <Button className='absolute z-10 top-0 left-0 w-full h-full group-hover:opacity-100 opacity-0' variant='light' radius='full' isIconOnly><DotsThreeVertical weight='fill' /></Button>
+                                                            </div>
+                                                        </div>
+                                                    )
+                                                })
+                                            }
+                                            </div>
                                         </ScrollShadow>
                                     </Tab>
                                     <Tab key="lyrics" title="Lyrics">
-                                        <ScrollShadow>
-                                        Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
-                                        ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-                                        cillum dolore eu fugiat nulla pariatur.
+                                        <ScrollShadow className='h-full pr-2' style={{scrollbarWidth:'thin',scrollbarColor:'hsl(var(--pona-app-music-accent-color-500))'}}>
+                                            <div className='flex flex-col gap-4 items-center justify-center w-full h-full'>
+                                                <Coffee size={56} weight='fill' className='text-[hsl(var(--pona-app-music-accent-color-500))]' />
+                                                <h1 className='text-2xl max-w-screen-md text-center text-[hsl(var(--pona-app-music-accent-color-500)/0.64)]'>{language.data.app.guilds.player.dev}</h1>
+                                                <Link href='/app/updates' rel='noopener' onPress={()=>{router.push('/app/updates')}}>
+                                                    <Button color='secondary' className='mt-2 bg-[hsl(var(--pona-app-music-accent-color-500))]' radius='full'><Heart weight='fill' /> {language.data.app.updates.follow}</Button>
+                                                </Link>
+                                            </div>
                                         </ScrollShadow>
                                     </Tab>
                                     <Tab key="related" title="Related">
-                                        <ScrollShadow>
-                                        Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-                                        mollit anim id est laborum.
+                                        <ScrollShadow className='h-full pr-2' style={{scrollbarWidth:'thin',scrollbarColor:'hsl(var(--pona-app-music-accent-color-500))'}}>
+                                            <div className='flex flex-col gap-4 items-center justify-center w-full h-full'>
+                                                <Coffee size={56} weight='fill' className='text-[hsl(var(--pona-app-music-accent-color-500))]' />
+                                                <h1 className='text-2xl max-w-screen-md text-center text-[hsl(var(--pona-app-music-accent-color-500)/0.64)]'>{language.data.app.guilds.player.dev}</h1>
+                                                <Link href='/app/updates' rel='noopener' onPress={()=>{router.push('/app/updates')}}>
+                                                    <Button color='secondary' className='mt-2 bg-[hsl(var(--pona-app-music-accent-color-500))]' radius='full'><Heart weight='fill' /> {language.data.app.updates.follow}</Button>
+                                                </Link>
+                                            </div>
                                         </ScrollShadow>
                                     </Tab>
                                 </Tabs>
@@ -141,9 +189,10 @@ function Providers({ children }: { children: React.ReactNode }) {
                         animate={{ opacity: 1, pointerEvents: 'auto', translateY: 0 }}
                         exit={{ opacity: 0, pointerEvents: 'none', translateY: 32 }}
                     className={
-                        userSetting.dev_pona_player_style === 'modern' ?
-                        `absolute max-md:overflow-hidden h-[4.8rem] z-50 max-lg:h-16 max-md:bottom-6 bottom-2 left-2 bg-gradient-to-br to-foreground/5 max-md:to-[hsl(var(--pona-app-music-accent-color-500)/.24)] from-[hsl(var(--pona-app-music-accent-color-500)/.24)] backdrop-blur-md max-md:rounded-lg rounded-2xl` :
-                        `absolute max-md:overflow-hidden h-[5.6rem] z-50 max-lg:h-16 max-md:bottom-6 bottom-2 left-2 bg-gradient-to-br to-foreground/5 max-md:to-[hsl(var(--pona-app-music-accent-color-500)/.24)] from-[hsl(var(--pona-app-music-accent-color-500)/.24)] backdrop-blur-md max-md:rounded-lg rounded-2xl`
+                        (userSetting.dev_pona_player_style === 'modern' ?
+                        `absolute max-md:overflow-hidden h-[4.8rem] z-50 max-lg:h-16 max-md:bottom-6 bottom-2 left-2 bg-gradient-to-br to-foreground/5 max-md:to-[hsl(var(--pona-app-music-accent-color-500)/.24)] from-[hsl(var(--pona-app-music-accent-color-500)/.24)] max-md:rounded-lg rounded-2xl` :
+                        `absolute max-md:overflow-hidden h-[5.6rem] z-50 max-lg:h-16 max-md:bottom-6 bottom-2 left-2 bg-gradient-to-br to-foreground/5 max-md:to-[hsl(var(--pona-app-music-accent-color-500)/.24)] from-[hsl(var(--pona-app-music-accent-color-500)/.24)] max-md:rounded-lg rounded-2xl`)
+                        + (userSetting.transparency ? ' backdrop-blur-md' : '')
                     } style={{width:'calc(100% - 1rem)'}}>
                     <div className='absolute top-0 left-0 z-0 w-full h-full [body.pona-player-focused_&]:bg-none [html.light_&]:[body.pona-player-focused_&]:bg-[hsl(var(--pona-app-music-accent-color-50))] [html.dark_&]:[body.pona-player-focused_&]:bg-[hsl(var(--pona-app-music-accent-color-900))] max-md:rounded-lg rounded-2xl'></div>
                     <Slider
@@ -260,7 +309,11 @@ function Providers({ children }: { children: React.ReactNode }) {
                                 </PopoverContent>
                             </Popover>
                             <Button isIconOnly radius='lg' size='md' variant='light' className='scale-110 max-lg:hidden hidden'><SpeakerSimpleHigh weight='fill' /></Button>
-                            <Button isIconOnly radius='lg' size='md' variant='light' className='scale-110 max-md:hidden' onPress={()=>{setPlayerPopup((value)=>!value)}}>
+                            <Button isIconOnly radius='lg' size='md' variant='light' className='scale-110 max-md:hidden' onPress={()=>{setPlayerPopup((value)=>{
+                                if ( !value ) document.body.classList.add('pona-player-focused');
+                                else document.body.classList.remove('pona-player-focused');
+                                return !value;
+                            })}}>
                                 <CaretUp className={`absolute ${playerPopup?'opacity-0 -translate-y-6':''}`} />
                                 <CaretDown className={`absolute ${!playerPopup?'opacity-0 translate-y-6':''}`} />
                             </Button>
