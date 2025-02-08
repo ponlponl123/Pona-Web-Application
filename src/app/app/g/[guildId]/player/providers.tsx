@@ -145,7 +145,9 @@ function Providers({ children }: { children: React.ReactNode }) {
                                                                     <Button className='absolute z-10 top-0 left-0 w-full h-full opacity-100' variant='light' radius='full' isIconOnly onPress={()=>{socket?.emit('pause')}}><SpeakerSimpleHigh weight='fill' /></Button> :
                                                                     <Button className='absolute z-10 top-0 left-0 w-full h-full group-hover:opacity-100 opacity-0' variant='light' radius='full' isIconOnly onPress={()=>{
                                                                         if ( isThisTrack ) socket?.emit('play');
-                                                                        else socket?.emit('skipto', String(index-1));
+                                                                        else 
+                                                                            if (index-1 === 0) socket?.emit('next');
+                                                                            else socket?.emit('skipto', index-1);
                                                                     }}><Play weight='fill' /></Button>
                                                                 }
                                                             </div>
