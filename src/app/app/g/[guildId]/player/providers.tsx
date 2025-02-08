@@ -130,7 +130,7 @@ function Providers({ children }: { children: React.ReactNode }) {
                                                     const isThisTrack = ponaCommonState.current?.identifier === track.identifier;
                                                     return (
                                                         <div className={`w-full py-2 px-2.5 flex gap-4 items-center rounded-3xl group ${
-                                                            isThisTrack?'[.light_&]:bg-[hsl(var(--pona-app-music-accent-color-400))] [.dark_&]:bg-[hsl(var(--pona-app-music-accent-color-800))] active':''
+                                                            isThisTrack?'[.light_&]:bg-[hsl(var(--pona-app-music-accent-color-100))] [.dark_&]:bg-[hsl(var(--pona-app-music-accent-color-800))] active':''
                                                         }`} key={index}>
                                                             <div className='w-11 h-11 select-none relative overflow-hidden rounded-2xl'>
                                                                 <Image src={track.artworkUrl} alt={track.title} height={44} width={44} className={
@@ -142,13 +142,13 @@ function Providers({ children }: { children: React.ReactNode }) {
                                                                 }></div>
                                                                 {
                                                                     (!ponaCommonState.pona.paused && isThisTrack) ?
-                                                                    <Button className='absolute z-10 top-0 left-0 w-full h-full opacity-100' variant='light' radius='full' isIconOnly onPress={()=>{socket?.emit('pause')}}><SpeakerSimpleHigh weight='fill' /></Button> :
+                                                                    <Button className='absolute z-10 top-0 left-0 w-full h-full opacity-100' variant='light' radius='full' isIconOnly onPress={()=>{socket?.emit('pause')}}><SpeakerSimpleHigh className='text-white' weight='fill' /></Button> :
                                                                     <Button className='absolute z-10 top-0 left-0 w-full h-full group-hover:opacity-100 opacity-0' variant='light' radius='full' isIconOnly onPress={()=>{
                                                                         if ( isThisTrack ) socket?.emit('play');
                                                                         else 
                                                                             if (index-1 === 0) socket?.emit('next');
                                                                             else socket?.emit('skipto', index-1);
-                                                                    }}><Play weight='fill' /></Button>
+                                                                    }}><Play className='text-white' weight='fill' /></Button>
                                                                 }
                                                             </div>
                                                             <div className='w-[calc(100%_-_10rem)]'>
