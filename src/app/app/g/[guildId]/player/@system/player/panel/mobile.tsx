@@ -9,8 +9,8 @@ import { useUserSettingContext } from '@/contexts/userSettingContext'
 import { msToTime } from '@/utils/time'
 import { useRouter } from 'next/navigation'
 
-import { CaretLineLeft, CaretLineRight, Coffee, Heart, Pause, Play, SpeakerSimpleHigh } from '@phosphor-icons/react/dist/ssr'
-import { Button, Image, Link, ScrollShadow, Slider, Tab, Tabs } from '@nextui-org/react'
+import { CaretLineLeft, CaretLineRight, Coffee, Equalizer, Heart, MusicNotes, Pause, Play, Repeat, RepeatOnce, SpeakerSimpleHigh } from '@phosphor-icons/react/dist/ssr'
+import { Button, Image, Link, Modal, ModalBody, ModalContent, ModalHeader, ScrollShadow, Slider, Tab, Tabs, useDisclosure } from '@nextui-org/react'
 
 import defaultImage from '@/../public/Ponlponl123 (1459).png'
 import { MobilePonaPlayerPanelAnimationState } from '../mobile';
@@ -35,6 +35,8 @@ function MobilePonaPlayerPanel({
     const { socket, playerPopup, setPlayerPopup } = usePonaMusicContext();
     const currentTrack = ponaCommonState?.current;
         
+    const {isOpen: isRepeatModalOpen, onOpen: onRepeatModalOpen, onOpenChange: onRepeatModalOpenChange} = useDisclosure();
+    const {isOpen: isEqualizerModalOpen, onOpen: onEqualizerModalOpen, onOpenChange: onEqualizerModalOpenChange} = useDisclosure();
     const [sliderValue, setSliderValue] = React.useState<number | number[]>(ponaCommonState?.pona.position || 0);
   
     React.useEffect(() => {
@@ -72,7 +74,7 @@ function MobilePonaPlayerPanel({
                 }, 100);
               }} id='pona-music-panel-trigger'></div>
               <div className='max-w-full max-h-full m-auto flex flex-col gap-4 justify-center items-center py-16' id='mobile-pona-player-controller'>
-                <div className='w-[calc(100%_-_3rem)] max-w-[48vh] aspect-square relative flex pointer-events-none'>
+                <div className='w-[calc(100vw_-_3rem)] max-w-[48vh] aspect-square relative flex pointer-events-none'>
                   <Image src={currentTrack ? currentTrack.highResArtworkUrl || currentTrack.artworkUrl : defaultImage.src} alt={currentTrack ? currentTrack.title : 'Artwork'}
                     className={
                       'w-full h-full object-cover'
@@ -80,7 +82,7 @@ function MobilePonaPlayerPanel({
                     loading='lazy' shadow='lg' radius='lg' isBlurred={userSetting.transparency} id='pona-music-artwork'
                   />
                 </div>
-                <div className='w-full max-h-full flex flex-col gap-2 px-6' id='mobile-pona-music-player-controller-track'>
+                <div className='w-full max-h-full flex flex-col gap-2' id='mobile-pona-music-player-controller-track'>
                   <h1 className='text-3xl !text-[hsl(var(--pona-app-music-accent-color-500))] w-full whitespace-nowrap overflow-hidden overflow-ellipsis'>{currentTrack.title}</h1>
                   <h1 className='text-base !text-[hsl(var(--pona-app-music-accent-color-500)/0.4)] w-full whitespace-nowrap overflow-hidden overflow-ellipsis'>{currentTrack.author}</h1>
                   <div className='my-4 relative' id='mobile-pona-music-player-controller-track-slider'>
@@ -115,15 +117,17 @@ function MobilePonaPlayerPanel({
                     </div>
                   </div>
                   <div className='w-full flex items-center justify-evenly my-6' id='mobile-pona-music-player-controller-track-action'>
+                    <Button isIconOnly radius='lg' size='md' variant='light' className='mr-auto' onPress={onEqualizerModalOpen}><Equalizer weight='fill' /></Button>
                     <Button isIconOnly radius='full' size='md' variant='light' onPress={()=>{socket?.emit('previous')}}><CaretLineLeft weight='fill' /></Button>
                     {
                       !ponaCommonState?.pona.paused ? <>
-                        <Button isIconOnly radius='full' size='lg' variant='light' className='scale-125' onPress={()=>{socket?.emit('pause')}}><Pause weight='fill' /></Button>
+                        <Button isIconOnly radius='full' size='lg' variant='light' className='scale-125 mx-auto' onPress={()=>{socket?.emit('pause')}}><Pause weight='fill' /></Button>
                       </> : <>
-                        <Button isIconOnly radius='full' size='lg' variant='light' className='scale-125' onPress={()=>{socket?.emit('play')}}><Play weight='fill' /></Button>
+                        <Button isIconOnly radius='full' size='lg' variant='light' className='scale-125 mx-auto' onPress={()=>{socket?.emit('play')}}><Play weight='fill' /></Button>
                       </>
                     }
                     <Button isIconOnly radius='full' size='md' variant='light' onPress={()=>{socket?.emit('next')}}><CaretLineRight weight='fill' /></Button>
+                    <Button isIconOnly radius='lg' size='md' variant='light' className='ml-auto' onPress={onRepeatModalOpen}><Repeat weight='fill' /></Button>
                   </div>
                 </div>
               </div>
@@ -133,6 +137,32 @@ function MobilePonaPlayerPanel({
           </motion.div>
         }
         </AnimatePresence>
+        <Modal isOpen={isRepeatModalOpen} onOpenChange={onRepeatModalOpenChange} hideCloseButton backdrop={userSetting.transparency?'blur':'opaque'}>
+          <ModalContent>
+            {(onClose) => (
+              <>
+                <ModalHeader className="flex flex-col gap-1">{language.data.app.guilds.player.repeat.title}</ModalHeader>
+                <ModalBody className='pb-6'>
+                  <Button variant={(!ponaCommonState?.pona.repeat.track && !ponaCommonState?.pona.repeat.queue)?'solid':'light'} onPress={()=>{socket?.emit('repeat', 'none');onClose();}}><MusicNotes /> {language.data.app.guilds.player.repeat.off}</Button>
+                  <Button variant={(ponaCommonState?.pona.repeat.track)?'solid':'light'} onPress={()=>{socket?.emit('repeat', 'track');onClose();}}><RepeatOnce /> {language.data.app.guilds.player.repeat.track}</Button>
+                  <Button variant={(ponaCommonState?.pona.repeat.queue)?'solid':'light'} onPress={()=>{socket?.emit('repeat', 'queue');onClose();}}><Repeat /> {language.data.app.guilds.player.repeat.queue}</Button>
+                </ModalBody>
+              </>
+            )}
+          </ModalContent>
+        </Modal>
+        <Modal isOpen={isEqualizerModalOpen} onOpenChange={onEqualizerModalOpenChange} hideCloseButton backdrop={userSetting.transparency?'blur':'opaque'}>
+          <ModalContent>
+            {() => (
+              <>
+                <ModalHeader className="flex flex-col gap-1">{language.data.app.guilds.player.equalizer.title}</ModalHeader>
+                <ModalBody className='pb-6'>
+                  {language.data.extensions.comingsoon}
+                </ModalBody>
+              </>
+            )}
+          </ModalContent>
+        </Modal>
         <AnimatePresence>
         {
             (currentTrack && playerPopup && !trackFocus) &&
@@ -159,10 +189,10 @@ function MobilePonaPlayerPanel({
                               base: 'absolute top-20 w-[calc(100%_-_2rem)] left-4',
                               tabContent: '!text-[hsl(var(--pona-app-music-accent-color-500))]',
                               cursor: 'bg-[hsl(var(--pona-app-music-accent-color-500))]',
-                              panel: 'h-[82vh] absolute top-36 left-1 w-full'
+                              panel: 'max-h-[80vh] h-max absolute top-36 left-1 w-full'
                             }}>
                             <Tab key="next" title={language.data.app.guilds.player.tabs.next}>
-                                <ScrollShadow className='h-full pr-2' style={{scrollbarWidth:'none',scrollbarColor:'hsl(var(--pona-app-music-accent-color-500))'}}>
+                                <ScrollShadow className='max-h-[80vh] pr-2' style={{scrollbarWidth:'none',scrollbarColor:'hsl(var(--pona-app-music-accent-color-500))'}}>
                                     <div className='flex flex-col gap-2'>
                                     {
                                         ponaCommonState.queue.map((track, index) => {
@@ -205,7 +235,7 @@ function MobilePonaPlayerPanel({
                                 </ScrollShadow>
                             </Tab>
                             <Tab key="lyrics" title={language.data.app.guilds.player.tabs.lyrics}>
-                                <ScrollShadow className='h-full pr-2' style={{scrollbarWidth:'none',scrollbarColor:'hsl(var(--pona-app-music-accent-color-500))'}}>
+                                <ScrollShadow className='max-h-[80vh] pr-2' style={{scrollbarWidth:'none',scrollbarColor:'hsl(var(--pona-app-music-accent-color-500))'}}>
                                     <div className='flex flex-col gap-4 items-center justify-center w-full h-full'>
                                         <Coffee size={56} weight='fill' className='text-[hsl(var(--pona-app-music-accent-color-500))]' />
                                         <h1 className='text-2xl max-w-screen-md text-center text-[hsl(var(--pona-app-music-accent-color-500)/0.64)]'>{language.data.app.guilds.player.dev}</h1>
@@ -216,7 +246,7 @@ function MobilePonaPlayerPanel({
                                 </ScrollShadow>
                             </Tab>
                             <Tab key="related" title={language.data.app.guilds.player.tabs.related}>
-                                <ScrollShadow className='h-full pr-2' style={{scrollbarWidth:'none',scrollbarColor:'hsl(var(--pona-app-music-accent-color-500))'}}>
+                                <ScrollShadow className='max-h-[80vh] pr-2' style={{scrollbarWidth:'none',scrollbarColor:'hsl(var(--pona-app-music-accent-color-500))'}}>
                                     <div className='flex flex-col gap-4 items-center justify-center w-full h-full'>
                                         <Coffee size={56} weight='fill' className='text-[hsl(var(--pona-app-music-accent-color-500))]' />
                                         <h1 className='text-2xl max-w-screen-md text-center text-[hsl(var(--pona-app-music-accent-color-500)/0.64)]'>{language.data.app.guilds.player.dev}</h1>

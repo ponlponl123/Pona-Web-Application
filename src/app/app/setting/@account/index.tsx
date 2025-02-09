@@ -6,6 +6,8 @@ import { Avatar, Chip, Image, Link } from '@nextui-org/react';
 import { DiscordLogo, StarAndCrescent } from '@phosphor-icons/react/dist/ssr';
 import React from 'react'
 
+import defaultAvatar from '@/../public/Ponlponl123 (1459).png'
+
 function Account() {
   const { language } = useLanguageContext();
   const { userInfo } = useDiscordUserInfo();
@@ -15,20 +17,37 @@ function Account() {
       <h1 className='text-5xl flex items-center gap-4 pt-4'><StarAndCrescent weight='fill' />{userInfo ? userInfo.global_name : language.data.app.setting.account.title}</h1>
       <div>
         <div className='rounded-3xl'>
-          <Image
-            isBlurred={userSetting.transparency}
-            alt={`${userInfo && userInfo.global_name} Banner`}
-            src={userInfo ? `https://cdn.discordapp.com/banners/${userInfo.id}/${userInfo.banner}.png?size=1024` : ''}
-            className='object-cover object-center bg-primary'
-            width="100%"
-          />
+          {
+            userInfo?.banner ? 
+            <Image
+              isBlurred={userSetting.transparency}
+              alt={`${userInfo && userInfo.global_name} Banner`}
+              src={userInfo ? `https://cdn.discordapp.com/banners/${userInfo.id}/${userInfo.banner}.png?size=1024` : ''}
+              className='object-cover object-center bg-primary'
+              width="100%"
+            /> :
+            <div className='w-full h-48 overflow-hidden bg-primary/40 rounded-3xl relative'>
+              {
+                userSetting.transparency &&
+                <Image
+                  alt={`${userInfo && userInfo.global_name} Banner`}
+                  src={userInfo ? `https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}.png?size=256` : defaultAvatar.src}
+                  className='object-cover object-center w-full h-full blur-2xl scale-110'
+                  width="100%" height="100%"
+                  classNames={{
+                    wrapper: 'w-full h-full'
+                  }}
+                />
+              }
+            </div>
+          }
         </div>
         <div className='flex gap-6 z-10 relative px-12 max-md:px-6'>
           <div className='flex flex-col items-center max-md:absolute max-md:left-12'>
             <div className='-translate-y-1/2 outline outline-8 outline-playground-background rounded-full block overflow-hidden min-w-32 w-32 h-32 max-md:outline-4 max-md:min-w-24 max-md:w-24 max-md:h-24'>
               <Avatar
                 alt={`${userInfo && userInfo.global_name} Avatar`}
-                src={userInfo ? `https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}.png?size=128` : ''}
+                src={userInfo ? `https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}.png?size=128` : defaultAvatar.src}
                 name={userInfo ? userInfo.username : 'Me'}
                 className='object-cover object-center max-md:w-24 max-md:h-24 bg-primary w-32 h-32'
               />
