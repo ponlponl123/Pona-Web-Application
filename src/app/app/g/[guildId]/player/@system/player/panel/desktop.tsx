@@ -12,14 +12,17 @@ import defaultImage from '@/../public/Ponlponl123 (1459).png'
 
 import { Coffee, DotsThreeVertical, Heart, Play, SpeakerSimpleHigh } from '@phosphor-icons/react/dist/ssr'
 import { Button, Image, Link, ScrollShadow, Tab, Tabs } from '@nextui-org/react'
+import LyricsDisplay from '@/components/music/lyricsDisplay';
 
 function DesktopPonaPlayerPanel() {
     const router = useRouter();
     const { language } = useLanguageContext();
-    const { userSetting } = useUserSettingContext();
     const { ponaCommonState } = useGlobalContext();
+    const { userSetting } = useUserSettingContext();
     const { socket, playerPopup } = usePonaMusicContext();
     const currentTrack = ponaCommonState?.current;
+    const lyricsContainerRef = React.useRef<HTMLElement>(null);
+    const playerPos = ponaCommonState ? ponaCommonState.pona.position : 0;
 
     return (
         <>
@@ -88,8 +91,8 @@ function DesktopPonaPlayerPanel() {
                                                         }></div>
                                                         {
                                                             (!ponaCommonState.pona.paused && isThisTrack) ?
-                                                            <Button className='absolute z-10 top-0 left-0 w-full h-full opacity-100' variant='light' radius='full' isIconOnly onPress={()=>{socket?.emit('pause')}}><SpeakerSimpleHigh className='text-white' weight='fill' /></Button> :
-                                                            <Button className='absolute z-10 top-0 left-0 w-full h-full group-hover:opacity-100 opacity-0' variant='light' radius='full' isIconOnly onPress={()=>{
+                                                            <Button className='absolute z-10 top-0 left-0 w-full h-full opacity-100' variant='light' radius='md' isIconOnly onPress={()=>{socket?.emit('pause')}}><SpeakerSimpleHigh className='text-white' weight='fill' /></Button> :
+                                                            <Button className='absolute z-10 top-0 left-0 w-full h-full group-hover:opacity-100 opacity-0' variant='light' radius='md' isIconOnly onPress={()=>{
                                                                 if ( isThisTrack ) socket?.emit('play');
                                                                 else 
                                                                     if (index-1 === 0) socket?.emit('next');
@@ -112,15 +115,11 @@ function DesktopPonaPlayerPanel() {
                                     </div>
                                 </ScrollShadow>
                             </Tab>
-                            <Tab key="lyrics" title={language.data.app.guilds.player.tabs.lyrics}>
-                                <ScrollShadow className='h-full pr-2' style={{scrollbarWidth:'thin',scrollbarColor:'hsl(var(--pona-app-music-accent-color-500))'}}>
-                                    <div className='flex flex-col gap-4 items-center justify-center w-full h-full'>
-                                        <Coffee size={56} weight='fill' className='text-[hsl(var(--pona-app-music-accent-color-500))]' />
-                                        <h1 className='text-2xl max-w-screen-md text-center text-[hsl(var(--pona-app-music-accent-color-500)/0.64)]'>{language.data.app.guilds.player.dev}</h1>
-                                        <Link href='/app/updates' rel='noopener' onPress={()=>{router.push('/app/updates')}}>
-                                            <Button color='secondary' className='mt-2 bg-[hsl(var(--pona-app-music-accent-color-500))]' radius='full'><Heart weight='fill' /> {language.data.app.updates.follow}</Button>
-                                        </Link>
-                                    </div>
+                            <Tab key="lyrics" title={language.data.app.guilds.player.tabs.lyrics} isDisabled={!currentTrack.lyrics}>
+                                <ScrollShadow className='h-full pr-2 pt-4 pb-12' style={{scrollbarWidth:'thin',scrollbarColor:'hsl(var(--pona-app-music-accent-color-500))'}} ref={lyricsContainerRef}>
+                                    {lyricsContainerRef.current && (
+                                        <LyricsDisplay playerPosition={playerPos} currentTrack={currentTrack} lyricsProvider={lyricsContainerRef.current} />
+                                    )}
                                 </ScrollShadow>
                             </Tab>
                             <Tab key="related" title={language.data.app.guilds.player.tabs.related}>

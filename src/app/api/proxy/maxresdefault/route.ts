@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
   try {
     const response = await fetch(youtubeThumbnailUrl);
     if (!response.ok) {
-      throw new Error("Failed to fetch thumbnail from both endpoints");
+      throw new Error("Failed to fetch thumbnail from any endpoints");
     }
 
     return NextResponse.json({ endpoint: response.url }, { status: 200 });

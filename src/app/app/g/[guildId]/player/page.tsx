@@ -1,7 +1,7 @@
 "use client"
 import React from 'react'
 import { Image, Spinner } from '@nextui-org/react';
-// import { useLanguageContext } from '@/contexts/languageContext';
+import { useLanguageContext } from '@/contexts/languageContext';
 import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo';
 import { useDiscordUserInfo } from '@/contexts/discordUserInfo';
 import MusicCard from '@/components/music/card';
@@ -44,7 +44,7 @@ const sample_track: Track = {
 function Page() {
   const { userInfo } = useDiscordUserInfo();
   const { guild } = useDiscordGuildInfo();
-  // const { language } = useLanguageContext();
+  const { language } = useLanguageContext();
   return (
     guild ? (
       <>
@@ -54,10 +54,10 @@ function Page() {
               className='rounded-full' />
             <div className='flex flex-col items-start justify-center'>
               <h3 className='text-lg leading-none'>{userInfo?.global_name}</h3>
-              <h1 className='text-5xl'>Listen Again</h1>
+              <h1 className='text-5xl'>{language.data.app.guilds.player.home.listen_again}</h1>
             </div>
           </div>
-          <div className='flex gap-5'>
+          <div className='w-full my-6 flex flex-row items-start justify-start gap-5'>
             <MusicCard track={sample_track} />
           </div>
         </div>

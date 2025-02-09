@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
     let response = await fetch(youtubeThumbnailUrl);
     if (!response.ok) {
       response = await fetch(youtubeThumbnailUrl_2);
-      if (!response.ok) throw new Error("Failed to fetch thumbnail from both endpoints");
+      if (!response.ok) throw new Error("Failed to fetch thumbnail from any endpoints");
     }
 
     const contentType = response.headers.get("content-type");

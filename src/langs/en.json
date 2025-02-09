@@ -257,6 +257,20 @@
                         }
                     }
                 },
+                "music_card": {
+                    "action": {
+                        "add_to_queue": {
+                            "title": "Add to queue?",
+                            "close": "Close",
+                            "add": "Add to queue"
+                        },
+                        "add_duplicated_track_to_queue": {
+                            "title": "Add Duplicated Track to queue!?",
+                            "close": "No way",
+                            "add": "Force Add to queue anyway!"
+                        }
+                    }
+                },
                 "tabs": {
                     "next": "Next",
                     "lyrics": "Lyrics",
@@ -278,7 +292,8 @@
                     "title": "Equalizer"
                 },
                 "home": {
-                    "title": "Home"
+                    "title": "Home",
+                    "listen_again": "Listen Again"
                 },
                 "history": {
                     "title": "History"

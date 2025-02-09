@@ -9,9 +9,7 @@ import { VoiceBasedChannel } from 'discord.js';
 import { MemberVoiceChangedState } from '@/interfaces/member';
 import { usePathname } from 'next/navigation';
 import { useGlobalContext } from './globalContext';
-import { getAccentHEXColorFromUrl } from '@/utils/colorUtils';
-import nextuiColorPalette from '../../themes/utils/nextui-color-palette-gen';
-import DynamicNextUIThemeUpdate from '../../themes/utils/dynamic-nextui-theme-update';
+import { makeTrack } from '@/utils/track';
 
 const PonaMusicContext = createContext<{
   socket: Socket | null;
@@ -93,22 +91,8 @@ export const PonaMusicProvider = ({ children }: { children: React.ReactNode }) =
             isMemberInVC?: VoiceBasedChannel | null
           }) => {
             if ( ponaState.pona?.current?.identifier ) {
-              const accentColor = await getAccentHEXColorFromUrl('/api/proxy/watch?v='+ponaState.pona.current.identifier);
-              const colorPalette = nextuiColorPalette({name: 'content1', baseColor: accentColor});
-              DynamicNextUIThemeUpdate('--pona-app-music-accent-color', colorPalette.content1);
-              document.body.setAttribute('playing', ponaState.pona.current.identifier);
-
-              if ( (ponaState.pona.queue[0].uniqueId !== ponaState.pona.current.uniqueId) )
-              {
-                const newQueue: Queue = [{...ponaState.pona.current },...ponaState.pona.queue];
-                ponaState.pona.queue = newQueue;
-              }
-              
-              fetch('/api/proxy/maxresdefault?v='+ponaState.pona.current.identifier, { cache: 'no-store' }).then(async res => {
-                const data = await res.json();
-                if (res.status === 200 && ponaState.pona?.current)
-                  ponaState.pona.current.highResArtworkUrl = data.endpoint;
-              });
+              const newTrack = await makeTrack(ponaState.pona.current);
+              ponaState.pona.current = newTrack;
             }
             setPonaCommonState(ponaState.pona || null);
             setIsMemberInVC(ponaState.isMemberInVC || null);
@@ -159,16 +143,8 @@ export const PonaMusicProvider = ({ children }: { children: React.ReactNode }) =
           });
           iosocket.on('track_started', async (track: Track) => {
             if ( track.identifier ) {
-              const accentColor = await getAccentHEXColorFromUrl('/api/proxy/watch?v='+track.identifier);
-              const colorPalette = nextuiColorPalette({name: 'content1', baseColor: accentColor});
-              DynamicNextUIThemeUpdate('--pona-app-music-accent-color', colorPalette.content1);
-              document.body.setAttribute('playing', track.identifier);
-              
-              fetch('/api/proxy/maxresdefault?v='+track.identifier, { cache: 'no-store' }).then(async res => {
-                const data = await res.json();
-                if (res.status === 200 && track)
-                  track.highResArtworkUrl = data.endpoint;
-              });
+              const newTrack = await makeTrack(track);
+              track = newTrack as Track;
             }
             setPonaCommonState((value) => {
               if (value) {
@@ -179,16 +155,8 @@ export const PonaMusicProvider = ({ children }: { children: React.ReactNode }) =
           });
           iosocket.on('track_updated', async (track: Track) => {
             if ( track.identifier ) {
-              const accentColor = await getAccentHEXColorFromUrl('/api/proxy/watch?v='+track.identifier);
-              const colorPalette = nextuiColorPalette({name: 'content1', baseColor: accentColor});
-              DynamicNextUIThemeUpdate('--pona-app-music-accent-color', colorPalette.content1);
-              document.body.setAttribute('playing', track.identifier);
-              
-              fetch('/api/proxy/maxresdefault?v='+track.identifier, { cache: 'no-store' }).then(async res => {
-                const data = await res.json();
-                if (res.status === 200 && track)
-                  track.highResArtworkUrl = data.endpoint;
-              });
+              const newTrack = await makeTrack(track);
+              track = newTrack as Track;
             }
             setPonaCommonState((value) => {
               if (value) {
@@ -199,16 +167,8 @@ export const PonaMusicProvider = ({ children }: { children: React.ReactNode }) =
           });
           iosocket.on('queue_updated', async (queue: Queue) => {
             if ( queue.current?.identifier ) {
-              const accentColor = await getAccentHEXColorFromUrl('/api/proxy/watch?v='+queue.current.identifier);
-              const colorPalette = nextuiColorPalette({name: 'content1', baseColor: accentColor});
-              DynamicNextUIThemeUpdate('--pona-app-music-accent-color', colorPalette.content1);
-              document.body.setAttribute('playing', queue.current.identifier);
-              
-              fetch('/api/proxy/maxresdefault?v='+queue.current.identifier, { cache: 'no-store' }).then(async res => {
-                const data = await res.json();
-                if (res.status === 200 && queue.current)
-                  queue.current.highResArtworkUrl = data.endpoint;
-              });
+              const newTrack = await makeTrack(queue.current);
+              queue.current = newTrack;
             }
             setPonaCommonState((value) => {
               if (value) {

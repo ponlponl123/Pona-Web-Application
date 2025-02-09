@@ -22,6 +22,7 @@ export interface Track {
   "uri": string,
   "artworkUrl": string,
   "highResArtworkUrl"?: string,
+  "lyrics"?: LyricsFormat[],
   "sourceName": string,
   "thumbnail": string,
   "requester": GuildMember
@@ -86,4 +87,9 @@ export interface HTTP_PonaCommonStateWithTracks {
 	pona: HTTP_PonaCommonState;
 	current: Track | UnresolvedTrack | null;
 	queue: Queue;
+}
+
+export interface LyricsFormat {
+  seconds: number;
+  lyrics: string;
 }
