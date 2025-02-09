@@ -4,27 +4,40 @@ import { HTTP_PonaCommonStateWithTracks } from '@/interfaces/ponaPlayer';
 import { createContext, Dispatch, SetStateAction, useContext, useState } from 'react';
 
 const GlobalContext = createContext<{
+  isMobile: boolean;
+
   ponaCommonState: HTTP_PonaCommonStateWithTracks | null;
   setPonaCommonState: Dispatch<SetStateAction<HTTP_PonaCommonStateWithTracks | null>>;
 
   isMemberInVC: VoiceBasedChannel | null;
   setIsMemberInVC: Dispatch<SetStateAction<VoiceBasedChannel | null>>;
-}>({
-    ponaCommonState: null,
-    setPonaCommonState: () => {},
 
-    isMemberInVC: null,
-    setIsMemberInVC: () => {},
+  isSameVC: boolean;
+  setIsSameVC: Dispatch<SetStateAction<boolean>>;
+}>({
+  isMobile: false,
+
+  ponaCommonState: null,
+  setPonaCommonState: () => {},
+
+  isMemberInVC: null,
+  setIsMemberInVC: () => {},
+
+  isSameVC: false,
+  setIsSameVC: () => {},
 });
 
-export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
+export const GlobalProvider = ({ children, isMobile }: { children: React.ReactNode; isMobile: boolean; }) => {
   const [ponaCommonState, setPonaCommonState] = useState<HTTP_PonaCommonStateWithTracks | null>(null);
   const [isMemberInVC, setIsMemberInVC] = useState<VoiceBasedChannel | null>(null);
+  const [isSameVC, setIsSameVC] = useState<boolean>(false);
 
   return (
     <GlobalContext.Provider value={{
-        ponaCommonState, setPonaCommonState,
-        isMemberInVC, setIsMemberInVC,
+      isMobile,
+      ponaCommonState, setPonaCommonState,
+      isMemberInVC, setIsMemberInVC,
+      isSameVC, setIsSameVC,
     }}>
       {children}
     </GlobalContext.Provider>

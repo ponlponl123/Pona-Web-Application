@@ -47,7 +47,8 @@ export const PonaMusicProvider = ({ children }: { children: React.ReactNode }) =
   const { guild } = useDiscordGuildInfo();
   const {
     setIsMemberInVC,
-    setPonaCommonState
+    setPonaCommonState,
+    setIsSameVC
   } = useGlobalContext();
   const pathname = usePathname();
 
@@ -111,6 +112,9 @@ export const PonaMusicProvider = ({ children }: { children: React.ReactNode }) =
             }
             setPonaCommonState(ponaState.pona || null);
             setIsMemberInVC(ponaState.isMemberInVC || null);
+            if ( ponaState.pona?.pona.voiceChannel && ponaState.isMemberInVC?.id )
+              setIsSameVC(true);
+            else setIsSameVC(false);
           });
           iosocket.on('queue_ended', () => {
             document.body.removeAttribute('playing');
@@ -224,6 +228,7 @@ export const PonaMusicProvider = ({ children }: { children: React.ReactNode }) =
             if ( memberVoiceState.isUserJoined && memberVoiceState.newVC ) setIsMemberInVC(memberVoiceState.newVC);
             else if ( memberVoiceState.isUserSwitched || (memberVoiceState.oldVC && memberVoiceState.newVC) ) setIsMemberInVC(memberVoiceState.newVC);
             else if ( memberVoiceState.isUserLeaved || !memberVoiceState.newVC ) setIsMemberInVC(null);
+            setIsSameVC(memberVoiceState.isSameVC);
           });
           iosocket.on('connect', () => {
             setIsConnected(true);

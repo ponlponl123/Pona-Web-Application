@@ -257,6 +257,10 @@
                         }
                     }
                 },
+                "notSameVC": {
+                    "title": "The party has started!",
+                    "description": "Join this party in [guildName] now!"
+                },
                 "repeat": {
                     "title": "Repeat Mode",
                     "off": "Off",

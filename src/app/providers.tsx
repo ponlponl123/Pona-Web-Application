@@ -11,7 +11,7 @@ import PageAnimatePresence from "@/components/HOC/PageAnimatePresence";
 import { usePathname } from 'next/navigation';
 import Snowfall from 'react-snowfall';
 
-export function Providers({ children }: { children: React.ReactNode }) {
+export function Providers({ children, isMobile }: { children: React.ReactNode; isMobile: boolean; }) {
   const pathname = usePathname();
   const date = new Date();
   return (
@@ -21,7 +21,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
           <UserSettingProvider>
             <DiscordUserInfoProvider>
               <DiscordGuildInfoProvider>
-                <GlobalProvider>
+                <GlobalProvider isMobile={isMobile}>
                 {
                   date.getMonth() === 11 && (
                     <Snowfall

@@ -6,4 +6,5 @@ export interface MemberVoiceChangedState {
     isUserJoined: boolean;
     isUserSwitched: boolean;
     isUserLeaved: boolean;
+    isSameVC: boolean;
 }

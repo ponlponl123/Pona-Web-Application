@@ -38,7 +38,7 @@ function Scrollbar(
     const isOwner = userInfo.id === ownerId;
     const { guild } = useDiscordGuildInfo();
     const { language } = useLanguageContext();
-    const { ponaCommonState } = useGlobalContext();
+    const { ponaCommonState, isSameVC } = useGlobalContext();
     const [ sidebarCollapsed, setSidebarCollapsed ] = useState<boolean>(false);
     const inGuild = pathname.startsWith('/app/g/');
     const inSetting = pathname.startsWith('/app/setting');
@@ -129,7 +129,7 @@ function Scrollbar(
                                     </ActivationLink>
                                     <ActivationLink iconOnly={(canCollapsed && sidebarCollapsed)} onClick={handlePushLocation} href={`/app/g/${guild.id}`} icon={ChartPieSlice}>{language.data.app.overview.name}</ActivationLink>
                                     {
-                                        !(ponaCommonState && ponaCommonState.pona.voiceChannel) ?
+                                        !(ponaCommonState && ponaCommonState.pona.voiceChannel && isSameVC) ?
                                         <ActivationLink iconOnly={(canCollapsed && sidebarCollapsed)} onClick={handlePushLocation} href={`/app/g/${guild.id}/player`} icon={MusicNoteSimple}>{language.data.app.guilds.player.name}</ActivationLink> :
                                         <div className={`group-menu ${(canCollapsed && sidebarCollapsed)?'collapsed':''}`} aria-label={`/app/g/${guild.id}/player`}>
                                             <div className='group-title'>
