@@ -129,7 +129,7 @@ function MobilePonaPlayerPanel({
               </div>
               <Button fullWidth variant='light' radius='full' className='absolute bottom-8 left-8 w-[calc(100%_-_4rem)]' onPress={()=>{
                 setTrackFocus(false);
-              }}>Open queue</Button>
+              }}>{language.data.app.guilds.player.tabs.open_queue}</Button>
           </motion.div>
         }
         </AnimatePresence>
@@ -161,7 +161,7 @@ function MobilePonaPlayerPanel({
                               cursor: 'bg-[hsl(var(--pona-app-music-accent-color-500))]',
                               panel: 'h-[82vh] absolute top-36 left-1 w-full'
                             }}>
-                            <Tab key="next" title="Next">
+                            <Tab key="next" title={language.data.app.guilds.player.tabs.next}>
                                 <ScrollShadow className='h-full pr-2' style={{scrollbarWidth:'none',scrollbarColor:'hsl(var(--pona-app-music-accent-color-500))'}}>
                                     <div className='flex flex-col gap-2'>
                                     {
@@ -204,7 +204,7 @@ function MobilePonaPlayerPanel({
                                     </div>
                                 </ScrollShadow>
                             </Tab>
-                            <Tab key="lyrics" title="Lyrics">
+                            <Tab key="lyrics" title={language.data.app.guilds.player.tabs.lyrics}>
                                 <ScrollShadow className='h-full pr-2' style={{scrollbarWidth:'none',scrollbarColor:'hsl(var(--pona-app-music-accent-color-500))'}}>
                                     <div className='flex flex-col gap-4 items-center justify-center w-full h-full'>
                                         <Coffee size={56} weight='fill' className='text-[hsl(var(--pona-app-music-accent-color-500))]' />
@@ -215,7 +215,7 @@ function MobilePonaPlayerPanel({
                                     </div>
                                 </ScrollShadow>
                             </Tab>
-                            <Tab key="related" title="Related">
+                            <Tab key="related" title={language.data.app.guilds.player.tabs.related}>
                                 <ScrollShadow className='h-full pr-2' style={{scrollbarWidth:'none',scrollbarColor:'hsl(var(--pona-app-music-accent-color-500))'}}>
                                     <div className='flex flex-col gap-4 items-center justify-center w-full h-full'>
                                         <Coffee size={56} weight='fill' className='text-[hsl(var(--pona-app-music-accent-color-500))]' />

@@ -257,6 +257,12 @@
                         }
                     }
                 },
+                "tabs": {
+                    "next": "Next",
+                    "lyrics": "Lyrics",
+                    "related": "Related",
+                    "open_queue": "Show More"
+                },
                 "notSameVC": {
                     "title": "The party has started!",
                     "description": "Join this party in [guildName] now!"
