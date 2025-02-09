@@ -10,6 +10,7 @@ export type PlayerState = "CONNECTED" | "CONNECTING" | "DISCONNECTED" | "DISCONN
 
 export interface Track {
   "track": string,
+	"cleanTitle": string;
   "timestamp": number,
   "uniqueId": string,
   "title": string,

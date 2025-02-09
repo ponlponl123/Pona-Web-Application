@@ -15,7 +15,7 @@ export async function makeTrack(track: Track | UnresolvedTrack): Promise<Track |
     if (res.status === 200)
       track.highResArtworkUrl = data.endpoint;
   });
-  fetch('/api/proxy/lyrics?q='+track.title, { cache: 'no-store' }).then(async res => {
+  fetch('/api/proxy/lyrics?q='+(track.cleanTitle || track.title), { cache: 'no-store' }).then(async res => {
     const data = await res.json();
     if (res.status === 200 && Array.isArray(data))
       track.lyrics = data;
