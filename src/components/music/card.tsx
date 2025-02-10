@@ -10,8 +10,16 @@ function MusicCard({track}: {track: Track}) {
   const { socket } = usePonaMusicContext();
   const { language } = useLanguageContext();
   const { isSameVC, ponaCommonState } = useGlobalContext();
+  const [loading, setLoading] = React.useState<boolean>(false);
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
   const {isOpen: isDuplicatedTrackOpen, onOpen: onDuplicatedTrackOpen, onOpenChange: onDuplicatedTrackOpenChange} = useDisclosure();
+  const addToQueue = () => {
+    if ( socket && socket.connected && isSameVC )
+    {
+      setLoading(true);
+      socket.emit('add', track.uri, track.sourceName, () => {setLoading(false)});
+    }
+  }
   return (
     <>
       <div className='music-card w-48' aria-label={track.title}>
@@ -25,7 +33,7 @@ function MusicCard({track}: {track: Track}) {
               src={track.artworkUrl}
               alt={track.title}
             />
-            <Button className='absolute top-0 left-0 w-full h-full z-10 rounded-3xl group-hover:opacity-100 opacity-0' isIconOnly variant='flat' onPress={()=>{
+            <Button className='absolute top-0 left-0 w-full h-full z-10 rounded-3xl group-hover:opacity-100 opacity-0' isIconOnly variant='flat' isLoading={loading} isDisabled={loading} onPress={()=>{
               if ( socket && socket.connected && isSameVC ) {
                 const findDuplicatedTrack = ponaCommonState?.queue.filter(refTrack => refTrack.identifier === track.identifier);
                 if (
@@ -36,7 +44,7 @@ function MusicCard({track}: {track: Track}) {
                   )
                 ) onDuplicatedTrackOpen();
                 else if ( ponaCommonState?.current ) onOpen();
-                else socket.emit('add', track.identifier);
+                else addToQueue();
               }
             }}><Play weight='fill' size={32} /></Button>
           </div>
@@ -55,12 +63,7 @@ function MusicCard({track}: {track: Track}) {
               </ModalBody>
               <ModalFooter>
                 <Button color="default" variant="light" onPress={onClose}>{language.data.app.guilds.player.music_card.action.add_to_queue.close}</Button>
-                <Button color="primary" onPress={()=>{
-                  if ( socket && socket.connected && isSameVC ) {
-                    socket.emit('add', track.identifier);
-                  }
-                  onClose();
-                }}>{language.data.app.guilds.player.music_card.action.add_to_queue.add}</Button>
+                <Button color="primary" onPress={()=>{addToQueue();onClose();}}>{language.data.app.guilds.player.music_card.action.add_to_queue.add}</Button>
               </ModalFooter>
             </>
           )}
@@ -77,12 +80,7 @@ function MusicCard({track}: {track: Track}) {
               </ModalBody>
               <ModalFooter>
                 <Button color="default" variant="light" onPress={onClose}>{language.data.app.guilds.player.music_card.action.add_duplicated_track_to_queue.close}</Button>
-                <Button color="danger" variant='light' onPress={()=>{
-                  if ( socket && socket.connected && isSameVC ) {
-                    socket.emit('add', track.identifier);
-                  }
-                  onClose();
-                }}>{language.data.app.guilds.player.music_card.action.add_duplicated_track_to_queue.add}</Button>
+                <Button color="danger" variant='light' onPress={()=>{addToQueue();onClose();}}>{language.data.app.guilds.player.music_card.action.add_duplicated_track_to_queue.add}</Button>
               </ModalFooter>
             </>
           )}

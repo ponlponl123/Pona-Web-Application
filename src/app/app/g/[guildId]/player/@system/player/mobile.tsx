@@ -135,7 +135,7 @@ function MobilePonaPlayer() {
                     }
                   }}
                 >
-                    <Image src={currentTrack ? currentTrack.artworkUrl : defaultImage.src} alt={currentTrack ? currentTrack.title : 'Thumbnail'}
+                    <Image src={currentTrack ? currentTrack.proxyArtworkUrl : defaultImage.src} alt={currentTrack ? currentTrack.title : 'Thumbnail'}
                         className={
                           'object-cover h-12 w-12 rounded-lg'
                         }

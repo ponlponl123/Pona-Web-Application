@@ -90,7 +90,7 @@ function DesktopPonaPlayer() {
               })}} id='pona-music-panel-trigger'></div>
               {
                   userSetting.transparency ?
-                  <Image src={currentTrack ? currentTrack.artworkUrl : defaultImage.src} alt={currentTrack ? currentTrack.title : 'Thumbnail'} height={'4.4rem'} className='z-10 blur-3xl absolute left-0 -translate-y-1/2 w-1/4 min-w-32 object-cover max-md:hidden' />
+                  <Image src={currentTrack ? currentTrack.proxyArtworkUrl : defaultImage.src} alt={currentTrack ? currentTrack.title : 'Thumbnail'} height={'4.4rem'} className='z-10 blur-3xl absolute left-0 -translate-y-1/2 w-1/4 min-w-32 object-cover max-md:hidden' />
                   : <div></div>
               }
               <motion.div
@@ -102,7 +102,7 @@ function DesktopPonaPlayer() {
                       }
                   }}
               >
-                  <Image src={currentTrack ? currentTrack.artworkUrl : defaultImage.src} alt={currentTrack ? currentTrack.title : 'Thumbnail'}
+                  <Image src={currentTrack ? currentTrack.proxyArtworkUrl : defaultImage.src} alt={currentTrack ? currentTrack.title : 'Thumbnail'}
                       className={
                           userSetting.dev_pona_player_style === 'modern' ?
                           'w-[3.6rem] h-[3.6rem] object-cover max-lg:h-12 max-lg:w-12 max-md:rounded-lg' :

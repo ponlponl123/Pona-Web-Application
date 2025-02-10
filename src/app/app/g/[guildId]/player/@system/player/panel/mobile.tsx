@@ -78,7 +78,7 @@ function MobilePonaPlayerPanel({
               }} id='pona-music-panel-trigger'></div>
               <div className='max-w-full max-h-full m-auto flex flex-col gap-4 justify-center items-center py-16' id='mobile-pona-player-controller'>
                 <div className='w-[calc(100vw_-_3rem)] max-w-[48vh] aspect-square relative flex pointer-events-none'>
-                  <Image src={currentTrack ? currentTrack.highResArtworkUrl || currentTrack.artworkUrl : defaultImage.src} alt={currentTrack ? currentTrack.title : 'Artwork'}
+                  <Image src={currentTrack ? currentTrack.proxyHighResArtworkUrl || currentTrack.proxyArtworkUrl : defaultImage.src} alt={currentTrack ? currentTrack.title : 'Artwork'}
                     className={
                       'w-full h-full object-cover'
                     }
@@ -195,7 +195,7 @@ function MobilePonaPlayerPanel({
                               panel: 'max-h-[80vh] h-max absolute top-36 left-1 w-full'
                             }}>
                             <Tab key="next" title={language.data.app.guilds.player.tabs.next}>
-                                <ScrollShadow className='max-h-[80vh] pr-2' style={{scrollbarWidth:'none',scrollbarColor:'hsl(var(--pona-app-music-accent-color-500))'}}>
+                                <ScrollShadow className='max-h-[80vh] pr-2 pb-4' style={{scrollbarWidth:'none'}}>
                                     <div className='flex flex-col gap-2'>
                                     {
                                         ponaCommonState.queue.map((track, index) => {
@@ -205,7 +205,7 @@ function MobilePonaPlayerPanel({
                                                     isThisTrack?'[.light_&]:bg-[hsl(var(--pona-app-music-accent-color-100))] [.dark_&]:bg-[hsl(var(--pona-app-music-accent-color-800))] active':''
                                                 }`} key={index}>
                                                     <div className='w-11 h-11 select-none relative overflow-hidden rounded-2xl'>
-                                                        <Image src={track.artworkUrl} alt={track.title} height={44} width={44} className={
+                                                        <Image src={track.proxyArtworkUrl} alt={track.title} height={44} width={44} className={
                                                             'object-cover rounded-lg z-0 ' + 
                                                             ( (!ponaCommonState.pona.paused && isThisTrack) ? 'brightness-50 saturate-0' : 'group-hover:brightness-50 group-hover:saturate-0' )
                                                         } />
@@ -237,15 +237,15 @@ function MobilePonaPlayerPanel({
                                     </div>
                                 </ScrollShadow>
                             </Tab>
-                            <Tab key="lyrics" title={language.data.app.guilds.player.tabs.lyrics}>
-                                <ScrollShadow className='max-h-[80vh] pr-2' style={{scrollbarWidth:'none',scrollbarColor:'hsl(var(--pona-app-music-accent-color-500))'}} ref={lyricsContainerRef}>
+                            <Tab key="lyrics" title={language.data.app.guilds.player.tabs.lyrics} isDisabled={(!currentTrack.lyrics || currentTrack.lyrics.length === 0)}>
+                                <ScrollShadow className='max-h-[80vh] pr-2' style={{scrollbarWidth:'none'}} ref={lyricsContainerRef}>
                                   {lyricsContainerRef.current && (
                                     <LyricsDisplay playerPosition={playerPos} currentTrack={currentTrack} lyricsProvider={lyricsContainerRef.current} />
                                   )}
                                 </ScrollShadow>
                             </Tab>
                             <Tab key="related" title={language.data.app.guilds.player.tabs.related}>
-                                <ScrollShadow className='max-h-[80vh] pr-2' style={{scrollbarWidth:'none',scrollbarColor:'hsl(var(--pona-app-music-accent-color-500))'}}>
+                                <ScrollShadow className='max-h-[80vh] pr-2' style={{scrollbarWidth:'none'}}>
                                     <div className='flex flex-col gap-4 items-center justify-center w-full h-full'>
                                         <Coffee size={56} weight='fill' className='text-[hsl(var(--pona-app-music-accent-color-500))]' />
                                         <h1 className='text-2xl max-w-screen-md text-center text-[hsl(var(--pona-app-music-accent-color-500)/0.64)]'>{language.data.app.guilds.player.dev}</h1>

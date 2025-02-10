@@ -36,7 +36,7 @@ function DesktopPonaPlayerPanel() {
                         'absolute z-40 left-2 p-8 bottom-[6.1rem] max-lg:bottom-[5.3rem] max-lg:h-[calc(100vh_-_6rem)] max-md:rounded-lg rounded-2xl w-[calc(100%_-_1rem)] h-[calc(100vh_-_6.8rem)] transition-all ease-out duration-250 overflow-hidden' :
                         'absolute z-40 left-2 p-8 bottom-[6.4rem] max-lg:bottom-[5.3rem] max-lg:h-[calc(100vh_-_6rem)] max-md:rounded-lg rounded-2xl w-[calc(100%_-_1rem)] h-[calc(100vh_-_6.8rem)] transition-all ease-out duration-250 overflow-hidden'
                     )
-                    + (userSetting.transparency ? ' backdrop-blur-2xl to-playground-background/100' : ' [html.light_&]:!to-[hsl(var(--pona-app-music-accent-color-50))] [html.dark_&]:!to-[hsl(var(--pona-app-music-accent-color-800))]')
+                    + (userSetting.transparency ? ' backdrop-blur-2xl to-playground-background/100' : ' [html.light_&]:!from-[hsl(var(--pona-app-music-accent-color-200))] [html.light_&]:!to-[hsl(var(--pona-app-music-accent-color-50))] [html.dark_&]:!to-[hsl(var(--pona-app-music-accent-color-800))] [html.dark_&]:!from-[hsl(var(--pona-app-music-accent-color-400))]')
                 }
                 id='pona=player-panel'
                 transition={{
@@ -47,7 +47,7 @@ function DesktopPonaPlayerPanel() {
                 exit={{ opacity: 0, pointerEvents: 'none', translateY: 64 }}>
                 {
                     userSetting.transparency &&
-                    <Image src={currentTrack ? currentTrack.artworkUrl : defaultImage.src} alt={currentTrack ? currentTrack.title : 'Backdrop'}
+                    <Image src={currentTrack ? currentTrack.proxyArtworkUrl : defaultImage.src} alt={currentTrack ? currentTrack.title : 'Backdrop'}
                         className='absolute -z-10 w-full h-full top-0 left-0 object-cover blur-3xl'/>
                 }
                 <div className={
@@ -57,7 +57,7 @@ function DesktopPonaPlayerPanel() {
                 }></div>
                 <div className='w-full h-full flex gap-12 justify-evenly items-center pt-16'>
                     <div className='w-[64vh] max-2xl:w-[42vh] max-xl:w-[26vh] max-xl:[body:not(.sidebar-collapsed)_&]:w-full aspect-square relative flex'>
-                        <Image src={currentTrack ? currentTrack.highResArtworkUrl || currentTrack.artworkUrl : defaultImage.src} alt={currentTrack ? currentTrack.title : 'Artwork'}
+                        <Image src={currentTrack ? currentTrack.proxyHighResArtworkUrl || currentTrack.proxyArtworkUrl : defaultImage.src} alt={currentTrack ? currentTrack.title : 'Artwork'}
                             className={
                                 'w-full h-full object-cover'
                             }
@@ -72,7 +72,7 @@ function DesktopPonaPlayerPanel() {
                                 panel: 'h-full max-h-full'
                             }}>
                             <Tab key="next" title={language.data.app.guilds.player.tabs.next}>
-                                <ScrollShadow className='h-full pr-2' style={{scrollbarWidth:'thin',scrollbarColor:'hsl(var(--pona-app-music-accent-color-500))'}}>
+                                <ScrollShadow className='h-full pr-2 pb-4' style={{scrollbarWidth:'thin',scrollbarColor:'hsl(var(--pona-app-music-accent-color-500)) hsl(var(--pona-app-playground-background))'}}>
                                     <div className='flex flex-col gap-2'>
                                     {
                                         ponaCommonState.queue.map((track, index) => {
@@ -82,7 +82,7 @@ function DesktopPonaPlayerPanel() {
                                                     isThisTrack?'[.light_&]:bg-[hsl(var(--pona-app-music-accent-color-100))] [.dark_&]:bg-[hsl(var(--pona-app-music-accent-color-800))] active':''
                                                 }`} key={index}>
                                                     <div className='w-11 h-11 select-none relative overflow-hidden rounded-2xl'>
-                                                        <Image src={track.artworkUrl} alt={track.title} height={44} width={44} className={
+                                                        <Image src={track.proxyArtworkUrl} alt={track.title} height={44} width={44} className={
                                                             'object-cover rounded-lg z-0 ' + 
                                                             ( (!ponaCommonState.pona.paused && isThisTrack) ? 'brightness-50 saturate-0' : 'group-hover:brightness-50 group-hover:saturate-0' )
                                                         } />
@@ -115,15 +115,15 @@ function DesktopPonaPlayerPanel() {
                                     </div>
                                 </ScrollShadow>
                             </Tab>
-                            <Tab key="lyrics" title={language.data.app.guilds.player.tabs.lyrics} isDisabled={!currentTrack.lyrics}>
-                                <ScrollShadow className='h-full pr-2 pt-4 pb-12' style={{scrollbarWidth:'thin',scrollbarColor:'hsl(var(--pona-app-music-accent-color-500))'}} ref={lyricsContainerRef}>
+                            <Tab key="lyrics" title={language.data.app.guilds.player.tabs.lyrics} isDisabled={(!currentTrack.lyrics || currentTrack.lyrics.length === 0)}>
+                                <ScrollShadow className='h-full pr-2 pt-4 pb-12' style={{scrollbarWidth:'thin',scrollbarColor:'hsl(var(--pona-app-music-accent-color-500)) hsl(var(--pona-app-playground-background))'}} ref={lyricsContainerRef}>
                                     {lyricsContainerRef.current && (
                                         <LyricsDisplay playerPosition={playerPos} currentTrack={currentTrack} lyricsProvider={lyricsContainerRef.current} />
                                     )}
                                 </ScrollShadow>
                             </Tab>
                             <Tab key="related" title={language.data.app.guilds.player.tabs.related}>
-                                <ScrollShadow className='h-full pr-2' style={{scrollbarWidth:'thin',scrollbarColor:'hsl(var(--pona-app-music-accent-color-500))'}}>
+                                <ScrollShadow className='h-full pr-2' style={{scrollbarWidth:'thin',scrollbarColor:'hsl(var(--pona-app-music-accent-color-500)) hsl(var(--pona-app-playground-background))'}}>
                                     <div className='flex flex-col gap-4 items-center justify-center w-full h-full'>
                                         <Coffee size={56} weight='fill' className='text-[hsl(var(--pona-app-music-accent-color-500))]' />
                                         <h1 className='text-2xl max-w-screen-md text-center text-[hsl(var(--pona-app-music-accent-color-500)/0.64)]'>{language.data.app.guilds.player.dev}</h1>

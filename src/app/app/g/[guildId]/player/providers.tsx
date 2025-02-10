@@ -31,7 +31,7 @@ function Providers({ children }: { children: React.ReactNode }) {
     const { isConnected, socket } = usePonaMusicContext();
     const { ponaCommonState, isSameVC, isMobile } = useGlobalContext();
     const currentTrack = ponaCommonState?.current;
-    const backdropBg = currentTrack ? currentTrack.artworkUrl ? currentTrack.artworkUrl : currentTrack.thumbnail : guild?.bannerURL ? guild.bannerURL+'?size=640' :
+    const backdropBg = currentTrack ? currentTrack.proxyThumbnail ? currentTrack.proxyArtworkUrl : currentTrack.thumbnail : guild?.bannerURL ? guild.bannerURL+'?size=640' :
         guild?.iconURL ? guild.iconURL+'?size=640' : userInfo?.banner ? `https://cdn.discordapp.com/banners/${userInfo.id}/${userInfo.banner}?size=640` : userInfo?.avatar ? `https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}?size=640` :
         backdrop.src;
 
@@ -49,7 +49,7 @@ function Providers({ children }: { children: React.ReactNode }) {
                     : <div className='w-full h-96 bg-gradient-to-t from-transparent to-[hsl(var(--pona-app-music-accent-color-500))]'></div>
                 }
                 </div>
-                <main id='app-workspace' style={{maxWidth:'unset'}}>
+                <main className={`[body.pona-player-focused_&]:opacity-0 [body.pona-player-focused_&]:-translate-y-8 apply-soft-transition`} id='app-workspace' style={{maxWidth:'unset'}}>
                     <div className='absolute top-6 left-6 flex items-center gap-12 z-50 w-full'>
                         <h1 className='items-center text-2xl gap-4 hidden'>
                             <MusicNoteSimple weight='fill' size={24} /> {language.data.app.guilds.player.name}

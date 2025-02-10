@@ -57,9 +57,10 @@ const LyricsDisplay: React.FC<LyricsDisplayProps> = ({ currentTrack, playerPosit
                     key={index}
                     id={`lyrics-index-${index}`}
                     className={`w-full h-max flex items-center text-start justify-between px-2.5 my-8 transition-all duration-500 ${
-                        index === activeIndex ? "text-2xl text-foreground font-bold" :
-                        index < activeIndex ? "text-lg text-foreground/60" :
-                        "text-lg text-foreground/40"
+                        index === activeIndex ? "text-3xl text-[hsl(var(--pona-app-music-accent-color-500))] font-bold" :
+                        index === activeIndex+1 ? "text-xl text-[hsl(var(--pona-app-music-accent-color-500)/0.4)]" :
+                        index < activeIndex ? "text-lg text-[hsl(var(--pona-app-music-accent-color-500)/0.6)]" :
+                        "text-lg text-[hsl(var(--pona-app-music-accent-color-500)/0.2)]"
                     }`}
                 >
                     {lyrics.lyrics}
