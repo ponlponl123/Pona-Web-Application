@@ -15,6 +15,7 @@ const sample_track: Track = {
   "track": "QAAA+gMASOengeOBruOBk+OBqOWlveOBjeOBp+OBl+OCh++8nyAvIGNvdmVyZWQgYnkg44Gs44G144Gh44KDIOeArOaIuOOCj+OCieOBswAV44Gs44G144Gh44KD44KT44Gt44KLAAAAAAAC4kgAC1l1TzJwNG1PWFgwAAEAK2h0dHBzOi8vd3d3LnlvdXR1YmUuY29tL3dhdGNoP3Y9WXVPMnA0bU9YWDABAD9odHRwczovL2kueXRpbWcuY29tL3ZpL1l1TzJwNG1PWFgwL21heHJlc2RlZmF1bHQuanBnP3Y9NjY2NzE1YjEAAAd5b3V0dWJlAAAAAAAAAAA=",
   "cleanTitle": "私のこと好きでしょ？",
   "author": "ぬふちゃんねる",
+  cleanAuthor: "ぬふちゃんねる",
   "duration": 189000,
   "isStream": false,
   "uniqueId": "3K2i80I0WzwZ3n7t927adCzW7WNXVhcy",

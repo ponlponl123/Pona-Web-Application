@@ -16,6 +16,7 @@ export interface Track {
   "title": string,
   "identifier": string,
   "author": string,
+	"cleanAuthor": string;
   "duration": number,
   "isrc": string,
   "isSeekable": true,
@@ -26,7 +27,8 @@ export interface Track {
   "lyrics"?: LyricsFormat[],
   "sourceName": string,
   "thumbnail": string,
-  "requester": GuildMember
+  "requester": GuildMember,
+	accentColor?: string;
 }
 
 export interface HTTP_PonaFetchState {
