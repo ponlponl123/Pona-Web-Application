@@ -1,3 +1,4 @@
+"use client"
 import { getCookie, setCookie, deleteCookie } from "cookies-next";
 import { UserInfo as UserInfoType, fetchByAccessToken, revokeUserAccessToken as removeAccessToken } from "@/server-side-api/discord/fetchUser";
 import { useContext, createContext, useState, useEffect } from "react";

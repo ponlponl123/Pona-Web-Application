@@ -221,7 +221,7 @@ export const PonaMusicProvider = ({ children }: { children: React.ReactNode }) =
         socket.close();
       }
     }
-  }, [guild, manager, isConnected, socket, oauth_type, oauth_token, pathname, setPonaCommonState, setIsMemberInVC])
+  }, [guild, manager, isConnected, socket, oauth_type, oauth_token, pathname, setPonaCommonState, setIsMemberInVC, setIsSameVC])
 
   return (
     <PonaMusicContext.Provider value={{

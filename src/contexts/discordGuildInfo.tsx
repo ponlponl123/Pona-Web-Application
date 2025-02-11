@@ -1,3 +1,4 @@
+"use client"
 import { usePathname } from "next/navigation";
 import { GuildInfo, fetchGuild } from "@/server-side-api/discord/fetchGuild";
 import { useContext, createContext, useState, useEffect } from "react";
