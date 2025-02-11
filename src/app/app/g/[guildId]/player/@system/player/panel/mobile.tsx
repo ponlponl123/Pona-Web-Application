@@ -15,6 +15,7 @@ import { Button, Image, Link, Modal, ModalBody, ModalContent, ModalHeader, Scrol
 import defaultImage from '@/../public/Ponlponl123 (1459).png'
 import { MobilePonaPlayerPanelAnimationState } from '../mobile';
 import LyricsDisplay from '@/components/music/lyricsDisplay';
+import { Track } from '@/interfaces/ponaPlayer';
 
 function MobilePonaPlayerPanel({
   trackFocus,
@@ -237,11 +238,17 @@ function MobilePonaPlayerPanel({
                                     </div>
                                 </ScrollShadow>
                             </Tab>
-                            <Tab key="lyrics" title={language.data.app.guilds.player.tabs.lyrics} isDisabled={(!currentTrack.lyrics || currentTrack.lyrics.length === 0)}>
+                            <Tab key="lyrics" title={language.data.app.guilds.player.tabs.lyrics} isDisabled={!(currentTrack.lyrics && currentTrack.lyrics.lyrics?.length > 0)}>
                                 <ScrollShadow className='max-h-[80vh] pr-2' style={{scrollbarWidth:'none'}} ref={lyricsContainerRef}>
-                                  {lyricsContainerRef.current && (
-                                    <LyricsDisplay playerPosition={playerPos} currentTrack={currentTrack} lyricsProvider={lyricsContainerRef.current} />
-                                  )}
+                                    {lyricsContainerRef.current && (
+                                        currentTrack.lyrics?.isTimestamp ?
+                                            <LyricsDisplay playerPosition={playerPos} currentTrack={currentTrack as Track} lyricsProvider={lyricsContainerRef.current} /> :
+                                            (currentTrack.lyrics?.lyrics && currentTrack.lyrics.lyrics.length > 0) && (currentTrack.lyrics.lyrics as string[]).map((lyric, index) => (
+                                                <div key={index} className='flex items-center gap-2'>
+                                                    <span className='text-2xl my-6 text-[hsl(var(--pona-app-music-accent-color-500))]'>{lyric}</span>
+                                                </div>
+                                            ))
+                                    )}
                                 </ScrollShadow>
                             </Tab>
                             <Tab key="related" title={language.data.app.guilds.player.tabs.related}>

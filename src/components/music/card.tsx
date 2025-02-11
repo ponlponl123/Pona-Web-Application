@@ -5,6 +5,7 @@ import { useLanguageContext } from '@/contexts/languageContext'
 import { usePonaMusicContext } from '@/contexts/ponaMusicContext'
 import { Button, Image, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from '@nextui-org/react'
 import { Play } from '@phosphor-icons/react/dist/ssr'
+import { proxyArtwork } from '@/utils/track'
 
 function MusicCard({track}: {track: Track}) {
   const { socket } = usePonaMusicContext();
@@ -20,17 +21,23 @@ function MusicCard({track}: {track: Track}) {
       socket.emit('add', track.uri, track.sourceName, () => {setLoading(false)});
     }
   }
+  if (!track.proxyArtworkUrl) {
+    const resolvedTrack = proxyArtwork(track);
+    if (resolvedTrack.proxyArtworkUrl) {
+      track = resolvedTrack as Track;
+    }
+  }
   return (
     <>
       <div className='music-card w-48' aria-label={track.title}>
-        <div className='flex flex-col items-start justify-start gap-3'>
+        <div className='flex flex-col items-start justify-start gap-3 w-full'>
           <div className='overflow-hidden aspect-square w-full group rounded-3xl relative'>
             <Image
               className='object-cover w-full h-full group-hover:scale-110'
               classNames={{
                 wrapper: 'w-full h-full'
               }}
-              src={track.artworkUrl}
+              src={track.proxyArtworkUrl}
               alt={track.title}
             />
             <Button className='absolute top-0 left-0 w-full h-full z-10 rounded-3xl group-hover:opacity-100 opacity-0' isIconOnly variant='flat' isLoading={loading} isDisabled={loading} onPress={()=>{

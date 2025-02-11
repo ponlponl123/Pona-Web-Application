@@ -27,7 +27,7 @@ export interface Track {
   "proxyThumbnail"?: string,
   "proxyArtworkUrl"?: string,
   "proxyHighResArtworkUrl"?: string,
-  "lyrics"?: LyricsFormat[],
+  "lyrics"?: Lyric,
   "sourceName": string,
   "thumbnail": string,
   "requester": GuildMember,
@@ -95,7 +95,14 @@ export interface HTTP_PonaCommonStateWithTracks {
 	queue: Queue;
 }
 
-export interface LyricsFormat {
+export interface TimestampLyrics {
   seconds: number;
   lyrics: string;
+}
+
+export type NonTimestampLyrics = string;
+
+export interface Lyric {
+  isTimestamp: boolean;
+  lyrics: TimestampLyrics[] | NonTimestampLyrics[];
 }

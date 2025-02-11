@@ -1,12 +1,8 @@
+import { Lyric, TimestampLyrics } from "@/interfaces/ponaPlayer";
 import { useState, useEffect, useRef } from "react";
 
-interface Lyric {
-    seconds: number;
-    lyrics: string;
-}
-
 interface Track {
-    lyrics?: Lyric[];
+    lyrics?: Lyric;
 }
 
 interface LyricsDisplayProps {
@@ -20,10 +16,10 @@ const LyricsDisplay: React.FC<LyricsDisplayProps> = ({ currentTrack, playerPosit
     const lyricsContainerRef = useRef<HTMLElement>(lyricsProvider);
 
     useEffect(() => {
-        if (!currentTrack?.lyrics || currentTrack.lyrics.length === 0) return;
+        if (!currentTrack?.lyrics || !currentTrack.lyrics?.isTimestamp ) return;
 
-        const newIndex = currentTrack.lyrics.findIndex((lyrics, index) => {
-            const nextLyrics = currentTrack.lyrics?.[index + 1];
+        const newIndex = (currentTrack.lyrics.lyrics as TimestampLyrics[]).findIndex((lyrics, index) => {
+            const nextLyrics = currentTrack.lyrics?.lyrics?.[index + 1] as TimestampLyrics;
             return (
                 playerPosition >= lyrics.seconds * 1000 &&
                 (!nextLyrics || playerPosition < nextLyrics.seconds * 1000)
@@ -46,13 +42,13 @@ const LyricsDisplay: React.FC<LyricsDisplayProps> = ({ currentTrack, playerPosit
         }
     }, [activeIndex]);
 
-    if (!currentTrack?.lyrics || currentTrack.lyrics.length === 0) {
+    if (!currentTrack?.lyrics || !currentTrack.lyrics.isTimestamp) {
         return <div className="text-center text-foreground/40">No lyrics available</div>;
     }
 
     return (
         <div className="w-full text-center">
-            {currentTrack.lyrics.map((lyrics, index) => (
+            {(currentTrack.lyrics.lyrics as TimestampLyrics[]).map((lyrics, index) => (
                 <div
                     key={index}
                     id={`lyrics-index-${index}`}

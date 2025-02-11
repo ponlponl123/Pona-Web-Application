@@ -1,56 +1,42 @@
 "use client"
 import React from 'react'
-import { Image, Spinner } from '@nextui-org/react';
+import { Image, ScrollShadow, Spinner } from '@nextui-org/react';
 import { useLanguageContext } from '@/contexts/languageContext';
 import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo';
 import { useDiscordUserInfo } from '@/contexts/discordUserInfo';
+import fetchHistory, { History } from '@/server-side-api/internal/history';
+import { getCookie } from 'cookies-next';
 import MusicCard from '@/components/music/card';
-import { Track } from '@/interfaces/ponaPlayer';
-import { GuildMember } from 'discord.js';
-
-const sample_track: Track = {
-  "uri": "https://www.youtube.com/watch?v=YuO2p4mOXX0",
-  "isrc": "",
-  "title": "私のこと好きでしょ？ / covered by ぬふちゃ 瀬戸わらび",
-  "track": "QAAA+gMASOengeOBruOBk+OBqOWlveOBjeOBp+OBl+OCh++8nyAvIGNvdmVyZWQgYnkg44Gs44G144Gh44KDIOeArOaIuOOCj+OCieOBswAV44Gs44G144Gh44KD44KT44Gt44KLAAAAAAAC4kgAC1l1TzJwNG1PWFgwAAEAK2h0dHBzOi8vd3d3LnlvdXR1YmUuY29tL3dhdGNoP3Y9WXVPMnA0bU9YWDABAD9odHRwczovL2kueXRpbWcuY29tL3ZpL1l1TzJwNG1PWFgwL21heHJlc2RlZmF1bHQuanBnP3Y9NjY2NzE1YjEAAAd5b3V0dWJlAAAAAAAAAAA=",
-  "cleanTitle": "私のこと好きでしょ？",
-  "author": "ぬふちゃんねる",
-  cleanAuthor: "ぬふちゃんねる",
-  "duration": 189000,
-  "isStream": false,
-  "uniqueId": "3K2i80I0WzwZ3n7t927adCzW7WNXVhcy",
-  "requester": {
-    "id": "604950275966631936",
-    "bot": false,
-    "tag": "_ponlponl123",
-    "avatar": "772bac166295072d7e8620ff0959bf29",
-    "system": false,
-    "username": "_ponlponl123",
-    "avatarURL": "https://cdn.discordapp.com/avatars/604950275966631936/772bac166295072d7e8620ff0959bf29.webp",
-    "globalName": "Arona",
-    "discriminator": "0",
-    "avatarDecoration": null,
-    "createdTimestamp": 1564301785223,
-    "defaultAvatarURL": "https://cdn.discordapp.com/embed/avatars/5.png",
-    "displayAvatarURL": "https://cdn.discordapp.com/avatars/604950275966631936/772bac166295072d7e8620ff0959bf29.webp",
-    "avatarDecorationData": null
-  } as unknown as GuildMember,
-  "thumbnail": "https://img.youtube.com/vi/YuO2p4mOXX0/default.jpg",
-  "timestamp": 1737987673770,
-  "artworkUrl": "https://i.ytimg.com/vi/YuO2p4mOXX0/maxresdefault.jpg?v=666715b1",
-  "identifier": "YuO2p4mOXX0",
-  "isSeekable": true,
-  "sourceName": "youtube"
-}
 
 function Page() {
   const { userInfo } = useDiscordUserInfo();
   const { guild } = useDiscordGuildInfo();
   const { language } = useLanguageContext();
+  const fetched = React.useRef(false);
+  const [ tracksHistory, setTracksHistory ] = React.useState<History[] | null>(null);
+
+  const fetchHistoryTracks = async () => {
+    const accessTokenType = getCookie('LOGIN_TYPE_');
+    const accessToken = getCookie('LOGIN_');
+    if ( !accessTokenType || !accessToken ) return false;
+    const tracks = await fetchHistory(accessTokenType, accessToken);
+    if ( tracks ) setTracksHistory(tracks.tracks);
+    fetched.current = true;
+  }
+
+  React.useEffect(() => {
+    if ( !fetched.current )
+    fetchHistoryTracks();
+  }, [fetched])
+
+  React.useEffect(() => {
+    console.log('tracksHistory', tracksHistory)
+  }, [tracksHistory])
+  
   return (
     guild ? (
       <>
-        <div className='w-full max-w-screen-lg mt-16 gap-4 flex flex-col items-center justify-center text-center'>
+        <div className='w-full mt-16 gap-4 flex flex-col items-center justify-center text-center'>
           <div className='w-full flex gap-5'>
             <Image src={userInfo ? `https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}?size=64` : ''} alt={userInfo ? userInfo.global_name : 'User'} height={64}
               className='rounded-full' />
@@ -59,9 +45,15 @@ function Page() {
               <h1 className='text-5xl'>{language.data.app.guilds.player.home.listen_again}</h1>
             </div>
           </div>
-          <div className='w-full my-6 flex flex-row items-start justify-start gap-5'>
-            <MusicCard track={sample_track} />
-          </div>
+          <ScrollShadow orientation='vertical' className='w-full' hideScrollBar>
+            <div className='w-max my-6 flex flex-row items-start justify-start gap-5'>
+              {
+                tracksHistory && tracksHistory.map((track, index) => (
+                  <MusicCard track={track.track} key={index} />
+                )) || <h1 className='text-4xl'>{'language.data.app.guilds.player.home.no_history'}</h1>
+              }
+            </div>
+          </ScrollShadow>
         </div>
       </>
     ) : (

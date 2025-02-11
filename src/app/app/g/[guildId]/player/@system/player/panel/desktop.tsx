@@ -13,6 +13,7 @@ import defaultImage from '@/../public/Ponlponl123 (1459).png'
 import { Coffee, DotsThreeVertical, Heart, Play, SpeakerSimpleHigh } from '@phosphor-icons/react/dist/ssr'
 import { Button, Image, Link, ScrollShadow, Tab, Tabs } from '@nextui-org/react'
 import LyricsDisplay from '@/components/music/lyricsDisplay';
+import { Track } from '@/interfaces/ponaPlayer';
 
 function DesktopPonaPlayerPanel() {
     const router = useRouter();
@@ -115,10 +116,16 @@ function DesktopPonaPlayerPanel() {
                                     </div>
                                 </ScrollShadow>
                             </Tab>
-                            <Tab key="lyrics" title={language.data.app.guilds.player.tabs.lyrics} isDisabled={(!currentTrack.lyrics || currentTrack.lyrics.length === 0)}>
+                            <Tab key="lyrics" title={language.data.app.guilds.player.tabs.lyrics} isDisabled={!(currentTrack.lyrics && currentTrack.lyrics.lyrics?.length > 0)}>
                                 <ScrollShadow className='h-full pr-2 pt-4 pb-12' style={{scrollbarWidth:'thin',scrollbarColor:'hsl(var(--pona-app-music-accent-color-500)) hsl(var(--pona-app-playground-background))'}} ref={lyricsContainerRef}>
                                     {lyricsContainerRef.current && (
-                                        <LyricsDisplay playerPosition={playerPos} currentTrack={currentTrack} lyricsProvider={lyricsContainerRef.current} />
+                                        currentTrack.lyrics?.isTimestamp ?
+                                            <LyricsDisplay playerPosition={playerPos} currentTrack={currentTrack as Track} lyricsProvider={lyricsContainerRef.current} /> :
+                                            (currentTrack.lyrics?.lyrics && currentTrack.lyrics.lyrics.length > 0) && (currentTrack.lyrics.lyrics as string[]).map((lyric, index) => (
+                                                <div key={index} className='flex items-center gap-2'>
+                                                    <span className='text-xl my-4 text-[hsl(var(--pona-app-music-accent-color-500))]'>{lyric}</span>
+                                                </div>
+                                            ))
                                     )}
                                 </ScrollShadow>
                             </Tab>
