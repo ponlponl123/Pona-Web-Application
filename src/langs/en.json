@@ -233,6 +233,10 @@
             "player": {
                 "name": "Pona! Music",
                 "dev": "Have a cup of coffee and listen to some great music. Player is in development. 🎵🍵",
+                "full_screen_mode": {
+                    "enter": "Full screen mode",
+                    "exit": "Exit full screen mode"
+                },
                 "socket": {
                     "connected": {
 
@@ -293,7 +297,12 @@
                 },
                 "home": {
                     "title": "Home",
-                    "listen_again": "Listen Again"
+                    "listen_again": "Listen Again",
+                    "no_history": {
+                        "title": "There are no history",
+                        "description": "Haven't tried Pona! Music yet? Then start listening to your first favorite songs here!",
+                        "get_started": "Let's search my favorite songs!"
+                    }
                 },
                 "history": {
                     "title": "History"
@@ -301,6 +310,38 @@
                 "search": {
                     "title": "Search",
                     "search_box": "Search for songs, albums, artists, podcasts"
+                },
+                "toast": {
+                    "add_track": {
+                        "loading": "Adding [track_name] by [artist] to queue",
+                        "success": "Got it, Added [track_name] by [artist] to queue!",
+                        "error": "Buh.. Something went wrong :("
+                    },
+                    "repeat": {
+                        "loading": "Changing the repeat mode to [repeat_mode]",
+                        "success": "The repeat mode has been changed to [repeat_mode]!",
+                        "error": "Buh.. Something went wrong :("
+                    },
+                    "pause": {
+                        "loading": "Pausing...",
+                        "success": "Paused!",
+                        "error": "Buh.. Something went wrong :("
+                    },
+                    "play": {
+                        "loading": "Continue playback...",
+                        "success": "Playing!",
+                        "error": "Buh.. Something went wrong :("
+                    },
+                    "next": {
+                        "loading": "Skipping...",
+                        "success": "Skipped to next track!",
+                        "error": "Buh.. Something went wrong :("
+                    },
+                    "previous": {
+                        "loading": "Reverting...",
+                        "success": "Reverted to previous track!",
+                        "error": "Buh.. Something went wrong :("
+                    }
                 }
             },
             "setting": {

@@ -6,6 +6,7 @@ import { usePonaMusicContext } from '@/contexts/ponaMusicContext'
 import { Button, Image, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from '@nextui-org/react'
 import { Play } from '@phosphor-icons/react/dist/ssr'
 import { proxyArtwork } from '@/utils/track'
+import toast from 'react-hot-toast'
 
 function MusicCard({track}: {track: Track}) {
   const { socket } = usePonaMusicContext();
@@ -15,10 +16,29 @@ function MusicCard({track}: {track: Track}) {
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
   const {isOpen: isDuplicatedTrackOpen, onOpen: onDuplicatedTrackOpen, onOpenChange: onDuplicatedTrackOpenChange} = useDisclosure();
   const addToQueue = () => {
-    if ( socket && socket.connected && isSameVC )
-    {
+    if (socket && socket.connected && isSameVC) {
       setLoading(true);
-      socket.emit('add', track.uri, track.sourceName, () => {setLoading(false)});
+      toast.promise(
+        new Promise<void>((resolve, reject) => {
+          socket.emit('add', track.uri, track.sourceName, (error: unknown) => {
+            setLoading(false);
+            if (error && (error as { status?: string }).status !== 'ok') {
+              reject(error);
+            } else {
+              resolve();
+            }
+          });
+        }),
+        {
+          loading: language.data.app.guilds.player.toast.add_track.loading.replace('[track_name]', track.title.slice(0,32)).replace('[artist]', track.author.slice(0,32)),
+          success: language.data.app.guilds.player.toast.add_track.success.replace('[track_name]', track.title.slice(0,32)).replace('[artist]', track.author.slice(0,32)),
+          error: language.data.app.guilds.player.toast.add_track.error,
+        },
+        {
+          position: 'bottom-left',
+          duration: 1280
+        }
+      );
     }
   }
   if (!track.proxyArtworkUrl) {

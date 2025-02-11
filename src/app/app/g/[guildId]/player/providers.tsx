@@ -44,7 +44,7 @@ function Providers({ children }: { children: React.ReactNode }) {
                 {
                     userSetting.transparency ? 
                     <Image src={backdropBg || backdrop.src} alt={currentTrack?currentTrack.title:guild?.name || ''} width={"100%"} height={320}
-                        className='object-cover blur-3xl scale-125 w-full h-96 pointer-events-none saturate-200 brightness-110'
+                        className='object-cover blur-3xl w-full h-96 pointer-events-none saturate-200 brightness-110 scale-[2]'
                     />
                     : <div className='w-full h-96 bg-gradient-to-t from-transparent to-[hsl(var(--pona-app-music-accent-color-500))]'></div>
                 }

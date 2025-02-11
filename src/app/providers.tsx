@@ -9,6 +9,7 @@ import { DiscordUserInfoProvider } from '@/contexts/discordUserInfo';
 import { DiscordGuildInfoProvider } from '@/contexts/discordGuildInfo';
 import PageAnimatePresence from "@/components/HOC/PageAnimatePresence";
 import { usePathname } from 'next/navigation';
+import { Toaster } from 'react-hot-toast';
 import Snowfall from 'react-snowfall';
 
 export function Providers({ children, isMobile }: { children: React.ReactNode; isMobile: boolean; }) {
@@ -36,6 +37,7 @@ export function Providers({ children, isMobile }: { children: React.ReactNode; i
                 {
                   pathname.startsWith('/app') ? children : <PageAnimatePresence>{children}</PageAnimatePresence>
                 }
+                <Toaster />
                 </GlobalProvider>
               </DiscordGuildInfoProvider>
             </DiscordUserInfoProvider>

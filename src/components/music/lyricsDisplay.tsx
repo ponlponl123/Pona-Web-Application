@@ -52,11 +52,11 @@ const LyricsDisplay: React.FC<LyricsDisplayProps> = ({ currentTrack, playerPosit
                 <div
                     key={index}
                     id={`lyrics-index-${index}`}
-                    className={`w-full h-max flex items-center text-start justify-between px-2.5 my-8 transition-all duration-500 ${
-                        index === activeIndex ? "text-3xl text-[hsl(var(--pona-app-music-accent-color-500))] font-bold" :
-                        index === activeIndex+1 ? "text-xl text-[hsl(var(--pona-app-music-accent-color-500)/0.4)]" :
-                        index < activeIndex ? "text-lg text-[hsl(var(--pona-app-music-accent-color-500)/0.6)]" :
-                        "text-lg text-[hsl(var(--pona-app-music-accent-color-500)/0.2)]"
+                    className={`w-full h-max flex items-center text-start justify-between px-2.5 my-8 disable-default-transition transition-all ease-out duration-400 ${
+                        index === activeIndex ? "text-3xl text-[hsl(var(--pona-app-music-accent-color-500))] font-bold [html.dark_&]:brightness-150 [html.light_&]:brightness-50" :
+                        (index === activeIndex+1 || index === activeIndex-1) ? "text-xl text-[hsl(var(--pona-app-music-accent-color-500)/0.4)] [html.light_&]:brightness-90 [html.dark_&]:brightness-125" :
+                        index < activeIndex ? "text-base text-[hsl(var(--pona-app-music-accent-color-500)/0.48)]" :
+                        "text-base text-[hsl(var(--pona-app-music-accent-color-500)/0.16)]"
                     }`}
                 >
                     {lyrics.lyrics}
