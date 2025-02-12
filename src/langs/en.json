@@ -233,9 +233,14 @@
             "player": {
                 "name": "Pona! Music",
                 "dev": "Have a cup of coffee and listen to some great music. Player is in development. 🎵🍵",
+                "request_by": "Request by",
                 "full_screen_mode": {
                     "enter": "Full screen mode",
                     "exit": "Exit full screen mode"
+                },
+                "picinpic_mode": {
+                    "enter": "Picture-In-Picture mode",
+                    "exit": "Exit Picture-In-Picture mode"
                 },
                 "socket": {
                     "connected": {
@@ -309,7 +314,15 @@
                 },
                 "search": {
                     "title": "Search",
-                    "search_box": "Search for songs, albums, artists, podcasts"
+                    "search_box": "Search for songs, albums, artists, podcasts",
+                    "result": "Search results for",
+                    "category": {
+                        "PLAYLIST": "PLAYLIST",
+                        "ARTIST": "ARTIST",
+                        "ALBUM": "ALBUM",
+                        "VIDEO": "VIDEO",
+                        "SONG": "SONG"
+                    }
                 },
                 "toast": {
                     "add_track": {

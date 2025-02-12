@@ -31,10 +31,6 @@ function Page() {
     if ( !fetched.current )
     fetchHistoryTracks();
   }, [fetched])
-
-  React.useEffect(() => {
-    console.log('tracksHistory', tracksHistory)
-  }, [tracksHistory])
   
   return (
     guild ? (

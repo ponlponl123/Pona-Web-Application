@@ -6,13 +6,14 @@ import { useGlobalContext } from '@/contexts/globalContext';
 import { useLanguageContext } from '@/contexts/languageContext';
 import { useDiscordUserInfo } from '@/contexts/discordUserInfo';
 import { DiscordLogo, Confetti, Hamburger, Question, Gear, Leaf, MagnifyingGlass } from "@phosphor-icons/react/dist/ssr";
-import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Avatar, Input, Button, Form } from '@nextui-org/react';
+import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Avatar, Button, Form, Input } from '@nextui-org/react';
 import { usePathname, useRouter } from 'next/navigation';
 import PonaIcon from '@/app/favicon.ico';
 import { getCookie } from 'cookies-next';
 import Scrollbar from '../scrollbar';
 import Image from 'next/image';
 import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo';
+import { fetchSearchSuggestionResult } from '@/server-side-api/internal/search';
 
 function UserAccountAction({className, minimize = false}: {className?: string, minimize?: boolean}) {
     const { userInfo, revokeUserAccessToken } = useDiscordUserInfo();
@@ -60,6 +61,38 @@ function Header() {
     const guildPath = isInGuild ? pathname.split('/')[4] : '';
     const isIndex = (pathname === '/');
 
+    const searchSuggestionElement = React.useRef<HTMLDivElement>(null);
+    const searchInputElement = React.useRef<HTMLInputElement>(null);
+    const [searching, setSearching] = React.useState<boolean>(false);
+    const [searchValue, setSearchValue] = React.useState<string>("");
+    const [searchSuggestions, setSearchSuggestions] = React.useState<string[]>([]);
+    const [typingTimeout, setTypingTimeout] = React.useState<NodeJS.Timeout | null>(null);
+
+    const handleBlur = (event: React.FocusEvent<HTMLInputElement>) => {
+        if (searchSuggestionElement.current && !searchSuggestionElement.current.contains(event.relatedTarget as Node)) 
+            setSearching(false);
+    };
+
+    const handleClickOutside = (event: MouseEvent) => {
+        if (
+            searchSuggestionElement.current && !searchSuggestionElement.current.contains(event.target as Node) &&
+            searchInputElement.current && !searchInputElement.current.contains(event.target as Node)
+        ) {
+            setSearching(false);
+        }
+    };
+
+    React.useEffect(() => {
+        if (searching) {
+            window.addEventListener('click', handleClickOutside);
+        } else {
+            window.removeEventListener('click', handleClickOutside);
+        }
+        return () => {
+            window.removeEventListener('click', handleClickOutside);
+        };
+    }, [searching]);
+
     return (
         <header className={`nav-opened-${navOpened} ${!isIndex ? 'max-md:backdrop-blur-md':''} ${(!isIndex && isMemberInVC && isSameVC)?'max-md:[body.pona-player-focused_&]:opacity-0 max-md:[body.pona-player-focused_&]:pointer-events-none':''} pona-header absolute w-full h-20 p-6 px-8 flex items-center justify-center gap-3`}>
             <div className={`w-full ${!isApp && 'max-w-5xl'} h-full flex items-center justify-between gap-6`}>
@@ -89,7 +122,7 @@ function Header() {
                         (pathname.includes('player') && ponaCommonState && ponaCommonState.pona.voiceChannel && isSameVC) &&
                         <div className={`${(navOpened) ? 'hidden' : 'contents'}`}>
                             <Button
-                                className={`${(navOpened || (pathname.includes('player') && pathname.includes('search'))) ? 'hidden' : ''} miniscreen:translate-y-8 miniscreen:pointer-events-none miniscreen:opacity-0 absolute left-1/2 -translate-x-1/2 bg-black text-white`}
+                                className={`${(navOpened || (pathname.includes('player') && pathname.includes('search'))) ? 'hidden' : ''} miniscreen:translate-y-8 miniscreen:pointer-events-none miniscreen:opacity-0 absolute left-1/2 -translate-x-1/2 bg-black text-white z-20`}
                                 radius='full' size='sm' onPress={()=>{
                                     router.push(`/app/g/${guild?.id}/player/search`);
                                 }}
@@ -97,16 +130,59 @@ function Header() {
                             <Form className='contents' onSubmit={(e) => {
                                     e.preventDefault();
                                     const data = Object.fromEntries(new FormData(e.currentTarget));
-                                    router.push(`/app/g/${guild?.id}/player/search?q=${data.name}`);
+                                    router.push(`/app/g/${guild?.id}/player/search?q=${data.search}`);
                             }}>
-                            <Input startContent={<MagnifyingGlass size={18} className='mr-1 max-miniscreen:absolute max-miniscreen:scale-75' />} name='search'
-                                placeholder={language.data.app.guilds.player.search.search_box}
-                                className={`${(pathname.includes('player') && pathname.includes('search')) ? 'max-miniscreen:left-24 max-miniscreen:translate-x-0' : 'max-miniscreen:min-w-0 max-miniscreen:w-10 max-miniscreen:pointer-events-none max-miniscreen:opacity-0 max-miniscreen:-translate-y-8'} backdrop-blur pona-music-searchbox miniscreen:w-80 max-md:max-w-[32vw] max-md:fixed max-md:-translate-x-1/2 max-md:left-1/2 md:absolute md:left-80 md:[body.sidebar-collapsed_&]:left-24 [body.pona-player-focused_&]:opacity-0 [body.pona-player-focused_&]:pointer-events-none [body.pona-player-focused_&]:-translate-y-6`}
-                                classNames={{
-                                    inputWrapper: 'max-md:rounded-full bg-foreground/10 border-2 border-foreground/10',
-                                    input: 'max-miniscreen:placeholder:opacity-0 placeholder:text-content1-foreground/40'
-                                }}
-                            ></Input>
+                            <div className='absolute miniscreen:w-80 max-miniscreen:top-24 max-miniscreen:left-4 max-miniscreen:translate-x-0 max-miniscreen:max-w-full max-miniscreen:w-[calc(100%_-_2rem)] max-md:max-w-[32vw] max-md:fixed max-md:-translate-x-1/2 max-md:left-1/2 md:absolute md:left-80 md:[body.sidebar-collapsed_&]:left-24 [body.pona-player-focused_&]:opacity-0 [body.pona-player-focused_&]:pointer-events-none [body.pona-player-focused_&]:-translate-y-6'>
+                                <Input ref={searchInputElement} startContent={<MagnifyingGlass size={18} className='mr-1 max-miniscreen:absolute max-miniscreen:scale-75' />} name='search'
+                                    placeholder={language.data.app.guilds.player.search.search_box}
+                                    onValueChange={(value) => {
+                                        setSearching(true);
+                                        setSearchValue(value);
+                                        if (typingTimeout) clearTimeout(typingTimeout);
+                                        setTypingTimeout(setTimeout(async () => {
+                                            if ( !value ) return;
+                                            const accessTokenType = getCookie('LOGIN_TYPE_');
+                                            const accessToken = getCookie('LOGIN_');
+                                            if (!accessTokenType || !accessToken) return false;
+                                            const searcher = await fetchSearchSuggestionResult(accessTokenType, accessToken, value);
+                                            if (searcher) setSearchSuggestions(searcher.searchSuggestions);
+                                            else setSearchSuggestions([]);
+                                        }, 500));
+                                    }}
+                                    onFocus={()=>{
+                                        if ( searchValue ) setSearching(true);
+                                    }}
+                                    onBlur={handleBlur}
+                                    classNames={{
+                                        inputWrapper: 'max-md:rounded-full bg-foreground/10 border-2 border-foreground/10 max-miniscreen:bg-playground-background',
+                                        input: 'max-miniscreen:placeholder:opacity-0 placeholder:text-content1-foreground/40'
+                                    }}
+                                    className={`${
+                                        (pathname.includes('player') && pathname.includes('search')) ?
+                                            'max-miniscreen:translate-x-0' :
+                                            'max-miniscreen:min-w-0 max-miniscreen:w-10 max-miniscreen:pointer-events-none max-miniscreen:opacity-0 max-miniscreen:-translate-y-8'
+                                        } backdrop-blur pona-music-searchbox z-10`
+                                    }
+                                />
+                                <div id='pona-search-suggestions' ref={searchSuggestionElement} className={
+                                    `absolute w-full min-h-6 bg-foreground/10 max-miniscreen:bg-playground-background border-2 border-foreground/10 miniscreen:backdrop-blur-xl rounded-xl top-12 p-1 z-30 ${(searching && searchValue)?'':'opacity-0 pointer-events-none -translate-y-6'}`
+                                }>
+                                    {
+                                        searchValue &&
+                                        <Button onPress={()=>{router.push(`/app/g/${guild?.id}/player/search?q=${searchValue}`);setSearching(false)}}
+                                            value={searchValue} variant='light' radius='sm'
+                                            className='text-start justify-start gap-3' fullWidth><MagnifyingGlass size={14} /> {searchValue}</Button>
+                                    }
+                                    {
+                                        searchSuggestions &&
+                                        searchSuggestions?.map((value, index)=>(
+                                            <Button key={index} onPress={()=>{router.push(`/app/g/${guild?.id}/player/search?q=${value}`);setSearching(false)}}
+                                                value={value} variant='light' radius='sm'
+                                                className='text-start justify-start gap-3' fullWidth><MagnifyingGlass size={14} /> {value}</Button>
+                                        ))
+                                    }
+                                </div>
+                            </div>
                             </Form>
                         </div>
                     }

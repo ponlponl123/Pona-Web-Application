@@ -40,11 +40,11 @@ function Providers({ children }: { children: React.ReactNode }) {
     return (
         <>
             <main id='app-panel' className='relative bg-gradient-to-t light:from-warning/10 to-primary/20 h-screen overflow-x-hidden overflow-y-auto scrollbar-hide -mb-6 border-l-2 border-foreground/10 pb-12'>
-                <div className='absolute w-full h-1/2 max-h-96 min-h-48 top-0 left-0 z-[1] opacity-40'>
+                <div className='absolute w-full h-1/2 max-h-96 min-h-48 top-0 left-0 z-[1] opacity-40 pointer-events-none'>
                 {
                     userSetting.transparency ? 
                     <Image src={backdropBg || backdrop.src} alt={currentTrack?currentTrack.title:guild?.name || ''} width={"100%"} height={320}
-                        className='object-cover blur-3xl w-full h-96 pointer-events-none saturate-200 brightness-110 [.light_&]:brightness-200 scale-[2]'
+                        className='object-cover blur-3xl w-full h-96 pointer-events-none saturate-200 brightness-125 [.light_&]:brightness-200 scale-[2]'
                     />
                     : <div className='w-full h-96 bg-gradient-to-t from-transparent to-[hsl(var(--pona-app-music-accent-color-500))]'></div>
                 }

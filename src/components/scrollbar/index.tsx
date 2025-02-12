@@ -62,7 +62,7 @@ function Scrollbar(
     return (
         <main className={`scrollbar ${!nav ? `${(canCollapsed && sidebarCollapsed) ? 'min-w-16 w-16 max-w-16 p-2' : 'min-w-72 w-72 max-w-72 p-6' } relative h-screen max-md:hidden pt-24 flex flex-col gap-2` : 'md:hidden w-full flex flex-col gap-2'}`}>
             {
-                canCollapsed && <Button className={`absolute -right-0.5 top-24 min-w-0 w-1 max-w-1 h-[calc(100vh_-_12rem)] z-20 opacity-0 hover:opacity-100`} isIconOnly onPress={()=>{
+                canCollapsed && <Button className={`absolute -right-[0.2rem] top-24 min-w-0 w-1 max-w-1 h-[calc(100vh_-_12rem)] z-20 opacity-0 hover:scale-[1.15] hover:opacity-100`} isIconOnly onPress={()=>{
                     setSidebarCollapsed((value)=>{
                         if (onCollapsed) onCollapsed(!value)
                         if ( (!value) ) document.body.classList.add("sidebar-collapsed");

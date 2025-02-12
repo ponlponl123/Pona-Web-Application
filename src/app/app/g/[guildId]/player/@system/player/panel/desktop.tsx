@@ -10,7 +10,7 @@ import { msToTime } from '@/utils/time'
 import { useRouter } from 'next/navigation'
 import defaultImage from '@/../public/Ponlponl123 (1459).png'
 
-import { Coffee, DotsThreeVertical, Heart, MonitorPlay, Play, SpeakerSimpleHigh } from '@phosphor-icons/react/dist/ssr'
+import { Coffee, DotsThreeVertical, Heart, MonitorPlay, PictureInPicture, Play, SpeakerSimpleHigh } from '@phosphor-icons/react/dist/ssr'
 import { Button, Image, Link, ScrollShadow, Tab, Tabs } from '@nextui-org/react'
 import LyricsDisplay from '@/components/music/lyricsDisplay';
 import { Track } from '@/interfaces/ponaPlayer';
@@ -60,13 +60,14 @@ function DesktopPonaPlayerPanel() {
                     <div className='m-auto flex flex-col gap-6'>
                         <div className='flex flex-wrap gap-4 items-center justify-center -mt-12'>
                             <Button color='default' variant='ghost' radius='full' className='w-fit'><MonitorPlay />{language.data.app.guilds.player.full_screen_mode.enter}</Button>
+                            <Button color='default' variant='ghost' radius='full' className='w-fit' isDisabled><PictureInPicture />{language.data.app.guilds.player.picinpic_mode.enter}</Button>
                         </div>
                         <div className='w-[56vh] max-2xl:w-[42vh] max-xl:w-[32vh] max-xl:[body:not(.sidebar-collapsed)_&]:w-[26vh] aspect-square relative flex group hover:scale-[1.032] active:scale-[1.016]'>
                             <Image src={currentTrack ? currentTrack.proxyHighResArtworkUrl || currentTrack.proxyArtworkUrl : defaultImage.src} alt={currentTrack ? currentTrack.title : 'Artwork'}
                                 className={
-                                    'w-full h-full object-cover select-none'
+                                    'w-full h-full object-cover select-none rounded-2xl'
                                 }
-                                loading='lazy' shadow='lg' radius='lg' isBlurred={userSetting.transparency} id='pona-music-artwork'
+                                loading='lazy' shadow='lg' isBlurred={userSetting.transparency} id='pona-music-artwork'
                             />
                             <div className='absolute top-0 left-0 z-[14] w-full h-full bg-gradient-to-t to-transparent rounded-2xl [html.light_&]:from-white/40 [html.dark_&]:from-black/40 opacity-0 group-hover:opacity-100 pointer-events-none'></div>
                         </div>
