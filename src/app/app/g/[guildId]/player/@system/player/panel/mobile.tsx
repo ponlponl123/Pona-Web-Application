@@ -226,7 +226,7 @@ function MobilePonaPlayerPanel({
                                                     </div>
                                                     <div className='w-[calc(100%_-_10rem)]'>
                                                       <h1 className='w-full [div.active_&]:text-[hsl(var(--pona-app-music-accent-color-500))] whitespace-nowrap overflow-hidden overflow-ellipsis'>{track.title}</h1>
-                                                      <span className='w-full text-xs text-foreground/40 [div.active_&]:text-[hsl(var(--pona-app-music-accent-color-500)/0.4)] whitespace-nowrap overflow-hidden overflow-ellipsis'>{track.author}</span>
+                                                      <span className='w-full text-xs text-foreground/40 [div.active_&]:text-[hsl(var(--pona-app-music-accent-color-500)/0.4)] whitespace-nowrap overflow-hidden overflow-ellipsis'>{track.author} ({track.requester?.displayName || '@'+track.requester?.username})</span>
                                                     </div>
                                                     <div className='ml-auto relative w-12 h-12 flex items-center justify-center'>
                                                       <span className='[div.active_&]:text-[hsl(var(--pona-app-music-accent-color-500)/0.64)] opacity-100 pointer-events-none'>{msToTime(track.duration || 0)}</span>

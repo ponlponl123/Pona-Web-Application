@@ -44,7 +44,7 @@ function MobilePonaPlayer() {
             animate={{ opacity: 1, pointerEvents: 'auto', translateY: 0 }}
             exit={{ opacity: 0, pointerEvents: 'none', translateY: 32 }}
           className={
-            `absolute overflow-hidden z-50 bg-gradient-to-br to-[hsl(var(--pona-app-music-accent-color-500)/.24)] from-[hsl(var(--pona-app-music-accent-color-500)/.24)] apply-soft-transition ${playerPopup?'w-full h-screen rounded-none bottom-4 left-0':'h-16 rounded-lg bottom-6 left-2 w-[calc(100%_-_1rem)]'}`
+            `absolute overflow-hidden z-50 [html.light_&]:bg-[hsl(var(--pona-app-music-accent-color-100))] [html.dark_&]:bg-[hsl(var(--pona-app-music-accent-color-800))] apply-soft-transition ${playerPopup?'w-full h-screen rounded-none bottom-4 left-0':'h-16 rounded-lg bottom-6 left-2 w-[calc(100%_-_1rem)]'}`
             + (userSetting.transparency ? ' backdrop-blur-md' : '')
           }>
           <div className='absolute top-0 left-0 z-0 w-full h-full [body.pona-player-focused_&]:bg-none [html.light_&]:[body.pona-player-focused_&]:bg-[hsl(var(--pona-app-music-accent-color-50))] [html.dark_&]:[body.pona-player-focused_&]:bg-[hsl(var(--pona-app-music-accent-color-900))] rounded-lg'></div>

@@ -1,4 +1,4 @@
-import { TextBasedChannel, VoiceBasedChannel, GuildMember } from 'discord.js'
+import { TextBasedChannel, VoiceBasedChannel, User, ClientUser } from 'discord.js'
 import { NextUIPalette } from '../../themes/utils/nextui-color-palette-gen';
 
 export interface Band {
@@ -30,7 +30,7 @@ export interface Track {
   "lyrics"?: Lyric,
   "sourceName": string,
   "thumbnail": string,
-  "requester": GuildMember,
+  "requester": User | ClientUser,
 	accentColor?: string;
 }
 

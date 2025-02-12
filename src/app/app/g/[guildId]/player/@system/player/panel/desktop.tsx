@@ -49,7 +49,7 @@ function DesktopPonaPlayerPanel() {
                 {
                     userSetting.transparency &&
                     <Image src={currentTrack ? currentTrack.proxyArtworkUrl : defaultImage.src} alt={currentTrack ? currentTrack.title : 'Backdrop'}
-                        className='absolute -z-10 scale-[2] w-full h-full top-0 left-0 object-cover blur-[128px] [html.dark_&]:brightness-50 [html.light_&]:brightness-150 [html.dark_&]:saturate-150' classNames={{wrapper:'contents'}}/>
+                        className='absolute -z-10 scale-[2] w-full h-full top-0 left-0 object-cover blur-[128px] [html.dark_&]:brightness-50 [html.light_&]:brightness-200 [html.dark_&]:saturate-150' classNames={{wrapper:'contents'}}/>
                 }
                 <div className={
                     'absolute -z-10 w-full h-full top-0 left-0 ' +
@@ -59,9 +59,9 @@ function DesktopPonaPlayerPanel() {
                 <div className='w-full h-full flex gap-12 justify-between items-center pt-16'>
                     <div className='m-auto flex flex-col gap-6'>
                         <div className='flex flex-wrap gap-4 items-center justify-center -mt-12'>
-                            <Button variant='ghost' radius='full' className='w-fit'><MonitorPlay />{language.data.app.guilds.player.full_screen_mode.enter}</Button>
+                            <Button color='default' variant='ghost' radius='full' className='w-fit'><MonitorPlay />{language.data.app.guilds.player.full_screen_mode.enter}</Button>
                         </div>
-                        <div className='w-[56vh] max-2xl:w-[42vh] max-xl:w-[26vh] max-xl:[body:not(.sidebar-collapsed)_&]:w-full aspect-square relative flex group hover:scale-[1.032] active:scale-[1.016]'>
+                        <div className='w-[56vh] max-2xl:w-[42vh] max-xl:w-[32vh] max-xl:[body:not(.sidebar-collapsed)_&]:w-[26vh] aspect-square relative flex group hover:scale-[1.032] active:scale-[1.016]'>
                             <Image src={currentTrack ? currentTrack.proxyHighResArtworkUrl || currentTrack.proxyArtworkUrl : defaultImage.src} alt={currentTrack ? currentTrack.title : 'Artwork'}
                                 className={
                                     'w-full h-full object-cover select-none'
@@ -109,7 +109,7 @@ function DesktopPonaPlayerPanel() {
                                                     </div>
                                                     <div className='w-[calc(100%_-_10rem)]'>
                                                         <h1 className='w-full [div.active_&]:text-[hsl(var(--pona-app-music-accent-color-500))] whitespace-nowrap overflow-hidden overflow-ellipsis'>{track.title}</h1>
-                                                        <span className='w-full text-xs text-foreground/40 [div.active_&]:text-[hsl(var(--pona-app-music-accent-color-500)/0.4)] whitespace-nowrap overflow-hidden overflow-ellipsis'>{track.author}</span>
+                                                        <span className='w-full text-xs text-foreground/40 [div.active_&]:text-[hsl(var(--pona-app-music-accent-color-500)/0.4)] whitespace-nowrap overflow-hidden overflow-ellipsis'>{track.author} ({track.requester?.displayName || '@'+track.requester?.username})</span>
                                                     </div>
                                                     <div className='ml-auto relative w-12 h-12 flex items-center justify-center'>
                                                         <span className='[div.active_&]:text-[hsl(var(--pona-app-music-accent-color-500)/0.64)] group-hover:opacity-0 opacity-100 pointer-events-none'>{msToTime(track.duration || 0)}</span>

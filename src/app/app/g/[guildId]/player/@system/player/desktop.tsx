@@ -9,8 +9,8 @@ import { useUserSettingContext } from '@/contexts/userSettingContext'
 import { msToTime } from '@/utils/time'
 import defaultImage from '@/../public/Ponlponl123 (1459).png'
 
-import { CaretDown, CaretLineLeft, CaretLineRight, CaretUp, Equalizer, MusicNotes, Pause, Play, Repeat, RepeatOnce, SpeakerSimpleHigh } from '@phosphor-icons/react/dist/ssr'
-import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger, Image, Link, Popover, PopoverContent, PopoverTrigger, Slider } from '@nextui-org/react'
+import { CaretDown, CaretLineLeft, CaretLineRight, CaretUp, Equalizer, Info, MusicNotes, Pause, Play, Repeat, RepeatOnce, SpeakerSimpleHigh } from '@phosphor-icons/react/dist/ssr'
+import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger, Image, Link, Popover, PopoverContent, PopoverTrigger, Slider, Tooltip } from '@nextui-org/react'
 import toast from 'react-hot-toast';
 
 function DesktopPonaPlayer() {
@@ -45,9 +45,11 @@ function DesktopPonaPlayer() {
                     exit={{ opacity: 0, pointerEvents: 'none', translateY: 32 }}
                 className={
                     (userSetting.dev_pona_player_style === 'modern' ?
-                    `absolute max-md:overflow-hidden h-[4.8rem] z-50 max-lg:h-16 max-md:bottom-6 bottom-2 left-2 bg-gradient-to-br to-foreground/5 max-md:to-[hsl(var(--pona-app-music-accent-color-500)/.24)] from-[hsl(var(--pona-app-music-accent-color-500)/.24)] max-md:rounded-lg rounded-2xl` :
-                    `absolute max-md:overflow-hidden h-[5.6rem] z-50 max-lg:h-16 max-md:bottom-6 bottom-2 left-2 bg-gradient-to-br to-foreground/5 max-md:to-[hsl(var(--pona-app-music-accent-color-500)/.24)] from-[hsl(var(--pona-app-music-accent-color-500)/.24)] max-md:rounded-lg rounded-2xl`)
-                    + (userSetting.transparency ? ' backdrop-blur-md' : '')
+                    `absolute max-md:overflow-hidden h-[4.8rem] z-50 max-lg:h-16 max-md:bottom-6 bottom-2 left-2 max-md:rounded-lg rounded-2xl` :
+                    `absolute max-md:overflow-hidden h-[5.6rem] z-50 max-lg:h-16 max-md:bottom-6 bottom-2 left-2 max-md:rounded-lg rounded-2xl`)
+                    + (userSetting.transparency ?
+                        ' backdrop-blur-3xl [.dark_&]:bg-[hsl(var(--pona-app-music-accent-color-800)/.64)] [.light_&]:bg-[hsl(var(--pona-app-music-accent-color-100)/.86)]' :
+                        ' [.dark_&]:bg-[hsl(var(--pona-app-music-accent-color-800))] [.light_&]:bg-[hsl(var(--pona-app-music-accent-color-100))]')
                 } style={{width:'calc(100% - 1rem)'}}>
                 <div className='absolute top-0 left-0 z-0 w-full h-full [body.pona-player-focused_&]:bg-none [html.light_&]:[body.pona-player-focused_&]:bg-[hsl(var(--pona-app-music-accent-color-50))] [html.dark_&]:[body.pona-player-focused_&]:bg-[hsl(var(--pona-app-music-accent-color-900))] max-md:rounded-lg rounded-2xl'></div>
                 <Slider
@@ -95,7 +97,7 @@ function DesktopPonaPlayer() {
                         : <div></div>
                     }
                     <motion.div
-                        className='flex items-center justify-start gap-4 w-full -ml-4 max-lg:max-w-[calc(50%_-_1rem)] max-md:max-w-[calc(100%_-_4rem)] max-w-[calc(33.33%_-_1rem)]'
+                        className='flex items-center justify-start gap-4 w-full -ml-4 max-lg:max-w-[calc(50%_-_2.4rem)] max-md:max-w-[calc(100%_-_4rem)] max-w-[calc(33.33%_-_1rem)]'
                         animate={{
                             transition: {
                                 duration: 0.2,
@@ -115,7 +117,15 @@ function DesktopPonaPlayer() {
                                 <h1 className='text-xl max-lg:text-base !text-[hsl(var(--pona-app-music-accent-color-500))] w-full whitespace-nowrap overflow-hidden overflow-ellipsis'>{currentTrack ? currentTrack.title : 'Music Name'}</h1>
                                 {currentTrack ? <Link href={currentTrack.uri} className='!text-[hsl(var(--pona-app-music-accent-color-500))]' showAnchorIcon target='_blank' /> : <></>}
                             </div>
-                            <span className='text-sm max-lg:text-xs text-foreground/40 w-full whitespace-nowrap overflow-hidden overflow-ellipsis'>{currentTrack ? currentTrack.author : 'Author'}</span>
+                            <div className='w-full flex flex-row gap-1 items-center justify-start'>
+                                <span className='text-sm max-lg:text-xs text-foreground/40 max-w-[calc(100%_-_1rem)] whitespace-nowrap overflow-hidden overflow-ellipsis'>{currentTrack ? currentTrack.author : 'Author'}</span>
+                                <Tooltip content={`Request by ${currentTrack.requester?.displayName || '@'+currentTrack.requester?.username}`}>
+                                    <div className='relative group w-3 opacity-40'>
+                                        <Info size={12} className='group-hover:opacity-0' />
+                                        <Info size={12} weight='fill' className='absolute top-0 left-0 opacity-0 group-hover:opacity-100' />
+                                    </div>
+                                </Tooltip>
+                            </div>
                         </div>
                     </motion.div>
                     <div className={`flex items-center justify-center gap-4 w-full max-lg:max-w-[calc(50%_-_3rem)] max-md:max-w-[3rem] max-w-[calc(33.33%_-_1rem)]  ${userSetting.dev_pona_player_style==='modern'?'':'lg:mt-4'}`}>

@@ -2,7 +2,7 @@ import { PonaConfigThemes, PonaThemeColors } from "../themes.config";
 import nextuiColorPalette from "./utils/nextui-color-palette-gen";
 
 const colorPalette: Partial<PonaThemeColors> = {
-  ...nextuiColorPalette({name: "default", baseColor: "#8a8a8a"}),
+  // ...nextuiColorPalette({name: "default", baseColor: "#8a8a8a"}),
   ...nextuiColorPalette({name: "primary", baseColor: "#feb9e7"}),
   ...nextuiColorPalette({name: "secondary", baseColor: "#00a2ff"}),
   ...nextuiColorPalette({name: "success", baseColor: "#47ff9d"}),
