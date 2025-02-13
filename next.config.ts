@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  crossOrigin: 'anonymous',
   images: {
     remotePatterns: [
       {
