@@ -37,9 +37,9 @@ function TrackDetail({data, isHasPlay = true}: {data: HTTP_SearchResult, isHasPl
         <h3 className='text-sm w-full overflow-hidden overflow-ellipsis whitespace-nowrap text-start'>
         {
           ( data.type === 'SONG' || data.type === 'VIDEO' ) ?
-          <>{data?.artist?.name}{data.duration && ' ● '+msToTime(data?.duration*1000)}</> :
+          <>{data?.artist?.name}{data.duration && ' • '+msToTime(data?.duration*1000)}</> :
           ( data.type === 'ALBUM' ) ?
-          <>{data?.artist?.name} ● {data?.year}</> :
+          <>{data?.artist?.name} • {data?.year}</> :
           ( data.type === 'PLAYLIST' ) ?
           <>{data?.artist?.name}</> :
           <></>
