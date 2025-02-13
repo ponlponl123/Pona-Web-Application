@@ -1,7 +1,7 @@
 "use client"
 import React, { useState } from 'react'
 import { UserInfo } from '@/server-side-api/discord/fetchUser'
-import { House, Confetti, Gear, Planet, CaretLeft, Wrench, Playlist, ChartPieSlice, Palette, Bug, StarAndCrescent, PaintBrush, SunHorizon, Keyboard, MusicNoteSimple, Thermometer, ShieldCheckered, HouseSimple, Sparkle, PersonSimpleRun, MapPinArea, ClockCounterClockwise, CubeTransparent } from '@phosphor-icons/react/dist/ssr'
+import { House, Confetti, Gear, Planet, CaretLeft, Wrench, Playlist, ChartPieSlice, Palette, Bug, StarAndCrescent, PaintBrush, SunHorizon, Keyboard, MusicNoteSimple, Thermometer, ShieldCheckered, HouseSimple, Sparkle, PersonSimpleRun, MapPinArea, ClockCounterClockwise, CubeTransparent, Heart, Compass } from '@phosphor-icons/react/dist/ssr'
 import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo'
 import { useLanguageContext } from '@/contexts/languageContext'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -137,6 +137,8 @@ function Scrollbar(
                                             </div>
                                             <div className='group-content'>
                                                 <ActivationLink iconOnly={(canCollapsed && sidebarCollapsed)} onClick={handlePushLocation} href={`/app/g/${guild.id}/player`} icon={HouseSimple}>{language.data.app.guilds.player.home.title}</ActivationLink>
+                                                <ActivationLink iconOnly={(canCollapsed && sidebarCollapsed)} onClick={handlePushLocation} href={`/app/g/${guild.id}/player/browse`} icon={Compass}>{language.data.app.guilds.player.browse.title}</ActivationLink>
+                                                <ActivationLink iconOnly={(canCollapsed && sidebarCollapsed)} onClick={handlePushLocation} href={`/app/g/${guild.id}/player/favorite`} icon={Heart}>{language.data.app.guilds.player.favorite.title}</ActivationLink>
                                                 <ActivationLink iconOnly={(canCollapsed && sidebarCollapsed)} onClick={handlePushLocation} href={`/app/g/${guild.id}/player/history`} icon={ClockCounterClockwise}>{language.data.app.guilds.player.history.title}</ActivationLink>
                                                 <ActivationLink iconOnly={(canCollapsed && sidebarCollapsed)} onClick={handlePushLocation} href={`/app/g/${guild.id}/player/playlists`} icon={Playlist}>{language.data.app.playlist.name}</ActivationLink>
                                             </div>

@@ -66,7 +66,7 @@ export async function getPlaylist(tokenType: string, tokenKey: string, playlistI
                 'Authorization': `${tokenType} ${tokenKey}`,
             },
         });
-        if ( handshakeRequest.status === 200 ) return handshakeRequest.data as PlaylistFull;
+        if ( handshakeRequest.status === 200 && handshakeRequest.data.result ) return handshakeRequest.data.result as PlaylistFull;
         else return false;
     } catch {
         // console.error('Failed to handshake with Pona! API:', err);
@@ -84,7 +84,7 @@ export async function getAlbum(tokenType: string, tokenKey: string, albumId: str
                 'Authorization': `${tokenType} ${tokenKey}`,
             },
         });
-        if ( handshakeRequest.status === 200 ) return handshakeRequest.data as AlbumFull;
+        if ( handshakeRequest.status === 200 && handshakeRequest.data.result ) return handshakeRequest.data.result as AlbumFull;
         else return false;
     } catch {
         // console.error('Failed to handshake with Pona! API:', err);
@@ -102,7 +102,7 @@ export async function getArtist(tokenType: string, tokenKey: string, artistId: s
                 'Authorization': `${tokenType} ${tokenKey}`,
             },
         });
-        if ( handshakeRequest.status === 200 ) return handshakeRequest.data as ArtistFull;
+        if ( handshakeRequest.status === 200 && handshakeRequest.data.result ) return handshakeRequest.data.result as ArtistFull;
         else return false;
     } catch {
         // console.error('Failed to handshake with Pona! API:', err);

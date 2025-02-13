@@ -309,6 +309,12 @@
                         "get_started": "Let's search my favorite songs!"
                     }
                 },
+                "browse": {
+                    "title": "Browse"
+                },
+                "favorite": {
+                    "title": "Favorite"
+                },
                 "history": {
                     "title": "History"
                 },

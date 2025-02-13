@@ -5,6 +5,7 @@ import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDi
 import { Play } from '@phosphor-icons/react/dist/ssr';
 import React from 'react'
 import toast from 'react-hot-toast';
+import PlayPauseButton from './playPause';
 
 export interface PlayDetail {
   title: string;
@@ -14,7 +15,9 @@ export interface PlayDetail {
   identifier: string;
 }
 
-function PlayButton({ s, iconSize = 32, className, detail, children, style }: { s?: number, iconSize?: number, className?: string, detail: PlayDetail, children?: React.ReactNode, style?: React.CSSProperties }) {
+function PlayButton({ s, iconSize = 32, className, classNames, detail, children, style, playPause }: { s?: number, iconSize?: number, className?: string, classNames?: {
+  playpause?: string
+}, detail: PlayDetail, children?: React.ReactNode, style?: React.CSSProperties, playPause?: boolean }) {
   const { socket } = usePonaMusicContext();
   const { language } = useLanguageContext();
   const { isSameVC, ponaCommonState } = useGlobalContext();
@@ -48,24 +51,28 @@ function PlayButton({ s, iconSize = 32, className, detail, children, style }: { 
     }
   }
   return (
-    <><Button className={'absolute top-0 left-0 w-full h-full z-10 rounded-3xl group-hover:opacity-100 opacity-0 ' + className} isIconOnly variant='flat' isLoading={loading} isDisabled={loading} onPress={()=>{
-      if ( socket && socket.connected && isSameVC ) {
-        const findDuplicatedTrack = ponaCommonState?.queue.filter(refTrack => refTrack.identifier === detail.identifier);
-        if (
-          ponaCommonState && ponaCommonState.current && 
-          (
-            ponaCommonState.current.identifier === detail.identifier ||
-            (findDuplicatedTrack && findDuplicatedTrack.length > 0)
-          )
-        ) onDuplicatedTrackOpen();
-        else if ( ponaCommonState?.current ) onOpen();
-        else addToQueue();
-      }
-    }} style={{ width: s, height: s, ...style }}>
-      {
-        children ? children : <Play weight='fill' size={iconSize || 32} />
-      }
-    </Button>
+    <>
+    {
+      playPause ? <PlayPauseButton className={classNames?.playpause} /> :
+      <Button className={'absolute top-0 left-0 w-full h-full z-10 rounded-3xl group-hover:opacity-100 opacity-0 ' + className} isIconOnly variant='flat' isLoading={loading} isDisabled={loading} onPress={()=>{
+        if ( socket && socket.connected && isSameVC ) {
+          const findDuplicatedTrack = ponaCommonState?.queue.filter(refTrack => refTrack.identifier === detail.identifier);
+          if (
+            ponaCommonState && ponaCommonState.current && 
+            (
+              ponaCommonState.current.identifier === detail.identifier ||
+              (findDuplicatedTrack && findDuplicatedTrack.length > 0)
+            )
+          ) onDuplicatedTrackOpen();
+          else if ( ponaCommonState?.current ) onOpen();
+          else addToQueue();
+        }
+      }} style={{ width: s, height: s, ...style }}>
+        {
+          children ? children : <Play weight='fill' size={iconSize || 32} />
+        }
+      </Button>
+    }
     <Modal isOpen={isOpen} onOpenChange={onOpenChange} size='xs' hideCloseButton>
       <ModalContent>
         {(onClose) => (

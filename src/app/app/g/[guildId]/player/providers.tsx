@@ -22,6 +22,7 @@ import SocketConnecting from './@system/socket-connecting'
 import DesktopPonaPlayer from './@system/player/desktop'
 import DesktopPonaPlayerPanel from './@system/player/panel/desktop'
 import MobilePonaPlayer from './@system/player/mobile'
+import PlayerNav from '@/components/mobile/playerNav'
 
 function Providers({ children }: { children: React.ReactNode }) {
     const { guild } = useDiscordGuildInfo();
@@ -37,9 +38,23 @@ function Providers({ children }: { children: React.ReactNode }) {
 
     const isTabletOrMobile = useMediaQuery({ query: '(max-width: 768px)' })
 
+    const musicAppContent = React.useRef<HTMLElement>(null);
+
+    React.useEffect(() => {
+        if (musicAppContent.current) {
+            musicAppContent.current.addEventListener('scroll', (e) => {
+                if (e.target instanceof Element && e.target.scrollTop > 0) {
+                    document.body.classList.add('pona-app-music-scrolled');
+                } else {
+                    document.body.classList.remove('pona-app-music-scrolled');
+                }
+            });
+        }
+    }, [musicAppContent]);
+
     return (
         <>
-            <main id='app-panel' className='relative bg-gradient-to-t light:from-warning/10 to-primary/20 h-screen overflow-x-hidden overflow-y-auto scrollbar-hide -mb-6 border-l-2 border-foreground/10 pb-12'>
+            <main id='app-panel' ref={musicAppContent} className='relative bg-gradient-to-t light:from-warning/10 to-primary/20 h-screen overflow-x-hidden overflow-y-auto scrollbar-hide -mb-6 border-l-2 border-foreground/10 pb-12'>
                 <div className='absolute w-full h-1/2 max-h-96 min-h-48 top-0 left-0 z-[1] opacity-40 pointer-events-none'>
                 {
                     userSetting.transparency ? 
@@ -78,6 +93,9 @@ function Providers({ children }: { children: React.ReactNode }) {
                     </>
                 }
                 </>
+            }
+            {
+                (isMobile) && <PlayerNav />
             }
         </>
     )

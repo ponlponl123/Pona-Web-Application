@@ -68,7 +68,9 @@ function Track({data}: {data: HTTP_SearchResult}) {
       data?.type === 'ARTIST'
     ) ? <Button className='rounded-xl relative opacity-100 bg-transparent active:!scale-[0.98] h-14 p-0' onPress={()=>{router.push(`/app/g/${guild?.id}/player/artist?c=${data?.artistId}`)}}><TrackDetail data={data} /></Button> :
     (
-      data?.type === 'ALBUM' ||
+      data?.type === 'ALBUM'
+    ) ? <Button className='rounded-xl relative opacity-100 bg-transparent active:!scale-[0.98] h-14 p-0' onPress={()=>{router.push(`/app/g/${guild?.id}/player/playlist?list=${data?.albumId}abm`)}}><TrackDetail data={data} /></Button> :
+    (
       data?.type === 'PLAYLIST'
     ) ? <Button className='rounded-xl relative opacity-100 bg-transparent active:!scale-[0.98] h-14 p-0' onPress={()=>{router.push(`/app/g/${guild?.id}/player/playlist?list=${data?.playlistId}`)}}><TrackDetail data={data} /></Button> :
     <TrackDetail data={data} />

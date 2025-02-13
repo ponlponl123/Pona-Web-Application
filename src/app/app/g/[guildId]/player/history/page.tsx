@@ -1,17 +1,21 @@
 "use client"
 import Track from '@/components/music/searchResult/track';
+import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo';
 import { useLanguageContext } from '@/contexts/languageContext';
 import { SearchResult } from '@/interfaces/ytmusic';
 import fetchHistory, { History } from '@/server-side-api/internal/history';
-import { Progress } from '@nextui-org/react';
-import { MusicNotesSimple } from '@phosphor-icons/react/dist/ssr';
+import { Button, Progress } from '@nextui-org/react';
+import { MagnifyingGlass, MicrophoneStage, MusicNotesSimple } from '@phosphor-icons/react/dist/ssr';
 import { getCookie } from 'cookies-next';
+import { useRouter } from 'next/navigation';
 import React from 'react'
 
 function Page() {
-  const [ searchResult, setSearchResult ] = React.useState<History[]>([]);
-  const [ loading, setLoading ] = React.useState<boolean>(true);
+  const [ searchResult, setSearchResult ] = React.useState<History[]>([])
+  const [ loading, setLoading ] = React.useState<boolean>(true)
   const { language } = useLanguageContext()
+  const { guild } = useDiscordGuildInfo()
+  const router = useRouter();
 
   React.useEffect(() => {
     setLoading(true);
@@ -41,25 +45,33 @@ function Page() {
       </div>
       <div id='pona-search-result' className='w-full flex flex-col gap-12 mt-4'>
         <div className='flex flex-col gap-8 w-full'>
-          {searchResult.map((result, idx) => (
-            <Track key={idx} data={{
-              artist: {
-                name: result.track.author,
-                artistId: result.track.author
-              },
-              name: result.track.title,
-              thumbnails: [
-                {
-                  url: result.track.proxyThumbnail || result.track.thumbnail,
-                  height: 64,
-                  width: 64
-                }
-              ],
-              type: "SONG",
-              videoId: result.track.identifier,
-              duration: result.track.duration,
-            } as SearchResult} />
-          ))}
+          {
+            searchResult ? searchResult.map((result, idx) => (
+              <Track key={idx} data={{
+                artist: {
+                  name: result.track.author,
+                  artistId: result.track.author
+                },
+                name: result.track.title,
+                thumbnails: [
+                  {
+                    url: result.track.proxyThumbnail || result.track.thumbnail,
+                    height: 64,
+                    width: 64
+                  }
+                ],
+                type: "SONG",
+                videoId: result.track.identifier,
+                duration: result.track.duration,
+              } as SearchResult} />
+            )) :
+            <div className='absolute top-0 left-0 w-full h-full flex flex-col items-center justify-center gap-4 rounded-3xl bg-foreground/10'>
+              <MicrophoneStage size={48} />
+              <h1 className='text-3xl'>{language.data.app.guilds.player.home.no_history.title}</h1>
+              <p className='text-lg'>{language.data.app.guilds.player.home.no_history.description}</p>
+              <Button color='secondary' radius='full' onPress={()=>{router.push(`/app/g/${guild?.id}/player/search`)}}><MagnifyingGlass /> {language.data.app.guilds.player.home.no_history.get_started}</Button>
+            </div>
+          }
         </div>
       </div>
     </div>

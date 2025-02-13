@@ -5,7 +5,7 @@ import { useRouter } from 'nextjs-toploader/app';
 import type { Icon as IconType } from '@phosphor-icons/react';
 import React, { useEffect, useRef, useState, useCallback } from 'react'
 
-function ActivationLink({ href, children, icon, onClick, className, isActive = false, iconOnly }: { href?: string, children: React.ReactNode, icon?: IconType, onClick?: () => void, className?: string, isActive?: boolean, iconOnly?: boolean | undefined }) {
+function ActivationLink({ href, children, icon, iconSize, onClick, className, isActive = false, iconOnly }: { href?: string, children: React.ReactNode, icon?: IconType, iconSize?: number, onClick?: () => void, className?: string, isActive?: boolean, iconOnly?: boolean | undefined }) {
     const router = useRouter();
     const sections = useRef<NodeListOf<HTMLElement> | null>(null);
     const pathname = usePathname();
@@ -19,7 +19,7 @@ function ActivationLink({ href, children, icon, onClick, className, isActive = f
     // const group_content = button.current?.parentElement?.classList.contains('group-content') ? button.current.parentElement : undefined;
     const isHere = ((isSection ? (activeSectionGroup || activeSection === href?.substring(1)) : pathname === href) || (group?.classList.contains('active') && group_title)) || isActive;
     const Icon = icon;
-    const iconContent = Icon ? <Icon weight={isHere ? 'fill' : 'regular'} size={16} /> : null;
+    const iconContent = Icon ? <Icon weight={isHere ? 'fill' : 'regular'} size={iconSize || 16} /> : null;
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const hrefIndex = href ? href.split('/') : [];
 

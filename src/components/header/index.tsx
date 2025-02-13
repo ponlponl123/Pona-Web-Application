@@ -59,6 +59,7 @@ function Header() {
     const isApp = pathname.startsWith('/app');
     const isInGuild = (isApp && pathname.split('/').includes('g') && typeof Number(pathname.split('/')[3]) === 'number');
     const guildPath = isInGuild ? pathname.split('/')[4] : '';
+    const isMusicApp = isApp && pathname.includes('/player');
     const isIndex = (pathname === '/');
 
     const searchSuggestionElement = React.useRef<HTMLDivElement>(null);
@@ -94,19 +95,19 @@ function Header() {
     }, [searching]);
 
     return (
-        <header className={`nav-opened-${navOpened} ${!isIndex ? 'max-md:backdrop-blur-md':''} ${(!isIndex && isMemberInVC && isSameVC)?'max-md:[body.pona-player-focused_&]:opacity-0 max-md:[body.pona-player-focused_&]:pointer-events-none':''} pona-header absolute w-full h-20 p-6 px-8 flex items-center justify-center gap-3`}>
+        <header className={`nav-opened-${navOpened} ${(!isIndex && !isMusicApp) ? 'max-md:backdrop-blur-md':(!isIndex && isMusicApp)?'[body.pona-app-music-scrolled_&]:border-foreground/10 [body.pona-app-music-scrolled_&]:backdrop-blur-md [body.pona-app-music-scrolled_&]:bg-playground-background/40 bg-transparent border-b-2 border-foreground/0 !duration-1000 apply-soft-transition':''} ${(!isIndex && isMemberInVC && isSameVC)?'max-md:[body.pona-player-focused_&]:opacity-0 max-md:[body.pona-player-focused_&]:pointer-events-none':''} pona-header absolute w-full h-20 p-6 px-8 flex items-center justify-center gap-3`}>
             <div className={`w-full ${!isApp && 'max-w-5xl'} h-full flex items-center justify-between gap-6`}>
                 <div className='flex gap-2 z-20 active:scale-95'>
                     <Link href={isApp ? '/app' : '/'} onClick={()=>{setNavOpened(false)}}>
-                        <h1 className='text-xl flex gap-2 items-center'>{
+                        <h1 className='text-xl max-md:text-base flex gap-2 items-center'>{
                             isApp ? (
                                 <>
-                                    <Image src={PonaIcon} alt='Pona! Application' width={32} height={32} />
+                                    <Image src={PonaIcon} alt='Pona! Application' className='max-md:h-6 max-md:w-6' width={32} height={32} />
                                     {
                                         pathname.includes('player') ?
                                         <>
                                             <span className='max-md:hidden md:contents'>Pona! {language.data.app.title}</span>
-                                            <span className='miniscreen:max-md:contents hidden'>{language.data.app.guilds.player.name}</span>
+                                            <span className='max-md:contents hidden'>{language.data.app.guilds.player.name}</span>
                                         </> :
                                         <>
                                             <span className='max-sm:hidden sm:contents'>Pona! {language.data.app.title}</span>
@@ -128,9 +129,9 @@ function Header() {
                                 }}
                             ><MagnifyingGlass size={14} /></Button>
                             <Form className='contents' onSubmit={(e) => {
-                                    e.preventDefault();
-                                    const data = Object.fromEntries(new FormData(e.currentTarget));
-                                    router.push(`/app/g/${guild?.id}/player/search?q=${data.search}`);
+                                e.preventDefault();
+                                const data = Object.fromEntries(new FormData(e.currentTarget));
+                                router.push(`/app/g/${guild?.id}/player/search?q=${data.search}`);
                             }}>
                             <div className='absolute miniscreen:w-80 max-miniscreen:top-24 max-miniscreen:left-4 max-miniscreen:translate-x-0 max-miniscreen:max-w-full max-miniscreen:w-[calc(100%_-_2rem)] max-md:max-w-[32vw] max-md:fixed max-md:-translate-x-1/2 max-md:left-1/2 md:absolute md:left-80 md:[body.sidebar-collapsed_&]:left-24 [body.pona-player-focused_&]:opacity-0 [body.pona-player-focused_&]:pointer-events-none [body.pona-player-focused_&]:-translate-y-6'>
                                 <Input ref={searchInputElement} startContent={<MagnifyingGlass size={18} className='mr-1 max-miniscreen:absolute max-miniscreen:scale-75' />} name='search'
@@ -186,7 +187,7 @@ function Header() {
                             </Form>
                         </div>
                     }
-                    <MyButton className='md:hidden btn-icon m-0' style='rounded' variant='text' onClick={()=>{
+                    <MyButton className={`md:hidden btn-icon m-0 ${isMusicApp?'max-miniscreen:hidden':''}`} style='rounded' variant='text' onClick={()=>{
                         setNavOpened((value)=>!value);
                     }}>
                         <Hamburger size={26} weight={ navOpened ? 'fill' : 'regular' } />
