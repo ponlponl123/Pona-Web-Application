@@ -13,7 +13,7 @@ function MusicCard({track}: {track: Track}) {
   }
   return (
     <>
-      <div className='music-card w-48' aria-label={track.title}>
+      <div className='music-card w-48' aria-label={track?.title}>
         <div className='flex flex-col items-start justify-start gap-3 w-full'>
           <div className='overflow-hidden aspect-square w-full group rounded-3xl relative'>
             <Image
@@ -22,18 +22,18 @@ function MusicCard({track}: {track: Track}) {
                 wrapper: 'w-full h-full'
               }}
               src={track?.proxyArtworkUrl}
-              alt={track.title}
+              alt={track?.title}
             />
             <PlayButton detail={{
-              author: track.author,
-              identifier: track.identifier,
-              sourceName: track.sourceName,
-              title: track.title,
-              uri: track.uri
+              author: track?.author,
+              identifier: track?.identifier,
+              sourceName: track?.sourceName,
+              title: track?.title,
+              uri: track?.uri
             }} />
           </div>
-          <h1 className='w-full text-lg whitespace-nowrap overflow-hidden overflow-ellipsis text-start'>{track.title}</h1>
-          <span className='w-full text-xs text-foreground/40 whitespace-nowrap overflow-hidden overflow-ellipsis text-start'>{track.author}</span>
+          <h1 className='w-full text-lg whitespace-nowrap overflow-hidden overflow-ellipsis text-start'>{track?.title}</h1>
+          <span className='w-full text-xs text-foreground/40 whitespace-nowrap overflow-hidden overflow-ellipsis text-start'>{track?.author}</span>
         </div>
       </div>
     </>
