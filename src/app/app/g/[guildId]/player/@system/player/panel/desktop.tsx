@@ -48,7 +48,7 @@ function DesktopPonaPlayerPanel() {
                 exit={{ opacity: 0, pointerEvents: 'none', translateY: 64 }}>
                 {
                     userSetting.transparency &&
-                    <Image src={currentTrack ? currentTrack.proxyArtworkUrl : defaultImage.src} alt={currentTrack ? currentTrack.title : 'Backdrop'}
+                    <Image src={currentTrack ? currentTrack?.proxyArtworkUrl : defaultImage.src} alt={currentTrack ? currentTrack.title : 'Backdrop'}
                         className='absolute -z-10 scale-[2] w-full h-full top-0 left-0 object-cover blur-[128px] [html.dark_&]:brightness-50 [html.light_&]:brightness-200 [html.dark_&]:saturate-150' classNames={{wrapper:'contents'}}/>
                 }
                 <div className={
@@ -63,7 +63,7 @@ function DesktopPonaPlayerPanel() {
                             <Button color='default' variant='ghost' radius='full' className='w-fit' isDisabled><PictureInPicture />{language.data.app.guilds.player.picinpic_mode.enter}</Button>
                         </div>
                         <div className='w-[56vh] max-2xl:w-[42vh] max-xl:w-[32vh] max-xl:[body:not(.sidebar-collapsed)_&]:w-[26vh] aspect-square relative flex group hover:scale-[1.032] active:scale-[1.016]'>
-                            <Image src={currentTrack ? currentTrack.proxyHighResArtworkUrl || currentTrack.proxyArtworkUrl : defaultImage.src} alt={currentTrack ? currentTrack.title : 'Artwork'}
+                            <Image src={currentTrack ? currentTrack.proxyHighResArtworkUrl || currentTrack?.proxyArtworkUrl : defaultImage.src} alt={currentTrack ? currentTrack.title : 'Artwork'}
                                 className={
                                     'w-full h-full object-cover select-none rounded-2xl'
                                 }
@@ -90,7 +90,7 @@ function DesktopPonaPlayerPanel() {
                                                     isThisTrack?'[.light_&]:bg-[hsl(var(--pona-app-music-accent-color-100))] [.dark_&]:bg-[hsl(var(--pona-app-music-accent-color-800))] active':''
                                                 }`} key={index}>
                                                     <div className='w-11 h-11 select-none relative overflow-hidden rounded-2xl'>
-                                                        <Image src={track.proxyArtworkUrl} alt={track.title} height={44} width={44} className={
+                                                        <Image src={track?.proxyArtworkUrl} alt={track.title} height={44} width={44} className={
                                                             'object-cover rounded-lg z-0 ' + 
                                                             ( (!ponaCommonState.pona.paused && isThisTrack) ? 'brightness-50 saturate-0' : 'group-hover:brightness-50 group-hover:saturate-0' )
                                                         } />

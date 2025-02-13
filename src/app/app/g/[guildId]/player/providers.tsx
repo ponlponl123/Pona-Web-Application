@@ -32,9 +32,9 @@ function Providers({ children }: { children: React.ReactNode }) {
     const { isConnected, socket } = usePonaMusicContext();
     const { ponaCommonState, isSameVC, isMobile } = useGlobalContext();
     const currentTrack = ponaCommonState?.current;
-    const backdropBg = currentTrack ? currentTrack.proxyThumbnail ? currentTrack.proxyArtworkUrl : currentTrack.thumbnail : guild?.bannerURL ? guild.bannerURL+'?size=640' :
-        guild?.iconURL ? guild.iconURL+'?size=640' : userInfo?.banner ? `https://cdn.discordapp.com/banners/${userInfo.id}/${userInfo.banner}?size=640` : userInfo?.avatar ? `https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}?size=640` :
-        backdrop.src;
+    const backdropBg = currentTrack ? currentTrack?.proxyThumbnail ? currentTrack?.proxyArtworkUrl : currentTrack?.thumbnail : guild?.bannerURL ? guild?.bannerURL+'?size=640' :
+        guild?.iconURL ? guild?.iconURL+'?size=640' : userInfo?.banner ? `https://cdn.discordapp.com/banners/${userInfo?.id}/${userInfo?.banner}?size=640` : userInfo?.avatar ? `https://cdn.discordapp.com/avatars/${userInfo?.id}/${userInfo?.avatar}?size=640` :
+        backdrop?.src;
 
     const isTabletOrMobile = useMediaQuery({ query: '(max-width: 768px)' })
 

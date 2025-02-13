@@ -79,7 +79,7 @@ function MobilePonaPlayerPanel({
               }} id='pona-music-panel-trigger'></div>
               <div className='max-w-full max-h-full m-auto flex flex-col gap-4 justify-center items-center py-16' id='mobile-pona-player-controller'>
                 <div className='w-[calc(100vw_-_3rem)] max-w-[48vh] aspect-square relative flex pointer-events-none'>
-                  <Image src={currentTrack ? currentTrack.proxyHighResArtworkUrl || currentTrack.proxyArtworkUrl : defaultImage.src} alt={currentTrack ? currentTrack.title : 'Artwork'}
+                  <Image src={currentTrack ? currentTrack.proxyHighResArtworkUrl || currentTrack?.proxyArtworkUrl : defaultImage.src} alt={currentTrack ? currentTrack.title : 'Artwork'}
                     className={
                       'w-full h-full object-cover'
                     }
@@ -206,7 +206,7 @@ function MobilePonaPlayerPanel({
                                                     isThisTrack?'[.light_&]:bg-[hsl(var(--pona-app-music-accent-color-100))] [.dark_&]:bg-[hsl(var(--pona-app-music-accent-color-800))] active':''
                                                 }`} key={index}>
                                                     <div className='w-11 h-11 select-none relative overflow-hidden rounded-2xl'>
-                                                        <Image src={track.proxyArtworkUrl} alt={track.title} height={44} width={44} className={
+                                                        <Image src={track?.proxyArtworkUrl} alt={track.title} height={44} width={44} className={
                                                             'object-cover rounded-lg z-0 ' + 
                                                             ( (!ponaCommonState.pona.paused && isThisTrack) ? 'brightness-50 saturate-0' : 'group-hover:brightness-50 group-hover:saturate-0' )
                                                         } />

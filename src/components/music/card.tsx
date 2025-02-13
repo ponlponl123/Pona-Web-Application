@@ -5,9 +5,9 @@ import PlayButton from './play'
 import { Image } from '@nextui-org/react';
 
 function MusicCard({track}: {track: Track}) {
-  if (!track.proxyArtworkUrl) {
+  if (!track?.proxyArtworkUrl) {
     const resolvedTrack = proxyArtwork(track);
-    if (resolvedTrack.proxyArtworkUrl) {
+    if (resolvedTrack?.proxyArtworkUrl) {
       track = resolvedTrack as Track;
     }
   }
@@ -21,7 +21,7 @@ function MusicCard({track}: {track: Track}) {
               classNames={{
                 wrapper: 'w-full h-full'
               }}
-              src={track.proxyArtworkUrl}
+              src={track?.proxyArtworkUrl}
               alt={track.title}
             />
             <PlayButton detail={{
