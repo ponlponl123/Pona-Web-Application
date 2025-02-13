@@ -95,7 +95,7 @@ function Header() {
     }, [searching]);
 
     return (
-        <header className={`nav-opened-${navOpened} ${(!isIndex && !isMusicApp) ? 'max-md:backdrop-blur-md':(!isIndex && isMusicApp)?'[body.pona-app-music-scrolled_&]:border-foreground/10 [body.pona-app-music-scrolled_&]:backdrop-blur-md [body.pona-app-music-scrolled_&]:bg-playground-background/40 bg-transparent border-b-2 border-foreground/0 !duration-1000 apply-soft-transition':''} ${(!isIndex && isMemberInVC && isSameVC)?'max-md:[body.pona-player-focused_&]:opacity-0 max-md:[body.pona-player-focused_&]:pointer-events-none':''} pona-header absolute w-full h-20 p-6 px-8 flex items-center justify-center gap-3`}>
+        <header className={`nav-opened-${navOpened} ${(!isIndex && !isMusicApp) ? 'max-md:backdrop-blur-md':(!isIndex && isMusicApp)?'max-md:[body.pona-app-music-scrolled_&]:border-foreground/10 max-md:[body.pona-app-music-scrolled_&]:backdrop-blur-md max-md:[body.pona-app-music-scrolled_&]:bg-playground-background/40 bg-transparent border-b-2 border-foreground/0 !duration-1000 apply-soft-transition':''} ${(!isIndex && isMemberInVC && isSameVC)?'max-md:[body.pona-player-focused_&]:opacity-0 max-md:[body.pona-player-focused_&]:pointer-events-none':''} pona-header absolute w-full h-20 p-6 px-8 flex items-center justify-center gap-3`}>
             <div className={`w-full ${!isApp && 'max-w-5xl'} h-full flex items-center justify-between gap-6`}>
                 <div className='flex gap-2 z-20 active:scale-95'>
                     <Link href={isApp ? '/app' : '/'} onClick={()=>{setNavOpened(false)}}>
