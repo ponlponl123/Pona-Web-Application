@@ -15,9 +15,11 @@ export interface Tracks {
     "tracks": History[]
 }
 
-export default async function fetchHistory(tokenType: string, tokenKey: string): Promise<false | Tracks> {
+export default async function fetchHistory(tokenType: string, tokenKey: string, limit?: number): Promise<false | Tracks> {
     try {
-        const handshakeRequest = await axios.get(`${Endpoint}:${EndpointPort}/v1/music/history`, {
+        const endpoint = new URL(`${Endpoint}:${EndpointPort}/v1/music/history`);
+        endpoint.searchParams.append('l', String(limit || 14));
+        const handshakeRequest = await axios.get(endpoint.toString(), {
             headers: {
                 'Authorization': `${tokenType} ${tokenKey}`,
             },
