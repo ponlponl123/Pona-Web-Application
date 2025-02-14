@@ -62,7 +62,7 @@ function Page() {
           </motion.div>
           <div className='w-full z-[4] p-8 flex max-lg:flex-col max-lg:gap-12 lg:gap-24 max-lg:items-center items-start lg:justify-center pb-[24vh]'>
             <div className='w-full max-w-xs lg:sticky lg:top-24 flex flex-col gap-4 justify-center items-start'>
-              <h3 className='text-center w-full'>{playlist?.artist.name}</h3>
+              <h3 className='text-center w-full'>{playlist?.artist?.name}</h3>
               <Image isLoading={loading || !playlist_id} src={`/api/proxy/image?r=`+playlist?.thumbnails[playlist.thumbnails.length-1].url} alt={playlist?.name}
                 className='object-cover w-full aspect-square opacity-1'
                 classNames={{
@@ -84,6 +84,10 @@ function Page() {
               {
                 playlist?.type === 'ALBUM' ?
                   playlist.songs.map((song, index) => (
+                    <TrackList index={index+1} key={index} data={song} />
+                  ))
+                : (playlist?.type === 'PLAYLIST' && playlist.videos) ?
+                  playlist.videos.map((song, index) => (
                     <TrackList index={index+1} key={index} data={song} />
                   ))
                 : <></>

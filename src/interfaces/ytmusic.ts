@@ -116,6 +116,7 @@ export interface AlbumFull {
 }
 
 export interface PlaylistFull {
+  	videos?: VideoDetailed[];
 	type: "PLAYLIST";
 	playlistId: string;
 	name: string;
