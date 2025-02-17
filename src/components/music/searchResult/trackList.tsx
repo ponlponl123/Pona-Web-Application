@@ -1,10 +1,11 @@
-import { SongDetailed, SongFull, VideoDetailed, VideoFull } from '@/interfaces/ytmusic';
 import { msToTime } from '@/utils/time';
 import React from 'react'
 import PlayButton from '../play';
 import { useGlobalContext } from '@/contexts/globalContext';
+import { AlbumTrack } from '@/interfaces/ytmusic-api';
+import { combineArtistName } from './track';
 
-function TrackList({data, index}: {data: SongDetailed | SongFull | VideoDetailed | VideoFull, index: number}) {
+function TrackList({data, index}: {data: AlbumTrack, index: number}) {
   const { ponaCommonState } = useGlobalContext();
   return (
     <div className={
@@ -17,10 +18,10 @@ function TrackList({data, index}: {data: SongDetailed | SongFull | VideoDetailed
         } iconSize={12} classNames={{
           playpause: 'text-sm'
         }} detail={{
-          author: data?.artist?.name,
+          author: combineArtistName(data?.artists),
           identifier: data?.videoId,
           sourceName: 'youtube music',
-          title: data?.name,
+          title: data?.title,
           uri: `https://music.youtube.com/watch?v=${data?.videoId}`
         }} />
         <span className={
@@ -29,22 +30,14 @@ function TrackList({data, index}: {data: SongDetailed | SongFull | VideoDetailed
         }>{index}</span>
       </div>
       <div className='flex flex-col gap-1 justify-center items-start flex-1 w-0 min-w-0'>
-        <h1 className='text-xl max-w-full w-full overflow-hidden overflow-ellipsis whitespace-nowrap text-start'>{data?.name}</h1>
+        <h1 className='text-xl max-w-full w-full overflow-hidden overflow-ellipsis whitespace-nowrap text-start'>{data?.title}</h1>
         <h3 className='text-sm max-w-full w-full overflow-hidden overflow-ellipsis whitespace-nowrap text-start'>
-        {
-          ( data.type === 'SONG' || data.type === 'VIDEO' ) ?
-          <>{data?.artist?.name}</> :
-          <></>
-        }
+        <>{combineArtistName(data?.artists)}</>
         </h3>
       </div>
       <div className='flex flex-row gap-1 justify-center items-start relative flex-[0 1 auto] min-w-max'>
         <h3 className='text-sm w-full overflow-hidden overflow-ellipsis whitespace-nowrap text-start'>
-        {
-          ( data.type === 'SONG' || data.type === 'VIDEO' ) ?
-          <>{data.duration && msToTime(data?.duration*1000)}</> :
-          <></>
-        }
+        <>{data.duration_seconds && msToTime(data?.duration_seconds*1000)}</>
         </h3>
         <div>
           

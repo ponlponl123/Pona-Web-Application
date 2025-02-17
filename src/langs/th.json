@@ -323,11 +323,15 @@
                     "search_box": "ค้นหาเพลง อัลบั้ม ศิลปิน พอดแคสต์",
                     "result": "ผลลัพธ์การค้นหาสำหรับ",
                     "category": {
-                        "PLAYLIST": "เพลย์ลิสต์",
-                        "ARTIST": "ศิลปิน",
-                        "ALBUM": "อัลบั้ม",
-                        "VIDEO": "วิดีโอ",
-                        "SONG": "เพลง"
+                        "Top result": "ผลลัพธ์ยอดนิยม",
+                        "Community playlists": "เพลย์ลิสต์",
+                        "Podcasts": "พอดแคสต์",
+                        "Episodes": "ตอนต่างๆ",
+                        "Profiles": "โปรไฟล์",
+                        "Artists": "ศิลปิน",
+                        "Albums": "อัลบั้ม",
+                        "Videos": "วิดีโอ",
+                        "Songs": "เพลง"
                     }
                 },
                 "toast": {

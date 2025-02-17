@@ -323,11 +323,15 @@
                     "search_box": "Search for songs, albums, artists, podcasts",
                     "result": "Search results for",
                     "category": {
-                        "PLAYLIST": "PLAYLIST",
-                        "ARTIST": "ARTIST",
-                        "ALBUM": "ALBUM",
-                        "VIDEO": "VIDEO",
-                        "SONG": "SONG"
+                        "Top result": "Top result",
+                        "Community playlists": "Community playlists",
+                        "Podcasts": "Podcasts",
+                        "Episodes": "Episodes",
+                        "Profiles": "Profiles",
+                        "Artists": "Artists",
+                        "Albums": "Albums",
+                        "Videos": "Videos",
+                        "Songs": "Songs"
                     }
                 },
                 "toast": {

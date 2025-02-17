@@ -1,13 +1,8 @@
 "use server";
 import axios from 'axios';
 import { Endpoint, EndpointPort } from '../endpoint';
-import { AlbumFull, ArtistFull, SearchResult as HTTP_SearchResult, PlaylistFull } from '@/interfaces/ytmusic';
-
-export interface Thumbnails {
-    "url": string,
-    "width": number,
-    "height": number
-}
+import { ArtistFull } from '@/interfaces/ytmusic';
+import { AlbumFull, SearchResult as HTTP_SearchResult, PlaylistFull } from '@/interfaces/ytmusic-api';
 
 export type YTMusicSearchResultType = "SONG" | "ALBUM" | "VIDEO" | "PLAYLIST" | "PODCAST" | "ARTIST";
 export type YTMusicSearchCategoryType = "Top result" | null | "Songs" | "Videos" | "Albums" | "Community Playlists" | "Artists" | "Podcasts" | "Episodes" | "Profiles";

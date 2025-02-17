@@ -1,9 +1,10 @@
 "use client"
+import { combineArtistName } from '@/components/music/searchResult/track';
 import TrackList from '@/components/music/searchResult/trackList';
 import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo';
-import { AlbumFull, PlaylistFull } from '@/interfaces/ytmusic';
+import { AlbumFull, PlaylistFull } from '@/interfaces/ytmusic-api';
 import { getAlbum, getPlaylist } from '@/server-side-api/internal/search';
-import { Button, Image, Spinner } from '@nextui-org/react';
+import { Button, Image, Link, Spinner } from '@nextui-org/react';
 import { ShareFat } from '@phosphor-icons/react/dist/ssr';
 import { getCookie } from 'cookies-next';
 import { motion } from 'framer-motion';
@@ -33,7 +34,6 @@ function Page() {
         if (!playlistResult) return setLoading(false);
         result = playlistResult;
       }
-
       setPlaylist(result);
       setLoading(false);
     }
@@ -62,14 +62,17 @@ function Page() {
           </motion.div>
           <div className='w-full z-[4] p-8 flex max-lg:flex-col max-lg:gap-12 lg:gap-24 max-lg:items-center items-start lg:justify-center pb-[24vh]'>
             <div className='w-full max-w-xs lg:sticky lg:top-24 flex flex-col gap-4 justify-center items-start'>
-              <h3 className='text-center w-full'>{playlist?.artist?.name}</h3>
-              <Image isLoading={loading || !playlist_id} src={`/api/proxy/image?r=`+playlist?.thumbnails[playlist.thumbnails.length-1].url} alt={playlist?.name}
+              <h3 className='text-center w-full'>{
+                (playlist as AlbumFull)?.artists ? <Link color='foreground' underline='hover' className='cursor-pointer'>{combineArtistName((playlist as AlbumFull)?.artists)}</Link>
+                : (playlist as PlaylistFull)?.author
+              }</h3>
+              <Image isLoading={loading || !playlist_id} src={`/api/proxy/image?r=`+playlist?.thumbnails[playlist.thumbnails.length-1].url} alt={playlist?.title}
                 className='object-cover w-full aspect-square opacity-1'
                 classNames={{
                   wrapper: 'w-full aspect-square'
                 }}
               />
-              <h1 className='text-center text-3xl w-full'>{playlist?.name}</h1>
+              <h1 className='text-center text-3xl w-full'>{playlist?.title}</h1>
               {
                 playlist?.type === 'ALBUM' ? <>
                   <span className='text-center text-foreground/40 w-full'>{playlist.year}</span>
@@ -82,15 +85,10 @@ function Page() {
             </div>
             <div className='w-full max-w-lg flex flex-col gap-4 justify-start items-center'>
               {
-                playlist?.type === 'ALBUM' ?
-                  playlist.songs.map((song, index) => (
+                ((playlist as AlbumFull)?.tracks) &&
+                  (playlist as AlbumFull)?.tracks?.map((song, index) => (
                     <TrackList index={index+1} key={index} data={song} />
                   ))
-                : (playlist?.type === 'PLAYLIST' && playlist.videos) ?
-                  playlist.videos.map((song, index) => (
-                    <TrackList index={index+1} key={index} data={song} />
-                  ))
-                : <></>
               }
             </div>
           </div>

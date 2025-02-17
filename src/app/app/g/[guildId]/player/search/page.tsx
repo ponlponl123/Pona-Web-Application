@@ -2,7 +2,7 @@
 import Track from '@/components/music/searchResult/track';
 import { useLanguageContext } from '@/contexts/languageContext';
 import fetchSearchResult from '@/server-side-api/internal/search';
-import { SearchResult as HTTP_SearchResult } from '@/interfaces/ytmusic';
+import { SearchResult as HTTP_SearchResult } from '@/interfaces/ytmusic-api';
 import { Progress } from '@nextui-org/react';
 import { MagnifyingGlass } from '@phosphor-icons/react/dist/ssr';
 import { getCookie } from 'cookies-next';
@@ -25,13 +25,13 @@ function Page() {
       const searchResult = await fetchSearchResult(accessTokenType, accessToken, search);
       if ( !searchResult ) return;
       const sortedResult = searchResult.result.reduce((acc: { [key: string]: HTTP_SearchResult[] }, item: HTTP_SearchResult) => {
-        const type = item.type || 'OTHER';
+        const type = item.category || 'OTHER';
         if (!acc[type]) acc[type] = [];
         acc[type].push(item);
         return acc;
       }, {});
 
-      const orderedKeys = ["SONG", "ALBUM", "VIDEO", "PLAYLIST", "ARTIST"];
+      const orderedKeys = ["Top result", "Songs", "Videos", "Albums", "Community playlists", "Artists", "Podcasts", "Episodes", "Profiles"];
       const orderedResult = orderedKeys.reduce((acc: { [key: string]: HTTP_SearchResult[] }, key) => {
         if (sortedResult[key]) {
           acc[key] = sortedResult[key];
