@@ -46,7 +46,7 @@ function Page() {
             <main id="app-workspace">
                 <h1 className='text-2xl mb-4'>{language.data.app.updates.name}</h1>
                 <div className='flex mt-12 justify-between gap-12 lg:flex-wrap items-center'>
-                    <h2 className='text-5xl flex gap-4 items-center'><Wrench size={48} weight='fill' /> {language.data.app.updates.latest}: Pre-Release 0.2.1</h2>
+                    <h2 className='text-5xl flex gap-4 items-center'><Wrench size={48} weight='fill' /> {language.data.app.updates.latest}: Pre-Release 0.2.2</h2>
                     <Button onPress={onOpen} color="primary" radius='full' size='lg' className='max-lg:p-4 max-lg:min-w-max'><BellSimple weight='fill' /><span className='text-primary-foreground max-lg:hidden'>{language.data.app.updates.subscription.title}</span></Button>
                 </div>
                 <SubscribeModal isOpen={isOpen} onOpenChange={onOpenChange}><></></SubscribeModal>
