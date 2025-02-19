@@ -2,6 +2,7 @@
     "key": "en-US",
     "label": "English",
     "country": "us",
+    "translators": ["Ponlponl123"],
     "extensions": {
         "new": "New",
         "beta": "Beta",
@@ -39,6 +40,39 @@
         "actions": {
             "invite": "Invite Pona!",
             "app": "Explore Pona Controller!"
+        }
+    },
+    "community": {
+        "title": "Community",
+        "description": "Thanks for everyone!",
+        "fonts": {
+            "title": "Fonts",
+            "language": {
+                "en": {
+                    "title": "English",
+                    "author": "Ponlponl123 OpenFonts",
+                    "link": "https://fonts.ponlponl123.com/about"
+                },
+                "th": {
+                    "title": "Thai",
+                    "author": "Ponlponl123 OpenFonts",
+                    "link": "https://fonts.ponlponl123.com/about"
+                },
+                "jp": {
+                    "title": "Japanese",
+                    "author": "HeartToMe (@沙奈[Sana])",
+                    "link": "https://hearttome.booth.pm/"
+                }
+            }
+        },
+        "translator": {
+            "title": "Translators"
+        },
+        "contributors": {
+            "title": "Project Contributors"
+        },
+        "library": {
+            "title": "Libraries & Frameworks"
         }
     },
     "app": {

@@ -2,6 +2,7 @@
     "key": "th-TH",
     "label": "ไทย",
     "country": "th",
+    "translators": ["Ponlponl123"],
     "extensions": {
         "new": "ใหม่",
         "beta": "เบต้า",
@@ -39,6 +40,43 @@
         "actions": {
             "invite": "เชิญ Pona!",
             "app": "สำรวจตัวควบคุม Pona!"
+        }
+    },
+    "community": {
+        "title": "ชุมชน",
+        "description": "ขอบคุณทุกคนนะคะ!",
+        "fonts": {
+            "title": "แบบอักษร",
+            "language": {
+                "en": {
+                    "title": "ภาษาอังกฤษ",
+                    "author": "Ponlponl123 OpenFonts",
+                    "link": "https://fonts.ponlponl123.com/about"
+                },
+                "th": {
+                    "title": "ภาษาไทย",
+                    "author": "Ponlponl123 OpenFonts",
+                    "link": "https://fonts.ponlponl123.com/about"
+                },
+                "jp": {
+                    "title": "ภาษาญี่ปุ่น",
+                    "author": "HeartToMe (@沙奈[Sana])",
+                    "link": "https://hearttome.booth.pm/"
+                }
+            }
+        },
+        "translator": {
+            "title": "นักแปล",
+            "language": {
+                "en": "ภาษาอังกฤษ",
+                "th": "ภาษาไทย"
+            }
+        },
+        "contributors": {
+            "title": "ผู้ร่วมสนับสนุนโครงการ"
+        },
+        "library": {
+            "title": "ไลบรารี และ เฟรมเวิร์ก"
         }
     },
     "app": {
