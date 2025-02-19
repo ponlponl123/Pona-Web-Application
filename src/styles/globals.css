@@ -48,7 +48,7 @@ html:not(
 
 body {
   @apply bg-background text-foreground;
-  font-family: var(--font-ponlponl123-article), sans-serif;
+  font-family: var(--font-ponlponl123-article), var(--font-sn-sanafon-maru-j30), sans-serif;
 }
 
 main#app {

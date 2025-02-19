@@ -14,6 +14,11 @@ const ponlponl123Article = localFont({
   variable: "--font-ponlponl123-article",
   weight: "100 900",
 });
+const SNsanafonMaruJ30 = localFont({
+  src: "./fonts/SNsanafonMaruJ30.ttf",
+  variable: "--font-sn-sanafon-maru-j30",
+  weight: "100 900",
+});
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
@@ -40,7 +45,7 @@ export default async function RootLayout(props: {
   return (
     <html lang="en">
       <body
-        className={`${ponlponl123Article.variable} ${geistSans.variable} ${geistMono.variable} antialiased overflow-x-hidden`}
+        className={`${ponlponl123Article.variable} ${geistSans.variable} ${geistMono.variable} ${SNsanafonMaruJ30.variable} antialiased overflow-x-hidden`}
       >
         <NextTopLoader
           color="#ff80c6"
