@@ -46,24 +46,7 @@
         "title": "Community",
         "description": "Thanks for everyone!",
         "fonts": {
-            "title": "Fonts",
-            "language": {
-                "en": {
-                    "title": "English",
-                    "author": "Ponlponl123 OpenFonts",
-                    "link": "https://fonts.ponlponl123.com/about"
-                },
-                "th": {
-                    "title": "Thai",
-                    "author": "Ponlponl123 OpenFonts",
-                    "link": "https://fonts.ponlponl123.com/about"
-                },
-                "jp": {
-                    "title": "Japanese",
-                    "author": "HeartToMe (@沙奈[Sana])",
-                    "link": "https://hearttome.booth.pm/"
-                }
-            }
+            "title": "Fonts"
         },
         "translator": {
             "title": "Translators"

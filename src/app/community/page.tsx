@@ -7,6 +7,7 @@ import backdrop from '@/../public/community-backdrop.png'
 import { Avatar, Image, Link } from '@nextui-org/react';
 import confetti from 'canvas-confetti';
 import { langs } from '@/utils/i18n';
+import { fonts_credits } from '@/data/fonts-author';
 
 function Page() {
     const { language } = useLanguageContext();
@@ -81,18 +82,14 @@ function Page() {
                     <section className='p-8 bg-foreground/5 rounded-3xl'>
                         <h2 className='text-4xl flex items-center gap-4 font-bold'><TextAa size={24} /> {language.data.community.fonts.title}</h2>
                         <div className='flex flex-col'>
-                            <div className='p-4 flex flex-col gap-2'>
-                                <h4>{language.data.community.fonts.language.en.title} • <Link target='_blank' href={language.data.community.fonts.language.en.link}>{language.data.community.fonts.language.en.author}</Link></h4>
-                                <h1>Lorem ipsum dolor sit amet consectetur adipisicing elit. Cum a iure numquam minima rem corporis repellendus saepe magnam temporibus molestiae animi, explicabo, sit dignissimos eos beatae molestias deserunt sint cupiditate?</h1>
-                            </div>
-                            <div className='p-4 flex flex-col gap-2'>
-                                <h4>{language.data.community.fonts.language.th.title} • <Link target='_blank' href={language.data.community.fonts.language.th.link}>{language.data.community.fonts.language.th.author}</Link></h4>
-                                <h1>มหภาค เฟอร์รี่บิลบุญคุณ ออร์แกนิคล็อบบี้ ดราม่าเซ็นทรัลฟลุทพรีเมียร์วอลนัท สเตริโอริกเตอร์ ศิรินทร์หล่อฮังก้วยแอนด์หม่านโถวแกรนด์ แฟรนไชส์เคลื่อนย้ายเดอะฮันนีมูนจูน ลิสต์โหลยโท่ยมายาคติ ป๊อปเนอะ วานิลาซิมโฟนีนิวส์ แคนยอนหลวงตาไวอากร้าเย้วเพรส เมาท์ซีรีส์บรรพชนโฮปพีเรียด หมวยสเตชั่นลาตินศึกษาศาสตร์ล็อต รีสอร์ตช็อปปิ้งวอลล์ไฮไลท์ ดยุกไชน่าไฮไลต์สถาปัตย์ แอโรบิค</h1>
-                            </div>
-                            <div className='p-4 flex flex-col gap-2'>
-                                <h4>{language.data.community.fonts.language.jp.title} • <Link target='_blank' href={language.data.community.fonts.language.jp.link}>{language.data.community.fonts.language.jp.author}</Link></h4>
-                                <h1>小ぱ情火ホ気投銀残り型症タソミセ合少をろにで岐管地ぎ治6社ミ信転よ英興乞伍ンがぎ。考ツサマメ話刺ちし新光てょでむ絵豪載ぶ界文りあでト運39覧はご園成ル座肥ホソリマ身5降マセ転載乏咋きし。地ロラニエ豊出キワ際粋負恵く舞業ぽン意離夫きそス及全なれぶぜ政始メ団大コナチ出達ちっ百夕罪治さリべえ。</h1>
-                            </div>
+                            {
+                                fonts_credits.map((font, index) => (
+                                    <div key={index} className='p-4 flex flex-col gap-2'>
+                                        <h4>{font.title} · {font.name} · <Link target='_blank' href={font.link}>{font.author}</Link></h4>
+                                        <h1>{font.lorem}</h1>
+                                    </div>
+                                ))
+                            }
                         </div>
                     </section>
                     <section className='p-8 bg-foreground/5 rounded-3xl'>
