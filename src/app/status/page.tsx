@@ -10,10 +10,12 @@ import socketio from '@/server-side-api/socketio';
 import lavalink from '@/server-side-api/lavalink';
 import clusterInfo, { ClusterInfo } from '@/server-side-api/clusterInfo';
 import { Button } from '@nextui-org/react';
+import { useLanguageContext } from '@/contexts/languageContext';
 
 export type viewType = '24h' | '12h' | '9h' | '6h' | '3h' | '1h' | '45min' | '30min' | '15min';
 
 function Status() {
+    const { language } = useLanguageContext();
     const [ fetching, setFetching ] = React.useState<boolean>(false);
     const [ lastRefresh, setLastRefresh ] = React.useState<Date | null>(null);
     const [ overallStatus, setOverallStatus ] = React.useState<'operational' | 'degraded' | 'down' | 'unknown'>('unknown');
@@ -83,19 +85,19 @@ function Status() {
                         <div className='flex flex-col gap-4'>
                             <h1 className='text-5xl flex items-center gap-4'>
                                 <Cube size={48} />
-                                Status
+                                {language.data.status.title}
                                 <div className={`service-status-badge ${overallStatus}`}></div>
                             </h1>
-                            <p className='text-lg'>Last Refreshed: {!fetching && lastRefresh ? lastRefresh.toLocaleString() : 'Refreshing...'}</p>
+                            <p className='text-lg'>{language.data.status.last_refreshed}: {!fetching && lastRefresh ? lastRefresh.toLocaleString() : language.data.status.refreshing}</p>
                         </div>
                         <div className='flex flex-row gap-4 items-center'>
                             <a onClick={refresh}>
-                                <MyButton>{ fetching ? <Spinner size='sm' color="default" /> : "Refresh" }</MyButton>
+                                <MyButton>{ fetching ? <Spinner size='sm' color="default" /> : language.data.status.refresh }</MyButton>
                             </a>
                         </div>
                     </div>
                     <div className='status-block'>
-                        <h1 className='text-3xl'>Overall Status</h1>
+                        <h1 className='text-3xl'>{language.data.status.overall}</h1>
                         <div className='flex flex-col gap-4 mt-4'>
                             <div className='service-list'><h1>Internal APIs</h1>
                             <div className={`service-status-badge ${handshakeStatus ? 'operational' : handshakeStatus === null ? 'unknown' : 'down'}`}></div></div>
@@ -117,7 +119,7 @@ function Status() {
                     </div>
                     <div className='flex gap-3 max-lg:flex-col'>
                         <div className='status-block'>
-                            <h1 className='text-3xl'>Regions Loads</h1>
+                            <h1 className='text-3xl'>{language.data.status.regionsloads}</h1>
                             <div className='flex flex-col gap-4 mt-4'>
                                 <div className='service-list'><h1>AP-TH_TH-10.0</h1>
                                 <div className={`service-status-badge unknown`}></div></div>
@@ -130,7 +132,7 @@ function Status() {
                             </div>
                         </div>
                         <div className='status-block'>
-                            <h1 className='text-3xl'>Application Response time (ms)</h1>
+                            <h1 className='text-3xl'>{language.data.status.app_res_ms}</h1>
                             <div className='flex flex-wrap items-center justify-start gap-2 mt-2'>
                                 {
                                     // create all viewType buttons
@@ -146,10 +148,10 @@ function Status() {
                     </div>
                     <div className='flex gap-3'>
                         <div className='status-block'>
-                            <h1 className='text-3xl'>Active Shards ({clusterInfoStatus ? clusterInfoStatus.totalShards : '0'})</h1>
+                            <h1 className='text-3xl'>{language.data.status.active_shards} ({clusterInfoStatus ? clusterInfoStatus.totalShards : '0'})</h1>
                         </div>
                         <div className='status-block'>
-                            <h1 className='text-3xl'>Active Cluster (1)</h1>
+                            <h1 className='text-3xl'>{language.data.status.active_clusters} (1)</h1>
                         </div>
                     </div>
                 </main>

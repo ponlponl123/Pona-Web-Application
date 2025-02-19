@@ -42,6 +42,17 @@
             "app": "สำรวจตัวควบคุม Pona!"
         }
     },
+    "status": {
+        "title": "สถานะ",
+        "refresh": "รีเฟรช",
+        "refreshing": "กำลังรีเฟรช...",
+        "last_refreshed": "รีเฟรชล่าสุด",
+        "overall": "สถานะโดยรวม",
+        "regionsloads": "โหลดภูมิภาค",
+        "app_res_ms": "เวลาตอบสนองของแอปพลิเคชัน (มิลลิวินาที)",
+        "active_shards": "ชาร์ดที่ใช้งานอยู่",
+        "active_clusters": "คลัสเตอร์ที่ใช้งานอยู่"
+    },
     "community": {
         "title": "ชุมชน",
         "description": "ขอบคุณทุกคนนะคะ!",
