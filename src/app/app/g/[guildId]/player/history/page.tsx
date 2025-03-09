@@ -2,7 +2,7 @@
 import Track from '@/components/music/searchResult/track';
 import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo';
 import { useLanguageContext } from '@/contexts/languageContext';
-import { SearchResult } from '@/interfaces/ytmusic';
+import { ArtistBasic, VideoDetailed } from '@/interfaces/ytmusic-api';
 import fetchHistory, { History } from '@/server-side-api/internal/history';
 import { Button, Progress } from '@nextui-org/react';
 import { MagnifyingGlass, MicrophoneStage, MusicNotesSimple } from '@phosphor-icons/react/dist/ssr';
@@ -48,22 +48,26 @@ function Page() {
           {
             searchResult ? searchResult.map((result, idx) => (
               <Track key={idx} data={{
-                artist: {
+                artists: [{
                   name: result.track.author,
-                  artistId: result.track.author
-                },
-                name: result.track.title,
+                }] as ArtistBasic[],
                 thumbnails: [
                   {
-                    url: result.track.proxyThumbnail || result.track.thumbnail,
+                    url: result.track.thumbnail || result.track.artworkUrl,
                     height: 64,
                     width: 64
                   }
                 ],
-                type: "SONG",
                 videoId: result.track.identifier,
+                title: result.track.title,
+                view: 0,
+                year: null,
+                isExplicit: false,
+                category: "Videos",
+                resultType: "video",
                 duration: result.track.duration,
-              } as SearchResult} />
+                duration_seconds: result.track.duration/1000
+              } as unknown as VideoDetailed} />
             )) :
             <div className='absolute top-0 left-0 w-full h-full flex flex-col items-center justify-center gap-4 rounded-3xl bg-foreground/10'>
               <MicrophoneStage size={48} />

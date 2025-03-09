@@ -154,7 +154,7 @@ export default function Home() {
               <motion.span
                 initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 2.06 }}>or</motion.span>
+                transition={{ delay: 2.06 }}>{language.data.home.actions.or}</motion.span>
               <motion.div
                 initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -165,7 +165,7 @@ export default function Home() {
                   underline='hover'
                   rel="noopener noreferrer"
                   onPress={() => {router.push('/app')}}
-                >I already have an party!</NextLink>
+                >{language.data.home.actions.login}</NextLink>
               </motion.div>
             </div>
           </motion.div>

@@ -106,12 +106,13 @@ export async function getArtist(tokenType: string, tokenKey: string, artistId: s
     }
 }
 
-export async function getSong(tokenType: string, tokenKey: string, title: string, artist: string): Promise<false | SongFull> {
+export async function getSong(tokenType: string, tokenKey: string, title: string, artist: string, identifier: string): Promise<false | SongFull> {
     try {
         const endpoint = new URL(`${Endpoint}:${EndpointPort}/v2/music/fetch/av`);
         endpoint.searchParams.append('type', 'song');
         endpoint.searchParams.append('t', title);
         endpoint.searchParams.append('a', artist);
+        endpoint.searchParams.append('id', identifier);
         const handshakeRequest = await axios.get(endpoint.toString(), {
             headers: {
                 'Authorization': `${tokenType} ${tokenKey}`,

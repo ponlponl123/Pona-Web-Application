@@ -66,7 +66,9 @@
         },
         "actions": {
             "invite": "Invite Pona!",
-            "app": "Explore Pona Controller!"
+            "app": "Explore Pona Controller!",
+            "or": "or",
+            "login": "I already have an party!"
         }
     },
     "status": {
@@ -377,6 +379,7 @@
                     "title": "Search",
                     "search_box": "Search for songs, albums, artists, podcasts",
                     "result": "Search results for",
+                    "notfound": "Not Found",
                     "category": {
                         "Top result": "Top result",
                         "Community playlists": "Community playlists",

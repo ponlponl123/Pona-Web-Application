@@ -87,7 +87,11 @@ function Page() {
               {
                 ((playlist as AlbumFull)?.tracks) &&
                   (playlist as AlbumFull)?.tracks?.map((song, index) => (
-                    <TrackList index={index+1} key={index} data={song} />
+                    (playlist?.type === 'Album' || playlist?.type === 'Single') ? <TrackList index={index+1} key={index} data={{
+                      ...song,
+                      resultType: 'need-to-fetch' as 'song'
+                    }} />
+                    : <TrackList index={index+1} key={index} data={song} />
                   ))
               }
             </div>

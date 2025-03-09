@@ -131,11 +131,12 @@ function Header() {
                             <Form className='contents' onSubmit={(e) => {
                                 e.preventDefault();
                                 const data = Object.fromEntries(new FormData(e.currentTarget));
-                                router.push(`/app/g/${guild?.id}/player/search?q=${data.search}`);
+                                router.push(`/app/g/${guild?.id}/player/search?q=${encodeURIComponent(data.search.toString())}`);
                             }}>
                             <div className='absolute miniscreen:w-80 max-miniscreen:top-24 max-miniscreen:left-4 max-miniscreen:translate-x-0 max-miniscreen:max-w-full max-miniscreen:w-[calc(100%_-_2rem)] max-md:max-w-[32vw] max-md:fixed max-md:-translate-x-1/2 max-md:left-1/2 md:absolute md:left-80 md:[body.sidebar-collapsed_&]:left-24 [body.pona-player-focused_&]:opacity-0 [body.pona-player-focused_&]:pointer-events-none [body.pona-player-focused_&]:-translate-y-6'>
                                 <Input ref={searchInputElement} startContent={<MagnifyingGlass size={18} className='mr-1 max-miniscreen:absolute max-miniscreen:scale-75' />} name='search'
                                     placeholder={language.data.app.guilds.player.search.search_box}
+                                    value={searchValue}
                                     onValueChange={(value) => {
                                         setSearching(true);
                                         setSearchValue(value);
@@ -170,14 +171,14 @@ function Header() {
                                 }>
                                     {
                                         searchValue &&
-                                        <Button onPress={()=>{router.push(`/app/g/${guild?.id}/player/search?q=${searchValue}`);setSearching(false)}}
+                                        <Button onPress={()=>{router.push(`/app/g/${guild?.id}/player/search?q=${searchValue}`);setSearching(false);setSearchValue(searchValue)}}
                                             value={searchValue} variant='light' radius='sm'
                                             className='text-start justify-start gap-3' fullWidth><MagnifyingGlass size={14} /> {searchValue}</Button>
                                     }
                                     {
                                         searchSuggestions &&
                                         searchSuggestions?.map((value, index)=>(
-                                            <Button key={index} onPress={()=>{router.push(`/app/g/${guild?.id}/player/search?q=${value}`);setSearching(false)}}
+                                            <Button key={index} onPress={()=>{router.push(`/app/g/${guild?.id}/player/search?q=${value}`);setSearching(false);setSearchValue(value)}}
                                                 value={value} variant='light' radius='sm'
                                                 className='text-start justify-start gap-3' fullWidth><MagnifyingGlass size={14} /> {value}</Button>
                                         ))

@@ -6,7 +6,7 @@ import { Pause, Play } from '@phosphor-icons/react/dist/ssr';
 import React from 'react'
 import toast from 'react-hot-toast';
 
-function PlayPauseButton({className}: {className?: string}) {
+function PlayPauseButton({className, iconSize = 32}: {className?: string, iconSize?: number}) {
   const { socket } = usePonaMusicContext();
   const { language } = useLanguageContext();
   const { ponaCommonState } = useGlobalContext();
@@ -32,7 +32,7 @@ function PlayPauseButton({className}: {className?: string}) {
                 duration: 1280
             }
         );
-    }}><Pause weight='fill' /></Button>
+    }}><Pause weight='fill' size={iconSize} /></Button>
   )
   else return (
     <Button isIconOnly radius='full' size='lg' variant='light' className={className?className:'scale-125 max-lg:scale-100'} onPress={()=>{
@@ -56,7 +56,7 @@ function PlayPauseButton({className}: {className?: string}) {
                 duration: 1280
             }
         );
-    }}><Play weight='fill' /></Button>
+    }}><Play weight='fill' size={iconSize} /></Button>
   )
 }
 

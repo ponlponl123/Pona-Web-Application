@@ -13,7 +13,7 @@ export interface PlayDetail {
   title: string;
   author: string;
   uri: string;
-  resultType: string;
+  resultType?: string;
   sourceName: string;
   identifier: string;
 }
@@ -33,11 +33,11 @@ function PlayButton({ s, iconSize = 32, className, classNames, detail, children,
       toast.promise(
         new Promise<void>(async (resolve, reject) => {
           let uri = detail.uri;
-          if ( detail.resultType === 'song' ) {
+          if ( detail.resultType === 'need-to-fetch' ) {
             const oauth_type = getCookie('LOGIN_TYPE_');
             const oauth_token = getCookie('LOGIN_');
             if (  oauth_type && oauth_token ) {
-              const result = await getSong(oauth_type.toString(), oauth_token.toString(), detail.title, detail.author);
+              const result = await getSong(oauth_type.toString(), oauth_token.toString(), detail.title, detail.author, detail.identifier);
               if ( result ) {
                 uri = `https://music.youtube.com/watch?v=${result.videoId}`;
               }
@@ -58,8 +58,7 @@ function PlayButton({ s, iconSize = 32, className, classNames, detail, children,
           error: language.data.app.guilds.player.toast.add_track.error,
         },
         {
-          position: 'bottom-left',
-          duration: 1280
+          position: 'bottom-left'
         }
       );
     }
@@ -67,7 +66,7 @@ function PlayButton({ s, iconSize = 32, className, classNames, detail, children,
   return (
     <>
     {
-      playPause ? <PlayPauseButton className={classNames?.playpause} /> :
+      playPause ? <PlayPauseButton className={classNames?.playpause} iconSize={iconSize || 32} /> :
       <Button className={'absolute top-0 left-0 w-full h-full z-10 rounded-3xl group-hover:opacity-100 opacity-0 ' + className} isIconOnly variant='flat' isLoading={loading} isDisabled={loading} onPress={()=>{
         if ( socket && socket.connected && isSameVC ) {
           const findDuplicatedTrack = ponaCommonState?.queue.filter(refTrack => refTrack.identifier === detail.identifier);
