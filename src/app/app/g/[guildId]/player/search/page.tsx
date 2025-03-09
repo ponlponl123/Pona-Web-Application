@@ -20,7 +20,7 @@ function Page() {
   const { ponaCommonState } = useGlobalContext()
   const { language } = useLanguageContext()
   const searchParams = useSearchParams()
-  const search = searchParams.get('q')
+  const search = searchParams ? searchParams.get('q') : ""
 
   React.useEffect(() => {
     setLoading(true);
@@ -61,7 +61,7 @@ function Page() {
       <div className='w-full flex gap-5'>
         <div className='flex flex-col items-start justify-center w-full'>
           <h1 className='text-5xl flex gap-4 items-center'><MagnifyingGlass size={32} weight='bold' /> {language.data.app.guilds.player.search.result}</h1>
-          <h3 className='text-2xl'>{search}</h3>
+          <h3 className='text-2xl text-start'>{search}</h3>
           {
             loading &&
             <Progress isIndeterminate aria-label="Loading..." className="w-full mt-2" size="sm" />
@@ -142,7 +142,7 @@ function Page() {
                             <h1 className='max-w-full cursor-pointer text-start text-foreground text-2xl overflow-hidden overflow-ellipsis whitespace-nowrap'>{trackTitle}</h1>
                           }
                           <div className='flex flex-row w-[calc(100%_-_2rem)] gap-1 items-center justify-start z-10 min-w-0'>
-                            <span>
+                            <span className='flex-initial'>
                             {
                               language.data.app.guilds.player.search.category[(track.resultType[0].toUpperCase()+track.resultType.slice(1,track.resultType.length))+'s' as keyof typeof language.data.app.guilds.player.search.category] ? 
                               language.data.app.guilds.player.search.category[(track.resultType[0].toUpperCase()+track.resultType.slice(1,track.resultType.length))+'s' as keyof typeof language.data.app.guilds.player.search.category] :
@@ -150,10 +150,13 @@ function Page() {
                             }
                             </span>
                             {
-                              track.resultType !== 'artist' && <> · <span className='max-w-full cursor-pointer text-start text-foreground text-2xl overflow-hidden overflow-ellipsis whitespace-nowrap flex-1'>{combineArtistName(track.artists, true)}</span></>
+                              track.resultType !== 'artist' && <> · <span className='max-w-full text-start text-foreground overflow-hidden overflow-ellipsis whitespace-nowrap flex-initial'>{combineArtistName(track.artists, true, router)}</span></>
                             }
                             {
-                              (track.resultType === 'song' || track.resultType === 'video') && <> · <span>{track.duration}</span></>
+                              (track.resultType === 'song' || track.resultType === 'video') && <> · <span className='flex-initial'>{track.duration}</span></>
+                            }
+                            {
+                              track.resultType === 'artist' && <> · <span className='flex-initial'>{track.subscribers}</span></>
                             }
                           </div>
                           <div className='flex flex-row gap-3 items-center justify-start w-full mt-1'>

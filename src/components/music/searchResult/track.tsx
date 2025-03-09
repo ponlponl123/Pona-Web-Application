@@ -6,20 +6,25 @@ import PlayButton from '../play';
 import { Play } from '@phosphor-icons/react/dist/ssr';
 import { useRouter } from 'next/navigation';
 import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo';
+import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 
 export function combineArtistName(artists: ArtistBasic[]): string;
 export function combineArtistName(artists: ArtistBasic[], isElement: true): React.ReactNode;
-export function combineArtistName(artists: ArtistBasic[], isElement?: boolean): string | React.ReactNode {
+export function combineArtistName(artists: ArtistBasic[], isElement: true, router: AppRouterInstance): React.ReactNode;
+export function combineArtistName(artists: ArtistBasic[], isElement?: boolean, router?: AppRouterInstance): string | React.ReactNode {
   let artist: string = '';
   if ( !artists ) return artist;
   if ( isElement ) {
     return <>
       {
         artists.map((artist, index) => {
-          if ( !artist.id ) return index === 0 ? <React.Fragment key={index}>{artist.name}</React.Fragment> :
-          <React.Fragment key={index}> & {artist.name}</React.Fragment>
-          const href = window.location.pathname.split('/player')[0] + '/player/artist?id='+artist.id
-          const Linked = () => <Link href={href} underline='hover' color='foreground'>{artist.name}</Link>;
+          if ( !artist.id ) return index === 0 ?
+            <React.Fragment key={index}>{artist.name}</React.Fragment> :
+            <React.Fragment key={index}> & {artist.name}</React.Fragment>
+          const href = window.location.pathname.split('/player')[0] + '/player/c?c='+artist.id
+          const Linked = () => router ?
+            <Link onPress={()=>{if(router) router.push(href)}} className='cursor-pointer' underline='hover' color='foreground'>{artist.name}</Link> :
+            <Link href={href} underline='hover' color='foreground'>{artist.name}</Link>;
           return index === 0 ? <Linked key={index} /> :
           <React.Fragment key={index}> & <Linked /></React.Fragment>
         })
@@ -36,17 +41,21 @@ export function combineArtistName(artists: ArtistBasic[], isElement?: boolean): 
   return artist;
 }
 
-function TrackDetail({data, isHasPlay = true}: {data: HTTP_SearchResult, isHasPlay?: boolean}) {
+export function TrackDetail({data, isHasPlay = true}: {data: HTTP_SearchResult, isHasPlay?: boolean}) {
+  const router = useRouter();
   const title =
   (
     data.category === 'Songs' ||
     data.category === 'Albums' ||
     data.category === 'Videos' ||
     data.category === 'Episodes' ||
-    data.category === 'Podcasts' ||
-    data.category === 'Community playlists'
+    data.category === 'Podcasts'
   ) ?
   data?.title :
+  (
+    data.category === 'Community playlists'
+  ) ?
+  data?.name :
   (
     data.category === 'Artists' ||
     data.category === 'Profiles'
@@ -84,15 +93,15 @@ function TrackDetail({data, isHasPlay = true}: {data: HTTP_SearchResult, isHasPl
           (
             data.category === 'Songs' || data.category === 'Videos'
           ) ?
-          <>{combineArtistName(data?.artists, true)}{data.duration_seconds && ' • '+msToTime(data?.duration_seconds*1000)}</> :
+          <>{combineArtistName(data?.artists, true, router)}{data.duration_seconds && ' • '+msToTime(data?.duration_seconds*1000)}</> :
           (
             data.category === 'Albums'
           ) ?
-          <>{combineArtistName(data?.artists, true)} • {data?.year}</> :
+          <>{combineArtistName(data?.artists, true, router)} • {data?.year}</> :
           (
             data.category === 'Episodes'
           ) ?
-          <>{combineArtistName(data?.artists, true)}</> :
+          <>{combineArtistName(data?.artists, true, router)}</> :
           ( data.category === 'Community playlists' ) ?
           <>{data?.author}</> :
           <></>
@@ -110,7 +119,7 @@ function Track({data}: {data: HTTP_SearchResult}) {
     (
       data?.category === 'Songs' ||
       data?.category === 'Videos'
-    ) ? <PlayButton className='rounded-xl relative opacity-100 bg-transparent active:!scale-[0.98]' detail={{
+    ) ? <PlayButton className='rounded-xl h-max relative opacity-100 bg-transparent active:!scale-[0.98]' detail={{
       author: combineArtistName(data?.artists),
       identifier: data?.videoId,
       resultType: data?.resultType,
@@ -120,13 +129,13 @@ function Track({data}: {data: HTTP_SearchResult}) {
     }}><TrackDetail data={data} isHasPlay={false} /></PlayButton> :
     (
       data?.category === 'Artists'
-    ) ? <Button className='rounded-xl relative opacity-100 bg-transparent active:!scale-[0.98] h-max p-0' onPress={()=>{router.push(`/app/g/${guild?.id}/player/artist?c=${data?.browseId}`)}}><TrackDetail data={data} /></Button> :
+    ) ? <Button className='w-full rounded-xl relative opacity-100 bg-transparent active:!scale-[0.98] h-max p-0' onPress={()=>{router.push(`/app/g/${guild?.id}/player/artist?c=${data?.browseId}`)}}><TrackDetail data={data} /></Button> :
     (
       data?.category === 'Albums'
-    ) ? <Button className='rounded-xl relative opacity-100 bg-transparent active:!scale-[0.98] h-max p-0' onPress={()=>{router.push(`/app/g/${guild?.id}/player/playlist?list=${data?.browseId}abm`)}}><TrackDetail data={data} /></Button> :
+    ) ? <Button className='w-full rounded-xl relative opacity-100 bg-transparent active:!scale-[0.98] h-max p-0' onPress={()=>{router.push(`/app/g/${guild?.id}/player/playlist?list=${data?.browseId}abm`)}}><TrackDetail data={data} /></Button> :
     (
       data?.category === 'Community playlists'
-    ) ? <Button className='rounded-xl relative opacity-100 bg-transparent active:!scale-[0.98] h-max p-0' onPress={()=>{router.push(`/app/g/${guild?.id}/player/playlist?list=${data?.browseId}`)}}><TrackDetail data={data} /></Button> :
+    ) ? <Button className='w-full rounded-xl relative opacity-100 bg-transparent active:!scale-[0.98] h-max p-0' onPress={()=>{router.push(`/app/g/${guild?.id}/player/playlist?list=${data?.browseId}`)}}><TrackDetail data={data} /></Button> :
     <TrackDetail data={data} />
   )
 }

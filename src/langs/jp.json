@@ -363,6 +363,19 @@
                 "browse": {
                     "title": "ブラウズ"
                 },
+                "artist":{
+                    "subscribe": "購読する",
+                    "subscribed": "購読済み",
+                    "unsubscribe": "購読解除",
+                    "category": {
+                        "topSongs": "トップソング",
+                        "topAlbums": "トップアルバム",
+                        "topSingles": "トップシングル",
+                        "topVideos": "トップビデオ",
+                        "featuredOn": "特集",
+                        "similarArtists": "類似アーティスト"
+                    }
+                },
                 "favorite": {
                     "title": "お気に入り"
                 },

@@ -373,6 +373,19 @@
                 "browse": {
                     "title": "สำรวจ"
                 },
+                "artist":{
+                    "subscribe": "ติดตาม",
+                    "subscribed": "ติดตามแล้ว",
+                    "unsubscribe": "ยกเลิกการติดตาม",
+                    "category": {
+                        "topSongs": "เพลงยอดนิยม",
+                        "topAlbums": "อัลบั้มยอดนิยม",
+                        "topSingles": "ซิงเกิลยอดนิยม",
+                        "topVideos": "วิดีโอยอดนิยม",
+                        "featuredOn": "นำเสนอบน",
+                        "similarArtists": "ศิลปินที่คล้ายกัน"
+                    }
+                },
                 "favorite": {
                     "title": "ชื่นชอบ"
                 },

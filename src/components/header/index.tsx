@@ -48,7 +48,7 @@ function UserAccountAction({className, minimize = false}: {className?: string, m
 }
 
 function Header() {
-    const pathname = usePathname();
+    const pathname = usePathname() || "";
     const [navOpened, setNavOpened] = React.useState<boolean>(false);
     const router = useRouter();
     const { guild } = useDiscordGuildInfo();
@@ -163,7 +163,7 @@ function Header() {
                                         (pathname.includes('player') && pathname.includes('search')) ?
                                             'max-miniscreen:translate-x-0' :
                                             'max-miniscreen:min-w-0 max-miniscreen:w-10 max-miniscreen:pointer-events-none max-miniscreen:opacity-0 max-miniscreen:-translate-y-8'
-                                        } backdrop-blur pona-music-searchbox z-10`
+                                        } backdrop-blur rounded-xl max-md:rounded-full pona-music-searchbox z-10`
                                     }
                                 />
                                 <div id='pona-search-suggestions' ref={searchSuggestionElement} className={

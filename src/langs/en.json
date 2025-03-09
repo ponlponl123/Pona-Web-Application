@@ -369,6 +369,19 @@
                 "browse": {
                     "title": "Browse"
                 },
+                "artist":{
+                    "subscribe": "Subscribe",
+                    "subscribed": "Subscribed",
+                    "unsubscribe": "Unsubscribe",
+                    "category": {
+                        "topSongs": "Top Songs",
+                        "topAlbums": "Top Albums",
+                        "topSingles": "Top Singles",
+                        "topVideos": "Top Videos",
+                        "featuredOn": "Featured On",
+                        "similarArtists": "Similar Artists"
+                    }
+                },
                 "favorite": {
                     "title": "Favorite"
                 },

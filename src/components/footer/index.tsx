@@ -12,7 +12,7 @@ function Footer() {
   const pathname = usePathname();
   const { language, setLanguage } = useLanguageContext();
   return (
-    <footer className={`pona-footer z-[10] max-md:flex-col ${pathname.startsWith('/app')?'m-0':'-mt-24'}`}>
+    <footer className={`pona-footer z-[10] max-md:flex-col ${(pathname && pathname.startsWith('/app'))?'m-0':'-mt-24'}`}>
       <div className='max-md:order-1 w-fit'>
         <span className='opacity-50 text-xs max-md:text-center -mb-4'>Hello Pona! v.<AppVersion /></span>
         <span className='opacity-50 text-xs max-md:text-center'>© 2024 - 2025 Pona! Application - Ponlponl123 Projects And the Ponlponl123.com Design are trademarks, services marks, and/or registered trademarks of Ponlponl123.com</span>

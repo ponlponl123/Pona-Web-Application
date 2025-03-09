@@ -9,6 +9,11 @@ export interface ArtistBasic {
 	name: string;
 }
 
+export interface SpecificArtistBasic {
+	artistId: string | null;
+	name: string;
+}
+
 export interface AlbumBasic {
 	id: string;
 	name: string;
@@ -143,9 +148,18 @@ export interface PlaylistDetailed {
 	category: "Community playlists";
 	type: "playlist";
 	browseId: string;
-	title: string;
+	name: string;
 	author: string;
 	itemCount: number;
+	thumbnails: ThumbnailFull[];
+}
+
+export interface PlaylistVideo {
+	type: "VIDEO" | "SONG" | "EPISODE";
+	videoId: string;
+	name: string;
+	artist: SpecificArtistBasic[];
+	duration: number;
 	thumbnails: ThumbnailFull[];
 }
 
@@ -181,7 +195,7 @@ export interface AlbumFull extends AlbumDetailed {
 }
 
 export interface PlaylistFull extends PlaylistDetailed {
-    videos?: VideoDetailed[];
+    videos?: PlaylistVideo[];
 	playlistId: string;
 }
 

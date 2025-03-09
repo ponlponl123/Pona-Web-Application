@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 function Page() {
   const router = useRouter();
   React.useEffect(() => {
-    router.replace(window.location.href.replace('/player/artist', '/player/c'));
+    router.replace(window.location.href.replace('/player/artist', '/player/c').replace('?id=', '?c='));
   })
   return (<></>)
 }

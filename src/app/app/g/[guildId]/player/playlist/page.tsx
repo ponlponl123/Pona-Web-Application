@@ -2,9 +2,9 @@
 import { combineArtistName } from '@/components/music/searchResult/track';
 import TrackList from '@/components/music/searchResult/trackList';
 import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo';
-import { AlbumFull, PlaylistFull } from '@/interfaces/ytmusic-api';
+import { AlbumFull, AlbumTrack, PlaylistFull } from '@/interfaces/ytmusic-api';
 import { getAlbum, getPlaylist } from '@/server-side-api/internal/search';
-import { Button, Image, Link, Spinner } from '@nextui-org/react';
+import { Button, Image, Link, Progress, Spinner } from '@nextui-org/react';
 import { ShareFat } from '@phosphor-icons/react/dist/ssr';
 import { getCookie } from 'cookies-next';
 import { motion } from 'framer-motion';
@@ -17,32 +17,36 @@ function Page() {
   const [ playlist, setPlaylist ] = React.useState<AlbumFull | PlaylistFull | null>(null);
   const router = useRouter();
   const searchParams = useSearchParams()
-  const playlist_id = searchParams.get('list')
+  const playlist_id = searchParams && searchParams.get('list')
 
   React.useEffect(() => {
     const letSearch = async () => {
       const accessTokenType = getCookie('LOGIN_TYPE_');
       const accessToken = getCookie('LOGIN_');
       if (typeof playlist_id !== 'string' || !accessTokenType || !accessToken) return setLoading(false);
-      let result;
       if (playlist_id.endsWith('abm')) {
         const albumResult = await getAlbum(accessTokenType, accessToken, playlist_id.slice(0, playlist_id.length-3));
         if (!albumResult) return setLoading(false);
-        result = albumResult;
+        setPlaylist(albumResult);
+        setLoading(false);
       } else {
         const playlistResult = await getPlaylist(accessTokenType, accessToken, playlist_id);
         if (!playlistResult) return setLoading(false);
-        result = playlistResult;
+        setPlaylist(playlistResult);
+        setLoading(false);
       }
-      setPlaylist(result);
-      setLoading(false);
     }
 
     letSearch();
   }, [playlist_id, router, guild]);
+
+  const title = (playlist as AlbumFull)?.title || (playlist as PlaylistFull)?.name;
   
   return (
     <div className='flex flex-col gap-4 items-center justify-center w-full'>
+      {
+        loading && <Progress isIndeterminate size='sm' className='absolute top-0 left-0 w-full' />
+      }
       {
         (loading || playlist) ?
         <>
@@ -66,13 +70,13 @@ function Page() {
                 (playlist as AlbumFull)?.artists ? <Link color='foreground' underline='hover' className='cursor-pointer'>{combineArtistName((playlist as AlbumFull)?.artists)}</Link>
                 : (playlist as PlaylistFull)?.author
               }</h3>
-              <Image isLoading={loading || !playlist_id} src={`/api/proxy/image?r=`+playlist?.thumbnails[playlist.thumbnails.length-1].url} alt={playlist?.title}
+              <Image isLoading={loading || !playlist_id} src={`/api/proxy/image?r=`+playlist?.thumbnails[playlist.thumbnails.length-1].url} alt={title}
                 className='object-cover w-full aspect-square opacity-1'
                 classNames={{
                   wrapper: 'w-full aspect-square'
                 }}
               />
-              <h1 className='text-center text-3xl w-full'>{playlist?.title}</h1>
+              <h1 className='text-center text-3xl w-full'>{title}</h1>
               {
                 playlist?.type === 'ALBUM' ? <>
                   <span className='text-center text-foreground/40 w-full'>{playlist.year}</span>
@@ -85,13 +89,23 @@ function Page() {
             </div>
             <div className='w-full max-w-lg flex flex-col gap-4 justify-start items-center'>
               {
-                ((playlist as AlbumFull)?.tracks) &&
+                ((playlist as AlbumFull)?.tracks && (playlist as AlbumFull).tracks.length > 0) &&
+                (playlist?.type === 'Album' || playlist?.type === 'Single') ?
                   (playlist as AlbumFull)?.tracks?.map((song, index) => (
-                    (playlist?.type === 'Album' || playlist?.type === 'Single') ? <TrackList index={index+1} key={index} data={{
+                    <TrackList index={index+1} key={index} data={{
                       ...song,
                       resultType: 'need-to-fetch' as 'song'
                     }} />
-                    : <TrackList index={index+1} key={index} data={song} />
+                  ))
+                : (playlist as PlaylistFull)?.videos?.map((video, index) => (
+                    <TrackList index={index+1} key={index} data={{
+                      title: video?.name,
+                      artists: (video?.artist && video?.artist.length > 0) ? video?.artist.map(artist => ({name: artist.name, id: artist.artistId})) : [],
+                      resultType: 'video' as 'song',
+                      thumbnails: video?.thumbnails,
+                      videoId: video?.videoId,
+                      duration_seconds: video?.duration
+                    } as AlbumTrack} />
                   ))
               }
             </div>
