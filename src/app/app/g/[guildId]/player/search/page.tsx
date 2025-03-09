@@ -1,17 +1,20 @@
 "use client"
-import Track from '@/components/music/searchResult/track';
+import Track, { combineArtistName } from '@/components/music/searchResult/track';
 import { useLanguageContext } from '@/contexts/languageContext';
 import fetchSearchResult from '@/server-side-api/internal/search';
-import { SearchResult as HTTP_SearchResult } from '@/interfaces/ytmusic-api';
-import { Progress } from '@nextui-org/react';
+import { SearchResult as HTTP_SearchResult, TopResults } from '@/interfaces/ytmusic-api';
+import { Image, Link, Progress } from '@nextui-org/react';
 import { MagnifyingGlass } from '@phosphor-icons/react/dist/ssr';
+import { useGlobalContext } from '@/contexts/globalContext';
 import { getCookie } from 'cookies-next';
 import { useSearchParams } from 'next/navigation';
 import React from 'react'
+import PlayButton from '@/components/music/play';
 
 function Page() {
   const [ searchResult, setSearchResult ] = React.useState<{ [key: string]: HTTP_SearchResult[] }>({});
   const [ loading, setLoading ] = React.useState<boolean>(true);
+  const { ponaCommonState } = useGlobalContext()
   const { language } = useLanguageContext()
   const searchParams = useSearchParams()
   const search = searchParams.get('q')
@@ -72,9 +75,79 @@ function Page() {
               <div className='w-full h-[2px] bg-foreground/10'></div>
             </h2>
             <div className='flex flex-col gap-4 w-full'>
-              {searchResult[category].map((result, idx) => (
-                <Track key={idx} data={result} />
-              ))}
+              {
+                (category === 'Top result') ? (() => {
+                  const track = searchResult['Top result'][0] as unknown as TopResults;
+                  const trackTitle = (
+                    track.resultType === 'song' ||
+                    track.resultType === 'video' ||
+                    track.resultType === 'album'
+                  ) ? track.title :
+                  (
+                    track.resultType === 'artist'
+                  ) ? track.artists[0].name : '';
+                  console.log('track', track);
+                  return (
+                    <>
+                      <div className='flex gap-6 p-8 max-md:p-4 bg-foreground/5 rounded-3xl relative'>
+                        <Image src={`/api/proxy/image?r=${track.thumbnails[0].url}`} alt='backdrop' classNames={{
+                          wrapper: 'w-full h-full absolute !max-w-none top-0 left-0 blur-2xl'
+                        }} className='w-full h-full object-cover' />
+                        <div className='w-24 h-24 md:min-w-24 md:min-h-24 max-md:h-16 max-md:w-16 max-md:min-w-16 max-md:min-h-16 relative overflow-hidden flex-[0 1 auto]'>
+                          <Image src={`/api/proxy/image?r=${track.thumbnails[track.thumbnails.length-1].url}`} alt={trackTitle} classNames={{
+                            wrapper: 'max-w-none'
+                          }} className='w-24 h-24 max-md:w-16 max-md:h-16 object-cover select-none' />
+                          {
+                            (
+                              (track.resultType === 'song' ||
+                              track.resultType === 'video') && track?.videoId
+                            ) &&
+                            <PlayButton playPause={ponaCommonState?.current?.identifier === track.videoId} className={
+                              'rounded-xl absolute top-0 left-0 w-full h-full z-10 ' + ` ${ponaCommonState?.current?.identifier === track.videoId?'':'group-hover:opacity-100 opacity-0'}`
+                            } iconSize={12} classNames={{
+                              playpause: 'rounded-xl text-sm absolute top-0 left-0 w-full h-full z-10'
+                            }} detail={{
+                              author: combineArtistName(track?.artists),
+                              identifier: track?.videoId,
+                              sourceName: 'youtube music',
+                              title: trackTitle,
+                              uri: `https://music.youtube.com/watch?v=${track?.videoId}`
+                            }} />
+                          }
+                        </div>
+                        <div className='flex flex-col gap-1 items-start justify-center z-10 w-0 min-w-0 flex-1'>
+                          <h1 className='max-w-full w-full text-start'>
+                            <Link underline='hover' className='text-foreground text-2xl max-w-full overflow-hidden overflow-ellipsis whitespace-nowrap' href={
+                              (
+                                track.resultType === 'song' ||
+                                track.resultType === 'video'
+                              ) ? 'video' :
+                              (
+                                track.resultType === 'album'
+                              ) ? 'album' :
+                              (
+                                track.resultType === 'artist'
+                              ) ? 'artist' : ''
+                            }>{trackTitle}</Link>
+                          </h1>
+                          <h3 className='text-foreground text-base max-w-full overflow-hidden overflow-ellipsis whitespace-nowrap'>
+                            {track.resultType.toLocaleUpperCase()}
+                            {
+                              track.resultType !== 'artist' && ' · ' + combineArtistName(track.artists, true)
+                            }
+                            {
+                              (track.resultType === 'song' ||
+                                track.resultType === 'video') && <> · {track.duration}</>
+                            }
+                          </h3>
+                        </div>
+                      </div>
+                    </>
+                  )
+                 })() : searchResult[category].map((result, idx) => (
+                  <Track key={idx} data={result} />
+                ))
+              }
             </div>
           </div>
         ))}

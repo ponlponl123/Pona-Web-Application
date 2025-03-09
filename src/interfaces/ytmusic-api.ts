@@ -60,6 +60,11 @@ export interface TopResult_Video extends TopResult {
 	thumbnails: ThumbnailFull[];
 }
 
+export type TopResults = TopResult_Album |
+	TopResult_Artist |
+	TopResult_Song |
+	TopResult_Video;
+
 export interface SongDetailed {
 	category: "Songs";
 	resultType: "song";
@@ -181,10 +186,7 @@ export interface PlaylistFull extends PlaylistDetailed {
 }
 
 export type SearchResult =
-    TopResult_Album |
-    TopResult_Artist |
-    TopResult_Song |
-    TopResult_Video |
+    TopResults |
     SongDetailed |
     VideoDetailed |
     AlbumDetailed |
