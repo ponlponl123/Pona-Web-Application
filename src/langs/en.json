@@ -2,6 +2,7 @@
     "key": "en-US",
     "label": "English",
     "country": "us",
+    "state": "ready",
     "translators": ["Ponlponl123"],
     "extensions": {
         "new": "New",
@@ -32,6 +33,32 @@
             "afternoon": "🌤️ It's afternoon already!\nIf you're tired, take a break o((>ω< ))o",
             "evening": "🍰 It's evening already. Don't forget to eat your fill O(∩_∩)O",
             "night": "🌙 Good night\nHave a nice dream (∪.∪ )...zzz"
+        },
+        "features": {
+            "before": [
+                "Hello\u2002",
+                "Hey\u2002",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "With ❤️ by\u2002",
+                "Hi\u2002",
+                "Hola\u2002"
+            ],
+            "after": [
+                "",
+                "",
+                "Application",
+                "Music",
+                "Magic",
+                "Chat",
+                "Community",
+                "",
+                "",
+                ""
+            ]
         },
         "mindselector": {
             "title": "Choose the emotion that expresses your feelings!",

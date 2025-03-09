@@ -74,7 +74,7 @@ function Providers({ children }: { children: React.ReactNode }) {
                         (isConnected || socket?.connected) ?
                             !ponaCommonState?.pona.voiceChannel ?
                             <LetsPonaJoin /> :
-                            isSameVC ? <PageAnimatePresence>{children}</PageAnimatePresence> :
+                            isSameVC ? <PageAnimatePresence presenceAffectsLayout mode='popLayout'>{children}</PageAnimatePresence> :
                             <NotInSameVC />
                         : <SocketConnecting />
                     }

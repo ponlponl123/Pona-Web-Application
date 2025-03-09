@@ -71,6 +71,7 @@ function TrackDetail({data, isHasPlay = true}: {data: HTTP_SearchResult, isHasPl
             author: combineArtistName(data?.artists),
             identifier: data?.videoId,
             sourceName: 'youtube music',
+            resultType: data?.resultType,
             title: data?.title,
             uri: `https://music.youtube.com/watch?v=${data?.videoId}`
           }} />
@@ -112,6 +113,7 @@ function Track({data}: {data: HTTP_SearchResult}) {
     ) ? <PlayButton className='rounded-xl relative opacity-100 bg-transparent active:!scale-[0.98]' detail={{
       author: combineArtistName(data?.artists),
       identifier: data?.videoId,
+      resultType: data?.resultType,
       sourceName: 'youtube',
       title: data?.title,
       uri: `https://www.youtube.com/watch?v=${data?.videoId}`

@@ -79,7 +79,7 @@ function Page() {
                         </div>
                     </div>
                     <h2 className='text-2xl -mt-12 font-bold'>{language.data.community.description}</h2>
-                    <section className='p-8 bg-foreground/5 rounded-3xl'>
+                    <section className='p-8 bg-foreground/5 border-2 border-foreground/5 rounded-3xl'>
                         <h2 className='text-4xl flex items-center gap-4 font-bold'><TextAa size={24} /> {language.data.community.fonts.title}</h2>
                         <div className='flex flex-col'>
                             {
@@ -92,7 +92,7 @@ function Page() {
                             }
                         </div>
                     </section>
-                    <section className='p-8 bg-foreground/5 rounded-3xl'>
+                    <section className='p-8 bg-foreground/5 border-2 border-foreground/5 rounded-3xl'>
                         <h2 className='text-4xl flex items-center gap-4 font-bold'><Article size={24} /> {language.data.community.translator.title}</h2>
                         <div className='flex flex-col'>
                             {
@@ -111,13 +111,13 @@ function Page() {
                             }
                         </div>
                     </section>
-                    <section className='p-8 bg-foreground/5 rounded-3xl'>
+                    <section className='p-8 bg-foreground/5 border-2 border-foreground/5 rounded-3xl'>
                         <h2 className='text-4xl flex items-center gap-4 font-bold'><GitMerge size={24} /> {language.data.community.contributors.title}</h2>
                         <div className='flex flex-wrap mt-4 gap-2'>
                             <Link className='w-max h-max' href='https://github.com/Ponlponl123' target='_blank'><Avatar src='https://github.com/Ponlponl123.png' name='Ponlponl123' /></Link>
                         </div>
                     </section>
-                    <section className='p-8 bg-foreground/5 rounded-3xl'>
+                    <section className='p-8 bg-foreground/5 border-2 border-foreground/5 rounded-3xl'>
                         <h2 className='text-4xl flex items-center gap-4 font-bold'><Package size={24} /> {language.data.community.library.title}</h2>
                         <div className='flex flex-wrap mt-4 gap-2'>
                             <Link href='https://react.dev/' target='_blank' isBlock showAnchorIcon>React</Link>

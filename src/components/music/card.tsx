@@ -28,6 +28,7 @@ function MusicCard({track}: {track: Track}) {
               author: track?.author,
               identifier: track?.identifier,
               sourceName: track?.sourceName,
+              resultType: 'track',
               title: track?.title,
               uri: track?.uri
             }} />

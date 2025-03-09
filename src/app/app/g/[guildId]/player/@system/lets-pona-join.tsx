@@ -68,8 +68,8 @@ function LetsPonaJoin() {
             </> :
             <div className='flex flex-col gap-2 items-center justify-center h-full w-full m-auto'>
               <Island className='text-foreground/60' size={48} />
-              <h1 className='text-2xl text-foreground/60'>{language.data.app.guilds.player.ponaIsNotInVC.select.notfound.title}</h1>
-              <span className='text-base text-foreground/30'>{language.data.app.guilds.player.ponaIsNotInVC.select.notfound.description}</span>
+              <h1 className='text-2xl text-center text-foreground/60'>{language.data.app.guilds.player.ponaIsNotInVC.select.notfound.title}</h1>
+              <span className='text-base text-center text-foreground/30'>{language.data.app.guilds.player.ponaIsNotInVC.select.notfound.description}</span>
             </div>
           }
         </ScrollShadow>

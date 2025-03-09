@@ -6,11 +6,14 @@ import { Play } from '@phosphor-icons/react/dist/ssr';
 import React from 'react'
 import toast from 'react-hot-toast';
 import PlayPauseButton from './playPause';
+import { getSong } from '@/server-side-api/internal/search';
+import { getCookie } from 'cookies-next';
 
 export interface PlayDetail {
   title: string;
   author: string;
   uri: string;
+  resultType: string;
   sourceName: string;
   identifier: string;
 }
@@ -28,8 +31,19 @@ function PlayButton({ s, iconSize = 32, className, classNames, detail, children,
     if (socket && socket.connected && isSameVC) {
       setLoading(true);
       toast.promise(
-        new Promise<void>((resolve, reject) => {
-          socket.emit('add', detail.uri, detail.sourceName, (error: unknown) => {
+        new Promise<void>(async (resolve, reject) => {
+          let uri = detail.uri;
+          if ( detail.resultType === 'song' ) {
+            const oauth_type = getCookie('LOGIN_TYPE_');
+            const oauth_token = getCookie('LOGIN_');
+            if (  oauth_type && oauth_token ) {
+              const result = await getSong(oauth_type.toString(), oauth_token.toString(), detail.title, detail.author);
+              if ( result ) {
+                uri = `https://music.youtube.com/watch?v=${result.videoId}`;
+              }
+            }
+          }
+          socket.emit('add', uri, detail.sourceName, (error: unknown) => {
             setLoading(false);
             if (error && (error as { status?: string }).status !== 'ok') {
               reject(error);
