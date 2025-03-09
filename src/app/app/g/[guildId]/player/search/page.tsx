@@ -7,7 +7,7 @@ import { useGlobalContext } from '@/contexts/globalContext';
 import fetchSearchResult from '@/server-side-api/internal/search';
 import { SearchResult as HTTP_SearchResult, TopResults } from '@/interfaces/ytmusic-api';
 import { Button, Image, Link, Progress, Tooltip } from '@nextui-org/react';
-import { FlyingSaucer, MagnifyingGlass, ShareFat } from '@phosphor-icons/react/dist/ssr';
+import { FlyingSaucer, Heart, MagnifyingGlass, ShareFat } from '@phosphor-icons/react/dist/ssr';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { getCookie } from 'cookies-next';
 import PlayButton from '@/components/music/play';
@@ -117,7 +117,7 @@ function Page() {
                               <PlayButton playPause={ponaCommonState?.current?.identifier === track.videoId} className={
                                 'rounded-xl absolute top-0 left-0 w-full h-full z-10 ' + ` ${ponaCommonState?.current?.identifier === track.videoId?'':'group-hover:opacity-100 opacity-0'}`
                               } iconSize={12} classNames={{
-                                playpause: 'rounded-xl text-sm absolute top-0 left-0 w-full h-full z-10'
+                                playpause: 'rounded-xl text-sm absolute top-0 left-0 w-full h-full z-10 bg-black/32'
                               }} detail={{
                                 author: combineArtistName(track?.artists),
                                 identifier: track?.videoId,
@@ -141,20 +141,21 @@ function Page() {
                             </Tooltip> :
                             <h1 className='max-w-full cursor-pointer text-start text-foreground text-2xl overflow-hidden overflow-ellipsis whitespace-nowrap'>{trackTitle}</h1>
                           }
-                          <h3 className='text-foreground text-base max-w-full overflow-hidden overflow-ellipsis whitespace-nowrap'>
+                          <div className='flex flex-row w-[calc(100%_-_2rem)] gap-1 items-center justify-start z-10 min-w-0'>
+                            <span>
                             {
                               language.data.app.guilds.player.search.category[(track.resultType[0].toUpperCase()+track.resultType.slice(1,track.resultType.length))+'s' as keyof typeof language.data.app.guilds.player.search.category] ? 
                               language.data.app.guilds.player.search.category[(track.resultType[0].toUpperCase()+track.resultType.slice(1,track.resultType.length))+'s' as keyof typeof language.data.app.guilds.player.search.category] :
                               track.resultType.toLocaleUpperCase()
                             }
+                            </span>
                             {
-                              track.resultType !== 'artist' && <> · {combineArtistName(track.artists, true)}</>
+                              track.resultType !== 'artist' && <> · <span className='max-w-full cursor-pointer text-start text-foreground text-2xl overflow-hidden overflow-ellipsis whitespace-nowrap flex-1'>{combineArtistName(track.artists, true)}</span></>
                             }
                             {
-                              (track.resultType === 'song' ||
-                                track.resultType === 'video') && <> · {track.duration}</>
+                              (track.resultType === 'song' || track.resultType === 'video') && <> · <span>{track.duration}</span></>
                             }
-                          </h3>
+                          </div>
                           <div className='flex flex-row gap-3 items-center justify-start w-full mt-1'>
                             {
                               (
@@ -174,6 +175,7 @@ function Page() {
                                   title: trackTitle,
                                   uri: `https://music.youtube.com/watch?v=${track?.videoId}`
                                 }} />
+                                <Button color='default' className='bg-opacity-40' radius='full' isIconOnly><Heart weight='bold' /></Button>
                                 <Button color='default' className='bg-opacity-40' radius='full' isIconOnly><ShareFat weight='fill' /></Button>
                               </>
                             }

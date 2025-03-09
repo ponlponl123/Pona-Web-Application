@@ -53,7 +53,7 @@ function TrackDetail({data, isHasPlay = true}: {data: HTTP_SearchResult, isHasPl
   ) ?
   data?.artist : ''
   return (
-    <div className='w-full flex gap-4 items-center justify-start group'>
+    <div className='w-full flex gap-4 items-center justify-start group hover:bg-foreground/5 p-2 rounded-2xl border-2 border-foreground/0 hover:border-foreground/5'>
       <div className='relative w-14 h-14'>
         <Image src={`/api/proxy/image?r=${data?.thumbnails && data?.thumbnails[0]?.url}`} alt={title} height={56} width={56} className='object-cover rounded-xl w-14 h-14' classNames={{
           img: 'w-14 h-14',
@@ -77,7 +77,7 @@ function TrackDetail({data, isHasPlay = true}: {data: HTTP_SearchResult, isHasPl
           }} />
         }
       </div>
-      <div className='flex flex-col gap-1 justify-center items-start w-[calc(100%_-_6rem)]'>
+      <div className='flex flex-col justify-center items-start w-[calc(100%_-_6rem)]'>
         <h1 className='text-xl w-full overflow-hidden overflow-ellipsis whitespace-nowrap text-start'>{title}</h1>
         <h3 className='text-sm w-full overflow-hidden overflow-ellipsis whitespace-nowrap text-start'>
         {
@@ -120,13 +120,13 @@ function Track({data}: {data: HTTP_SearchResult}) {
     }}><TrackDetail data={data} isHasPlay={false} /></PlayButton> :
     (
       data?.category === 'Artists'
-    ) ? <Button className='rounded-xl relative opacity-100 bg-transparent active:!scale-[0.98] h-14 p-0' onPress={()=>{router.push(`/app/g/${guild?.id}/player/artist?c=${data?.browseId}`)}}><TrackDetail data={data} /></Button> :
+    ) ? <Button className='rounded-xl relative opacity-100 bg-transparent active:!scale-[0.98] h-max p-0' onPress={()=>{router.push(`/app/g/${guild?.id}/player/artist?c=${data?.browseId}`)}}><TrackDetail data={data} /></Button> :
     (
       data?.category === 'Albums'
-    ) ? <Button className='rounded-xl relative opacity-100 bg-transparent active:!scale-[0.98] h-14 p-0' onPress={()=>{router.push(`/app/g/${guild?.id}/player/playlist?list=${data?.browseId}abm`)}}><TrackDetail data={data} /></Button> :
+    ) ? <Button className='rounded-xl relative opacity-100 bg-transparent active:!scale-[0.98] h-max p-0' onPress={()=>{router.push(`/app/g/${guild?.id}/player/playlist?list=${data?.browseId}abm`)}}><TrackDetail data={data} /></Button> :
     (
       data?.category === 'Community playlists'
-    ) ? <Button className='rounded-xl relative opacity-100 bg-transparent active:!scale-[0.98] h-14 p-0' onPress={()=>{router.push(`/app/g/${guild?.id}/player/playlist?list=${data?.browseId}`)}}><TrackDetail data={data} /></Button> :
+    ) ? <Button className='rounded-xl relative opacity-100 bg-transparent active:!scale-[0.98] h-max p-0' onPress={()=>{router.push(`/app/g/${guild?.id}/player/playlist?list=${data?.browseId}`)}}><TrackDetail data={data} /></Button> :
     <TrackDetail data={data} />
   )
 }

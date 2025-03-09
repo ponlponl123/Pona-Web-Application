@@ -2,7 +2,7 @@
 import axios from 'axios';
 import { Endpoint, EndpointPort } from '../endpoint';
 import { ArtistFull } from '@/interfaces/ytmusic';
-import { AlbumFull, SearchResult as HTTP_SearchResult, PlaylistFull, SongFull } from '@/interfaces/ytmusic-api';
+import { AlbumFull, SearchResult as HTTP_SearchResult, PlaylistFull, SongFull, TopResult_Song } from '@/interfaces/ytmusic-api';
 
 export type YTMusicSearchResultType = "SONG" | "ALBUM" | "VIDEO" | "PLAYLIST" | "PODCAST" | "ARTIST";
 export type YTMusicSearchCategoryType = "Top result" | null | "Songs" | "Videos" | "Albums" | "Community Playlists" | "Artists" | "Podcasts" | "Episodes" | "Profiles";
@@ -44,7 +44,34 @@ export default async function fetchSearchResult(tokenType: string, tokenKey: str
                 'Authorization': `${tokenType} ${tokenKey}`,
             },
         });
-        if ( handshakeRequest.status === 200 ) return handshakeRequest.data as SearchResult;
+        if ( handshakeRequest.status === 200 ) {
+            const topResult = (handshakeRequest.data.result as HTTP_SearchResult[]).filter((result: HTTP_SearchResult) => result.category === "Top result");
+            if ( topResult && topResult.length > 0 && topResult[0].resultType === "video" && topResult[0].videoId )
+            {
+                const track = topResult[0];
+                const fetchSong = await getSong(tokenType, tokenKey, track.title, track.artists[0].name, topResult[0].videoId);
+                if ( fetchSong )
+                return {
+                    ...handshakeRequest.data,
+                    result:
+                        (topResult && topResult[0].resultType === "video") ? [
+                            {
+                                artists: fetchSong.artists,
+                                category: "Top result",
+                                duration: fetchSong.duration,
+                                duration_seconds: fetchSong.duration_seconds,
+                                resultType: "song",
+                                thumbnails: fetchSong.thumbnails,
+                                title: fetchSong.title,
+                                videoId: fetchSong.videoId,
+                                videoType: fetchSong.videoType,
+                            } as TopResult_Song as HTTP_SearchResult,
+                            ...(handshakeRequest.data.result as HTTP_SearchResult[]).filter((result: HTTP_SearchResult) => result.category !== "Top result")
+                        ] : handshakeRequest.data.result as HTTP_SearchResult[]
+                } as SearchResult;
+            }
+            return handshakeRequest.data as SearchResult;
+    }
         else return false;
     } catch {
         // console.error('Failed to handshake with Pona! API:', err);

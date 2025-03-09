@@ -150,8 +150,7 @@ function DesktopPonaPlayer() {
                                     error: language.data.app.guilds.player.toast.previous.error,
                                 },
                                 {
-                                    position: 'top-center',
-                                    duration: 1280
+                                    position: 'top-center'
                                 }
                             );
                         }}><CaretLineLeft weight='fill' /></Button>
@@ -174,8 +173,7 @@ function DesktopPonaPlayer() {
                                             error: language.data.app.guilds.player.toast.pause.error,
                                         },
                                         {
-                                            position: 'top-center',
-                                            duration: 1280
+                                            position: 'top-center'
                                         }
                                     );
                                 }}><Pause weight='fill' /></Button>
@@ -197,8 +195,7 @@ function DesktopPonaPlayer() {
                                             error: language.data.app.guilds.player.toast.play.error,
                                         },
                                         {
-                                            position: 'top-center',
-                                            duration: 1280
+                                            position: 'top-center'
                                         }
                                     );
                                 }}><Play weight='fill' /></Button>
@@ -221,8 +218,7 @@ function DesktopPonaPlayer() {
                                     error: language.data.app.guilds.player.toast.next.error,
                                 },
                                 {
-                                    position: 'top-center',
-                                    duration: 1280
+                                    position: 'top-center'
                                 }
                             );
                         }}><CaretLineRight weight='fill' /></Button>
@@ -257,8 +253,7 @@ function DesktopPonaPlayer() {
                                             error: language.data.app.guilds.player.toast.repeat.error,
                                         },
                                         {
-                                            position: 'top-center',
-                                            duration: 1280
+                                            position: 'top-center'
                                         }
                                     );
                                 }}
