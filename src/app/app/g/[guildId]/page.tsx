@@ -1,7 +1,6 @@
 "use client"
 import React from 'react'
 import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo';
-import defaultBanner from '@/../public/app/default.png';
 import { Spinner, Image as NextUIimage, Chip, Avatar } from '@nextui-org/react';
 import { CartesianGrid, XAxis, YAxis, ResponsiveContainer, BarChart, Legend, Bar, Tooltip, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, PieChart, Pie, Line, LineChart } from 'recharts';
 import { useLanguageContext } from '@/contexts/languageContext';
@@ -98,7 +97,7 @@ function Page() {
                       />
                     ) : (
                       <div className='w-full h-full overflow-hidden rounded-3xl'>
-                        <NextUIimage alt={guild.name as string} src={guild.iconURL+'?size=320' || defaultBanner.src as string} width={"100%"} height={192}
+                        <NextUIimage alt={guild.name as string} src={guild.iconURL+'?size=320' || '/public/app/default.png'} width={"100%"} height={192}
                           className='w-full h-full object-cover blur-2xl bg-primary'
                         />
                       </div>
@@ -109,7 +108,7 @@ function Page() {
                   <div className='overflow-hidden rounded-full outline outline-4 outline-playground-background'>
                     <Avatar
                       alt={`${guild && guild.name} Avatar`}
-                      src={guild.iconURL+'?size=128' || defaultBanner.src as string}
+                      src={guild.iconURL+'?size=128' || '/public/app/default.png'}
                       name={guild ? guild.name : 'Guild'}
                       className='w-24 h-24 object-cover bg-primary'
                     />

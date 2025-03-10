@@ -11,7 +11,7 @@ interface AnimationPresence extends AnimatePresenceProps {
 }
 
 const PageAnimatePresence = (props: AnimationPresence) => {
-  const pathnameFromHook = usePathname()
+  const pathnameFromHook = usePathname() || ''
   const pathname = props.customKey || pathnameFromHook
 
   return (

@@ -1,24 +1,26 @@
 "use client"
 import { useLanguageContext } from '@/contexts/languageContext';
-import { getArtist, getArtistv1 } from '@/server-side-api/internal/search';
+import { getArtist, getArtistv1, getUser } from '@/server-side-api/internal/search';
 import { Button, Image as NextImage, Progress, ScrollShadow } from '@nextui-org/react';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { getCookie } from 'cookies-next';
 import { motion } from 'framer-motion';
 import React from 'react'
 import { AlbumCard, ArtistCard, PlaylistCard, VideoCard } from '@/components/music/card';
 import Track from '@/components/music/searchResult/track';
 import { ArtistFull as ArtistFullv1 } from '@/interfaces/ytmusic';
-import { ArtistFull, SongDetailed, VideoDetailed } from '@/interfaces/ytmusic-api';
+import { ArtistFull, ProfileFull, SongDetailed, VideoDetailed } from '@/interfaces/ytmusic-api';
 import { FlyingSaucer } from '@phosphor-icons/react/dist/ssr';
 
 function Page() {
+  const router = useRouter();
   const { language } = useLanguageContext();
   const searchParams = useSearchParams()
   const [ loading, setLoading ] = React.useState<boolean>(true);
   const [ ready, setReady ] = React.useState<boolean>(true);
   const [ channelDetailv1, setChannelDetailv1 ] = React.useState<ArtistFullv1 | null | false>(null);
   const [ channelDetail, setChannelDetail ] = React.useState<ArtistFull | null | false>(null);
+  const [ profileDetail, setProfileDetail ] = React.useState<ProfileFull | null | false>(null);
   const channelId = searchParams ? searchParams.get('c') : ""
   const highResArtworkProxyURI = React.useRef<string>("");
 
@@ -35,7 +37,9 @@ function Page() {
       setChannelDetail(null);
       const resultv1 = await getArtistv1(accessTokenType, accessToken, channelId);
       const result = await getArtist(accessTokenType, accessToken, channelId);
+      const profile = await getUser(accessTokenType, accessToken, channelId);
       if (resultv1)  setChannelDetailv1(resultv1);
+      if (profile)  setProfileDetail(profile);
       if (!result && !resultv1) return exit(false);
       exit(result);
       highResArtworkProxyURI.current = (result && result?.thumbnails) ? `/api/proxy/image?r=`+result?.thumbnails[result?.thumbnails.length-1].url : (resultv1 && resultv1?.thumbnails) ? `/api/proxy/image?r=`+resultv1?.thumbnails[resultv1?.thumbnails.length-1].url : "";
@@ -94,9 +98,8 @@ function Page() {
                 <Button radius='full' size='lg' color='primary' className='font-bold max-md:text-sm max-md:min-h-0 max-md:min-w-0 max-md:py-3 max-md:px-4 max-md:h-max'>
                   <span>{language.data.app.guilds.player.artist.subscribe}</span>
                   {
-                    channelDetail && channelDetail.subscribers && <span>{channelDetail.subscribers}</span>
+                    channelDetail && channelDetail.subscribers && <><span>{channelDetail.subscribers}</span><span>{language.data.app.guilds.player.artist.people}</span></>
                   }
-                  <span>{language.data.app.guilds.player.artist.people}</span>
                 </Button>
               </div>
             </div>
@@ -149,7 +152,13 @@ function Page() {
                     ))
                   }
                   <div className='flex gap-4 flex-wrap items-center justify-start w-full p-1 -mt-2'>
-                    <Button radius='full' variant='bordered' size='sm' color='primary' className='font-bold max-md:text-sm max-md:min-h-0 max-md:min-w-0 max-md:py-3 max-md:px-4 max-md:h-max'>{language.data.app.guilds.player.artist.showmore}</Button>
+                    {
+                      channelDetail && channelDetail.songs && channelDetail.songs.browseId &&
+                      (() => {
+                        const href = window.location.pathname.split('/player')[0] + '/player/playlist?list='+channelDetail.songs.browseId;
+                        return <Button href={href} onClick={()=>{router.push(href)}} radius='full' variant='bordered' size='sm' color='primary' className='font-bold max-md:text-sm max-md:min-h-0 max-md:min-w-0 max-md:py-3 max-md:px-4 max-md:h-max'>{language.data.app.guilds.player.artist.showmore}</Button>
+                      })()
+                    }
                   </div>
                 </section>
               </>
@@ -159,10 +168,12 @@ function Page() {
               (
                 (channelDetailv1 && channelDetailv1.topVideos && channelDetailv1.topVideos.length > 0) ||
                 (channelDetail && channelDetail.videos && channelDetail.videos.results && channelDetail.videos.results.length > 0)
-               ) && <>
+              ) ? <>
                 <section className='w-full px-16 max-w-screen-xl flex flex-col gap-4 items-center justify-start'>
                 {/* <section className='w-full xl:px-16 max-xl:max-md:px-12 xl:max-w-[calc(50%_-_2rem)] flex flex-col gap-4 items-center justify-start'> */}
-                  <h1 className='w-full text-start text-4xl'>{language.data.app.guilds.player.artist.category.topVideos}</h1>
+                  <div className='flex gap-4 flex-wrap items-center justify-between w-full p-1 -mt-2'>
+                    <h1 className='text-start text-4xl'>{language.data.app.guilds.player.artist.category.topVideos}</h1>
+                  </div>
                   <ScrollShadow orientation='vertical' className='w-full relative' hideScrollBar>
                   <div className='w-max my-6 flex flex-row items-start justify-start gap-5'>
                   {
@@ -170,10 +181,10 @@ function Page() {
                       <React.Fragment key={index}>
                         <VideoCard video={{
                           artists: videoDetail.artists,
-                          category: "Songs",
+                          category: "Videos",
                           duration_seconds: null,
                           isExplicit: false,
-                          resultType: "song",
+                          resultType: "viceo",
                           thumbnails: videoDetail.thumbnails,
                           title: videoDetail.title,
                           videoId: videoDetail.videoId,
@@ -186,13 +197,42 @@ function Page() {
                       <React.Fragment key={index}>
                         <VideoCard video={{
                           artists: [{ id: videoDetail.artist.artistId, name: videoDetail.artist.name }],
-                          category: "Songs",
+                          category: "Videos",
                           duration: videoDetail.duration,
                           duration_seconds: videoDetail.duration && videoDetail.duration/1000,
                           isExplicit: false,
-                          resultType: "song",
+                          resultType: "viceo",
                           thumbnails: videoDetail.thumbnails,
                           title: videoDetail.name,
+                          videoId: videoDetail.videoId,
+                          view: null,
+                          videoType: null,
+                          year: null
+                        } as unknown as VideoDetailed} />
+                      </React.Fragment>
+                    ))
+                  }
+                  </div>
+                  </ScrollShadow>
+                </section>
+              </> : profileDetail && profileDetail.videos && profileDetail.videos.results.length > 0 && <>
+                <section className='w-full px-16 max-w-screen-xl flex flex-col gap-4 items-center justify-start'>
+                {/* <section className='w-full xl:px-16 max-xl:max-md:px-12 xl:max-w-[calc(50%_-_2rem)] flex flex-col gap-4 items-center justify-start'> */}
+                  <h1 className='w-full text-start text-4xl'>{language.data.app.guilds.player.artist.category.topVideos}</h1>
+                  <ScrollShadow orientation='vertical' className='w-full relative' hideScrollBar>
+                  <div className='w-max my-6 flex flex-row items-start justify-start gap-5'>
+                  {
+                    profileDetail.videos.results.map((videoDetail, index) => (
+                      <React.Fragment key={index}>
+                        <VideoCard video={{
+                          artists: videoDetail.artists,
+                          category: "Videos",
+                          duration: null,
+                          duration_seconds: null,
+                          isExplicit: false,
+                          resultType: "video",
+                          thumbnails: videoDetail.thumbnails,
+                          title: videoDetail.title,
                           videoId: videoDetail.videoId,
                           view: null,
                           videoType: null,
@@ -230,7 +270,10 @@ function Page() {
                 (channelDetail && channelDetail.singles && channelDetail.singles.results && channelDetail.singles.results.length > 0)
               ) && <>
                 <section className='w-full px-16 max-w-screen-xl flex flex-col gap-4 items-center justify-start'>
-                  <h1 className='w-full text-start text-4xl'>{language.data.app.guilds.player.artist.category.topSingles}</h1>
+                  <div className='flex gap-4 flex-wrap items-center justify-between w-full p-1 -mt-2'>
+                    <h1 className='text-start text-4xl'>{language.data.app.guilds.player.artist.category.topSingles}</h1>
+                    <Button radius='full' variant='bordered' size='sm' color='primary' className='font-bold max-md:text-sm max-md:min-h-0 max-md:min-w-0 max-md:py-3 max-md:px-4 max-md:h-max'>{language.data.app.guilds.player.artist.showmore}</Button>
+                  </div>
                   <ScrollShadow orientation='vertical' className='w-full relative' hideScrollBar>
                     <div className='w-max my-6 flex flex-row items-start justify-start gap-5'>
                     {
@@ -280,12 +323,15 @@ function Page() {
               </>
             }
             {
-              (
+              !profileDetail && (
                 (channelDetailv1 && channelDetailv1.topAlbums && channelDetailv1.topAlbums.length > 0) ||
                 (channelDetail && channelDetail.albums && channelDetail.albums.results && channelDetail.albums.results.length > 0)
               ) && <>
                 <section className='w-full px-16 max-w-screen-xl flex flex-col gap-4 items-center justify-start'>
-                  <h1 className='w-full text-start text-4xl'>{language.data.app.guilds.player.artist.category.topAlbums}</h1>
+                  <div className='flex gap-4 flex-wrap items-center justify-between w-full p-1 -mt-2'>
+                    <h1 className='text-start text-4xl'>{language.data.app.guilds.player.artist.category.topAlbums}</h1>
+                    <Button radius='full' variant='bordered' size='sm' color='primary' className='font-bold max-md:text-sm max-md:min-h-0 max-md:min-w-0 max-md:py-3 max-md:px-4 max-md:h-max'>{language.data.app.guilds.player.artist.showmore}</Button>
+                  </div>
                   <ScrollShadow orientation='vertical' className='w-full relative' hideScrollBar>
                     <div className='w-max my-6 flex flex-row items-start justify-start gap-5'>
                     {

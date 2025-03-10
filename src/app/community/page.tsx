@@ -3,7 +3,6 @@ import { useLanguageContext } from '@/contexts/languageContext';
 import { Article, GitMerge, Heart, Package, PottedPlant, TextAa } from '@phosphor-icons/react/dist/ssr'
 import React from 'react'
 
-import backdrop from '@/../public/community-backdrop.png'
 import { Avatar, Image, Link } from '@nextui-org/react';
 import confetti from 'canvas-confetti';
 import { langs } from '@/utils/i18n';
@@ -50,7 +49,7 @@ function Page() {
     })
     return (
         <main className="w-full min-h-screen relative">
-            <Image src={backdrop.src} alt='Pona! Community' classNames={{
+            <Image src={'/public/community-backdrop.png'} alt='Pona! Community' classNames={{
                 wrapper: 'w-full !max-w-none absolute overflow-hidden h-[48vh] z-[0] blur-3xl max-h-96 min-h-24 scale-[1.1] opacity-60'
             }} className='w-full object-cover' />
             <div className="relative flex flex-col grid-rows-[20px_1fr_20px] items-center min-h-screen p-8 pb-20 gap-8 sm:p-20 z-[1]">

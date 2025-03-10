@@ -100,6 +100,13 @@ export interface VideoDetailed {
 	thumbnails: ThumbnailFull[];
 }
 
+export interface ExtendedVideoDetailed extends VideoDetailed {
+	likeStatus: string;
+	inLibrary: boolean;
+	isAvailable: boolean;
+	isExplicit: boolean;
+}
+
 export interface ArtistDetailed {
 	category: "Artists";
 	resultType: "artist";
@@ -166,32 +173,55 @@ export interface ArtistFull {
 	thumbnails: ThumbnailFull[];
 	songs: {
 		browseId: string | null;
+		params: string | null;
 		results: ArtistSong[];
 	};
 	singles: {
 		browseId: string | null;
+		params: string | null;
 		results: ArtistSingle[];
 	};
 	albums: {
 		browseId: string | null;
+		params: string | null;
 		results: ArtistSingle[];
 	};
 	videos: {
 		browseId: string | null;
+		params: string | null;
 		results: ArtistVideo[];
 	};
 	related: {
 		browseId: string | null;
+		params: string | null;
 		results: ArtistRelated[];
 	};
 }
 
 export interface ProfileDetailed {
 	category: "Profiles";
-	resultType: "artist";
+	resultType: "profile";
 	browseId: string;
 	artist: string;
 	thumbnails: ThumbnailFull[];
+}
+
+export interface ProfilePlaylist {
+	title: string;
+	playlistId: string;
+	thumbnails: ThumbnailFull[];
+}
+
+export interface ProfileFull {
+	name: string;
+	videos: {
+		browseId: string | null;
+		results: ArtistVideo[];
+	};
+	playlists: {
+		browseId: string | null;
+		results: ProfilePlaylist[];
+	};
 }
 
 export interface PodcastDetailed {
@@ -230,13 +260,13 @@ export interface PlaylistDetailed {
 	thumbnails: ThumbnailFull[];
 }
 
-export interface PlaylistVideo {
-	type: "VIDEO" | "SONG" | "EPISODE";
-	videoId: string;
-	name: string;
-	artist: SpecificArtistBasic;
-	duration: number;
-	thumbnails: ThumbnailFull[];
+export interface PlaylistFull extends PlaylistDetailed {
+	owned: boolean;
+	privacy: string;
+	description: string | null;
+	views: string | null;
+	duration: string | null;
+	tracks: ExtendedVideoDetailed[];
 }
 
 export interface SongFull extends SongDetailed {
@@ -268,11 +298,6 @@ export interface AlbumFull extends AlbumDetailed {
     trackCount: number;
 	likeStatus: string;
 	description: string;
-}
-
-export interface PlaylistFull extends PlaylistDetailed {
-    videos?: PlaylistVideo[];
-	playlistId: string;
 }
 
 export type SearchResult =

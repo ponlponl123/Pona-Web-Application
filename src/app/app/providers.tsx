@@ -8,7 +8,7 @@ import RedirectOauth from './redirectOauth';
 import { Spinner } from '@nextui-org/react';
 
 function Providers({ children }: { children: React.ReactNode }) {
-    const pathname = usePathname();
+    const pathname = usePathname() || window.location.pathname || '';
     const { userInfo, loading } = useDiscordUserInfo();
     const appContent = React.useRef<HTMLElement>(null);
 

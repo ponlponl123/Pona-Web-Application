@@ -16,7 +16,7 @@ const variants2: Variants = {
 }
 
 export default function Template({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
+  const pathname = usePathname() || window.location.pathname || '';
   const apppath = pathname.includes('player');
   return (
     <motion.main

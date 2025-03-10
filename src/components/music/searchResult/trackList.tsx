@@ -4,8 +4,9 @@ import PlayButton from '../play';
 import { useGlobalContext } from '@/contexts/globalContext';
 import { AlbumTrack } from '@/interfaces/ytmusic-api';
 import { combineArtistName } from './track';
+import { Image } from '@nextui-org/react';
 
-function TrackList({data, index}: {data: AlbumTrack, index: number}) {
+function TrackList({data, index, showThumbnail = false}: {data: AlbumTrack, index: number, showThumbnail?: boolean}) {
   const { ponaCommonState } = useGlobalContext();
   return (
     <div className={
@@ -30,6 +31,12 @@ function TrackList({data, index}: {data: AlbumTrack, index: number}) {
           + ` ${ponaCommonState?.current?.identifier === data.videoId?'':'group-hover:opacity-0 opacity-100'}`
         }>{index}</span>
       </div>
+      {
+        (showThumbnail && data.thumbnails && data.thumbnails?.length > 0) &&
+        <div className='flex flex-row gap-1 justify-center items-center w-12 h-12 min-w-12 max-w-12 max-h-12 relative flex-[0 1 auto]'>
+          <Image src={`/api/proxy/image?r=`+data?.thumbnails[0].url} alt={data.title} className='aspect-square h-full' />
+        </div>
+      }
       <div className='flex flex-col gap-1 justify-center items-start flex-1 w-0 min-w-0'>
         <h1 className='text-xl max-w-full w-full overflow-hidden overflow-ellipsis whitespace-nowrap text-start'>{data?.title}</h1>
         <h3 className='text-sm max-w-full w-full overflow-hidden overflow-ellipsis whitespace-nowrap text-start'>

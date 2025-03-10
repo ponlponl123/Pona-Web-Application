@@ -129,7 +129,7 @@ function Track({data}: {data: HTTP_SearchResult}) {
     }}><TrackDetail data={data} isHasPlay={false} /></PlayButton> :
     (
       data?.category === 'Artists'
-    ) ? <Button className='w-full rounded-xl relative opacity-100 bg-transparent active:!scale-[0.98] h-max p-0' onPress={()=>{router.push(`/app/g/${guild?.id}/player/artist?c=${data?.browseId}`)}}><TrackDetail data={data} /></Button> :
+    ) ? <Button className='w-full rounded-xl relative opacity-100 bg-transparent active:!scale-[0.98] h-max p-0' onPress={()=>{router.push(`/app/g/${guild?.id}/player/c?c=${data?.browseId}`)}}><TrackDetail data={data} /></Button> :
     (
       data?.category === 'Albums'
     ) ? <Button className='w-full rounded-xl relative opacity-100 bg-transparent active:!scale-[0.98] h-max p-0' onPress={()=>{router.push(`/app/g/${guild?.id}/player/playlist?list=${data?.browseId}abm`)}}><TrackDetail data={data} /></Button> :

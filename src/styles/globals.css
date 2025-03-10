@@ -79,33 +79,33 @@ main#app-workspace {
 }
 
 .main-bg {
-  background: linear-gradient(0deg, hsl(var(--pona-app-background)), hsl(var(--pona-app-background) / 0.48)), url(./../../public/backdrop.png) center no-repeat;
+  background: linear-gradient(0deg, hsl(var(--pona-app-background)), hsl(var(--pona-app-background) / 0.48)), url(/public/backdrop.png) center no-repeat;
   background-size: cover;
 }
 
 .main-bg-2 {
-  background: linear-gradient(0deg, hsl(var(--pona-app-background)), hsl(var(--pona-app-background) / 0.48)), url(./../../public/backdrop2025.png) center no-repeat;
+  background: linear-gradient(0deg, hsl(var(--pona-app-background)), hsl(var(--pona-app-background) / 0.48)), url(/public/backdrop2025.png) center no-repeat;
   background-size: cover;
 }
 
 .welcome-banner {
-  background:  linear-gradient(0deg, hsl(var(--pona-app-playground-background)), hsl(var(--pona-app-playground-background) / 0.24)), url(./../../public/welcome_banner.png) center no-repeat;
+  background:  linear-gradient(0deg, hsl(var(--pona-app-playground-background)), hsl(var(--pona-app-playground-background) / 0.24)), url(/public/welcome_banner.png) center no-repeat;
   background-size: cover;
 }
 
 .apphome-banner.evening,
 .apphome-banner.morning {
-  background:  linear-gradient(0deg, hsl(var(--pona-app-playground-background)), hsl(var(--pona-app-playground-background) / 0.24)), url(./../../public/app/PonaWebViewMorning.png) center no-repeat;
+  background:  linear-gradient(0deg, hsl(var(--pona-app-playground-background)), hsl(var(--pona-app-playground-background) / 0.24)), url(/public/app/PonaWebViewMorning.png) center no-repeat;
   background-size: cover;
 }
 
 .apphome-banner.afternoon {
-  background:  linear-gradient(0deg, hsl(var(--pona-app-playground-background)), hsl(var(--pona-app-playground-background) / 0.24)), url(./../../public/app/PonaWebViewAfternoon.png) center no-repeat;
+  background:  linear-gradient(0deg, hsl(var(--pona-app-playground-background)), hsl(var(--pona-app-playground-background) / 0.24)), url(/public/app/PonaWebViewAfternoon.png) center no-repeat;
   background-size: cover;
 }
 
 .apphome-banner.night {
-  background:  linear-gradient(0deg, hsl(var(--pona-app-playground-background)), hsl(var(--pona-app-playground-background) / 0.24)), url(./../../public/app/PonaWebViewNight.png) center no-repeat;
+  background:  linear-gradient(0deg, hsl(var(--pona-app-playground-background)), hsl(var(--pona-app-playground-background) / 0.24)), url(/public/app/PonaWebViewNight.png) center no-repeat;
   background-size: cover;
 }
 

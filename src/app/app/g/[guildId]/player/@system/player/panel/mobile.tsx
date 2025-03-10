@@ -12,7 +12,6 @@ import { useRouter } from 'next/navigation'
 import { CaretLineLeft, CaretLineRight, Coffee, Equalizer, Heart, MusicNotes, Pause, Play, Repeat, RepeatOnce, SpeakerSimpleHigh } from '@phosphor-icons/react/dist/ssr'
 import { Button, Image, Link, Modal, ModalBody, ModalContent, ModalHeader, ScrollShadow, Slider, Tab, Tabs, useDisclosure } from '@nextui-org/react'
 
-import defaultImage from '@/../public/Ponlponl123 (1459).png'
 import { MobilePonaPlayerPanelAnimationState } from '../mobile';
 import LyricsDisplay from '@/components/music/lyricsDisplay';
 import { Track } from '@/interfaces/ponaPlayer';
@@ -79,7 +78,7 @@ function MobilePonaPlayerPanel({
               }} id='pona-music-panel-trigger'></div>
               <div className='max-w-full max-h-full m-auto flex flex-col gap-4 justify-center items-center py-16' id='mobile-pona-player-controller'>
                 <div className='w-[calc(100vw_-_3rem)] max-w-[48vh] aspect-square relative flex pointer-events-none'>
-                  <Image src={currentTrack ? currentTrack.proxyHighResArtworkUrl || currentTrack?.proxyArtworkUrl : defaultImage.src} alt={currentTrack ? currentTrack.title : 'Artwork'}
+                  <Image src={currentTrack ? currentTrack.proxyHighResArtworkUrl || currentTrack?.proxyArtworkUrl : '/public/Ponlponl123 (1459).png'} alt={currentTrack ? currentTrack.title : 'Artwork'}
                     className={
                       'w-full h-full object-cover'
                     }

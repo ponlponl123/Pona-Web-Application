@@ -129,7 +129,7 @@ function Page() {
                             : ( track.resultType === 'album' && track?.browseId ) ?
                               <Link className='cursor-pointer absolute top-0 left-0 w-full h-full z-10' onPress={()=>{router.push(`/app/g/${guild?.id}/player/playlist?list=${track?.browseId}abm`)}} />
                             : ( track.resultType === 'artist' && track?.artists[0].id ) &&
-                            <Link className='cursor-pointer absolute top-0 left-0 w-full h-full z-10' onPress={()=>{router.push(`/app/g/${guild?.id}/player/artist?c=${track?.artists[0].id}`)}} />
+                            <Link className='cursor-pointer absolute top-0 left-0 w-full h-full z-10' onPress={()=>{router.push(`/app/g/${guild?.id}/player/c?c=${track?.artists[0].id}`)}} />
                           }
                         </div>
                         <div className='flex flex-col gap-1 items-start justify-center z-10 w-0 min-w-0 flex-1'>

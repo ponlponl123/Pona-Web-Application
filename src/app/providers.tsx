@@ -13,7 +13,7 @@ import { Toaster } from 'react-hot-toast';
 import Snowfall from 'react-snowfall';
 
 export function Providers({ children, isMobile }: { children: React.ReactNode; isMobile: boolean; }) {
-  const pathname = usePathname();
+  const pathname = usePathname() || window.location.pathname || '';
   const date = new Date();
   return (
     <ThemeContextProvider>

@@ -5,8 +5,6 @@ import { useGlobalContext } from '@/contexts/globalContext'
 import { usePonaMusicContext } from '@/contexts/ponaMusicContext'
 import { useUserSettingContext } from '@/contexts/userSettingContext'
 
-import defaultImage from '@/../public/Ponlponl123 (1459).png'
-
 import { CaretDown, CaretUp, Pause, Play } from '@phosphor-icons/react/dist/ssr'
 import { Button, Image, Link, Slider } from '@nextui-org/react'
 import MobilePonaPlayerPanel from './panel/mobile';
@@ -135,7 +133,7 @@ function MobilePonaPlayer() {
                     }
                   }}
                 >
-                    <Image src={currentTrack ? currentTrack?.proxyArtworkUrl : defaultImage.src} alt={currentTrack ? currentTrack.title : 'Thumbnail'}
+                    <Image src={currentTrack ? currentTrack?.proxyArtworkUrl : '/public/Ponlponl123 (1459).png'} alt={currentTrack ? currentTrack.title : 'Thumbnail'}
                         className={
                           'object-cover h-12 w-12 rounded-lg'
                         }

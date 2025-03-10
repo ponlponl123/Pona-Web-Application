@@ -12,8 +12,8 @@ import Link from 'next/link';
 
 function Authorize() {
     const params = useSearchParams();
-    const code = params.get('code');
-    const redirectFrom = params.get('from');
+    const code = params && params.get('code');
+    const redirectFrom = params && params.get('from');
     const { language } = useLanguageContext();
     const initialized = React.useRef<boolean>(false);
     const confetti_colors = React.useRef<string[]>(['#ff69b4', '#ff8c00', '#90ee90', '#3cb371', '#008000', '#00ffff', '#4169e1', '#8a2be2', '#a52a2a', '#deb887', '#ffdead', '#f5f5f5', '#ffffff']);

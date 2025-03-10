@@ -58,6 +58,10 @@ export interface PlaylistDetailed {
 	thumbnails: ThumbnailFull[];
 }
 
+export interface PlaylistFull extends PlaylistDetailed {
+	videos?: VideoDetailed[];
+}
+
 export interface SongFull {
 	type: "SONG";
 	videoId: string;

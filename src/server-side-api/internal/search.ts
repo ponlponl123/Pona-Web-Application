@@ -1,8 +1,8 @@
 "use server";
 import axios from 'axios';
 import { Endpoint, EndpointPort } from '../endpoint';
-import { ArtistFull as ArtistFullv1 } from '@/interfaces/ytmusic';
-import { AlbumFull, ArtistFull, SearchResult as HTTP_SearchResult, PlaylistFull, SongFull, TopResult_Song } from '@/interfaces/ytmusic-api';
+import { ArtistFull as ArtistFullv1, PlaylistFull as PlaylistFullv1 } from '@/interfaces/ytmusic';
+import { AlbumFull, ArtistFull, SearchResult as HTTP_SearchResult, PlaylistFull, ProfileFull, SongFull, TopResult_Song } from '@/interfaces/ytmusic-api';
 
 export type YTMusicSearchResultType = "SONG" | "ALBUM" | "VIDEO" | "PLAYLIST" | "PODCAST" | "ARTIST";
 export type YTMusicSearchCategoryType = "Top result" | null | "Songs" | "Videos" | "Albums" | "Community Playlists" | "Artists" | "Podcasts" | "Episodes" | "Profiles";
@@ -79,10 +79,27 @@ export default async function fetchSearchResult(tokenType: string, tokenKey: str
     }
 }
 
-export async function getPlaylist(tokenType: string, tokenKey: string, playlistId: string): Promise<false | PlaylistFull> {
+export async function getPlaylistv1(tokenType: string, tokenKey: string, playlistId: string): Promise<false | PlaylistFullv1> {
     try {
         const endpoint = new URL(`${Endpoint}:${EndpointPort}/v1/music/fetch`);
         endpoint.searchParams.append('type', 'playlist');
+        endpoint.searchParams.append('id', playlistId);
+        const handshakeRequest = await axios.get(endpoint.toString(), {
+            headers: {
+                'Authorization': `${tokenType} ${tokenKey}`,
+            },
+        });
+        if ( handshakeRequest.status === 200 && handshakeRequest.data.result ) return handshakeRequest.data.result as PlaylistFullv1;
+        else return false;
+    } catch {
+        // console.error('Failed to handshake with Pona! API:', err);
+        return false;
+    }
+}
+
+export async function getPlaylist(tokenType: string, tokenKey: string, playlistId: string): Promise<false | PlaylistFull> {
+    try {
+        const endpoint = new URL(`${Endpoint}:${EndpointPort}/v2/music/fetch/playlist`);
         endpoint.searchParams.append('id', playlistId);
         const handshakeRequest = await axios.get(endpoint.toString(), {
             headers: {
@@ -143,6 +160,23 @@ export async function getArtist(tokenType: string, tokenKey: string, artistId: s
             },
         });
         if ( handshakeRequest.status === 200 && handshakeRequest.data.result ) return handshakeRequest.data.result as ArtistFull;
+        else return false;
+    } catch {
+        // console.error('Failed to handshake with Pona! API:', err);
+        return false;
+    }
+}
+
+export async function getUser(tokenType: string, tokenKey: string, userId: string): Promise<false | ProfileFull> {
+    try {
+        const endpoint = new URL(`${Endpoint}:${EndpointPort}/v2/music/fetch/user`);
+        endpoint.searchParams.append('id', userId);
+        const handshakeRequest = await axios.get(endpoint.toString(), {
+            headers: {
+                'Authorization': `${tokenType} ${tokenKey}`,
+            },
+        });
+        if ( handshakeRequest.status === 200 && handshakeRequest.data.result ) return handshakeRequest.data.result as ProfileFull;
         else return false;
     } catch {
         // console.error('Failed to handshake with Pona! API:', err);
