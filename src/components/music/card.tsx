@@ -5,6 +5,8 @@ import PlayButton from './play'
 import { Button, Image } from '@nextui-org/react';
 import { ArtistDetailed, PlaylistDetailed } from '@/interfaces/ytmusic';
 import { useRouter } from 'next/navigation';
+import { AlbumDetailed, VideoDetailed } from '@/interfaces/ytmusic-api';
+import { combineArtistName } from './searchResult/track';
 
 function MusicCard({track}: {track: Track}) {
   if (!track?.proxyArtworkUrl) {
@@ -43,11 +45,72 @@ function MusicCard({track}: {track: Track}) {
   )
 }
 
-export function PlaylistCard({playlist}: {playlist: PlaylistDetailed}) {
-  const router = useRouter();
+export function VideoCard({video}: {video: VideoDetailed}) {
   return (
     <>
-      <Button className='min-h-0 min-w-0 w-max h-max p-4 rounded-[2rem] bg-transparent' onPress={()=>{router.push(window.location.pathname.split('/player')[0] + '/player/playlist?list='+playlist.playlistId)}}>
+    <div className='music-card w-64' aria-label={video?.title}>
+      <div className='flex flex-col items-start justify-start gap-3 w-full'>
+        <div className='overflow-hidden aspect-video w-full group rounded-3xl relative'>
+          <Image
+            className='object-cover w-full h-full group-hover:scale-110'
+            classNames={{
+              wrapper: 'w-full h-full min-w-full'
+            }}
+            src={'/api/proxy/image?r='+video?.thumbnails[video?.thumbnails.length-1].url}
+            alt={video?.title}
+          />
+          <PlayButton detail={{
+            author: combineArtistName(video.artists),
+            identifier: video?.videoId,
+            sourceName: 'youtube music',
+            resultType: 'track',
+            title: video?.title,
+            uri: `https://youtu.be/${video.videoId}`
+          }} />
+        </div>
+        <h1 className='w-full text-lg whitespace-nowrap overflow-hidden overflow-ellipsis text-start'>{video?.title}</h1>
+        <span className='w-full text-xs text-foreground/40 whitespace-nowrap overflow-hidden overflow-ellipsis text-start'>{combineArtistName(video.artists)}</span>
+      </div>
+    </div>
+    </>
+  )
+}
+
+export function AlbumCard({album}: {album: AlbumDetailed}) {
+  const router = useRouter();
+  const href = window.location.pathname.split('/player')[0] + '/player/playlist?list='+album.browseId+'abm';
+  return (
+    <>
+      <Button className='min-h-0 min-w-0 w-max h-max p-4 rounded-[2rem] bg-transparent' href={href} onPress={()=>{router.push(href)}}>
+        <div className='music-card w-48' aria-label={album?.title}>
+          <div className='flex flex-col items-start justify-start gap-3 w-full'>
+            <div className='overflow-hidden aspect-square w-full group rounded-3xl relative'>
+              <Image
+                className='object-cover w-full h-full group-hover:scale-110'
+                classNames={{
+                  wrapper: 'w-full h-full'
+                }}
+                src={'/api/proxy/image?r='+album?.thumbnails[album?.thumbnails.length-1].url}
+                alt={album?.title}
+              />
+            </div>
+            <div className='flex flex-col p-2'>
+              <h1 className='w-full text-lg whitespace-nowrap overflow-hidden overflow-ellipsis text-start'>{album?.title}</h1>
+              <span className='w-full text-xs text-foreground/40 whitespace-nowrap overflow-hidden overflow-ellipsis text-start'>{combineArtistName(album?.artists)}</span>
+            </div>
+          </div>
+        </div>
+      </Button>
+    </>
+  )
+}
+
+export function PlaylistCard({playlist}: {playlist: PlaylistDetailed}) {
+  const router = useRouter();
+  const href = window.location.pathname.split('/player')[0] + '/player/playlist?list='+playlist.playlistId;
+  return (
+    <>
+      <Button className='min-h-0 min-w-0 w-max h-max p-4 rounded-[2rem] bg-transparent' href={href} onPress={()=>{router.push(href)}}>
         <div className='music-card w-48' aria-label={playlist?.name}>
           <div className='flex flex-col items-start justify-start gap-3 w-full'>
             <div className='overflow-hidden aspect-square w-full group rounded-3xl relative'>
@@ -73,9 +136,10 @@ export function PlaylistCard({playlist}: {playlist: PlaylistDetailed}) {
 
 export function ArtistCard({artist}: {artist: ArtistDetailed}) {
   const router = useRouter();
+  const href = window.location.pathname.split('/player')[0] + '/player/c?c='+artist.artistId;
   return (
     <>
-      <Button className='min-h-0 min-w-0 w-max h-max p-4 rounded-[2rem] bg-transparent' onPress={()=>{router.push(window.location.pathname.split('/player')[0] + '/player/c?c='+artist.artistId)}}>
+      <Button className='min-h-0 min-w-0 w-max h-max p-4 rounded-[2rem] bg-transparent' href={href} onPress={()=>{router.push(href)}}>
         <div className='music-card w-48' aria-label={artist?.name}>
           <div className='flex flex-col items-start justify-start gap-3 w-full'>
             <div className='overflow-hidden aspect-square w-full group rounded-full relative'>

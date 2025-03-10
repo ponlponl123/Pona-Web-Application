@@ -1,8 +1,8 @@
 "use server";
 import axios from 'axios';
 import { Endpoint, EndpointPort } from '../endpoint';
-import { ArtistFull } from '@/interfaces/ytmusic';
-import { AlbumFull, SearchResult as HTTP_SearchResult, PlaylistFull, SongFull, TopResult_Song } from '@/interfaces/ytmusic-api';
+import { ArtistFull as ArtistFullv1 } from '@/interfaces/ytmusic';
+import { AlbumFull, ArtistFull, SearchResult as HTTP_SearchResult, PlaylistFull, SongFull, TopResult_Song } from '@/interfaces/ytmusic-api';
 
 export type YTMusicSearchResultType = "SONG" | "ALBUM" | "VIDEO" | "PLAYLIST" | "PODCAST" | "ARTIST";
 export type YTMusicSearchCategoryType = "Top result" | null | "Songs" | "Videos" | "Albums" | "Community Playlists" | "Artists" | "Podcasts" | "Episodes" | "Profiles";
@@ -115,10 +115,27 @@ export async function getAlbum(tokenType: string, tokenKey: string, albumId: str
     }
 }
 
-export async function getArtist(tokenType: string, tokenKey: string, artistId: string): Promise<false | ArtistFull> {
+export async function getArtistv1(tokenType: string, tokenKey: string, artistId: string): Promise<false | ArtistFullv1> {
     try {
         const endpoint = new URL(`${Endpoint}:${EndpointPort}/v1/music/fetch`);
         endpoint.searchParams.append('type', 'artist');
+        endpoint.searchParams.append('id', artistId);
+        const handshakeRequest = await axios.get(endpoint.toString(), {
+            headers: {
+                'Authorization': `${tokenType} ${tokenKey}`,
+            },
+        });
+        if ( handshakeRequest.status === 200 && handshakeRequest.data.result ) return handshakeRequest.data.result as ArtistFullv1;
+        else return false;
+    } catch {
+        // console.error('Failed to handshake with Pona! API:', err);
+        return false;
+    }
+}
+
+export async function getArtist(tokenType: string, tokenKey: string, artistId: string): Promise<false | ArtistFull> {
+    try {
+        const endpoint = new URL(`${Endpoint}:${EndpointPort}/v2/music/fetch/artist`);
         endpoint.searchParams.append('id', artistId);
         const handshakeRequest = await axios.get(endpoint.toString(), {
             headers: {

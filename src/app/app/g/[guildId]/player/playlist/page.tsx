@@ -2,16 +2,18 @@
 import { combineArtistName } from '@/components/music/searchResult/track';
 import TrackList from '@/components/music/searchResult/trackList';
 import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo';
+import { useLanguageContext } from '@/contexts/languageContext';
 import { AlbumFull, AlbumTrack, PlaylistFull } from '@/interfaces/ytmusic-api';
-import { getAlbum, getPlaylist } from '@/server-side-api/internal/search';
-import { Button, Image, Link, Progress, Spinner } from '@nextui-org/react';
-import { ShareFat } from '@phosphor-icons/react/dist/ssr';
+import { getAlbum, getArtist, getArtistv1, getPlaylist } from '@/server-side-api/internal/search';
+import { Button, Image, Link, Progress } from '@nextui-org/react';
+import { FlyingSaucer, ShareFat } from '@phosphor-icons/react/dist/ssr';
 import { getCookie } from 'cookies-next';
 import { motion } from 'framer-motion';
 import { useRouter, useSearchParams } from 'next/navigation';
 import React from 'react'
 
 function Page() {
+  const { language } = useLanguageContext();
   const { guild } = useDiscordGuildInfo();
   const [ loading, setLoading ] = React.useState<boolean>(true);
   const [ playlist, setPlaylist ] = React.useState<AlbumFull | PlaylistFull | null>(null);
@@ -24,17 +26,28 @@ function Page() {
       const accessTokenType = getCookie('LOGIN_TYPE_');
       const accessToken = getCookie('LOGIN_');
       if (typeof playlist_id !== 'string' || !accessTokenType || !accessToken) return setLoading(false);
+      setLoading(true);
+      setPlaylist(null);
+      let pl_result = null;
       if (playlist_id.endsWith('abm')) {
         const albumResult = await getAlbum(accessTokenType, accessToken, playlist_id.slice(0, playlist_id.length-3));
-        if (!albumResult) return setLoading(false);
-        setPlaylist(albumResult);
-        setLoading(false);
+        if (albumResult) pl_result = albumResult;
+        else if ( !albumResult ) {
+          const playlistResult = await getPlaylist(accessTokenType, accessToken, playlist_id.slice(0, playlist_id.length-3));
+          if (playlistResult) pl_result = playlistResult;
+        }
       } else {
         const playlistResult = await getPlaylist(accessTokenType, accessToken, playlist_id);
-        if (!playlistResult) return setLoading(false);
-        setPlaylist(playlistResult);
-        setLoading(false);
+        if (playlistResult) pl_result = playlistResult;
       }
+      if ( !pl_result ) {
+        const resultv1 = await getArtistv1(accessTokenType, accessToken, playlist_id);
+        if ( resultv1 ) return router.replace(window.location.pathname.split('/player')[0] + '/player/c?c='+playlist_id);
+        const result = await getArtist(accessTokenType, accessToken, playlist_id);
+        if ( result ) return router.replace(window.location.pathname.split('/player')[0] + '/player/c?c='+playlist_id);
+      }
+      setPlaylist(pl_result);
+      setLoading(false);
     }
 
     letSearch();
@@ -45,10 +58,10 @@ function Page() {
   return (
     <div className='flex flex-col gap-4 items-center justify-center w-full'>
       {
-        loading && <Progress isIndeterminate size='sm' className='absolute top-0 left-0 w-full' />
+        loading && <Progress isIndeterminate size='sm' className='absolute top-0 left-0 w-full z-10' />
       }
       {
-        (loading || playlist) ?
+        (!loading && playlist) ?
         <>
           <motion.div
             initial={{opacity: 0}}
@@ -90,7 +103,7 @@ function Page() {
             <div className='w-full max-w-lg flex flex-col gap-4 justify-start items-center'>
               {
                 ((playlist as AlbumFull)?.tracks && (playlist as AlbumFull).tracks.length > 0) &&
-                (playlist?.type === 'Album' || playlist?.type === 'Single') ?
+                (playlist?.type === 'Album' || playlist?.type === 'Single' || playlist?.type === 'EP') ?
                   (playlist as AlbumFull)?.tracks?.map((song, index) => (
                     <TrackList index={index+1} key={index} data={{
                       ...song,
@@ -100,7 +113,10 @@ function Page() {
                 : (playlist as PlaylistFull)?.videos?.map((video, index) => (
                     <TrackList index={index+1} key={index} data={{
                       title: video?.name,
-                      artists: (video?.artist && video?.artist.length > 0) ? video?.artist.map(artist => ({name: artist.name, id: artist.artistId})) : [],
+                      artists: [{
+                        id: video.artist.artistId,
+                        name: video.artist.name
+                      }],
                       resultType: 'video' as 'song',
                       thumbnails: video?.thumbnails,
                       videoId: video?.videoId,
@@ -110,7 +126,11 @@ function Page() {
               }
             </div>
           </div>
-        </> : <Spinner />
+        </> : (!loading && !playlist) && <div className='w-full min-h-[36vh] flex flex-col gap-4 items-center justify-center'>
+          <FlyingSaucer weight='fill' size={74} />
+          <h1 className='text-lg tracking-wider'>{language.data.app.guilds.player.search.notfound}</h1>
+          <h4 className='text-sm tracking-wider'>＼（〇_ｏ）／</h4>
+        </div>
       }
     </div>
   )

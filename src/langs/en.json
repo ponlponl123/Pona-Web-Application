@@ -373,6 +373,8 @@
                     "subscribe": "Subscribe",
                     "subscribed": "Subscribed",
                     "unsubscribe": "Unsubscribe",
+                    "showmore": "Show More",
+                    "people": "people",
                     "category": {
                         "topSongs": "Top Songs",
                         "topAlbums": "Top Albums",

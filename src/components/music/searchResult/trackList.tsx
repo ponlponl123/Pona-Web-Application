@@ -33,7 +33,7 @@ function TrackList({data, index}: {data: AlbumTrack, index: number}) {
       <div className='flex flex-col gap-1 justify-center items-start flex-1 w-0 min-w-0'>
         <h1 className='text-xl max-w-full w-full overflow-hidden overflow-ellipsis whitespace-nowrap text-start'>{data?.title}</h1>
         <h3 className='text-sm max-w-full w-full overflow-hidden overflow-ellipsis whitespace-nowrap text-start'>
-        <>{combineArtistName(data?.artists)}</>
+          <>{combineArtistName(data?.artists)}</>
         </h3>
       </div>
       <div className='flex flex-row gap-1 justify-center items-start relative flex-[0 1 auto] min-w-max'>

@@ -110,6 +110,82 @@ export interface ArtistDetailed {
 	thumbnails: ThumbnailFull[];
 }
 
+export interface RelatedArtist {
+	title: string;
+	browseId: string;
+	subscribers: string;
+	thumbnails: ThumbnailFull[];
+}
+
+export interface ArtistSong {
+	videoId: string;
+	title: string;
+	artists: ArtistBasic[];
+	album: AlbumBasic[];
+	views: string | null;
+	videoType: string;
+	likeStatus: string;
+	isExplicit: boolean;
+	isAvailable: boolean;
+	inLibrary: boolean;
+	thumbnails: ThumbnailFull[];
+}
+
+export interface ArtistSingle {
+	title: string;
+	browseId: string;
+	year: string;
+	thumbnails: ThumbnailFull[];
+}
+
+export interface ArtistVideo {
+	title: string;
+	playlistId: string;
+	views: string;
+	videoId: string;
+	artists: ArtistBasic[];
+	thumbnails: ThumbnailFull[];
+}
+
+export interface ArtistRelated {
+	title: string;
+	browseId: string;
+	subscribers: string;
+	thumbnails: ThumbnailFull[];
+}
+
+export interface ArtistFull {
+	name: string;
+	description: string | null;
+	view: string | null;
+	shuffleId: string;
+	radioId: string;
+	browseId: string;
+	subscribers: string;
+	subscribed: boolean;
+	thumbnails: ThumbnailFull[];
+	songs: {
+		browseId: string | null;
+		results: ArtistSong[];
+	};
+	singles: {
+		browseId: string | null;
+		results: ArtistSingle[];
+	};
+	albums: {
+		browseId: string | null;
+		results: ArtistSingle[];
+	};
+	videos: {
+		browseId: string | null;
+		results: ArtistVideo[];
+	};
+	related: {
+		browseId: string | null;
+		results: ArtistRelated[];
+	};
+}
+
 export interface ProfileDetailed {
 	category: "Profiles";
 	resultType: "artist";
@@ -158,7 +234,7 @@ export interface PlaylistVideo {
 	type: "VIDEO" | "SONG" | "EPISODE";
 	videoId: string;
 	name: string;
-	artist: SpecificArtistBasic[];
+	artist: SpecificArtistBasic;
 	duration: number;
 	thumbnails: ThumbnailFull[];
 }
