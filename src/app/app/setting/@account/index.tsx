@@ -1,3 +1,4 @@
+"use client"
 import { useDiscordUserInfo } from '@/contexts/discordUserInfo';
 import { useLanguageContext } from '@/contexts/languageContext'
 import { useUserSettingContext } from '@/contexts/userSettingContext';

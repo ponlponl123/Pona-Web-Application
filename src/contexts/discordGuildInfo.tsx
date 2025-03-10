@@ -14,7 +14,7 @@ const discordGuildInfo = createContext<{
 
 export const DiscordGuildInfoProvider = ({children}: { children: React.ReactNode }) => {
     const [guild, setGuild] = useState<GuildInfo | undefined>(undefined);
-    const pathname = usePathname() || window.location.pathname || '';
+    const pathname = usePathname() || '';
 
     useEffect(() => {
         const currentAccessToken = getCookie('LOGIN_');

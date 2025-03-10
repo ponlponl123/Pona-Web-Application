@@ -1,3 +1,4 @@
+"use client"
 import { Radio } from '@/components/radio';
 import { useLanguageContext } from '@/contexts/languageContext';
 import { Animation, useUserSettingContext } from '@/contexts/userSettingContext';

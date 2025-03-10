@@ -8,7 +8,7 @@ import React, { useEffect, useRef, useState, useCallback } from 'react'
 function ActivationLink({ href, children, icon, iconSize, onClick, className, isActive = false, iconOnly }: { href?: string, children: React.ReactNode, icon?: IconType, iconSize?: number, onClick?: () => void, className?: string, isActive?: boolean, iconOnly?: boolean | undefined }) {
     const router = useRouter();
     const sections = useRef<NodeListOf<HTMLElement> | null>(null);
-    const pathname = usePathname() || window.location.pathname || '';
+    const pathname = usePathname() || '';
     const isSection = href?.startsWith('#');
     const app = useRef<HTMLElement | null>(null);
     const button = useRef<HTMLButtonElement | null>(null);

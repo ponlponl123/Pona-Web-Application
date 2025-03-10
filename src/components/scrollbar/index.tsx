@@ -33,7 +33,7 @@ function Scrollbar(
         onCollapsed?: (value: boolean) => void
     }
 ) {
-    const pathname = usePathname() || window.location.pathname || '';
+    const pathname = usePathname() || '';
     const ownerId = process.env.NEXT_PUBLIC_DISCORD_OWNER_ID;
     const isOwner = userInfo.id === ownerId;
     const { guild } = useDiscordGuildInfo();

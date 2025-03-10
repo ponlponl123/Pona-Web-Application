@@ -16,7 +16,7 @@ export interface GuildInfo {
     bannerURL: string | null;
 }
 
-export async function fetchGuilds(key: string, keyType: string): Promise<false | GuildInfo[]> {
+export async function fetchGuildsV1(key: string, keyType: string): Promise<false | GuildInfo[]> {
     try {
         const guildsFromUser = await axios.get(API_ENDPOINT + '/users/@me/guilds', {
             headers: {
@@ -25,7 +25,7 @@ export async function fetchGuilds(key: string, keyType: string): Promise<false |
                 "User-Agent": "Pona! Application (OpenPonlponl123.com/v1)"
             }
         })
-        if ( guildsFromUser.status === 200 ) {
+        if ( guildsFromUser.status === 200 && guildsFromUser.data.length > 0 ) {
             try {
                 const guilds = await axios.get(EndpointHTTP + '/v1/guilds', {
                     headers: {
@@ -39,6 +39,22 @@ export async function fetchGuilds(key: string, keyType: string): Promise<false |
                     return guilds.data.guilds as GuildInfo[];
             } catch { return false }
         }
+    } catch { return false }
+    return false;
+}
+
+export async function fetchGuilds(key: string, keyType: string): Promise<false | GuildInfo[]> {
+    try {
+        const guilds = await axios.get(EndpointHTTP + '/v2/guilds', {
+            headers: {
+                Authorization: `Pona! ${EndpointKey}`,
+                'DISCORD-AUTHORIZATION': `${keyType} ${key}`,
+                'Content-Type': 'application/json',
+                "User-Agent": "Pona! Application (OpenPonlponl123.com/v1)"
+            }
+        })
+        if ( guilds.status === 200 ) 
+            return guilds.data.guilds as GuildInfo[];
     } catch { return false }
     return false;
 }

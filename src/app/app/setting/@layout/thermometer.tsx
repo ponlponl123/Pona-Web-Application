@@ -1,3 +1,4 @@
+"use client"
 import { useLanguageContext } from '@/contexts/languageContext'
 import { Thermometer as ThermometerType, useUserSettingContext } from '@/contexts/userSettingContext'
 import { Thermometer as ThermometerIcon } from '@phosphor-icons/react/dist/ssr'

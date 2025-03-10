@@ -1,3 +1,4 @@
+"use client"
 import { useLanguageContext } from '@/contexts/languageContext'
 import { Palette } from '@phosphor-icons/react/dist/ssr'
 import React from 'react'

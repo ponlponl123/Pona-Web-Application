@@ -10,7 +10,7 @@ import Link from "next/link";
 import confetti from 'canvas-confetti';
 import CountdownTimer from '@/components/timer';
 import WavyText from '@/components/motion/wavytext';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 const TextVariants = {
   before: {y: 24, opacity: 0},
@@ -21,6 +21,7 @@ const TextVariants = {
 export default function Home() {
   const { language } = useLanguageContext();
   const router = useRouter();
+  const pathname = usePathname() || '';
   const date = new Date();
   const hours = date.getHours();
 
@@ -51,7 +52,7 @@ export default function Home() {
     const randomInRange = (min: number, max: number) => Math.random() * (max - min) + min;
 
     (function frame() {
-      if ( window.location.pathname !== '/' ) return;
+      if ( pathname !== '/' ) return;
       const timeLeft = animationEnd - Date.now();
       const ticks = Math.max(64, 256 * (timeLeft / duration));
       skew = Math.max(0.8, skew - 0.001);

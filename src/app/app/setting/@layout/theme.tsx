@@ -1,3 +1,4 @@
+"use client"
 import { useLanguageContext } from '@/contexts/languageContext';
 import { dark_amoled_themes, dark_themes, DynamicTheme, fetchThemes, ThemeDot, ThemePreview, Themes, useThemeContext } from '@/contexts/themeContext';
 import { Chip } from '@nextui-org/react';

@@ -9,7 +9,7 @@ import { usePathname } from 'next/navigation';
 import AppVersion from '../app-version';
 
 function Footer() {
-  const pathname = usePathname() || window.location.pathname || '';
+  const pathname = usePathname() || '';
   const { language, setLanguage } = useLanguageContext();
   return (
     <footer className={`pona-footer z-[10] max-md:flex-col ${(pathname && pathname.startsWith('/app'))?'m-0':'-mt-24'}`}>

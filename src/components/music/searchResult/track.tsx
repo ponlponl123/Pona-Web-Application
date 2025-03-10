@@ -1,3 +1,4 @@
+"use client";
 import { ArtistBasic, SearchResult as HTTP_SearchResult } from '@/interfaces/ytmusic-api';
 import { msToTime } from '@/utils/time';
 import { Button, Image, Link } from '@nextui-org/react';

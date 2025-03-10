@@ -1,10 +1,13 @@
+"use client"
 import { useLanguageContext } from '@/contexts/languageContext';
 import { revokeUserAccessToken } from '@/server-side-api/discord/fetchUser';
 import { Modal, ModalBody, ModalContent, ModalHeader, Spinner } from '@nextui-org/react'
 import { deleteCookie, getCookie } from 'cookies-next';
+import { useRouter } from 'next/navigation';
 import React from 'react'
 
 function DeleteMyData() {
+  const router = useRouter();
   const { language } = useLanguageContext();
   React.useEffect(()=>{
     revokeUserAccessToken(String(getCookie('LOGIN_')));
@@ -14,7 +17,7 @@ function DeleteMyData() {
     deleteCookie('lang');
     deleteCookie('theme');
     setTimeout(()=>{
-      window.location.href = '/'
+      router.push('/');
     }, 3000)
   })
   return (

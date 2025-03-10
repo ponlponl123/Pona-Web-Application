@@ -1,3 +1,4 @@
+"use client"
 import { Radio } from '@/components/radio';
 import { type PonaPlayerStyle, useUserSettingContext } from '@/contexts/userSettingContext';
 import { RadioGroup } from '@nextui-org/react';

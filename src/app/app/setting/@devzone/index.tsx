@@ -1,3 +1,4 @@
+"use client"
 import { useLanguageContext } from '@/contexts/languageContext'
 import { Bug } from '@phosphor-icons/react/dist/ssr'
 import Switch from '@/components/switch'

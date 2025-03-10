@@ -1,3 +1,4 @@
+"use client"
 import Map from '@/components/map-picker';
 import { Radio } from '@/components/radio'
 import { useLanguageContext } from '@/contexts/languageContext';

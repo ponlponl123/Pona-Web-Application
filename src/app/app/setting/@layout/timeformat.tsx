@@ -1,3 +1,4 @@
+"use client"
 import { Radio } from '@/components/radio'
 import { RadioGroup } from '@nextui-org/react'
 import { SunHorizon } from '@phosphor-icons/react/dist/ssr'

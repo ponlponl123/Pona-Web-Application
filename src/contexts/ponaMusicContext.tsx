@@ -48,7 +48,7 @@ export const PonaMusicProvider = ({ children }: { children: React.ReactNode }) =
     setPonaCommonState,
     setIsSameVC
   } = useGlobalContext();
-  const pathname = usePathname() || window.location.pathname || '';
+  const pathname = usePathname() || '';
 
   const initialized = useRef(false);
   const [socket, setSocket] = useState<Socket | null>(null);
