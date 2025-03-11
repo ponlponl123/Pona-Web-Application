@@ -49,7 +49,7 @@ function Page() {
     })
     return (
         <main className="w-full min-h-screen relative">
-            <Image src={'/public/community-backdrop.png'} alt='Pona! Community' classNames={{
+            <Image src={'/static/community-backdrop.png'} alt='Pona! Community' classNames={{
                 wrapper: 'w-full !max-w-none absolute overflow-hidden h-[48vh] z-[0] blur-3xl max-h-96 min-h-24 scale-[1.1] opacity-60'
             }} className='w-full object-cover' />
             <div className="relative flex flex-col grid-rows-[20px_1fr_20px] items-center min-h-screen p-8 pb-20 gap-8 sm:p-20 z-[1]">

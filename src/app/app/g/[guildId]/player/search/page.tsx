@@ -1,5 +1,6 @@
 "use client"
 import React from 'react'
+import { motion } from 'framer-motion';
 import Track, { combineArtistName } from '@/components/music/searchResult/track';
 import { useLanguageContext } from '@/contexts/languageContext';
 import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo';
@@ -87,7 +88,13 @@ function Page() {
               </span>
               <div className='w-full h-[2px] bg-foreground/10'></div>
             </h2>
-            <div className='flex flex-col gap-4 w-full'>
+            <motion.div
+              initial={{opacity: 0, y: 12}}
+              animate={{opacity: 1, y: 0}}
+              exit={{opacity: 0, y: -12}}
+              transition={{delay: 0.1*index}}
+              key={category}
+              className='flex flex-col gap-4 w-full'>
               {
                 (category === 'Top result') ? (() => {
                   const track = searchResult['Top result'][0] as unknown as TopResults;
@@ -191,7 +198,7 @@ function Page() {
                   <Track key={idx} data={result} />
                 ))
               }
-            </div>
+            </motion.div>
           </div>
           )) : ( !loading && !searchResult ) &&
           <div className='w-full min-h-[36vh] flex flex-col gap-4 items-center justify-center'>

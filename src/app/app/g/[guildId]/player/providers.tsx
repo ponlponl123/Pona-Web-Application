@@ -32,7 +32,7 @@ function Providers({ children }: { children: React.ReactNode }) {
     const currentTrack = ponaCommonState?.current;
     const backdropBg = currentTrack ? currentTrack?.proxyThumbnail ? currentTrack?.proxyArtworkUrl : currentTrack?.thumbnail : guild?.bannerURL ? guild?.bannerURL+'?size=640' :
         guild?.iconURL ? guild?.iconURL+'?size=640' : userInfo?.banner ? `https://cdn.discordapp.com/banners/${userInfo?.id}/${userInfo?.banner}?size=640` : userInfo?.avatar ? `https://cdn.discordapp.com/avatars/${userInfo?.id}/${userInfo?.avatar}?size=640` :
-       '/public/backdrop.png';
+       '/static/backdrop.png';
 
     const isTabletOrMobile = useMediaQuery({ query: '(max-width: 768px)' })
 
@@ -56,7 +56,7 @@ function Providers({ children }: { children: React.ReactNode }) {
                 <div className='absolute w-full h-1/2 max-h-96 min-h-48 top-0 left-0 z-[1] opacity-40 pointer-events-none'>
                 {
                     userSetting.transparency ? 
-                    <Image src={backdropBg || '/public/backdrop.png'} alt={currentTrack?currentTrack.title:guild?.name || ''} width={"100%"} height={320}
+                    <Image src={backdropBg || '/static/backdrop.png'} alt={currentTrack?currentTrack.title:guild?.name || ''} width={"100%"} height={320}
                         className='object-cover blur-3xl w-full h-96 pointer-events-none saturate-200 brightness-125 [.light_&]:brightness-200 scale-[2]'
                     />
                     : <div className='w-full h-96 bg-gradient-to-t from-transparent to-[hsl(var(--pona-app-music-accent-color-500))]'></div>

@@ -78,7 +78,7 @@ function MobilePonaPlayerPanel({
               }} id='pona-music-panel-trigger'></div>
               <div className='max-w-full max-h-full m-auto flex flex-col gap-4 justify-center items-center py-16' id='mobile-pona-player-controller'>
                 <div className='w-[calc(100vw_-_3rem)] max-w-[48vh] aspect-square relative flex pointer-events-none'>
-                  <Image src={currentTrack ? currentTrack.proxyHighResArtworkUrl || currentTrack?.proxyArtworkUrl : '/public/Ponlponl123 (1459).png'} alt={currentTrack ? currentTrack.title : 'Artwork'}
+                  <Image src={currentTrack ? currentTrack.proxyHighResArtworkUrl || currentTrack?.proxyArtworkUrl : '/static/Ponlponl123 (1459).png'} alt={currentTrack ? currentTrack.title : 'Artwork'}
                     className={
                       'w-full h-full object-cover'
                     }

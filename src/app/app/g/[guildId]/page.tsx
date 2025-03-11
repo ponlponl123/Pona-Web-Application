@@ -97,7 +97,7 @@ function Page() {
                       />
                     ) : (
                       <div className='w-full h-full overflow-hidden rounded-3xl'>
-                        <NextUIimage alt={guild.name as string} src={guild.iconURL+'?size=320' || '/public/app/default.png'} width={"100%"} height={192}
+                        <NextUIimage alt={guild.name as string} src={guild.iconURL+'?size=320' || '/static/app/default.png'} width={"100%"} height={192}
                           className='w-full h-full object-cover blur-2xl bg-primary'
                         />
                       </div>
@@ -108,7 +108,7 @@ function Page() {
                   <div className='overflow-hidden rounded-full outline outline-4 outline-playground-background'>
                     <Avatar
                       alt={`${guild && guild.name} Avatar`}
-                      src={guild.iconURL+'?size=128' || '/public/app/default.png'}
+                      src={guild.iconURL+'?size=128' || '/static/app/default.png'}
                       name={guild ? guild.name : 'Guild'}
                       className='w-24 h-24 object-cover bg-primary'
                     />

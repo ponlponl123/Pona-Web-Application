@@ -48,9 +48,9 @@ export async function fetchGuilds(key: string, keyType: string): Promise<false |
         const guilds = await axios.get(EndpointHTTP + '/v2/guilds', {
             headers: {
                 Authorization: `Pona! ${EndpointKey}`,
-                'DISCORD-AUTHORIZATION': `${keyType} ${key}`,
                 'Content-Type': 'application/json',
-                "User-Agent": "Pona! Application (OpenPonlponl123.com/v1)"
+                "User-Agent": "Pona! Application (OpenPonlponl123.com/v1)",
+                Cookie: `type=${keyType}; key=${key};`
             }
         })
         if ( guilds.status === 200 ) 

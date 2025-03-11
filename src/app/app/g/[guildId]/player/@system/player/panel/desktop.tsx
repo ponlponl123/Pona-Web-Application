@@ -47,7 +47,7 @@ function DesktopPonaPlayerPanel() {
                 exit={{ opacity: 0, pointerEvents: 'none', translateY: 64 }}>
                 {
                     userSetting.transparency &&
-                    <Image src={currentTrack ? currentTrack?.proxyArtworkUrl : '/public/Ponlponl123 (1459).png'} alt={currentTrack ? currentTrack.title : 'Backdrop'}
+                    <Image src={currentTrack ? currentTrack?.proxyArtworkUrl : '/static/Ponlponl123 (1459).png'} alt={currentTrack ? currentTrack.title : 'Backdrop'}
                         className='absolute -z-10 scale-[2] w-full h-full top-0 left-0 object-cover blur-[128px] [html.dark_&]:brightness-50 [html.light_&]:brightness-200 [html.dark_&]:saturate-150' classNames={{wrapper:'contents'}}/>
                 }
                 <div className={
@@ -62,7 +62,7 @@ function DesktopPonaPlayerPanel() {
                             <Button color='default' variant='ghost' radius='full' className='w-fit' isDisabled><PictureInPicture />{language.data.app.guilds.player.picinpic_mode.enter}</Button>
                         </div>
                         <div className='w-[56vh] max-2xl:w-[42vh] max-xl:w-[32vh] max-xl:[body:not(.sidebar-collapsed)_&]:w-[26vh] aspect-square relative flex group hover:scale-[1.032] active:scale-[1.016]'>
-                            <Image src={currentTrack ? currentTrack.proxyHighResArtworkUrl || currentTrack?.proxyArtworkUrl : '/public/Ponlponl123 (1459).png'} alt={currentTrack ? currentTrack.title : 'Artwork'}
+                            <Image src={currentTrack ? currentTrack.proxyHighResArtworkUrl || currentTrack?.proxyArtworkUrl : '/static/Ponlponl123 (1459).png'} alt={currentTrack ? currentTrack.title : 'Artwork'}
                                 className={
                                     'w-full h-full object-cover select-none rounded-2xl'
                                 }

@@ -30,7 +30,7 @@ function Account() {
                 userSetting.transparency &&
                 <Image
                   alt={`${userInfo && userInfo.global_name} Banner`}
-                  src={userInfo ? `https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}.png?size=256` : '/public/Ponlponl123 (1459).png'}
+                  src={userInfo ? `https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}.png?size=256` : '/static/Ponlponl123 (1459).png'}
                   className='object-cover object-center w-full h-full blur-2xl scale-110'
                   width="100%" height="100%"
                   classNames={{
@@ -46,7 +46,7 @@ function Account() {
             <div className='-translate-y-1/2 outline outline-8 outline-playground-background rounded-full block overflow-hidden min-w-32 w-32 h-32 max-md:outline-4 max-md:min-w-24 max-md:w-24 max-md:h-24'>
               <Avatar
                 alt={`${userInfo && userInfo.global_name} Avatar`}
-                src={userInfo ? `https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}.png?size=128` : '/public/Ponlponl123 (1459).png'}
+                src={userInfo ? `https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}.png?size=128` : '/static/Ponlponl123 (1459).png'}
                 name={userInfo ? userInfo.username : 'Me'}
                 className='object-cover object-center max-md:w-24 max-md:h-24 bg-primary w-32 h-32'
               />

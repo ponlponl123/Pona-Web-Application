@@ -133,7 +133,7 @@ function MobilePonaPlayer() {
                     }
                   }}
                 >
-                    <Image src={currentTrack ? currentTrack?.proxyArtworkUrl : '/public/Ponlponl123 (1459).png'} alt={currentTrack ? currentTrack.title : 'Thumbnail'}
+                    <Image src={currentTrack ? currentTrack?.proxyArtworkUrl : '/static/Ponlponl123 (1459).png'} alt={currentTrack ? currentTrack.title : 'Thumbnail'}
                         className={
                           'object-cover h-12 w-12 rounded-lg'
                         }
