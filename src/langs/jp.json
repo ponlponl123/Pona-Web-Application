@@ -390,7 +390,9 @@
                     "result": "の検索結果",
                     "notfound": "結果が見つかりませんでした",
                     "category": {
+                        "All": "全て",
                         "Top result": "トップ結果",
+                        "More from YouTube": "ポナからさらに！",
                         "Community playlists": "コミュニティプレイリスト",
                         "Podcasts": "ポッドキャスト",
                         "Episodes": "エピソード",

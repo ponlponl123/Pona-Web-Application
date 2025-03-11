@@ -396,7 +396,9 @@
                     "result": "Search results for",
                     "notfound": "Not Found",
                     "category": {
+                        "All": "All",
                         "Top result": "Top result",
+                        "More from YouTube": "More from Pona!",
                         "Community playlists": "Community playlists",
                         "Podcasts": "Podcasts",
                         "Episodes": "Episodes",

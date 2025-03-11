@@ -3,6 +3,8 @@ import { VoiceBasedChannel } from 'discord.js';
 import { HTTP_PonaCommonStateWithTracks } from '@/interfaces/ponaPlayer';
 import React, { createContext, Dispatch, SetStateAction, useContext, useState } from 'react';
 
+export type FullScreenMode = boolean | 'changing';
+
 const GlobalContext = createContext<{
   isMobile: boolean;
 
@@ -11,6 +13,9 @@ const GlobalContext = createContext<{
 
   isMemberInVC: VoiceBasedChannel | null;
   setIsMemberInVC: Dispatch<SetStateAction<VoiceBasedChannel | null>>;
+
+  isFullscreenMode: FullScreenMode;
+  setIsFullscreenMode: Dispatch<SetStateAction<FullScreenMode>>;
 
   isSameVC: boolean;
   setIsSameVC: Dispatch<SetStateAction<boolean>>;
@@ -26,6 +31,9 @@ const GlobalContext = createContext<{
   isMemberInVC: null,
   setIsMemberInVC: () => {},
 
+  isFullscreenMode: false,
+  setIsFullscreenMode: () => {},
+
   isSameVC: false,
   setIsSameVC: () => {},
 
@@ -38,6 +46,7 @@ export const GlobalProvider = ({ children, isMobile }: { children: React.ReactNo
   const [isMemberInVC, setIsMemberInVC] = useState<VoiceBasedChannel | null>(null);
   const [socketRequesting, setSocketRequesting] = useState<boolean>(false);
   const [isSameVC, setIsSameVC] = useState<boolean>(false);
+  const [isFullscreenMode, setIsFullscreenMode] = useState<FullScreenMode>(false);
 
   React.useEffect(()=>{
     if ( ponaCommonState?.pona.voiceChannel && isMemberInVC?.id )
@@ -51,6 +60,7 @@ export const GlobalProvider = ({ children, isMobile }: { children: React.ReactNo
       socketRequesting, setSocketRequesting,
       isMemberInVC, setIsMemberInVC,
       isSameVC, setIsSameVC,
+      isFullscreenMode, setIsFullscreenMode,
     }}>
       {children}
     </GlobalContext.Provider>

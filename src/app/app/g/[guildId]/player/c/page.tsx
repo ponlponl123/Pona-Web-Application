@@ -34,7 +34,9 @@ function Page() {
       const accessToken = getCookie('LOGIN_');
       if (typeof channelId !== 'string' || !accessTokenType || !accessToken || !channelId) return exit(false);
       setLoading(true);
+      setProfileDetail(null);
       setChannelDetail(null);
+      setChannelDetailv1(null);
       const resultv1 = await getArtistv1(accessTokenType, accessToken, channelId);
       const result = await getArtist(accessTokenType, accessToken, channelId);
       const profile = await getUser(accessTokenType, accessToken, channelId);
@@ -289,7 +291,7 @@ function Page() {
                             duration: null,
                             isExplicit: false,
                             playlistId: singleDetail.browseId,
-                            resultType: 'album',
+                            resultType: 'single',
                             thumbnails: singleDetail.thumbnails,
                             title: singleDetail.title,
                             year: Number(singleDetail.year),
@@ -308,7 +310,7 @@ function Page() {
                             duration: null,
                             isExplicit: false,
                             playlistId: singleDetail.albumId,
-                            resultType: 'album',
+                            resultType: 'single',
                             thumbnails: singleDetail.thumbnails,
                             title: singleDetail.name,
                             year: singleDetail.year,

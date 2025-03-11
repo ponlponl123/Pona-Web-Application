@@ -19,9 +19,11 @@ export interface AlbumBasic {
 	name: string;
 }
 
+export type ResultType = "artist" | "profile" | "video" | "song" | "album" | "single" | "playlist";
+
 export interface TopResult {
 	category: "Top result";
-	resultType: "artist" | "video" | "song" | "album";
+	resultType: ResultType;
 }
 
 export interface TopResult_Artist extends TopResult {
@@ -238,8 +240,8 @@ export interface EpisodeDetailed extends VideoDetailed {
 
 export interface AlbumDetailed {
 	category: "Albums";
-	resultType: "album";
-	type: string | "Single";
+	resultType: "single" | "album";
+	type: string | "Single" | "Album";
 	browseId: string;
 	playlistId: string;
 	title: string;
@@ -252,6 +254,7 @@ export interface AlbumDetailed {
 
 export interface PlaylistDetailed {
 	category: "Community playlists";
+	resultType: "playlist";
 	type: "playlist";
 	browseId: string;
 	name: string;

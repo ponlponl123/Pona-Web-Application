@@ -1,5 +1,5 @@
 "use client";
-import { ArtistBasic, SearchResult as HTTP_SearchResult } from '@/interfaces/ytmusic-api';
+import { ArtistBasic, SearchResult as HTTP_SearchResult, ResultType } from '@/interfaces/ytmusic-api';
 import { msToTime } from '@/utils/time';
 import { Button, Image, Link } from '@nextui-org/react';
 import React from 'react'
@@ -8,6 +8,7 @@ import { Play } from '@phosphor-icons/react/dist/ssr';
 import { useRouter } from 'next/navigation';
 import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
+import { useLanguageContext } from '@/contexts/languageContext';
 
 export function combineArtistName(artists: ArtistBasic[]): string;
 export function combineArtistName(artists: ArtistBasic[], isElement: true): React.ReactNode;
@@ -44,30 +45,20 @@ export function combineArtistName(artists: ArtistBasic[], isElement?: boolean, r
 
 export function TrackDetail({data, isHasPlay = true}: {data: HTTP_SearchResult, isHasPlay?: boolean}) {
   const router = useRouter();
+  const { language } = useLanguageContext();
   const title =
-  (
-    data.category === 'Songs' ||
-    data.category === 'Albums' ||
-    data.category === 'Videos' ||
-    data.category === 'Episodes' ||
-    data.category === 'Podcasts'
-  ) ?
-  data?.title :
-  (
-    data.category === 'Community playlists'
-  ) ?
-  data?.name :
-  (
-    data.category === 'Artists' ||
-    data.category === 'Profiles'
-  ) ?
-  data?.artist : ''
+    ('title' in data) ?
+      data?.title :
+    ('name' in data) ?
+      data?.name :
+    ('artist' in data) ?
+      data?.artist : ''
   return (
     <div className='w-full flex gap-4 items-center justify-start group hover:bg-foreground/5 p-2 rounded-2xl border-2 border-foreground/0 hover:border-foreground/5'>
       <div className='relative w-14 h-14'>
-        <Image src={`/api/proxy/image?r=${data?.thumbnails && data?.thumbnails[0]?.url}`} alt={title} height={56} width={56} className='object-cover rounded-xl w-14 h-14' classNames={{
+        <Image src={`/api/proxy/image?r=${(data?.thumbnails && data?.thumbnails.length > 0) ? data?.thumbnails[data?.thumbnails.length-1] ? data?.thumbnails[data?.thumbnails.length-1]?.url : data?.thumbnails[0]?.url : '/static/default.png'}`} alt={title} height={56} width={56} className='object-cover rounded-xl w-14 h-14' classNames={{
           img: 'w-14 h-14',
-          wrapper: 'w-full h-full'
+          wrapper: 'w-full h-full overflow-hidden'
         }} />
         {
           !isHasPlay && <div className='absolute w-full h-full opacity-0 group-hover:opacity-100 bg-black/40 top-0 left-0 z-10 rounded-xl flex items-center justify-center'><Play weight='fill' size={16} /></div>
@@ -91,20 +82,26 @@ export function TrackDetail({data, isHasPlay = true}: {data: HTTP_SearchResult, 
         <h1 className='text-xl w-full overflow-hidden overflow-ellipsis whitespace-nowrap text-start'>{title}</h1>
         <h3 className='text-sm w-full overflow-hidden overflow-ellipsis whitespace-nowrap text-start'>
         {
+          'resultType' in data &&
+            language.data.app.guilds.player.search.category[(data.resultType[0].toUpperCase()+data.resultType.slice(1,data.resultType.length))+'s' as keyof typeof language.data.app.guilds.player.search.category] ? 
+            language.data.app.guilds.player.search.category[(data.resultType[0].toUpperCase()+data.resultType.slice(1,data.resultType.length))+'s' as keyof typeof language.data.app.guilds.player.search.category] :
+            data.resultType.toLocaleUpperCase()
+        }
+        {
           (
-            data.category === 'Songs' || data.category === 'Videos'
+            'artists' in data && 'duration_seconds' in data
           ) ?
-          <>{combineArtistName(data?.artists, true, router)}{data.duration_seconds && ' • '+msToTime(data?.duration_seconds*1000)}</> :
+          <> • {combineArtistName(data?.artists, true, router)}{data.duration_seconds && ' • '+msToTime(data?.duration_seconds*1000)}</> :
           (
-            data.category === 'Albums'
+            'artists' in data && 'year' in data
           ) ?
-          <>{combineArtistName(data?.artists, true, router)} • {data?.year}</> :
+          <> • {combineArtistName(data?.artists, true, router)} • {data?.year}</> :
           (
-            data.category === 'Episodes'
+            'artists' in data
           ) ?
-          <>{combineArtistName(data?.artists, true, router)}</> :
-          ( data.category === 'Community playlists' ) ?
-          <>{data?.author}</> :
+          <> • {combineArtistName(data?.artists, true, router)}</> :
+          ( 'author' in data ) ?
+          <> • {data?.author}</> :
           <></>
         }
         </h3>
@@ -118,8 +115,10 @@ function Track({data}: {data: HTTP_SearchResult}) {
   const { guild } = useDiscordGuildInfo();
   return (
     (
-      data?.category === 'Songs' ||
-      data?.category === 'Videos'
+      (data?.category === 'Songs' ||
+      data?.category === 'Videos' ||
+      data?.resultType === 'song' ||
+      data?.resultType === 'video') && data?.videoId
     ) ? <PlayButton className='rounded-xl h-max relative opacity-100 bg-transparent active:!scale-[0.98]' detail={{
       author: combineArtistName(data?.artists),
       identifier: data?.videoId,
@@ -129,13 +128,17 @@ function Track({data}: {data: HTTP_SearchResult}) {
       uri: `https://www.youtube.com/watch?v=${data?.videoId}`
     }}><TrackDetail data={data} isHasPlay={false} /></PlayButton> :
     (
-      data?.category === 'Artists'
+      (data?.category === 'Artists' ||
+      data?.resultType === 'artist' ||
+      data?.resultType === 'profile') && 'browseId' in data
     ) ? <Button className='w-full rounded-xl relative opacity-100 bg-transparent active:!scale-[0.98] h-max p-0' onPress={()=>{router.push(`/app/g/${guild?.id}/player/c?c=${data?.browseId}`)}}><TrackDetail data={data} /></Button> :
     (
-      data?.category === 'Albums'
+      data?.category === 'Albums' ||
+      data?.resultType === 'album'
     ) ? <Button className='w-full rounded-xl relative opacity-100 bg-transparent active:!scale-[0.98] h-max p-0' onPress={()=>{router.push(`/app/g/${guild?.id}/player/playlist?list=${data?.browseId}abm`)}}><TrackDetail data={data} /></Button> :
     (
-      data?.category === 'Community playlists'
+      (data?.category === 'Community playlists' ||
+      data?.resultType === 'playlist' as ResultType) && 'browseId' in data
     ) ? <Button className='w-full rounded-xl relative opacity-100 bg-transparent active:!scale-[0.98] h-max p-0' onPress={()=>{router.push(`/app/g/${guild?.id}/player/playlist?list=${data?.browseId}`)}}><TrackDetail data={data} /></Button> :
     <TrackDetail data={data} />
   )

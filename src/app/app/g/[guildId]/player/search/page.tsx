@@ -1,5 +1,5 @@
 "use client"
-import React from 'react'
+import React, { Key } from 'react'
 import { motion } from 'framer-motion';
 import Track, { combineArtistName } from '@/components/music/searchResult/track';
 import { useLanguageContext } from '@/contexts/languageContext';
@@ -7,7 +7,7 @@ import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo';
 import { useGlobalContext } from '@/contexts/globalContext';
 import fetchSearchResult from '@/server-side-api/internal/search';
 import { SearchResult as HTTP_SearchResult, TopResults } from '@/interfaces/ytmusic-api';
-import { Button, Image, Link, Progress, Tooltip } from '@nextui-org/react';
+import { Button, Image, Link, Progress, ScrollShadow, Tab, Tabs, Tooltip } from '@nextui-org/react';
 import { FlyingSaucer, Heart, MagnifyingGlass, ShareFat } from '@phosphor-icons/react/dist/ssr';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { getCookie } from 'cookies-next';
@@ -18,18 +18,23 @@ function Page() {
   const { guild } = useDiscordGuildInfo();
   const [ searchResult, setSearchResult ] = React.useState<{ [key: string]: HTTP_SearchResult[] } | null>(null);
   const [ loading, setLoading ] = React.useState<boolean>(true);
+  const [ filter, setFilter ] = React.useState<Key | false>(false);
   const { ponaCommonState } = useGlobalContext()
   const { language } = useLanguageContext()
   const searchParams = useSearchParams()
   const search = searchParams ? searchParams.get('q') : ""
+  const filterNormallize =
+    filter.toString() === "playlists" ? "Community playlists" :
+    filter ? filter.toString()[0].toUpperCase() + filter.toString().slice(1, filter.toString().length) :
+    filter.toString();
 
   React.useEffect(() => {
-    setLoading(true);
     const letSearch = async () => {
       const accessTokenType = getCookie('LOGIN_TYPE_');
       const accessToken = getCookie('LOGIN_');
       if ( !search || typeof search !== 'string' || !accessTokenType || !accessToken ) return;
-      const searchResult = await fetchSearchResult(accessTokenType, accessToken, search);
+      setLoading(true);
+      const searchResult = await fetchSearchResult(accessTokenType, accessToken, search, (filter === 'all' || !filter) ? undefined : filter.toString());
       if ( !searchResult ) {
         setSearchResult(null);
         setLoading(false);
@@ -42,7 +47,7 @@ function Page() {
         return acc;
       }, {});
 
-      const orderedKeys = ["Top result", "Songs", "Videos", "Albums", "Community playlists", "Artists", "Podcasts", "Episodes", "Profiles"];
+      const orderedKeys = ["Top result", "More from YouTube", "Songs", "Videos", "Albums", "Community playlists", "Artists", "Podcasts", "Episodes", "Profiles"];
       const orderedResult = orderedKeys.reduce((acc: { [key: string]: HTTP_SearchResult[] }, key) => {
         if (sortedResult[key]) {
           acc[key] = sortedResult[key];
@@ -52,10 +57,11 @@ function Page() {
 
       setSearchResult(orderedResult);
       setLoading(false);
+      console.log("result", orderedResult);
     }
 
     letSearch();
-  }, [search]);
+  }, [filter, search]);
 
   return (
     <div className='w-full max-w-screen-md mx-auto mt-24 gap-4 flex flex-col items-center justify-center text-center pb-[16vh]'>
@@ -63,6 +69,19 @@ function Page() {
         <div className='flex flex-col items-start justify-center w-full'>
           <h1 className='text-5xl flex gap-4 items-center'><MagnifyingGlass size={32} weight='bold' /> {language.data.app.guilds.player.search.result}</h1>
           <h3 className='text-2xl text-start'>{search}</h3>
+          <ScrollShadow orientation="vertical" hideScrollBar className='w-full relative'>
+            <div className='w-max flex flex-row items-start justify-center gap-2'>
+              <Tabs aria-label="Filters" className='my-4' radius='full' variant='light' isDisabled={loading} onSelectionChange={setFilter}>
+                <Tab key="all" title={language.data.app.guilds.player.search.category.All} />
+                <Tab key="songs" title={language.data.app.guilds.player.search.category.Songs} />
+                <Tab key="videos" title={language.data.app.guilds.player.search.category.Videos} />
+                <Tab key="albums" title={language.data.app.guilds.player.search.category.Albums} />
+                <Tab key="playlists" title={language.data.app.guilds.player.search.category['Community playlists']} />
+                <Tab key="artists" title={language.data.app.guilds.player.search.category.Artists} />
+                <Tab key="profiles" title={language.data.app.guilds.player.search.category.Profiles} />
+              </Tabs>
+            </div>
+          </ScrollShadow>
           {
             loading &&
             <Progress isIndeterminate aria-label="Loading..." className="w-full mt-2" size="sm" />
@@ -71,7 +90,7 @@ function Page() {
       </div>
       <div id='pona-search-result' className='w-full flex flex-col gap-12 mt-4'>
         {
-          (!loading && searchResult) ? Object.keys(searchResult).map((category, index) => 
+          !loading ? ((!filter || filter === 'all') && searchResult) ? Object.keys(searchResult).map((category, index) => 
             !(
               category === 'Top result' &&
               (searchResult['Top result'][0] as unknown as TopResults).resultType === 'episode' as TopResults['resultType']
@@ -110,7 +129,7 @@ function Page() {
                     <>
                       <div className='flex gap-6 p-6 max-md:p-4 bg-foreground/5 rounded-3xl relative overflow-hidden'>
                         <Image src={`/api/proxy/image?r=${track.thumbnails[0].url}`} alt='backdrop' classNames={{
-                          wrapper: 'w-full h-full absolute !max-w-none top-0 left-0 blur-3xl scale-125 saturate-150 brightness-75'
+                          wrapper: 'w-full h-full absolute !max-w-none top-0 left-0 blur-3xl scale-125 [html.dark_&]:saturate-150 [html.dark_&]:brightness-75 [html.light_&]:saturate-200 [html.light_&]:brightness-200'
                         }} className='w-full h-full object-cover' />
                         <div className='w-28 h-28 md:min-w-28 md:min-h-28 max-md:h-16 max-md:w-16 max-md:min-w-16 max-md:min-h-16 relative overflow-hidden flex-[0 1 auto]'>
                           <Image src={`/api/proxy/image?r=${track.thumbnails[track.thumbnails.length-1].url}`} alt={trackTitle} classNames={{
@@ -200,7 +219,13 @@ function Page() {
               }
             </motion.div>
           </div>
-          )) : ( !loading && !searchResult ) &&
+          )) : (!loading && filter && searchResult && searchResult[filterNormallize] && searchResult[filterNormallize].length > 0) && <div className='w-full flex flex-col gap-4 items-center justify-start'>
+            {
+              searchResult[filterNormallize].map((result, idx) => (
+                <Track key={idx} data={result} />
+              ))
+            }
+          </div> : ( !loading && !searchResult ) &&
           <div className='w-full min-h-[36vh] flex flex-col gap-4 items-center justify-center'>
             <FlyingSaucer weight='fill' size={74} />
             <h1 className='text-lg tracking-wider'>{language.data.app.guilds.player.search.notfound}</h1>

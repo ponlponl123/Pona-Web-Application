@@ -400,7 +400,9 @@
                     "result": "ผลลัพธ์การค้นหาสำหรับ",
                     "notfound": "ไม่พบผลลัพธ์",
                     "category": {
+                        "All": "ทั้งหมด",
                         "Top result": "ผลลัพธ์ยอดนิยม",
+                        "More from YouTube": "เพิ่มเติมจาก Pona!",
                         "Community playlists": "เพลย์ลิสต์",
                         "Podcasts": "พอดแคสต์",
                         "Episodes": "ตอนต่างๆ",

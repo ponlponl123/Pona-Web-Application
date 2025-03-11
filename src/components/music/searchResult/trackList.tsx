@@ -34,7 +34,10 @@ function TrackList({data, index, showThumbnail = false}: {data: AlbumTrack, inde
       {
         (showThumbnail && data.thumbnails && data.thumbnails?.length > 0) &&
         <div className='flex flex-row gap-1 justify-center items-center w-12 h-12 min-w-12 max-w-12 max-h-12 relative flex-[0 1 auto]'>
-          <Image src={`/api/proxy/image?r=`+data?.thumbnails[0].url} alt={data.title} className='aspect-square h-full object-cover' />
+          <Image src={`/api/proxy/image?r=`+data?.thumbnails[0].url} alt={data.title} className='aspect-square h-full object-cover' classNames={{
+            img: 'scale-150',
+            wrapper: 'overflow-hidden'
+          }} />
         </div>
       }
       <div className='flex flex-col gap-1 justify-center items-start flex-1 w-0 min-w-0'>

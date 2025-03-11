@@ -35,9 +35,10 @@ export async function fetchSearchSuggestionResult(tokenType: string, tokenKey: s
     }
 }
 
-export default async function fetchSearchResult(tokenType: string, tokenKey: string, search: string): Promise<false | SearchResult> {
+export default async function fetchSearchResult(tokenType: string, tokenKey: string, search: string, filter?: string): Promise<false | SearchResult> {
     try {
         const endpoint = new URL(`${Endpoint}:${EndpointPort}/v1/music/search`);
+        if (filter) endpoint.searchParams.append('filter', filter);
         endpoint.searchParams.append('q', search);
         const handshakeRequest = await axios.get(endpoint.toString(), {
             headers: {
