@@ -13,18 +13,18 @@ export type MobilePonaPlayerPanelAnimationState = 'none' | 'playerPanel' | 'queu
 
 function MobilePonaPlayer() {
   const { userSetting } = useUserSettingContext();
-  const { ponaCommonState, isMobile } = useGlobalContext();
+  const { ponaCommonState, isMobile, playback } = useGlobalContext();
   const { socket, playerPopup, setPlayerPopup } = usePonaMusicContext();
   const [ beforeState, setBeforeState ] = React.useState<MobilePonaPlayerPanelAnimationState>('none');
   const [ afterState, setAfterState ] = React.useState<MobilePonaPlayerPanelAnimationState>('none');
   const [ trackFocus, setTrackFocus ] = React.useState<boolean>(true);
   const currentTrack = ponaCommonState?.current;
     
-  const [sliderValue, setSliderValue] = React.useState<number | number[]>(ponaCommonState?.pona.position || 0);
+  const [sliderValue, setSliderValue] = React.useState<number | number[]>(playback);
 
   React.useEffect(() => {
-      setSliderValue(ponaCommonState?.pona.position || 0);
-  }, [ponaCommonState?.pona.position]);
+      setSliderValue(playback);
+  }, [playback]);
 
   React.useEffect(()=>{
     if ( !currentTrack )

@@ -1,15 +1,25 @@
 "use client";
 import { VoiceBasedChannel } from 'discord.js';
-import { HTTP_PonaCommonStateWithTracks } from '@/interfaces/ponaPlayer';
+import { HTTP_PonaCommonStateWithTracks, Queue } from '@/interfaces/ponaPlayer';
 import React, { createContext, Dispatch, SetStateAction, useContext, useState } from 'react';
 
 export type FullScreenMode = boolean | 'changing';
+export interface PonaQueue {
+  queue: Queue | null;
+  updating: boolean;
+}
 
 const GlobalContext = createContext<{
   isMobile: boolean;
 
   ponaCommonState: HTTP_PonaCommonStateWithTracks | null;
   setPonaCommonState: Dispatch<SetStateAction<HTTP_PonaCommonStateWithTracks | null>>;
+
+  ponaTrackQueue: PonaQueue;
+  setPonaTrackQueue: Dispatch<SetStateAction<PonaQueue>>;
+
+  playback: number;
+  setPlayback: Dispatch<SetStateAction<number>>;
 
   isMemberInVC: VoiceBasedChannel | null;
   setIsMemberInVC: Dispatch<SetStateAction<VoiceBasedChannel | null>>;
@@ -28,6 +38,12 @@ const GlobalContext = createContext<{
   ponaCommonState: null,
   setPonaCommonState: () => {},
 
+  ponaTrackQueue: { queue: null, updating: false },
+  setPonaTrackQueue: () => {},
+
+  playback: 0,
+  setPlayback: () => {},
+
   isMemberInVC: null,
   setIsMemberInVC: () => {},
 
@@ -45,7 +61,9 @@ export const GlobalProvider = ({ children, isMobile }: { children: React.ReactNo
   const [ponaCommonState, setPonaCommonState] = useState<HTTP_PonaCommonStateWithTracks | null>(null);
   const [isMemberInVC, setIsMemberInVC] = useState<VoiceBasedChannel | null>(null);
   const [socketRequesting, setSocketRequesting] = useState<boolean>(false);
+  const [ponaTrackQueue, setPonaTrackQueue] = useState<PonaQueue>({ queue: null, updating: false });
   const [isSameVC, setIsSameVC] = useState<boolean>(false);
+  const [playback, setPlayback] = useState<number>(0);
   const [isFullscreenMode, setIsFullscreenMode] = useState<FullScreenMode>(false);
 
   React.useEffect(()=>{
@@ -57,6 +75,8 @@ export const GlobalProvider = ({ children, isMobile }: { children: React.ReactNo
     <GlobalContext.Provider value={{
       isMobile,
       ponaCommonState, setPonaCommonState,
+      ponaTrackQueue, setPonaTrackQueue,
+      playback, setPlayback,
       socketRequesting, setSocketRequesting,
       isMemberInVC, setIsMemberInVC,
       isSameVC, setIsSameVC,

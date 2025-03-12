@@ -32,19 +32,19 @@ function MobilePonaPlayerPanel({
     const router = useRouter();
     const { language } = useLanguageContext();
     const { userSetting } = useUserSettingContext();
-    const { ponaCommonState } = useGlobalContext();
+    const { ponaCommonState, playback } = useGlobalContext();
     const { socket, playerPopup, setPlayerPopup } = usePonaMusicContext();
     const currentTrack = ponaCommonState?.current;
     const lyricsContainerRef = React.useRef<HTMLElement>(null);
-    const playerPos = ponaCommonState ? ponaCommonState.pona.position : 0;
+    const playerPos = playback;
         
     const {isOpen: isRepeatModalOpen, onOpen: onRepeatModalOpen, onOpenChange: onRepeatModalOpenChange} = useDisclosure();
     const {isOpen: isEqualizerModalOpen, onOpen: onEqualizerModalOpen, onOpenChange: onEqualizerModalOpenChange} = useDisclosure();
-    const [sliderValue, setSliderValue] = React.useState<number | number[]>(ponaCommonState?.pona.position || 0);
+    const [sliderValue, setSliderValue] = React.useState<number | number[]>(playback);
   
     React.useEffect(() => {
-        setSliderValue(ponaCommonState?.pona.position || 0);
-    }, [ponaCommonState?.pona.position]);
+        setSliderValue(playback);
+    }, [playback]);
   
     React.useEffect(()=>{
       if ( !currentTrack )
@@ -115,7 +115,7 @@ function MobilePonaPlayerPanel({
                       }}
                     />
                     <div className='absolute w-full flex flex-row gap-2 justify-between items-center'>
-                      <span className='text-xs text-center !text-[hsl(var(--pona-app-music-accent-color-500)/0.6)]'>{msToTime(ponaCommonState?.pona.position || 0)}</span>
+                      <span className='text-xs text-center !text-[hsl(var(--pona-app-music-accent-color-500)/0.6)]'>{msToTime(playback)}</span>
                       <span className='text-xs text-center !text-[hsl(var(--pona-app-music-accent-color-500)/0.6)]'>{msToTime(ponaCommonState?.pona.length || 0)}</span>
                     </div>
                   </div>

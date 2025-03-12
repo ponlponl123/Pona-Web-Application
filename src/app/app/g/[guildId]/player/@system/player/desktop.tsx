@@ -15,17 +15,17 @@ import toast from 'react-hot-toast';
 function DesktopPonaPlayer() {
     const { language } = useLanguageContext();
     const { userSetting } = useUserSettingContext();
-    const { ponaCommonState } = useGlobalContext();
+    const { ponaCommonState, playback } = useGlobalContext();
     const { socket, playerPopup, setPlayerPopup } = usePonaMusicContext();
     const currentTrack = ponaCommonState?.current;
     const isLoopTrack = ponaCommonState?.pona.repeat.track;
     const isLoopQueue = ponaCommonState?.pona.repeat.queue;
         
-    const [sliderValue, setSliderValue] = React.useState<number | number[]>(ponaCommonState?.pona.position || 0);
+    const [sliderValue, setSliderValue] = React.useState<number | number[]>(playback);
 
     React.useEffect(() => {
-        setSliderValue(ponaCommonState?.pona.position || 0);
-    }, [ponaCommonState?.pona.position]);
+        setSliderValue(playback);
+    }, [playback]);
 
     React.useEffect(()=>{
         if ( !currentTrack )
@@ -131,7 +131,7 @@ function DesktopPonaPlayer() {
                         </div>
                     </motion.div>
                     <div className={`flex items-center justify-center gap-4 w-full max-lg:max-w-[calc(50%_-_3rem)] max-md:max-w-[3rem] max-w-[calc(33.33%_-_1rem)]  ${userSetting.dev_pona_player_style==='modern'?'':'lg:mt-4'}`}>
-                        <span className='w-16 text-center max-lg:hidden !text-[hsl(var(--pona-app-music-accent-color-500))]'>{msToTime(ponaCommonState?.pona.position || 0)}</span>
+                        <span className='w-16 text-center max-lg:hidden !text-[hsl(var(--pona-app-music-accent-color-500))]'>{msToTime(playback)}</span>
                         <Button isIconOnly radius='full' size='md' variant='light' className='scale-110 max-lg:scale-100 max-md:hidden' onPress={()=>{
                             toast.promise(
                                 new Promise<void>((resolve, reject) => {
@@ -222,7 +222,7 @@ function DesktopPonaPlayer() {
                             );
                         }}><CaretLineRight weight='fill' /></Button>
                         <div className='w-16 max-lg:w-max max-md:hidden flex gap-1 text-center whitespace-nowrap !text-[hsl(var(--pona-app-music-accent-color-500))]'>
-                            <span className='lg:hidden flex !text-[hsl(var(--pona-app-music-accent-color-500))]'>{msToTime(ponaCommonState?.pona.position || 0)} / </span>
+                            <span className='lg:hidden flex !text-[hsl(var(--pona-app-music-accent-color-500))]'>{msToTime(playback)} / </span>
                             {msToTime(ponaCommonState?.pona.length || 0)}
                         </div>
                     </div>

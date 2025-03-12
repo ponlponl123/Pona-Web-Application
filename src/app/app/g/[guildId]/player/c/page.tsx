@@ -37,20 +37,28 @@ function Page() {
       setProfileDetail(null);
       setChannelDetail(null);
       setChannelDetailv1(null);
-      const resultv1 = await getArtistv1(accessTokenType, accessToken, channelId);
-      const result = await getArtist(accessTokenType, accessToken, channelId);
-      const profile = await getUser(accessTokenType, accessToken, channelId);
-      if (resultv1)  setChannelDetailv1(resultv1);
-      if (profile)  setProfileDetail(profile);
-      if (!result && !resultv1) return exit(false);
-      exit(result);
-      highResArtworkProxyURI.current = (result && result?.thumbnails) ? `/api/proxy/image?r=`+result?.thumbnails[result?.thumbnails.length-1].url : (resultv1 && resultv1?.thumbnails) ? `/api/proxy/image?r=`+resultv1?.thumbnails[resultv1?.thumbnails.length-1].url : "";
-      const image = new Image();
-      image.src = highResArtworkProxyURI.current;
-      if (image.onloadeddata) image.onloadeddata = () => {
-        setReady(true);
+
+      try {
+        const [resultv1, result, profile] = await Promise.all([
+          getArtistv1(accessTokenType, accessToken, channelId),
+          getArtist(accessTokenType, accessToken, channelId),
+          getUser(accessTokenType, accessToken, channelId)
+        ]);
+
+        if (resultv1) setChannelDetailv1(resultv1);
+        if (profile) setProfileDetail(profile);
+        if (!result && !resultv1) return exit(false);
+        exit(result);
+
+        highResArtworkProxyURI.current = (result && result?.thumbnails) ? `/api/proxy/image?r=` + result?.thumbnails[result?.thumbnails.length - 1].url : (resultv1 && resultv1?.thumbnails) ? `/api/proxy/image?r=` + resultv1?.thumbnails[resultv1?.thumbnails.length - 1].url : "";
+        const image = new Image();
+        image.src = highResArtworkProxyURI.current;
+        if (image.onloadeddata) image.onloadeddata = () => {
+          setReady(true);
+        }
+      } catch {
+        exit(false);
       }
-      return;
     }
 
     letSearch();
@@ -107,14 +115,14 @@ function Page() {
             </div>
             <div className='absolute z-[10] bg-gradient-to-t from-playground-background to-transparent w-full h-full top-0 left-0'></div>
           </motion.div>
-          <div className='w-full z-[4] p-8 flex flex-col max-lg:gap-12 lg:gap-24 items-center justify-start pb-[24vh] -mt-12'>
+          <div className='w-full z-[4] p-8 max-lg:p-0 flex flex-col max-lg:gap-12 lg:gap-24 items-center justify-start pb-[24vh] -mt-12'>
             <div className='w-full max-w-screen-xl flex flex-row flex-wrap gap-8'>
             {
               (
                 (channelDetailv1 && channelDetailv1.topSongs && channelDetailv1.topSongs.length > 0) ||
                 (channelDetail && channelDetail.songs && channelDetail.songs.results && channelDetail.songs.results.length > 0)
               ) && <>
-                <section className='w-full px-16 max-w-screen-xl flex flex-col gap-4 items-center justify-start'>
+                <section className='c section'>
                 {/* <section className='w-full xl:px-16 max-xl:max-md:px-12 xl:max-w-[calc(50%_-_2rem)] flex flex-col gap-4 items-center justify-start'> */}
                   <h1 className='w-full text-start text-4xl'>{language.data.app.guilds.player.artist.category.topSongs}</h1>
                   {
@@ -171,7 +179,7 @@ function Page() {
                 (channelDetailv1 && channelDetailv1.topVideos && channelDetailv1.topVideos.length > 0) ||
                 (channelDetail && channelDetail.videos && channelDetail.videos.results && channelDetail.videos.results.length > 0)
               ) ? <>
-                <section className='w-full px-16 max-w-screen-xl flex flex-col gap-4 items-center justify-start'>
+                <section className='c section'>
                 {/* <section className='w-full xl:px-16 max-xl:max-md:px-12 xl:max-w-[calc(50%_-_2rem)] flex flex-col gap-4 items-center justify-start'> */}
                   <div className='flex gap-4 flex-wrap items-center justify-between w-full p-1 -mt-2'>
                     <h1 className='text-start text-4xl'>{language.data.app.guilds.player.artist.category.topVideos}</h1>
@@ -218,7 +226,7 @@ function Page() {
                   </ScrollShadow>
                 </section>
               </> : profileDetail && profileDetail.videos && profileDetail.videos.results.length > 0 && <>
-                <section className='w-full px-16 max-w-screen-xl flex flex-col gap-4 items-center justify-start'>
+                <section className='c section'>
                 {/* <section className='w-full xl:px-16 max-xl:max-md:px-12 xl:max-w-[calc(50%_-_2rem)] flex flex-col gap-4 items-center justify-start'> */}
                   <h1 className='w-full text-start text-4xl'>{language.data.app.guilds.player.artist.category.topVideos}</h1>
                   <ScrollShadow orientation='vertical' className='w-full relative' hideScrollBar>
@@ -250,7 +258,7 @@ function Page() {
             }
             {
               (channelDetailv1 && channelDetailv1.featuredOn && channelDetailv1.featuredOn.length > 0) && <>
-                <section className='w-full px-16 max-w-screen-xl flex flex-col gap-4 items-center justify-start'>
+                <section className='c section'>
                   <h1 className='w-full text-start text-4xl'>{language.data.app.guilds.player.artist.category.featuredOn} {channelDetail && channelDetail?.name || channelDetailv1 && channelDetailv1.name}</h1>
                   <ScrollShadow orientation='vertical' className='w-full relative' hideScrollBar>
                     <div className='w-max my-6 flex flex-row items-start justify-start gap-5'>
@@ -271,7 +279,7 @@ function Page() {
                 (channelDetailv1 && channelDetailv1.topSingles && channelDetailv1.topSingles.length > 0) ||
                 (channelDetail && channelDetail.singles && channelDetail.singles.results && channelDetail.singles.results.length > 0)
               ) && <>
-                <section className='w-full px-16 max-w-screen-xl flex flex-col gap-4 items-center justify-start'>
+                <section className='c section'>
                   <div className='flex gap-4 flex-wrap items-center justify-between w-full p-1 -mt-2'>
                     <h1 className='text-start text-4xl'>{language.data.app.guilds.player.artist.category.topSingles}</h1>
                     <Button radius='full' variant='bordered' size='sm' color='primary' className='font-bold max-md:text-sm max-md:min-h-0 max-md:min-w-0 max-md:py-3 max-md:px-4 max-md:h-max'>{language.data.app.guilds.player.artist.showmore}</Button>
@@ -329,7 +337,7 @@ function Page() {
                 (channelDetailv1 && channelDetailv1.topAlbums && channelDetailv1.topAlbums.length > 0) ||
                 (channelDetail && channelDetail.albums && channelDetail.albums.results && channelDetail.albums.results.length > 0)
               ) && <>
-                <section className='w-full px-16 max-w-screen-xl flex flex-col gap-4 items-center justify-start'>
+                <section className='c section'>
                   <div className='flex gap-4 flex-wrap items-center justify-between w-full p-1 -mt-2'>
                     <h1 className='text-start text-4xl'>{language.data.app.guilds.player.artist.category.topAlbums}</h1>
                     <Button radius='full' variant='bordered' size='sm' color='primary' className='font-bold max-md:text-sm max-md:min-h-0 max-md:min-w-0 max-md:py-3 max-md:px-4 max-md:h-max'>{language.data.app.guilds.player.artist.showmore}</Button>
@@ -387,7 +395,7 @@ function Page() {
                 (channelDetailv1 && channelDetailv1.similarArtists && channelDetailv1.similarArtists.length > 0) ||
                 (channelDetail && channelDetail.related && channelDetail.related.results && channelDetail.related.results.length > 0)
               ) && <>
-                <section className='w-full px-16 max-w-screen-xl flex flex-col gap-4 items-center justify-start'>
+                <section className='c section'>
                   <h1 className='w-full text-start text-4xl'>{language.data.app.guilds.player.artist.category.similarArtists} {channelDetail && channelDetail?.name || channelDetailv1 && channelDetailv1.name}</h1>
                   <ScrollShadow orientation='vertical' className='w-full relative' hideScrollBar>
                     <div className='w-max my-6 flex flex-row items-start justify-start gap-5'>

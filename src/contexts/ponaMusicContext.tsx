@@ -46,7 +46,9 @@ export const PonaMusicProvider = ({ children }: { children: React.ReactNode }) =
   const {
     setIsMemberInVC,
     setPonaCommonState,
-    setIsSameVC
+    setIsSameVC,
+    setPonaTrackQueue,
+    setPlayback
   } = useGlobalContext();
   const pathname = usePathname() || '';
 
@@ -99,6 +101,10 @@ export const PonaMusicProvider = ({ children }: { children: React.ReactNode }) =
             }
             setPonaCommonState(ponaState.pona || null);
             setIsMemberInVC(ponaState.isMemberInVC || null);
+            setPonaTrackQueue({
+              queue: ponaState?.pona?.queue || [],
+              updating: false
+            });
             if (
               ponaState.pona?.pona.voiceChannel && ponaState.isMemberInVC?.id &&
               ponaState.pona.pona.voiceChannel === ponaState.isMemberInVC.id
@@ -113,14 +119,19 @@ export const PonaMusicProvider = ({ children }: { children: React.ReactNode }) =
               }
               return value;
             });
+            setPonaTrackQueue({
+              queue: [],
+              updating: false
+            });
           });
           iosocket.on('track_pos_updated', (position: number) => {
-            setPonaCommonState((value) => {
-              if (value) {
-                return { ...value, pona: { ...value.pona, position: position } };
-              }
-              return value;
-            });
+            setPlayback(position);
+            // setPonaCommonState((value) => {
+            //   if (value) {
+            //     return { ...value, pona: { ...value.pona, position: position } };
+            //   }
+            //   return value;
+            // });
           });
           iosocket.on('pause_updated', (paused: boolean) => {
             setPonaCommonState((value) => {
@@ -184,6 +195,16 @@ export const PonaMusicProvider = ({ children }: { children: React.ReactNode }) =
               }
               return value;
             });
+            setPonaTrackQueue({
+              queue: queue,
+              updating: false
+            });
+          });
+          iosocket.on('queue_updating', () => {
+            setPonaTrackQueue((value)=>({
+              ...value,
+              updating: true
+            }));
           });
           iosocket.on('player_created', (pona: HTTP_PonaCommonStateWithTracks | null) => {
             setPonaCommonState(pona);
@@ -221,7 +242,7 @@ export const PonaMusicProvider = ({ children }: { children: React.ReactNode }) =
         socket.close();
       }
     }
-  }, [guild, manager, isConnected, socket, oauth_type, oauth_token, pathname, setPonaCommonState, setIsMemberInVC, setIsSameVC])
+  }, [guild, manager, isConnected, socket, oauth_type, oauth_token, pathname, setPonaCommonState, setIsMemberInVC, setIsSameVC, setPonaTrackQueue, setPlayback])
 
   return (
     <PonaMusicContext.Provider value={{

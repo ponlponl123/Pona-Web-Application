@@ -289,6 +289,14 @@ main#app-workspace {
   @apply opacity-25
 }
 
+section.c.section {
+  @apply w-full px-16 max-xl:px-8 max-lg:px-4 max-w-screen-xl flex flex-col gap-4 items-center justify-start;
+}
+
+.nextui-ripple {
+  filter: blur(2rem)
+}
+
 footer.pona-footer {
   @apply flex gap-6 items-center justify-center min-h-24 w-full relative p-6;
 }

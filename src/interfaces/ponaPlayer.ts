@@ -75,7 +75,7 @@ export interface HTTP_PonaRepeatState {
 }
 
 export interface HTTP_PonaCommonState {
-  position: number;
+  // position: number;
   length: number;
 	repeat: HTTP_PonaRepeatState;
 	volume: number;

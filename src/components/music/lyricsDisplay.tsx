@@ -47,7 +47,7 @@ const LyricsDisplay: React.FC<LyricsDisplayProps> = ({ currentTrack, playerPosit
     }
 
     return (
-        <div className="w-full text-center">
+        <div className="w-full text-center pb-[24vh]">
             {(currentTrack?.lyrics.lyrics as TimestampLyrics[]).map((lyrics, index) => (
                 <div
                     key={index}
