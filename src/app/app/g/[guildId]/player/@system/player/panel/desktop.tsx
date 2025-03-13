@@ -202,7 +202,6 @@ export function DraggableTrack({index, track, active, isLoading}:
         transform,
         transition,
     } = useSortable({id: track.uniqueId as string});
-    const { userSetting } = useUserSettingContext();
     
     const style = {
         transform: CSS.Transform.toString(transform),
@@ -220,14 +219,9 @@ export function DraggableTrack({index, track, active, isLoading}:
                 initial: false,
                 whileTap: {
                     outline: "2px hsl(var(--pona-app-music-accent-color-500)) solid",
+                    backdropFilter: 'blur(12px)',
                     userSelect: "none",
                     zIndex: 24,
-                    ...(userSetting.transparency) ?
-                    {
-                        backdropFilter: 'blur(16px)'
-                    } : {
-                        backgroundColor: 'hsl(var(--pona-app-playground-background))',
-                    }
                 },
                 style,
                 ...attributes,
@@ -280,14 +274,14 @@ export function TrackQueue({index, track, active, isLoading, ref, params}:
             </div>
             <div className={`w-[calc(100%_-_10rem)] ${isLoading?'flex flex-col gap-1':''}`}>
                 <Skeleton className={isLoading?'rounded-full h-5':'h-max'} isLoaded={!isLoading}>
-                    <h1 className='w-full text-[hsl(var(--pona-app-music-accent-color-500))] whitespace-nowrap overflow-hidden overflow-ellipsis'>{track.title}</h1>
+                    <h1 className='w-full [div.active_&]:text-[hsl(var(--pona-app-music-accent-color-500))] whitespace-nowrap overflow-hidden overflow-ellipsis'>{track.title}</h1>
                 </Skeleton>
                 <Skeleton className={isLoading?'rounded-full h-3 w-2/5':'h-max -mt-1'} isLoaded={!isLoading}>
-                    <span className='w-full text-xs text-[hsl(var(--pona-app-music-accent-color-500)/0.4)] whitespace-nowrap overflow-hidden overflow-ellipsis'>{track.author} ({track.requester?.displayName || '@'+track.requester?.username})</span>
+                    <span className='w-full text-xs text-foreground/40 [div.active_&]:text-[hsl(var(--pona-app-music-accent-color-500)/0.4)] whitespace-nowrap overflow-hidden overflow-ellipsis'>{track.author} ({track.requester?.displayName || '@'+track.requester?.username})</span>
                 </Skeleton>
             </div>
             <div className={`ml-auto relative w-12 h-12 flex items-center justify-center ${isLoading?'opacity-0 pointer-events-none':''}`}>
-                <span className='text-[hsl(var(--pona-app-music-accent-color-500)/0.64)] group-hover:opacity-0 opacity-100 pointer-events-none'>{msToTime(track.duration || 0)}</span>
+                <span className='[div.active_&]:text-[hsl(var(--pona-app-music-accent-color-500)/0.64)] group-hover:opacity-0 opacity-100 pointer-events-none'>{msToTime(track.duration || 0)}</span>
                 <Button className='absolute z-10 top-0 left-0 w-full h-full group-hover:opacity-100 opacity-0' variant='light' radius='full' isIconOnly><DotsThreeVertical weight='bold' /></Button>
             </div>
         </motion.div>

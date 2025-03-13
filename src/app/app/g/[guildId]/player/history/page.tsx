@@ -8,6 +8,7 @@ import { Button, Progress } from '@nextui-org/react';
 import { MagnifyingGlass, MicrophoneStage, MusicNotesSimple } from '@phosphor-icons/react/dist/ssr';
 import { getCookie } from 'cookies-next';
 import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion'
 import React from 'react'
 
 function Page() {
@@ -44,10 +45,18 @@ function Page() {
         </div>
       </div>
       <div id='pona-search-result' className='w-full flex flex-col gap-12 mt-4'>
-        <div className='flex flex-col gap-8 w-full'>
+        <div className='flex flex-col gap-4 w-full'>
           {
             searchResult ? searchResult.map((result, idx) => (
-              <Track key={idx} data={{
+              <motion.div key={idx}
+                initial={{opacity:0,y:32}}
+                animate={{opacity:1,y:0}}
+                transition={{
+                  delay: 0.012 * idx,
+                  ease: 'easeInOut',
+                  x: { type: "spring", damping: 15, stiffness: 150 },
+                }}
+              ><Track data={{
                 artists: [{
                   name: result.track.author,
                 }] as ArtistBasic[],
@@ -67,7 +76,7 @@ function Page() {
                 resultType: "video",
                 duration: result.track.duration,
                 duration_seconds: result.track.duration/1000
-              } as unknown as VideoDetailed} />
+              } as unknown as VideoDetailed} /></motion.div>
             )) :
             <div className='absolute top-0 left-0 w-full h-full flex flex-col items-center justify-center gap-4 rounded-3xl bg-foreground/10'>
               <MicrophoneStage size={48} />

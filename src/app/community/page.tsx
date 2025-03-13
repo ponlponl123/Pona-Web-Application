@@ -125,6 +125,8 @@ function Page() {
                             <Link href='https://github.com/discordjs' target='_blank' isBlock showAnchorIcon>discord.js</Link>
                             <Link href='https://phosphoricons.com/' target='_blank' isBlock showAnchorIcon>PhosphorIcons</Link>
                             <Link href='https://www.framer.com/motion/' target='_blank' isBlock showAnchorIcon>Framer Motion</Link>
+                            <Link href='https://github.com/davidjerleke/embla-carousel' target='_blank' isBlock showAnchorIcon>embla-carousel</Link>
+                            <Link href='https://github.com/shadcn-ui/ui' target='_blank' isBlock showAnchorIcon>shadcn-ui</Link>
                             <Link href='https://github.com/axios/axios' target='_blank' isBlock showAnchorIcon>axios</Link>
                             <Link href='https://github.com/catdad/canvas-confetti' target='_blank' isBlock showAnchorIcon>Canvas Confetti</Link>
                             <Link href='https://github.com/andreizanik/cookies-next' target='_blank' isBlock showAnchorIcon>Cookies Next</Link>

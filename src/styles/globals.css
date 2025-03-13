@@ -1,5 +1,6 @@
 @import './themes.css';
 @import './markdown.css';
+@import './embla-carousel.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -305,7 +306,11 @@ footer.pona-footer a {
   @apply flex items-center gap-2 hover:underline hover:underline-offset-4;
 }
 
-footer.pona-footer > div {
+footer.pona-footer > div:not(:nth-child(2)) {
+  @apply row-start-3 w-full flex flex-wrap gap-6 items-center justify-center;
+}
+
+footer.pona-footer .div {
   @apply row-start-3 w-full flex flex-wrap gap-6 items-center justify-center;
 }
 

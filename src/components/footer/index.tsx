@@ -18,77 +18,81 @@ function Footer() {
         <span className='opacity-50 text-xs max-md:text-center'>© 2024 - 2025 Pona! Application - Ponlponl123 Projects And the Ponlponl123.com Design are trademarks, services marks, and/or registered trademarks of Ponlponl123.com</span>
         <span className='opacity-30 text-xs max-md:text-center flex flex-wrap gap-1 items-center'>PhosphorIcons <SmileyWink size={12} />, Framer Motion <PersonSimpleRun size={12} />, NextUI <Sunglasses size={12} /></span>
       </div>
-      <div>
-        <Link
-          href="https://github.com/ponlponl123/Pona-Discord-Application"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <GithubLogo
-            alt="Github"
-          />
-          {language.data.footer.links.github}
-        </Link>
-        <Link
-          href="https://github.com/ponlponl123/Pona-Discord-Application/tree/main/docs"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Atom
-            alt="Atom"
-          />
-          {language.data.footer.links.apidocs}
-        </Link>
-        <Link
-          href="https://ponlponl123.com/discord"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Bird
-            alt="Bird"
-          />
-          {language.data.footer.links.support}
-        </Link>
-        <Link
-          href="/community"
-          rel="noopener noreferrer"
-        >
-          <PottedPlant
-            alt="PottedPlant"
-          />
-          {language.data.community.title}
-        </Link>
-        <Link
-          href="/status"
-          rel="noopener noreferrer"
-        >
-          <Cube
-            alt="Cube"
-          />
-          {language.data.footer.links.status}
-        </Link>
-        <Link
-          href="https://law.ponlponl123.com/pona"
-          rel="noopener noreferrer"
-        >
-          <Gavel
-            alt="Gavel"
-          />
-          {language.data.footer.links.legal}
-        </Link>
-        <Tooltip className="capitalize" color="primary" size='sm' content={language.data.footer.links.a_coffee}>
-          <a title={language.data.footer.links.a_coffee} className='group'>
-            <Coffee
-              alt="Coffee"
-              className='group-hover:hidden'
+      <div className='flex flex-col justify-center items-center gap-2'>
+        <div className='div'>
+          <Link
+            href="https://github.com/ponlponl123/Pona-Discord-Application"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <GithubLogo
+              alt="Github"
             />
-            <Coffee
-              alt="A cup of Coffee"
-              weight='fill'
-              className='hidden group-hover:block'
+            {language.data.footer.links.github}
+          </Link>
+          <Link
+            href="https://github.com/ponlponl123/Pona-Discord-Application/tree/main/docs"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Atom
+              alt="Atom"
             />
-          </a>
-        </Tooltip>
+            {language.data.footer.links.apidocs}
+          </Link>
+          <Link
+            href="https://ponlponl123.com/discord"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Bird
+              alt="Bird"
+            />
+            {language.data.footer.links.support}
+          </Link>
+          <Link
+            href="/community"
+            rel="noopener noreferrer"
+          >
+            <PottedPlant
+              alt="PottedPlant"
+            />
+            {language.data.community.title}
+          </Link>
+          <Link
+            href="/status"
+            rel="noopener noreferrer"
+          >
+            <Cube
+              alt="Cube"
+            />
+            {language.data.footer.links.status}
+          </Link>
+          <Link
+            href="https://law.ponlponl123.com/pona"
+            rel="noopener noreferrer"
+          >
+            <Gavel
+              alt="Gavel"
+            />
+            {language.data.footer.links.legal}
+          </Link>
+          <Tooltip className="capitalize" color="primary" size='sm' content={language.data.footer.links.a_coffee}>
+            <a title={language.data.footer.links.a_coffee} className='group'>
+              <Coffee
+                alt="Coffee"
+                className='group-hover:hidden'
+              />
+              <Coffee
+                alt="A cup of Coffee"
+                weight='fill'
+                className='hidden group-hover:block'
+              />
+            </a>
+          </Tooltip>
+        </div>
+        <div>
+        </div>
       </div>
       <div className='max-md:-order-1'>
         <Select

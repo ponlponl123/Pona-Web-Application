@@ -1,7 +1,7 @@
 "use client"
 import { useLanguageContext } from '@/contexts/languageContext';
 import { getArtist, getArtistv1, getUser } from '@/server-side-api/internal/search';
-import { Button, Image as NextImage, Progress, ScrollShadow } from '@nextui-org/react';
+import { Button, Image as NextImage, Progress } from '@nextui-org/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { getCookie } from 'cookies-next';
 import { motion } from 'framer-motion';
@@ -10,7 +10,9 @@ import { AlbumCard, ArtistCard, PlaylistCard, VideoCard } from '@/components/mus
 import Track from '@/components/music/searchResult/track';
 import { ArtistFull as ArtistFullv1 } from '@/interfaces/ytmusic';
 import { ArtistFull, ProfileFull, SongDetailed, VideoDetailed } from '@/interfaces/ytmusic-api';
-import { FlyingSaucer } from '@phosphor-icons/react/dist/ssr';
+import { CaretLeft, CaretRight, FlyingSaucer } from '@phosphor-icons/react/dist/ssr';
+import useEmblaCarousel from 'embla-carousel-react';
+import { usePrevNextButtons } from '@/utils/Embla/CarouselArrowButtons';
 
 function Page() {
   const router = useRouter();
@@ -23,6 +25,41 @@ function Page() {
   const [ profileDetail, setProfileDetail ] = React.useState<ProfileFull | null | false>(null);
   const channelId = searchParams ? searchParams.get('c') : ""
   const highResArtworkProxyURI = React.useRef<string>("");
+  const [videoEmblaRef, videoEmblaApi] = useEmblaCarousel({ skipSnaps: true })
+  const [channelEmblaRef, channelEmblaApi] = useEmblaCarousel({ skipSnaps: true })
+  const [singleEmblaRef, singleEmblaApi] = useEmblaCarousel({ skipSnaps: true })
+  const [albumEmblaRef, albumEmblaApi] = useEmblaCarousel({ skipSnaps: true })
+  const [artistEmblaRef, artistEmblaApi] = useEmblaCarousel({ skipSnaps: true })
+  const {
+    prevBtnDisabled: videoEmblaPrevBtnDisabled,
+    nextBtnDisabled: videoEmblaNextBtnDisabled,
+    onPrevButtonClick: videoEmblaOnPrevButtonClick,
+    onNextButtonClick: videoEmblaOnNextButtonClick
+  } = usePrevNextButtons(videoEmblaApi);
+  const {
+    prevBtnDisabled: channelEmblaPrevBtnDisabled,
+    nextBtnDisabled: channelEmblaNextBtnDisabled,
+    onPrevButtonClick: channelEmblaOnPrevButtonClick,
+    onNextButtonClick: channelEmblaOnNextButtonClick
+  } = usePrevNextButtons(channelEmblaApi);
+  const {
+    prevBtnDisabled: singleEmblaPrevBtnDisabled,
+    nextBtnDisabled: singleEmblaNextBtnDisabled,
+    onPrevButtonClick: singleEmblaOnPrevButtonClick,
+    onNextButtonClick: singleEmblaOnNextButtonClick
+  } = usePrevNextButtons(singleEmblaApi);
+  const {
+    prevBtnDisabled: albumEmblaPrevBtnDisabled,
+    nextBtnDisabled: albumEmblaNextBtnDisabled,
+    onPrevButtonClick: albumEmblaOnPrevButtonClick,
+    onNextButtonClick: albumEmblaOnNextButtonClick
+  } = usePrevNextButtons(albumEmblaApi);
+  const {
+    prevBtnDisabled: artistEmblaPrevBtnDisabled,
+    nextBtnDisabled: artistEmblaNextBtnDisabled,
+    onPrevButtonClick: artistEmblaOnPrevButtonClick,
+    onNextButtonClick: artistEmblaOnNextButtonClick
+  } = usePrevNextButtons(artistEmblaApi);
 
   React.useEffect(() => {
     const exit = (provider: ArtistFull | null | false) => {
@@ -177,100 +214,140 @@ function Page() {
             {
               (
                 (channelDetailv1 && channelDetailv1.topVideos && channelDetailv1.topVideos.length > 0) ||
-                (channelDetail && channelDetail.videos && channelDetail.videos.results && channelDetail.videos.results.length > 0)
-              ) ? <>
+                (channelDetail && channelDetail.videos && channelDetail.videos.results && channelDetail.videos.results.length > 0) ||
+                (profileDetail && profileDetail.videos && profileDetail.videos.results.length > 0)
+              ) && <>
                 <section className='c section'>
-                {/* <section className='w-full xl:px-16 max-xl:max-md:px-12 xl:max-w-[calc(50%_-_2rem)] flex flex-col gap-4 items-center justify-start'> */}
                   <div className='flex gap-4 flex-wrap items-center justify-between w-full p-1 -mt-2'>
                     <h1 className='text-start text-4xl'>{language.data.app.guilds.player.artist.category.topVideos}</h1>
+                    <div className='flex-1'></div>
+                    {
+                      channelDetail && channelDetail?.videos?.browseId && channelDetail?.videos?.params &&
+                      <Button radius='full' variant='bordered' size='sm' color='primary' className='font-bold max-md:text-sm max-md:min-h-0 max-md:min-w-0 max-md:py-3 max-md:px-4 max-md:h-max'>{language.data.app.guilds.player.artist.showmore}</Button>
+                    }
+                    <div className="embla__buttons gap-3 flex items-center justify-center">
+                      <Button
+                        onPress={videoEmblaOnPrevButtonClick} disabled={videoEmblaPrevBtnDisabled}
+                        title='previous'
+                        className="embla__button embla__button--prev border-2 border-foreground/10 bg-foreground/10 disabled:opacity-30 disabled:bg-transparent disabled:border-foreground/5"
+                        type="button"
+                        size='sm'
+                        radius='full'
+                        isIconOnly
+                      ><CaretLeft/></Button>
+                      <Button
+                        onPress={videoEmblaOnNextButtonClick} disabled={videoEmblaNextBtnDisabled}
+                        title='next'
+                        className="embla__button embla__button--next border-2 border-foreground/10 bg-foreground/10 disabled:opacity-30 disabled:bg-transparent disabled:border-foreground/5"
+                        type="button"
+                        size='sm'
+                        radius='full'
+                        isIconOnly
+                      ><CaretRight/></Button>
+                    </div>
                   </div>
-                  <ScrollShadow orientation='vertical' className='w-full relative' hideScrollBar>
-                  <div className='w-max my-6 flex flex-row items-start justify-start gap-5'>
-                  {
-                    (channelDetail && channelDetail.videos && channelDetail.videos.results && channelDetail.videos.results.length > 0) ? channelDetail.videos.results.map((videoDetail, index) => (
-                      <React.Fragment key={index}>
-                        <VideoCard video={{
-                          artists: videoDetail.artists,
-                          category: "Videos",
-                          duration_seconds: null,
-                          isExplicit: false,
-                          resultType: "viceo",
-                          thumbnails: videoDetail.thumbnails,
-                          title: videoDetail.title,
-                          videoId: videoDetail.videoId,
-                          view: videoDetail.views,
-                          videoType: null,
-                          year: null
-                        } as unknown as VideoDetailed} />
-                      </React.Fragment>
-                    )) : (channelDetailv1 && channelDetailv1.topVideos && channelDetailv1.topVideos.length > 0) && channelDetailv1.topVideos.map((videoDetail, index) => (
-                      <React.Fragment key={index}>
-                        <VideoCard video={{
-                          artists: [{ id: videoDetail.artist.artistId, name: videoDetail.artist.name }],
-                          category: "Videos",
-                          duration: videoDetail.duration,
-                          duration_seconds: videoDetail.duration && videoDetail.duration/1000,
-                          isExplicit: false,
-                          resultType: "viceo",
-                          thumbnails: videoDetail.thumbnails,
-                          title: videoDetail.name,
-                          videoId: videoDetail.videoId,
-                          view: null,
-                          videoType: null,
-                          year: null
-                        } as unknown as VideoDetailed} />
-                      </React.Fragment>
-                    ))
-                  }
+                  <div className="embla w-full max-w-none mx-0 mt-6 z-10 relative">
+                    <div className="embla__viewport" ref={videoEmblaRef}>
+                      <div className="embla__container gap-5 select-none px-4">
+                      {
+                        (channelDetail && channelDetail.videos && channelDetail.videos.results && channelDetail.videos.results.length > 0) ? channelDetail.videos.results.map((videoDetail, index) => (
+                          <React.Fragment key={index}>
+                            <VideoCard video={{
+                              artists: videoDetail.artists,
+                              category: "Videos",
+                              duration_seconds: null,
+                              isExplicit: false,
+                              resultType: "viceo",
+                              thumbnails: videoDetail.thumbnails,
+                              title: videoDetail.title,
+                              videoId: videoDetail.videoId,
+                              view: videoDetail.views,
+                              videoType: null,
+                              year: null
+                            } as unknown as VideoDetailed} />
+                          </React.Fragment>
+                        )) : (channelDetailv1 && channelDetailv1.topVideos && channelDetailv1.topVideos.length > 0) ? channelDetailv1.topVideos.map((videoDetail, index) => (
+                          <React.Fragment key={index}>
+                            <VideoCard video={{
+                              artists: [{ id: videoDetail.artist.artistId, name: videoDetail.artist.name }],
+                              category: "Videos",
+                              duration: videoDetail.duration,
+                              duration_seconds: videoDetail.duration && videoDetail.duration/1000,
+                              isExplicit: false,
+                              resultType: "viceo",
+                              thumbnails: videoDetail.thumbnails,
+                              title: videoDetail.name,
+                              videoId: videoDetail.videoId,
+                              view: null,
+                              videoType: null,
+                              year: null
+                            } as unknown as VideoDetailed} />
+                          </React.Fragment>
+                        )) : (profileDetail && profileDetail.videos && profileDetail.videos.results.length > 0) && profileDetail.videos.results.map((videoDetail, index) => (
+                          <React.Fragment key={index}>
+                            <VideoCard video={{
+                              artists: videoDetail.artists,
+                              category: "Videos",
+                              duration: null,
+                              duration_seconds: null,
+                              isExplicit: false,
+                              resultType: "video",
+                              thumbnails: videoDetail.thumbnails,
+                              title: videoDetail.title,
+                              videoId: videoDetail.videoId,
+                              view: null,
+                              videoType: null,
+                              year: null
+                            } as unknown as VideoDetailed} />
+                          </React.Fragment>
+                        ))
+                      }
+                      </div>
+                    </div>
                   </div>
-                  </ScrollShadow>
-                </section>
-              </> : profileDetail && profileDetail.videos && profileDetail.videos.results.length > 0 && <>
-                <section className='c section'>
-                {/* <section className='w-full xl:px-16 max-xl:max-md:px-12 xl:max-w-[calc(50%_-_2rem)] flex flex-col gap-4 items-center justify-start'> */}
-                  <h1 className='w-full text-start text-4xl'>{language.data.app.guilds.player.artist.category.topVideos}</h1>
-                  <ScrollShadow orientation='vertical' className='w-full relative' hideScrollBar>
-                  <div className='w-max my-6 flex flex-row items-start justify-start gap-5'>
-                  {
-                    profileDetail.videos.results.map((videoDetail, index) => (
-                      <React.Fragment key={index}>
-                        <VideoCard video={{
-                          artists: videoDetail.artists,
-                          category: "Videos",
-                          duration: null,
-                          duration_seconds: null,
-                          isExplicit: false,
-                          resultType: "video",
-                          thumbnails: videoDetail.thumbnails,
-                          title: videoDetail.title,
-                          videoId: videoDetail.videoId,
-                          view: null,
-                          videoType: null,
-                          year: null
-                        } as unknown as VideoDetailed} />
-                      </React.Fragment>
-                    ))
-                  }
-                  </div>
-                  </ScrollShadow>
                 </section>
               </>
             }
             {
               (channelDetailv1 && channelDetailv1.featuredOn && channelDetailv1.featuredOn.length > 0) && <>
                 <section className='c section'>
-                  <h1 className='w-full text-start text-4xl'>{language.data.app.guilds.player.artist.category.featuredOn} {channelDetail && channelDetail?.name || channelDetailv1 && channelDetailv1.name}</h1>
-                  <ScrollShadow orientation='vertical' className='w-full relative' hideScrollBar>
-                    <div className='w-max my-6 flex flex-row items-start justify-start gap-5'>
-                    {
-                      channelDetailv1.featuredOn.map((playlistDetailed, index) => (
-                        <React.Fragment key={index}>
-                          <PlaylistCard playlist={playlistDetailed} />
-                        </React.Fragment>
-                      ))
-                    }
+                  <div className='flex gap-4 items-center justify-between w-full p-1 -mt-2'>
+                    <h1 className='w-full text-start text-4xl'>{language.data.app.guilds.player.artist.category.featuredOn} {channelDetail && channelDetail?.name || channelDetailv1 && channelDetailv1.name}</h1>
+                    <div className='flex-1'></div>
+                    <div className="embla__buttons gap-3 flex items-center justify-center">
+                      <Button
+                        onPress={channelEmblaOnPrevButtonClick} disabled={channelEmblaPrevBtnDisabled}
+                        title='previous'
+                        className="embla__button embla__button--prev border-2 border-foreground/10 bg-foreground/10 disabled:opacity-30 disabled:bg-transparent disabled:border-foreground/5"
+                        type="button"
+                        size='sm'
+                        radius='full'
+                        isIconOnly
+                      ><CaretLeft/></Button>
+                      <Button
+                        onPress={channelEmblaOnNextButtonClick} disabled={channelEmblaNextBtnDisabled}
+                        title='next'
+                        className="embla__button embla__button--next border-2 border-foreground/10 bg-foreground/10 disabled:opacity-30 disabled:bg-transparent disabled:border-foreground/5"
+                        type="button"
+                        size='sm'
+                        radius='full'
+                        isIconOnly
+                      ><CaretRight/></Button>
                     </div>
-                  </ScrollShadow>
+                  </div>
+                  <div className="embla w-full max-w-none mx-0 mt-6 z-10 relative">
+                    <div className="embla__viewport" ref={channelEmblaRef}>
+                      <div className="embla__container gap-5 select-none px-4">
+                      {
+                        channelDetailv1.featuredOn.map((playlistDetailed, index) => (
+                          <React.Fragment key={index}>
+                            <PlaylistCard playlist={playlistDetailed} />
+                          </React.Fragment>
+                        ))
+                      }
+                      </div>
+                    </div>
+                  </div>
                 </section>
               </>
             }
@@ -280,55 +357,81 @@ function Page() {
                 (channelDetail && channelDetail.singles && channelDetail.singles.results && channelDetail.singles.results.length > 0)
               ) && <>
                 <section className='c section'>
-                  <div className='flex gap-4 flex-wrap items-center justify-between w-full p-1 -mt-2'>
+                  <div className='flex gap-4 items-center justify-between w-full p-1 -mt-2'>
                     <h1 className='text-start text-4xl'>{language.data.app.guilds.player.artist.category.topSingles}</h1>
-                    <Button radius='full' variant='bordered' size='sm' color='primary' className='font-bold max-md:text-sm max-md:min-h-0 max-md:min-w-0 max-md:py-3 max-md:px-4 max-md:h-max'>{language.data.app.guilds.player.artist.showmore}</Button>
-                  </div>
-                  <ScrollShadow orientation='vertical' className='w-full relative' hideScrollBar>
-                    <div className='w-max my-6 flex flex-row items-start justify-start gap-5'>
+                    <div className='flex-1'></div>
                     {
-                      (channelDetail && channelDetail.singles && channelDetail.singles.results && channelDetail.singles.results.length > 0) ? channelDetail.singles.results.map((singleDetail, index) => (
-                        <React.Fragment key={index}>
-                          <AlbumCard album={{
-                            artists: [{
-                              id: channelId,
-                              name: channelDetail.name
-                            }],
-                            browseId: singleDetail.browseId,
-                            category: 'Albums',
-                            duration: null,
-                            isExplicit: false,
-                            playlistId: singleDetail.browseId,
-                            resultType: 'single',
-                            thumbnails: singleDetail.thumbnails,
-                            title: singleDetail.title,
-                            year: Number(singleDetail.year),
-                            type: ''
-                          }} />
-                        </React.Fragment>
-                      )) : (channelDetailv1 && channelDetailv1.topSingles && channelDetailv1.topSingles.length > 0) && channelDetailv1.topSingles.map((singleDetail, index) => (
-                        <React.Fragment key={index}>
-                          <AlbumCard album={{
-                            artists: [{
-                              id: singleDetail.artist.artistId,
-                              name: singleDetail.artist.name
-                            }],
-                            browseId: singleDetail.albumId,
-                            category: 'Albums',
-                            duration: null,
-                            isExplicit: false,
-                            playlistId: singleDetail.albumId,
-                            resultType: 'single',
-                            thumbnails: singleDetail.thumbnails,
-                            title: singleDetail.name,
-                            year: singleDetail.year,
-                            type: singleDetail.type
-                          }} />
-                        </React.Fragment>
-                      ))
+                      channelDetail && channelDetail?.singles?.browseId && channelDetail?.singles?.params &&
+                      <Button radius='full' variant='bordered' size='sm' color='primary' className='font-bold max-md:text-sm max-md:min-h-0 max-md:min-w-0 max-md:py-3 max-md:px-4 max-md:h-max'>{language.data.app.guilds.player.artist.showmore}</Button>
                     }
+                    <div className="embla__buttons gap-3 flex items-center justify-center">
+                      <Button
+                        onPress={singleEmblaOnPrevButtonClick} disabled={singleEmblaPrevBtnDisabled}
+                        title='previous'
+                        className="embla__button embla__button--prev border-2 border-foreground/10 bg-foreground/10 disabled:opacity-30 disabled:bg-transparent disabled:border-foreground/5"
+                        type="button"
+                        size='sm'
+                        radius='full'
+                        isIconOnly
+                      ><CaretLeft/></Button>
+                      <Button
+                        onPress={singleEmblaOnNextButtonClick} disabled={singleEmblaNextBtnDisabled}
+                        title='next'
+                        className="embla__button embla__button--next border-2 border-foreground/10 bg-foreground/10 disabled:opacity-30 disabled:bg-transparent disabled:border-foreground/5"
+                        type="button"
+                        size='sm'
+                        radius='full'
+                        isIconOnly
+                      ><CaretRight/></Button>
                     </div>
-                  </ScrollShadow>
+                  </div>
+                  <div className="embla w-full max-w-none mx-0 mt-6 z-10 relative">
+                    <div className="embla__viewport" ref={singleEmblaRef}>
+                      <div className="embla__container gap-5 select-none px-4">
+                      {
+                        (channelDetail && channelDetail.singles && channelDetail.singles.results && channelDetail.singles.results.length > 0) ? channelDetail.singles.results.map((singleDetail, index) => (
+                          <React.Fragment key={index}>
+                            <AlbumCard album={{
+                              artists: [{
+                                id: channelId,
+                                name: channelDetail.name
+                              }],
+                              browseId: singleDetail.browseId,
+                              category: 'Albums',
+                              duration: null,
+                              isExplicit: false,
+                              playlistId: singleDetail.browseId,
+                              resultType: 'single',
+                              thumbnails: singleDetail.thumbnails,
+                              title: singleDetail.title,
+                              year: Number(singleDetail.year),
+                              type: ''
+                            }} />
+                          </React.Fragment>
+                        )) : (channelDetailv1 && channelDetailv1.topSingles && channelDetailv1.topSingles.length > 0) && channelDetailv1.topSingles.map((singleDetail, index) => (
+                          <React.Fragment key={index}>
+                            <AlbumCard album={{
+                              artists: [{
+                                id: singleDetail.artist.artistId,
+                                name: singleDetail.artist.name
+                              }],
+                              browseId: singleDetail.albumId,
+                              category: 'Albums',
+                              duration: null,
+                              isExplicit: false,
+                              playlistId: singleDetail.albumId,
+                              resultType: 'single',
+                              thumbnails: singleDetail.thumbnails,
+                              title: singleDetail.name,
+                              year: singleDetail.year,
+                              type: singleDetail.type
+                            }} />
+                          </React.Fragment>
+                        ))
+                      }
+                      </div>
+                    </div>
+                  </div>
                 </section>
               </>
             }
@@ -338,55 +441,81 @@ function Page() {
                 (channelDetail && channelDetail.albums && channelDetail.albums.results && channelDetail.albums.results.length > 0)
               ) && <>
                 <section className='c section'>
-                  <div className='flex gap-4 flex-wrap items-center justify-between w-full p-1 -mt-2'>
+                  <div className='flex gap-4 items-center justify-between w-full p-1 -mt-2'>
                     <h1 className='text-start text-4xl'>{language.data.app.guilds.player.artist.category.topAlbums}</h1>
-                    <Button radius='full' variant='bordered' size='sm' color='primary' className='font-bold max-md:text-sm max-md:min-h-0 max-md:min-w-0 max-md:py-3 max-md:px-4 max-md:h-max'>{language.data.app.guilds.player.artist.showmore}</Button>
-                  </div>
-                  <ScrollShadow orientation='vertical' className='w-full relative' hideScrollBar>
-                    <div className='w-max my-6 flex flex-row items-start justify-start gap-5'>
+                    <div className='flex-1'></div>
                     {
-                      (channelDetail && channelDetail.albums && channelDetail.albums.results && channelDetail.albums.results.length > 0) ? channelDetail.albums.results.map((albumDetail, index) => (
-                        <React.Fragment key={index}>
-                          <AlbumCard album={{
-                            artists: [{
-                              id: channelId,
-                              name: channelDetail.name
-                            }],
-                            browseId: albumDetail.browseId,
-                            category: 'Albums',
-                            duration: null,
-                            isExplicit: false,
-                            playlistId: albumDetail.browseId,
-                            resultType: 'album',
-                            thumbnails: albumDetail.thumbnails,
-                            title: albumDetail.title,
-                            year: Number(albumDetail.year),
-                            type: ''
-                          }} />
-                        </React.Fragment>
-                      )) : (channelDetailv1 && channelDetailv1.topAlbums && channelDetailv1.topAlbums.length > 0) && channelDetailv1.topAlbums.map((albumDetail, index) => (
-                        <React.Fragment key={index}>
-                          <AlbumCard album={{
-                            artists: [{
-                              id: albumDetail.artist.artistId,
-                              name: albumDetail.artist.name
-                            }],
-                            browseId: albumDetail.albumId,
-                            category: 'Albums',
-                            duration: null,
-                            isExplicit: false,
-                            playlistId: albumDetail.albumId,
-                            resultType: 'album',
-                            thumbnails: albumDetail.thumbnails,
-                            title: albumDetail.name,
-                            year: albumDetail.year,
-                            type: albumDetail.type
-                          }} />
-                        </React.Fragment>
-                      ))
+                      channelDetail && channelDetail?.albums?.browseId && channelDetail?.albums?.params &&
+                      <Button radius='full' variant='bordered' size='sm' color='primary' className='font-bold max-md:text-sm max-md:min-h-0 max-md:min-w-0 max-md:py-3 max-md:px-4 max-md:h-max'>{language.data.app.guilds.player.artist.showmore}</Button>
                     }
+                    <div className="embla__buttons gap-3 flex items-center justify-center">
+                      <Button
+                        onPress={albumEmblaOnPrevButtonClick} disabled={albumEmblaPrevBtnDisabled}
+                        title='previous'
+                        className="embla__button embla__button--prev border-2 border-foreground/10 bg-foreground/10 disabled:opacity-30 disabled:bg-transparent disabled:border-foreground/5"
+                        type="button"
+                        size='sm'
+                        radius='full'
+                        isIconOnly
+                      ><CaretLeft/></Button>
+                      <Button
+                        onPress={albumEmblaOnNextButtonClick} disabled={albumEmblaNextBtnDisabled}
+                        title='next'
+                        className="embla__button embla__button--next border-2 border-foreground/10 bg-foreground/10 disabled:opacity-30 disabled:bg-transparent disabled:border-foreground/5"
+                        type="button"
+                        size='sm'
+                        radius='full'
+                        isIconOnly
+                      ><CaretRight/></Button>
                     </div>
-                  </ScrollShadow>
+                  </div>
+                  <div className="embla w-full max-w-none mx-0 mt-6 z-10 relative">
+                    <div className="embla__viewport" ref={albumEmblaRef}>
+                      <div className="embla__container gap-5 select-none px-4">
+                      {
+                        (channelDetail && channelDetail.albums && channelDetail.albums.results && channelDetail.albums.results.length > 0) ? channelDetail.albums.results.map((albumDetail, index) => (
+                          <React.Fragment key={index}>
+                            <AlbumCard album={{
+                              artists: [{
+                                id: channelId,
+                                name: channelDetail.name
+                              }],
+                              browseId: albumDetail.browseId,
+                              category: 'Albums',
+                              duration: null,
+                              isExplicit: false,
+                              playlistId: albumDetail.browseId,
+                              resultType: 'album',
+                              thumbnails: albumDetail.thumbnails,
+                              title: albumDetail.title,
+                              year: Number(albumDetail.year),
+                              type: ''
+                            }} />
+                          </React.Fragment>
+                        )) : (channelDetailv1 && channelDetailv1.topAlbums && channelDetailv1.topAlbums.length > 0) && channelDetailv1.topAlbums.map((albumDetail, index) => (
+                          <React.Fragment key={index}>
+                            <AlbumCard album={{
+                              artists: [{
+                                id: albumDetail.artist.artistId,
+                                name: albumDetail.artist.name
+                              }],
+                              browseId: albumDetail.albumId,
+                              category: 'Albums',
+                              duration: null,
+                              isExplicit: false,
+                              playlistId: albumDetail.albumId,
+                              resultType: 'album',
+                              thumbnails: albumDetail.thumbnails,
+                              title: albumDetail.name,
+                              year: albumDetail.year,
+                              type: albumDetail.type
+                            }} />
+                          </React.Fragment>
+                        ))
+                      }
+                      </div>
+                    </div>
+                  </div>
                 </section>
               </>
             }
@@ -396,27 +525,52 @@ function Page() {
                 (channelDetail && channelDetail.related && channelDetail.related.results && channelDetail.related.results.length > 0)
               ) && <>
                 <section className='c section'>
-                  <h1 className='w-full text-start text-4xl'>{language.data.app.guilds.player.artist.category.similarArtists} {channelDetail && channelDetail?.name || channelDetailv1 && channelDetailv1.name}</h1>
-                  <ScrollShadow orientation='vertical' className='w-full relative' hideScrollBar>
-                    <div className='w-max my-6 flex flex-row items-start justify-start gap-5'>
-                    {
-                      (channelDetail && channelDetail.related && channelDetail.related.results && channelDetail.related.results.length > 0) ? channelDetail.related.results.map((artistDetail, index) => (
-                        <React.Fragment key={index}>
-                          <ArtistCard artist={{
-                            name: artistDetail.title,
-                            artistId: artistDetail.browseId,
-                            thumbnails: artistDetail.thumbnails,
-                            type: 'ARTIST'
-                          }} />
-                        </React.Fragment>
-                      )) : (channelDetailv1 && channelDetailv1.similarArtists && channelDetailv1.similarArtists.length > 0) && channelDetailv1.similarArtists.map((artistDetail, index) => (
-                        <React.Fragment key={index}>
-                          <ArtistCard artist={artistDetail} />
-                        </React.Fragment>
-                      ))
-                    }
+                  <div className='flex gap-4 items-center justify-between w-full p-1 -mt-2'>
+                    <h1 className='w-full text-start text-4xl'>{language.data.app.guilds.player.artist.category.similarArtists} {channelDetail && channelDetail?.name || channelDetailv1 && channelDetailv1.name}</h1>
+                    <div className='flex-1'></div>
+                    <div className="embla__buttons gap-3 flex items-center justify-center">
+                      <Button
+                        onPress={artistEmblaOnPrevButtonClick} disabled={artistEmblaPrevBtnDisabled}
+                        title='previous'
+                        className="embla__button embla__button--prev border-2 border-foreground/10 bg-foreground/10 disabled:opacity-30 disabled:bg-transparent disabled:border-foreground/5"
+                        type="button"
+                        size='sm'
+                        radius='full'
+                        isIconOnly
+                      ><CaretLeft/></Button>
+                      <Button
+                        onPress={artistEmblaOnNextButtonClick} disabled={artistEmblaNextBtnDisabled}
+                        title='next'
+                        className="embla__button embla__button--next border-2 border-foreground/10 bg-foreground/10 disabled:opacity-30 disabled:bg-transparent disabled:border-foreground/5"
+                        type="button"
+                        size='sm'
+                        radius='full'
+                        isIconOnly
+                      ><CaretRight/></Button>
                     </div>
-                  </ScrollShadow>
+                  </div>
+                  <div className="embla w-full max-w-none mx-0 mt-6 z-10 relative">
+                    <div className="embla__viewport" ref={artistEmblaRef}>
+                      <div className="embla__container gap-5 select-none px-4">
+                      {
+                        (channelDetail && channelDetail.related && channelDetail.related.results && channelDetail.related.results.length > 0) ? channelDetail.related.results.map((artistDetail, index) => (
+                          <React.Fragment key={index}>
+                            <ArtistCard artist={{
+                              name: artistDetail.title,
+                              artistId: artistDetail.browseId,
+                              thumbnails: artistDetail.thumbnails,
+                              type: 'ARTIST'
+                            }} />
+                          </React.Fragment>
+                        )) : (channelDetailv1 && channelDetailv1.similarArtists && channelDetailv1.similarArtists.length > 0) && channelDetailv1.similarArtists.map((artistDetail, index) => (
+                          <React.Fragment key={index}>
+                            <ArtistCard artist={artistDetail} />
+                          </React.Fragment>
+                        ))
+                      }
+                      </div>
+                    </div>
+                  </div>
                 </section>
               </>
             }

@@ -49,7 +49,7 @@ function MusicCard({track}: {track: Track}) {
 export function VideoCard({video}: {video: VideoDetailed}) {
   return (
     <>
-    <div className='music-card w-64' aria-label={video?.title}>
+    <div className='music-card w-64 min-w-64' aria-label={video?.title}>
       <div className='flex flex-col items-start justify-start gap-3 w-full'>
         <div className='overflow-hidden aspect-video w-full group rounded-3xl relative'>
           <Image
@@ -82,7 +82,7 @@ export function AlbumCard({album}: {album: AlbumDetailed}) {
   const href = window.location.pathname.split('/player')[0] + '/player/playlist?list='+album.browseId+'abm';
   return (
     <>
-      <Button className='min-h-0 min-w-0 w-max h-max p-4 rounded-[2rem] bg-transparent' href={href} onPress={()=>{router.push(href)}}>
+      <Button className='min-h-max min-w-max w-max h-max p-4 rounded-[2rem] bg-transparent' href={href} onPress={()=>{router.push(href)}}>
         <div className='music-card w-48' aria-label={album?.title}>
           <div className='flex flex-col items-start justify-start gap-3 w-full'>
             <div className='overflow-hidden aspect-square w-full group rounded-3xl relative'>
@@ -111,7 +111,7 @@ export function PlaylistCard({playlist}: {playlist: PlaylistDetailed}) {
   const href = window.location.pathname.split('/player')[0] + '/player/playlist?list='+playlist.playlistId;
   return (
     <>
-      <Button className='min-h-0 min-w-0 w-max h-max p-4 rounded-[2rem] bg-transparent' href={href} onPress={()=>{router.push(href)}}>
+      <Button className='min-h-max min-w-max w-max h-max p-4 rounded-[2rem] bg-transparent' href={href} onPress={()=>{router.push(href)}}>
         <div className='music-card w-48' aria-label={playlist?.name}>
           <div className='flex flex-col items-start justify-start gap-3 w-full'>
             <div className='overflow-hidden aspect-square w-full group rounded-3xl relative'>
@@ -140,7 +140,7 @@ export function ArtistCard({artist}: {artist: ArtistDetailed}) {
   const href = window.location.pathname.split('/player')[0] + '/player/c?c='+artist.artistId;
   return (
     <>
-      <Button className='min-h-0 min-w-0 w-max h-max p-4 rounded-[2rem] bg-transparent' href={href} onPress={()=>{router.push(href)}}>
+      <Button className='min-h-max min-w-max w-max h-max p-4 rounded-[2rem] bg-transparent' href={href} onPress={()=>{router.push(href)}}>
         <div className='music-card w-48' aria-label={artist?.name}>
           <div className='flex flex-col items-start justify-start gap-3 w-full'>
             <div className='overflow-hidden aspect-square w-full group rounded-full relative'>
