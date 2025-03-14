@@ -118,7 +118,7 @@ function ActivationLink({ href, children, icon, iconSize, onClick, className, is
     }, [isSection, handleScroll, href, hrefIndex, pathname, group]);
 
     return (
-        <Button onPress={clicked} ref={button} className={className} color='primary' startContent={!iconOnly && iconContent} variant={isHere ? 'flat' : 'light'} size='lg' isIconOnly={iconOnly}>
+        <Button onPress={clicked} ref={button} className={'justify-start ' + className} color='primary' startContent={!iconOnly && iconContent} variant={isHere ? 'flat' : 'light'} size='lg' isIconOnly={iconOnly}>
             {iconOnly ? <div className='m-auto'>{iconContent}</div> : children}
         </Button>
     );

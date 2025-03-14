@@ -101,6 +101,7 @@
             "name": "アップデート",
             "latest": "最新バージョン",
             "follow": "アップデートをフォロー",
+            "read": "読む",
             "subscription": {
                 "title": "購読",
                 "notify": {
@@ -330,6 +331,15 @@
                             "add": "強制的にキューに追加！"
                         }
                     }
+                },
+                "context_menu": {
+                    "add_to_queue": "キューに追加",
+                    "add_to_favorite": "お気に入りに追加",
+                    "rm_from_favorite": "お気に入りから削除",
+                    "add_to_my_playlist": "プレイリストに追加",
+                    "goto_artist": "アーティストに移動",
+                    "goto_album": "アルバムに移動",
+                    "rm_from_queue": "キューから削除"
                 },
                 "tabs": {
                     "next": "次へ",

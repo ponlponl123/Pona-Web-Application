@@ -8,7 +8,22 @@ import { cn } from "@/utils/shadcn-ui"
 
 const ContextMenu = ContextMenuPrimitive.Root
 
-const ContextMenuTrigger = ContextMenuPrimitive.Trigger
+const ContextMenuTrigger = React.forwardRef<
+  React.ElementRef<typeof ContextMenuPrimitive.Trigger>,
+  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.Trigger> & {
+    onClick?: () => void
+  }
+>(({ onClick, ...props }, ref) => (
+  <ContextMenuPrimitive.Trigger
+    ref={ref}
+    {...props}
+    onClick={(e) => {
+      e.preventDefault();
+      if (onClick) onClick();
+    }}
+  />
+));
+ContextMenuTrigger.displayName = ContextMenuPrimitive.Trigger.displayName;
 
 const ContextMenuGroup = ContextMenuPrimitive.Group
 

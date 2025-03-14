@@ -8,7 +8,7 @@ import { useGlobalContext } from '@/contexts/globalContext';
 import fetchSearchResult from '@/server-side-api/internal/search';
 import { SearchResult as HTTP_SearchResult, TopResults } from '@/interfaces/ytmusic-api';
 import { Button, Image, Link, Progress, ScrollShadow, Tab, Tabs, Tooltip } from '@nextui-org/react';
-import { FlyingSaucer, Heart, MagnifyingGlass, ShareFat } from '@phosphor-icons/react/dist/ssr';
+import { CaretRight, FlyingSaucer, Heart, MagnifyingGlass, ShareFat } from '@phosphor-icons/react/dist/ssr';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { getCookie } from 'cookies-next';
 import PlayButton from '@/components/music/play';
@@ -165,7 +165,7 @@ function Page() {
                             <Tooltip content='More info'>
                               <h1 className='max-w-full cursor-pointer text-start text-foreground text-2xl overflow-hidden overflow-ellipsis whitespace-nowrap'>{trackTitle}</h1>
                             </Tooltip> :
-                            <h1 className='max-w-full cursor-pointer text-start text-foreground text-2xl overflow-hidden overflow-ellipsis whitespace-nowrap'>{trackTitle}</h1>
+                            <h1 className='max-w-full text-start text-foreground text-2xl overflow-hidden overflow-ellipsis whitespace-nowrap'>{trackTitle}</h1>
                           }
                           <div className='flex flex-row w-[calc(100%_-_2rem)] gap-1 items-center justify-start z-10 min-w-0'>
                             <span className='flex-initial'>
@@ -190,7 +190,7 @@ function Page() {
                               (
                                 (track.resultType === 'song' ||
                                 track.resultType === 'video') && track?.videoId
-                              ) &&
+                              ) ?
                               <>
                                 <PlayButton playPause={ponaCommonState?.current?.identifier === track.videoId} className={
                                   'rounded-full relative !opacity-100 p-2 w-max'
@@ -206,6 +206,9 @@ function Page() {
                                 }} />
                                 <Button color='default' className='bg-opacity-40' radius='full' isIconOnly><Heart weight='bold' /></Button>
                                 <Button color='default' className='bg-opacity-40' radius='full' isIconOnly><ShareFat weight='fill' /></Button>
+                              </> : (track.resultType === 'artist') && <>
+                                <Button color='default' radius='full'><Heart weight='bold' /> {language.data.app.guilds.player.artist.subscribe}</Button>
+                                <Button href={`/app/g/${guild?.id}/player/c?c=${track?.artists[0].id}`} onPress={()=>{router.push(`/app/g/${guild?.id}/player/c?c=${track?.artists[0].id}`)}} color='default' className='bg-opacity-40' radius='full' isIconOnly><CaretRight weight='bold' /></Button>
                               </>
                             }
                           </div>

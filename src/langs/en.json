@@ -107,6 +107,7 @@
             "name": "Updates",
             "latest": "Latest version",
             "follow": "Follow the updates",
+            "read": "Read",
             "subscription": {
                 "title": "Subscribe",
                 "notify": {
@@ -336,6 +337,15 @@
                             "add": "Force Add to queue anyway!"
                         }
                     }
+                },
+                "context_menu": {
+                    "add_to_queue": "Add to queue",
+                    "add_to_favorite": "Add to my favorite",
+                    "rm_from_favorite": "Remove from my favorite",
+                    "add_to_my_playlist": "Add to my playlist",
+                    "goto_artist": "Go to artist",
+                    "goto_album": "Go to album",
+                    "rm_from_queue": "Remove from queue"
                 },
                 "tabs": {
                     "next": "Next",

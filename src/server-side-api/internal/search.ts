@@ -117,8 +117,7 @@ export async function getPlaylist(tokenType: string, tokenKey: string, playlistI
 
 export async function getAlbum(tokenType: string, tokenKey: string, albumId: string): Promise<false | AlbumFull> {
     try {
-        const endpoint = new URL(`${Endpoint}:${EndpointPort}/v1/music/fetch`);
-        endpoint.searchParams.append('type', 'album');
+        const endpoint = new URL(`${Endpoint}:${EndpointPort}/v2/music/fetch/album`);
         endpoint.searchParams.append('id', albumId);
         const handshakeRequest = await axios.get(endpoint.toString(), {
             headers: {

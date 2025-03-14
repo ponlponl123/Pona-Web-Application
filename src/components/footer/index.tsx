@@ -13,12 +13,12 @@ function Footer() {
   const { language, setLanguage } = useLanguageContext();
   return (
     <footer className={`pona-footer z-[10] max-md:flex-col ${(pathname && pathname.startsWith('/app'))?'m-0':'-mt-24'}`}>
-      <div className='max-md:order-1 w-fit'>
+      <div className='max-md:order-1 w-fit div md:max-w-64'>
         <span className='opacity-50 text-xs max-md:text-center -mb-4'>Hello Pona! v.<AppVersion /></span>
         <span className='opacity-50 text-xs max-md:text-center'>© 2024 - 2025 Pona! Application - Ponlponl123 Projects And the Ponlponl123.com Design are trademarks, services marks, and/or registered trademarks of Ponlponl123.com</span>
         <span className='opacity-30 text-xs max-md:text-center flex flex-wrap gap-1 items-center'>PhosphorIcons <SmileyWink size={12} />, Framer Motion <PersonSimpleRun size={12} />, NextUI <Sunglasses size={12} /></span>
       </div>
-      <div className='flex flex-col justify-center items-center gap-2'>
+      <div className='flex flex-col justify-center items-center gap-2 flex-1'>
         <div className='div'>
           <Link
             href="https://github.com/ponlponl123/Pona-Discord-Application"
@@ -94,7 +94,7 @@ function Footer() {
         <div>
         </div>
       </div>
-      <div className='max-md:-order-1'>
+      <div className='max-md:-order-1 div md:max-w-64'>
         <Select
           color='default'
           className="w-32"

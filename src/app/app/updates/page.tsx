@@ -85,7 +85,8 @@ function Page() {
                                                         <div className='flex flex-col gap-1'>
                                                             <h1 className='text-2xl leading-8'>{language.data.app.updates.version} {version.replace('.md','')}</h1>
                                                         </div>
-                                                        <div className='m-auto mr-4'>
+                                                        <div className='m-auto mr-4 flex flex-row gap-3 items-center'>
+                                                            <span className='group-hover:translate-x-1 group-active:-translate-x-1'>{language.data.app.updates.read}</span>
                                                             <CaretRight className='group-hover:translate-x-1 group-active:-translate-x-1' size={18} />
                                                         </div>
                                                     </div>

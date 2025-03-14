@@ -8,6 +8,11 @@ export interface Band {
 
 export type PlayerState = "CONNECTED" | "CONNECTING" | "DISCONNECTED" | "DISCONNECTING" | "DESTROYING";
 
+export interface ArtistBasic {
+  id: string;
+  name: string;
+}
+
 export interface Track {
   "track": string,
 	"cleanTitle": string;
@@ -16,6 +21,7 @@ export interface Track {
   "title": string,
   "identifier": string,
   "author": string,
+  "artist"?: ArtistBasic[],
 	"cleanAuthor": string;
   "duration": number,
   "isrc": string,
@@ -61,6 +67,7 @@ export interface UnresolvedTrack extends Partial<Track> {
 	title: string;
 	author?: string;
 	duration?: number;
+  artist?: ArtistBasic[];
 	resolve(): Promise<void>;
 }
 

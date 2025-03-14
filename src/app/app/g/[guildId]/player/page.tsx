@@ -5,13 +5,29 @@ import { useLanguageContext } from '@/contexts/languageContext';
 import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo';
 import { useDiscordUserInfo } from '@/contexts/discordUserInfo';
 import fetchHistory, { History } from '@/server-side-api/internal/history';
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 import { getCookie } from 'cookies-next';
 import { useRouter } from 'next/navigation';
 import MusicCard from '@/components/music/card';
 import { CaretLeft, CaretRight, CraneTower, Heart, MagnifyingGlass, MicrophoneStage } from '@phosphor-icons/react/dist/ssr';
 import useEmblaCarousel from 'embla-carousel-react';
 import { usePrevNextButtons } from '@/utils/Embla/CarouselArrowButtons'
+
+export const motion_card: Variants = {
+  offscreen: {
+    x: -100,
+    opacity: 0
+  },
+  onscreen: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      type: "spring",
+      stiffness: 150,
+      damping: 15,
+    },
+  },
+}
 
 function Page() {
   const router = useRouter();

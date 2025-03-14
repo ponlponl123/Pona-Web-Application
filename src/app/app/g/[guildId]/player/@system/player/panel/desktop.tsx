@@ -9,8 +9,8 @@ import { useUserSettingContext } from '@/contexts/userSettingContext'
 import { msToTime } from '@/utils/time'
 import { useRouter } from 'next/navigation'
 
-import { Coffee, DotsThreeVertical, Heart, MonitorPlay, PictureInPicture, Play, SpeakerSimpleHigh } from '@phosphor-icons/react/dist/ssr'
-import { Button, Image, Link, ScrollShadow, Skeleton, Spinner, Tab, Tabs } from '@nextui-org/react'
+import { Coffee, DotsThreeVertical, Heart, MonitorPlay, PersonSimple, PictureInPicture, Play, Trash } from '@phosphor-icons/react/dist/ssr'
+import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger, Image, Link, ScrollShadow, Skeleton, Spinner, Tab, Tabs } from '@nextui-org/react'
 import LyricsDisplay from '@/components/music/lyricsDisplay';
 import { Track, UnresolvedTrack } from '@/interfaces/ponaPlayer';
 
@@ -31,6 +31,8 @@ import {
     verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import {CSS} from '@dnd-kit/utilities';
+import Equalizing from '@/components/equalizing';
+import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuLabel, ContextMenuTrigger } from '@/components/context-menu';
 
 function DesktopPonaPlayerPanel() {
     const router = useRouter();
@@ -232,6 +234,25 @@ export function DraggableTrack({index, track, active, isLoading}:
     )
 }
 
+export function TrackQueueContextFunction({ track }: { track: Track | UnresolvedTrack })
+{
+    const { language } = useLanguageContext();
+    return (
+        <>
+            <ContextMenuLabel>{track.title}</ContextMenuLabel>
+            <ContextMenuItem className='contents'>
+                <Button fullWidth variant='light' className='justify-start'><Heart weight='bold' /> {language.data.app.guilds.player.context_menu.add_to_favorite}</Button>
+            </ContextMenuItem>
+            <ContextMenuItem className='contents'>
+                <Button fullWidth variant='light' className='justify-start'><Trash weight='bold' /> {language.data.app.guilds.player.context_menu.rm_from_queue}</Button>
+            </ContextMenuItem>
+            <ContextMenuItem className='contents'>
+                <Button fullWidth variant='light' className='justify-start'><PersonSimple weight='bold' /> {language.data.app.guilds.player.context_menu.goto_artist}</Button>
+            </ContextMenuItem>
+        </>
+    )
+}
+
 export function TrackQueue({index, track, active, isLoading, ref, params}:
     {
         index: number,
@@ -245,46 +266,86 @@ export function TrackQueue({index, track, active, isLoading, ref, params}:
     const { ponaCommonState } = useGlobalContext();
     const { socket } = usePonaMusicContext();
     const paused = ponaCommonState?.pona?.paused || false;
+    const { language } = useLanguageContext();
+
     return (
-        <motion.div ref={ref}
-            className={`w-full py-2 px-2.5 flex gap-4 items-center rounded-3xl group ${
-                active?'[.light_&]:bg-[hsl(var(--pona-app-music-accent-color-100))] [.dark_&]:bg-[hsl(var(--pona-app-music-accent-color-800))] active':''
-            } ${isLoading?'pointer-events-none':''}`} key={index} {...params}
-        >
-            <div className='w-11 h-11 select-none relative overflow-hidden rounded-2xl'>
-                <Skeleton isLoaded={!isLoading}>
-                    <Image src={track?.proxyArtworkUrl} alt={track.title} height={44} width={44} className={
-                        'object-cover rounded-lg z-0 ' + 
-                        ( (!paused && active) ? 'brightness-50 saturate-0' : 'group-hover:brightness-50 group-hover:saturate-0' )
-                    } />
-                </Skeleton>
-                <div className={'absolute top-0 left-0 w-full h-full bg-background/35 z-[5] ' +
-                    ( (!paused && active) ? 'opacity-100' : 'group-hover:opacity-100 opacity-0' )
-                }></div>
-                {
-                    (!paused && active) ?
-                    <Button className='absolute z-10 top-0 left-0 w-full h-full opacity-100' variant='light' radius='md' isIconOnly onPress={()=>{socket?.emit('pause')}}><SpeakerSimpleHigh className='text-white' weight='fill' /></Button> :
-                    <Button className='absolute z-10 top-0 left-0 w-full h-full group-hover:opacity-100 opacity-0' variant='light' radius='md' isIconOnly onPress={()=>{
-                        if ( active ) socket?.emit('play');
-                        else 
-                            if (index-1 === 0) socket?.emit('next');
-                            else socket?.emit('skipto', index-1);
-                    }}><Play className='text-white' weight='fill' /></Button>
-                }
-            </div>
-            <div className={`w-[calc(100%_-_10rem)] ${isLoading?'flex flex-col gap-1':''}`}>
-                <Skeleton className={isLoading?'rounded-full h-5':'h-max'} isLoaded={!isLoading}>
-                    <h1 className='w-full [div.active_&]:text-[hsl(var(--pona-app-music-accent-color-500))] whitespace-nowrap overflow-hidden overflow-ellipsis'>{track.title}</h1>
-                </Skeleton>
-                <Skeleton className={isLoading?'rounded-full h-3 w-2/5':'h-max -mt-1'} isLoaded={!isLoading}>
-                    <span className='w-full text-xs text-foreground/40 [div.active_&]:text-[hsl(var(--pona-app-music-accent-color-500)/0.4)] whitespace-nowrap overflow-hidden overflow-ellipsis'>{track.author} ({track.requester?.displayName || '@'+track.requester?.username})</span>
-                </Skeleton>
-            </div>
-            <div className={`ml-auto relative w-12 h-12 flex items-center justify-center ${isLoading?'opacity-0 pointer-events-none':''}`}>
-                <span className='[div.active_&]:text-[hsl(var(--pona-app-music-accent-color-500)/0.64)] group-hover:opacity-0 opacity-100 pointer-events-none'>{msToTime(track.duration || 0)}</span>
-                <Button className='absolute z-10 top-0 left-0 w-full h-full group-hover:opacity-100 opacity-0' variant='light' radius='full' isIconOnly><DotsThreeVertical weight='bold' /></Button>
-            </div>
-        </motion.div>
+        <ContextMenu modal={false}>
+            <ContextMenuTrigger>
+                <motion.div ref={ref}
+                    className={`w-full py-2 px-2.5 flex gap-4 items-center rounded-3xl group ${
+                        active?'[.light_&]:bg-[hsl(var(--pona-app-music-accent-color-100))] [.dark_&]:bg-[hsl(var(--pona-app-music-accent-color-800))] active':''
+                    } ${isLoading?'pointer-events-none':''}`} key={index} {...params}
+                >
+                    <div className='flex-[0 1 auto] w-11 h-11 select-none relative overflow-hidden rounded-2xl'>
+                        <Skeleton isLoaded={!isLoading}>
+                            <Image src={track?.proxyArtworkUrl} alt={track.title} height={44} width={44} className={
+                                'object-cover rounded-lg z-0 ' + 
+                                ( (!paused && active) ? 'brightness-50 saturate-0' : 'group-hover:brightness-50 group-hover:saturate-0' )
+                            } />
+                        </Skeleton>
+                        <div className={'absolute top-0 left-0 w-full h-full bg-background/35 z-[5] ' +
+                            ( (!paused && active) ? 'opacity-100' : 'group-hover:opacity-100 opacity-0' )
+                        }></div>
+                        {
+                            (!paused && active) ?
+                            <Button className='absolute z-10 top-0 left-0 w-full h-full opacity-100' variant='light' radius='md' isIconOnly onPress={()=>{socket?.emit('pause')}}>
+                                <Equalizing steps={3} />
+                            </Button> :
+                            <Button className='absolute z-10 top-0 left-0 w-full h-full group-hover:opacity-100 opacity-0' variant='light' radius='md' isIconOnly onPress={()=>{
+                                if ( active ) socket?.emit('play');
+                                else 
+                                    if (index-1 === 0) socket?.emit('next');
+                                    else socket?.emit('skipto', index-1);
+                            }}><Play className='text-white' weight='fill' /></Button>
+                        }
+                    </div>
+                    <div className={`w-0 min-w-0 flex-1 ${isLoading?'flex flex-col gap-1':''}`}>
+                        <Skeleton className={isLoading?'rounded-full h-5':'h-max' + ' max-w-full'} isLoaded={!isLoading}
+                            classNames={{
+                                content: 'whitespace-nowrap overflow-hidden overflow-ellipsis'
+                            }}>
+                            <h1 className='max-w-full [div.active_&]:text-[hsl(var(--pona-app-music-accent-color-500))]'>{track.title}</h1>
+                        </Skeleton>
+                        <Skeleton className={isLoading?'rounded-full h-3 w-2/5':'h-max -mt-1' + ' max-w-full'} isLoaded={!isLoading}
+                            classNames={{
+                                content: 'whitespace-nowrap overflow-hidden overflow-ellipsis'
+                            }}>
+                            <span className='max-w-full text-xs text-foreground/40 [div.active_&]:text-[hsl(var(--pona-app-music-accent-color-500)/0.4)]'>{track.author} ({track.requester?.displayName || '@'+track.requester?.username})</span>
+                        </Skeleton>
+                    </div>
+                    <div className={`flex-[0 1 auto] ml-auto relative w-12 h-12 flex items-center justify-center ${isLoading?'opacity-0 pointer-events-none':''}`}>
+                        <span className='[div.active_&]:text-[hsl(var(--pona-app-music-accent-color-500)/0.64)] group-hover:opacity-0 opacity-100 pointer-events-none'>{msToTime(track.duration || 0)}</span>
+		                <Dropdown shouldBlockScroll={false} className='border-2 rounded-2xl'>
+                            <DropdownTrigger>
+                                <Button className='absolute z-10 top-0 left-0 w-full h-full group-hover:opacity-100 opacity-0' variant='light' radius='full' isIconOnly><DotsThreeVertical weight='bold' /></Button>
+                            </DropdownTrigger>
+                            <DropdownMenu className="w-56">
+                                <DropdownSection title={track.title}>
+                                    <DropdownItem className='p-0' key='add_to_fav'>
+                                        <Button fullWidth variant='light' className='justify-start'><Heart weight='bold' /> {language.data.app.guilds.player.context_menu.add_to_favorite}</Button>
+                                    </DropdownItem>
+                                    <DropdownItem className='p-0' key='add_to_queue'>
+                                        <Button fullWidth variant='light' className='justify-start'><Trash weight='bold' /> {language.data.app.guilds.player.context_menu.rm_from_queue}</Button>
+                                    </DropdownItem>
+                                    <DropdownItem className='p-0' key='goto_artist'>
+                                        <Button fullWidth variant='light' className='justify-start'><PersonSimple weight='bold' /> {language.data.app.guilds.player.context_menu.goto_artist}</Button>
+                                    </DropdownItem>
+                                </DropdownSection>
+                            </DropdownMenu>
+                        </Dropdown>
+                    </div>
+                </motion.div>
+            </ContextMenuTrigger>
+            <ContextMenuContent className='z-50 contents'>
+                <motion.div
+                    initial={{ opacity: 0, y: -6, x: -6 }}
+                    animate={{ opacity: 1, y: 0, x: 0 }}
+                    exit={{ opacity: 0, y: 12 }}
+                    className='bg-content1/90 backdrop-blur-lg backdrop-brightness-200 backdrop-saturate-200 w-64 rounded-2xl p-[2px] border-2 border-content1-foreground/5 flex flex-col gap-[2px]'>
+                    <TrackQueueContextFunction track={track} />
+                </motion.div>
+            </ContextMenuContent>
+        </ContextMenu>
     )
 }
 

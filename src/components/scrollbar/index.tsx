@@ -8,7 +8,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import ActivationLink from './activationLink'
 import { usePathname, useRouter } from 'next/navigation'
 import FrozenRoute from '../HOC/FrozenRoute'
-import { Avatar, Button, Chip } from '@nextui-org/react'
+import { Avatar, Button, Chip, ScrollShadow } from '@nextui-org/react'
 import { useGlobalContext } from '@/contexts/globalContext'
 
 const variants = {
@@ -72,7 +72,8 @@ function Scrollbar(
                 }}><CaretLeft/></Button>
             }
             <AnimatePresence mode="wait">
-                <motion.div className='max-h-full overflow-x-hidden overflow-y-auto scroll-smooth' style={{scrollbarWidth: 'thin'}} key={String(`${inGuild} ${inSetting}`)}>
+                <motion.div className='max-h-[calc(100%_-_64px)] w-full' key={String(`${inGuild} ${inSetting}`)}>
+                    <ScrollShadow className='w-full max-h-full flex flex-col' style={{scrollbarWidth: 'none'}}>
                     <FrozenRoute>
                         <motion.main
                             variants={variants}
@@ -80,6 +81,7 @@ function Scrollbar(
                             exit="exit"
                             animate="enter"
                             transition={{ type: 'linear', duration: 0.12 }}
+                            className='flex flex-col gap-2 min-h-max'
                             key="Menu"
                         >
                         {
@@ -150,6 +152,8 @@ function Scrollbar(
                         }
                         </motion.main>
                     </FrozenRoute>
+                    <div className='p-2'></div>
+                    </ScrollShadow>
                 </motion.div>
             </AnimatePresence>
             { !nav && (<div className='mt-auto'></div>) }
