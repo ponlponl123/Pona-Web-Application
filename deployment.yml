@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pona-webapp
+  namespace: pona-webapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pona-webapp
+  template:
+    metadata:
+      labels:
+        app: pona-webapp
+    spec:
+      containers:
+        - name: pona-webapp
+          image: hub.ponlponl123.local.registry:5000/pona-web-application:latest
+          ports:
+            - containerPort: 3000
+          imagePullPolicy: Always
+      imagePullSecrets:
+        - name: regcred
