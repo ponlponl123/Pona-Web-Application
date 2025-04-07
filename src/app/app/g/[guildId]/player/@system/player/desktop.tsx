@@ -44,13 +44,13 @@ function DesktopPonaPlayer() {
                     exit={{ opacity: 0, pointerEvents: 'none', translateY: 32 }}
                 className={
                     (userSetting.dev_pona_player_style === 'modern' ?
-                    `absolute max-md:overflow-hidden h-[4.8rem] z-50 max-lg:h-16 max-md:bottom-6 bottom-2 left-2 max-md:rounded-lg rounded-2xl` :
-                    `absolute max-md:overflow-hidden h-[5.6rem] z-50 max-lg:h-16 max-md:bottom-6 bottom-2 left-2 max-md:rounded-lg rounded-2xl`)
+                    `absolute max-md:overflow-hidden h-[4.8rem] z-50 max-lg:h-16 max-md:bottom-6 bottom-2 left-2 max-md:rounded-lg rounded-3xl` :
+                    `absolute max-md:overflow-hidden h-[5.6rem] z-50 max-lg:h-16 max-md:bottom-6 bottom-2 left-2 max-md:rounded-lg rounded-3xl`)
                     + (userSetting.transparency ?
                         ' backdrop-blur-3xl [.dark_&]:bg-[hsl(var(--pona-app-music-accent-color-800)/.64)] [.light_&]:bg-[hsl(var(--pona-app-music-accent-color-100)/.86)]' :
                         ' [.dark_&]:bg-[hsl(var(--pona-app-music-accent-color-800))] [.light_&]:bg-[hsl(var(--pona-app-music-accent-color-100))]')
                 } style={{width:'calc(100% - 1rem)'}}>
-                <div className='absolute top-0 left-0 z-0 w-full h-full [body.pona-player-focused_&]:bg-none [html.light_&]:[body.pona-player-focused_&]:bg-[hsl(var(--pona-app-music-accent-color-50))] [html.dark_&]:[body.pona-player-focused_&]:bg-[hsl(var(--pona-app-music-accent-color-900))] max-md:rounded-lg rounded-2xl'></div>
+                <div className='absolute top-0 left-0 z-0 w-full h-full [body.pona-player-focused_&]:bg-none [html.light_&]:[body.pona-player-focused_&]:bg-[hsl(var(--pona-app-music-accent-color-50))] [html.dark_&]:[body.pona-player-focused_&]:bg-[hsl(var(--pona-app-music-accent-color-900))] max-md:rounded-lg rounded-3xl'></div>
                 <Slider
                     aria-label="PlayerSeekBar"
                     className={
@@ -83,7 +83,7 @@ function DesktopPonaPlayer() {
                 <div
                     id='pona-player'
                     className={
-                        `rounded-2xl max-md:rounded-lg max-md:p-2 p-2 max-lg:p-1 flex flex-row items-center justify-between gap-4 absolute overflow-hidden w-full h-full select-none`
+                        `rounded-3xl max-md:rounded-lg max-md:p-2 p-2 max-lg:p-1 flex flex-row items-center justify-between gap-4 absolute overflow-hidden w-full h-full select-none`
                     }>
                     <div className='absolute top-0 left-0 w-full h-full' onClick={()=>{setPlayerPopup((value)=>{
                         if ( !value ) document.body.classList.add('pona-player-focused');
@@ -92,9 +92,9 @@ function DesktopPonaPlayer() {
                     })}} id='pona-music-panel-trigger'></div>
                     {
                         userSetting.transparency ?
-                        <Image src={currentTrack ? currentTrack?.proxyArtworkUrl : '/static/Ponlponl123 (1459).png'} alt={currentTrack ? currentTrack.title : 'Thumbnail'} height={'4.4rem'}
-                            className='z-10 blur-3xl absolute left-0 -translate-y-1/2 w-1/4 min-w-32 object-cover max-md:hidden'
-                            classNames={{ wrapper: 'pointer-events-none' }}
+                        <Image src={currentTrack ? currentTrack?.proxyArtworkUrl : '/static/Ponlponl123 (1459).png'} alt={currentTrack ? currentTrack.title : 'Thumbnail'}
+                            className='z-10 blur-3xl absolute left-0 -translate-y-1/2 h-full aspect-square object-cover max-md:hidden'
+                            classNames={{ wrapper: 'pointer-events-none h-full' }}
                         />
                         : <div></div>
                     }

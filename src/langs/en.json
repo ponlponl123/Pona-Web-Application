@@ -425,6 +425,11 @@
                         "success": "Got it, Added [track_name] by [artist] to queue!",
                         "error": "Buh.. Something went wrong :("
                     },
+                    "rm_track": {
+                        "loading": "Removing [track_name] by [artist] from queue",
+                        "success": "Got it, [track_name] by [artist] removed from queue!",
+                        "error": "Buh.. Something went wrong :("
+                    },
                     "repeat": {
                         "loading": "Changing the repeat mode to [repeat_mode]",
                         "success": "The repeat mode has been changed to [repeat_mode]!",

@@ -32,7 +32,7 @@ function Page() {
     const letSearch = async () => {
       const accessTokenType = getCookie('LOGIN_TYPE_');
       const accessToken = getCookie('LOGIN_');
-      if ( !search || typeof search !== 'string' || !accessTokenType || !accessToken ) return;
+      if ( !search || typeof search !== 'string' || !accessTokenType || !accessToken ) return setLoading(false);;
       setLoading(true);
       const searchResult = await fetchSearchResult(accessTokenType, accessToken, search, (filter === 'all' || !filter) ? undefined : filter.toString());
       if ( !searchResult ) {

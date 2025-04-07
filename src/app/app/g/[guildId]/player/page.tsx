@@ -98,7 +98,7 @@ function Page() {
                 <div className="embla__dots"></div>
               </div>
             }
-            <div className="embla__viewport pr-4" ref={emblaRef}>
+            <div className="embla__viewport" ref={emblaRef}>
               <div className="embla__container gap-5">
                 {
                   fetched.current ? (tracksHistory && tracksHistory.map((track, index) => (
@@ -113,13 +113,16 @@ function Page() {
                       className='embla__slide w-max flex-none select-none' key={index}>
                       <MusicCard track={track.track} />
                     </motion.div>
-                  )) || <>
+                  )) ||
+                  <>
                     <div className='h-52'></div>
-                    <div className='absolute top-0 left-0 w-full h-full flex flex-col items-center justify-center gap-4 rounded-3xl bg-foreground/10'>
-                      <MicrophoneStage size={48} />
+                    <div className='absolute top-0 left-0 w-full h-full flex flex-col items-center justify-center gap-2 rounded-3xl bg-foreground/10 border-2 border-foreground/10'>
+                      <MicrophoneStage size={32} />
                       <h1 className='text-3xl'>{language.data.app.guilds.player.home.no_history.title}</h1>
                       <p className='text-lg'>{language.data.app.guilds.player.home.no_history.description}</p>
-                      <Button color='secondary' radius='full' onPress={()=>{router.push(`/app/g/${guild.id}/player/search`)}}><MagnifyingGlass /> {language.data.app.guilds.player.home.no_history.get_started}</Button>
+                      <Button color='primary' radius='lg' onPress={()=>{router.push(`/app/g/${guild.id}/player/search`)}}>
+                        <MagnifyingGlass /> {language.data.app.guilds.player.home.no_history.get_started}
+                      </Button>
                     </div>
                   </>) : <div className='w-full h-52 flex items-center justify-center'><Spinner className='m-auto' /></div>
                 }

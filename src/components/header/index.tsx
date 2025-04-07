@@ -6,7 +6,7 @@ import { useGlobalContext } from '@/contexts/globalContext';
 import { useLanguageContext } from '@/contexts/languageContext';
 import { useDiscordUserInfo } from '@/contexts/discordUserInfo';
 import { DiscordLogo, Confetti, Hamburger, Question, Gear, Leaf, MagnifyingGlass } from "@phosphor-icons/react/dist/ssr";
-import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Avatar, Button, Form, Input } from '@nextui-org/react';
+import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Avatar, Button, Form, Input, ScrollShadow } from '@nextui-org/react';
 import { usePathname, useRouter } from 'next/navigation';
 import PonaIcon from '@/app/favicon.ico';
 import { getCookie } from 'cookies-next';
@@ -166,24 +166,26 @@ function Header() {
                                         } backdrop-blur rounded-xl max-md:rounded-full pona-music-searchbox z-10`
                                     }
                                 />
-                                <div id='pona-search-suggestions' ref={searchSuggestionElement} className={
-                                    `absolute w-full min-h-6 bg-foreground/10 max-miniscreen:bg-playground-background border-2 border-foreground/10 miniscreen:backdrop-blur-xl rounded-xl top-12 p-1 z-30 ${(searching && searchValue)?'':'opacity-0 pointer-events-none -translate-y-6'}`
-                                }>
-                                    {
-                                        searchValue &&
-                                        <Button onPress={()=>{router.push(`/app/g/${guild?.id}/player/search?q=${searchValue}`);setSearching(false);setSearchValue(searchValue)}}
-                                            value={searchValue} variant='light' radius='sm'
-                                            className='text-start justify-start gap-3' fullWidth><MagnifyingGlass size={14} /> {searchValue}</Button>
-                                    }
-                                    {
-                                        searchSuggestions &&
-                                        searchSuggestions?.map((value, index)=>(
-                                            <Button key={index} onPress={()=>{router.push(`/app/g/${guild?.id}/player/search?q=${value}`);setSearching(false);setSearchValue(value)}}
-                                                value={value} variant='light' radius='sm'
-                                                className='text-start justify-start gap-3' fullWidth><MagnifyingGlass size={14} /> {value}</Button>
-                                        ))
-                                    }
-                                </div>
+                                <ScrollShadow id='pona-search-suggestions' ref={searchSuggestionElement} className={
+                                    `absolute w-full min-h-6 h-max max-h-[calc(96vh_-_64px)] bg-foreground/10 max-miniscreen:bg-playground-background border-2 border-foreground/10 miniscreen:backdrop-blur-xl rounded-xl top-12 p-1 z-30 ${(searching && searchValue)?'':'opacity-0 pointer-events-none -translate-y-6'}`
+                                } style={{scrollbarWidth: 'thin',scrollbarColor: 'hsl(var(--pona-app)) transparent'}}>
+                                    <div className='flex flex-col gap-1 w-full h-max'>
+                                        {
+                                            searchValue &&
+                                            <Button onPress={()=>{router.push(`/app/g/${guild?.id}/player/search?q=${searchValue}`);setSearching(false);setSearchValue(searchValue)}}
+                                                value={searchValue} variant='light' radius='sm'
+                                                className='text-start justify-start gap-3' fullWidth><MagnifyingGlass size={14} /> {searchValue}</Button>
+                                        }
+                                        {
+                                            searchSuggestions &&
+                                            searchSuggestions?.map((value, index)=>(
+                                                <Button key={index} onPress={()=>{router.push(`/app/g/${guild?.id}/player/search?q=${value}`);setSearching(false);setSearchValue(value)}}
+                                                    value={value} variant='light' radius='sm'
+                                                    className='text-start justify-start gap-3' fullWidth><MagnifyingGlass size={14} /> {value}</Button>
+                                            ))
+                                        }
+                                    </div>
+                                </ScrollShadow>
                             </div>
                             </Form>
                         </div>

@@ -33,6 +33,7 @@ import {
 import {CSS} from '@dnd-kit/utilities';
 import Equalizing from '@/components/equalizing';
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuLabel, ContextMenuTrigger } from '@/components/context-menu';
+import toast from 'react-hot-toast';
 
 function DesktopPonaPlayerPanel() {
     const router = useRouter();
@@ -76,8 +77,8 @@ function DesktopPonaPlayerPanel() {
                 className={
                     (
                         userSetting.dev_pona_player_style === 'modern' ?
-                        'absolute z-40 left-2 p-8 bottom-[6.1rem] max-lg:bottom-[5.3rem] max-lg:h-[calc(100vh_-_5.8rem)] max-md:rounded-lg rounded-2xl w-[calc(100%_-_1rem)] h-[calc(100vh_-_6.6rem)] transition-all ease-out duration-250 overflow-hidden' :
-                        'absolute z-40 left-2 p-8 bottom-[6.4rem] max-lg:bottom-[5.3rem] max-lg:h-[calc(100vh_-_6rem)] max-md:rounded-lg rounded-2xl w-[calc(100%_-_1rem)] h-[calc(100vh_-_6.8rem)] transition-all ease-out duration-250 overflow-hidden'
+                        'absolute z-40 left-2 p-8 bottom-[6.1rem] max-lg:bottom-[5.3rem] max-lg:h-[calc(100vh_-_5.8rem)] max-md:rounded-lg rounded-3xl w-[calc(100%_-_1rem)] h-[calc(100vh_-_6.6rem)] transition-all ease-out duration-250 overflow-hidden' :
+                        'absolute z-40 left-2 p-8 bottom-[6.4rem] max-lg:bottom-[5.3rem] max-lg:h-[calc(100vh_-_6rem)] max-md:rounded-lg rounded-3xl w-[calc(100%_-_1rem)] h-[calc(100vh_-_6.8rem)] transition-all ease-out duration-250 overflow-hidden'
                     )
                     + (userSetting.transparency ? ' backdrop-blur-2xl to-playground-background/100' : ' [html.light_&]:!from-[hsl(var(--pona-app-music-accent-color-200))] [html.light_&]:!to-[hsl(var(--pona-app-music-accent-color-50))] [html.dark_&]:!to-[hsl(var(--pona-app-music-accent-color-800))] [html.dark_&]:!from-[hsl(var(--pona-app-music-accent-color-400))]')
                 }
@@ -127,7 +128,7 @@ function DesktopPonaPlayerPanel() {
                                 panel: 'h-full max-h-full'
                             }}>
                             <Tab key="next" title={language.data.app.guilds.player.tabs.next}>
-                                <ScrollShadow className='overflow-x-hidden h-full pr-2 pb-4 relative' style={{scrollbarWidth:'thin',scrollbarColor:'hsl(var(--pona-app-music-accent-color-500)) hsl(var(--pona-app-playground-background))'}}>
+                                <ScrollShadow className='overflow-x-hidden h-full pr-2 pb-4 relative' style={{scrollbarWidth:'thin',scrollbarColor:'hsl(var(--pona-app-music-accent-color-500)) transparent'}}>
                                     <div className='flex flex-col gap-2 px-3 py-1'>
                                     {
                                         ponaTrackQueue && ponaTrackQueue.queue && ponaTrackQueue.queue[0] &&
@@ -156,7 +157,7 @@ function DesktopPonaPlayerPanel() {
                                 </ScrollShadow>
                             </Tab>
                             <Tab key="lyrics" title={language.data.app.guilds.player.tabs.lyrics} isDisabled={!(currentTrack.lyrics && currentTrack.lyrics.lyrics?.length > 0)}>
-                                <ScrollShadow className='h-full pr-2 pt-4 pb-12' style={{scrollbarWidth:'thin',scrollbarColor:'hsl(var(--pona-app-music-accent-color-500)) hsl(var(--pona-app-playground-background))'}} ref={lyricsContainerRef}>
+                                <ScrollShadow className='h-full pr-2 pt-4 pb-12' style={{scrollbarWidth:'thin',scrollbarColor:'hsl(var(--pona-app-music-accent-color-500)) transparent'}} ref={lyricsContainerRef}>
                                     {lyricsContainerRef.current && (
                                         currentTrack.lyrics?.isTimestamp ?
                                             <LyricsDisplay playerPosition={playerPos} currentTrack={currentTrack as Track} lyricsProvider={lyricsContainerRef.current} /> :
@@ -169,7 +170,7 @@ function DesktopPonaPlayerPanel() {
                                 </ScrollShadow>
                             </Tab>
                             <Tab key="related" title={language.data.app.guilds.player.tabs.related}>
-                                <ScrollShadow className='h-full pr-2' style={{scrollbarWidth:'thin',scrollbarColor:'hsl(var(--pona-app-music-accent-color-500)) hsl(var(--pona-app-playground-background))'}}>
+                                <ScrollShadow className='h-full pr-2' style={{scrollbarWidth:'thin',scrollbarColor:'hsl(var(--pona-app-music-accent-color-500)) transparent'}}>
                                     <div className='flex flex-col gap-4 items-center justify-center w-full h-full'>
                                         <Coffee size={56} weight='fill' className='text-[hsl(var(--pona-app-music-accent-color-500))]' />
                                         <h1 className='text-2xl max-w-screen-md text-center text-[hsl(var(--pona-app-music-accent-color-500)/0.64)]'>{language.data.app.guilds.player.dev}</h1>
@@ -237,15 +238,38 @@ export function DraggableTrack({index, track, active, isLoading}:
 export function TrackQueueContextFunction({ track }: { track: Track | UnresolvedTrack })
 {
     const { language } = useLanguageContext();
+    const { ponaCommonState } = useGlobalContext();
+    const { socket } = usePonaMusicContext();
     return (
         <>
             <ContextMenuLabel>{track.title}</ContextMenuLabel>
             <ContextMenuItem className='contents'>
                 <Button fullWidth variant='light' className='justify-start'><Heart weight='bold' /> {language.data.app.guilds.player.context_menu.add_to_favorite}</Button>
             </ContextMenuItem>
-            <ContextMenuItem className='contents'>
-                <Button fullWidth variant='light' className='justify-start'><Trash weight='bold' /> {language.data.app.guilds.player.context_menu.rm_from_queue}</Button>
-            </ContextMenuItem>
+            {
+                ponaCommonState?.current?.uniqueId !== track.uniqueId &&
+                <ContextMenuItem className='contents' onClick={()=>{toast.promise(
+                    new Promise<void>((resolve, reject) => {
+                        socket?.emit('rm', track.uniqueId, (error: unknown) => {
+                            if (error && (error as { status?: string }).status !== 'ok') {
+                                reject(error);
+                            } else {
+                                resolve();
+                            }
+                        });
+                    }),
+                    {
+                        loading: language.data.app.guilds.player.toast.rm_track.loading.replace('[track_name]', track.title).replace('[artist]', String(track.author)),
+                        success: language.data.app.guilds.player.toast.rm_track.success.replace('[track_name]', track.title).replace('[artist]', String(track.author)),
+                        error: language.data.app.guilds.player.toast.rm_track.error,
+                    },
+                    {
+                        position: 'top-center'
+                    }
+                )}}>
+                    <Button fullWidth variant='light' className='justify-start'><Trash weight='bold' /> {language.data.app.guilds.player.context_menu.rm_from_queue}</Button>
+                </ContextMenuItem>
+            }
             <ContextMenuItem className='contents'>
                 <Button fullWidth variant='light' className='justify-start'><PersonSimple weight='bold' /> {language.data.app.guilds.player.context_menu.goto_artist}</Button>
             </ContextMenuItem>
@@ -315,20 +339,49 @@ export function TrackQueue({index, track, active, isLoading, ref, params}:
                     </div>
                     <div className={`flex-[0 1 auto] ml-auto relative w-12 h-12 flex items-center justify-center ${isLoading?'opacity-0 pointer-events-none':''}`}>
                         <span className='[div.active_&]:text-[hsl(var(--pona-app-music-accent-color-500)/0.64)] group-hover:opacity-0 opacity-100 pointer-events-none'>{msToTime(track.duration || 0)}</span>
-		                <Dropdown shouldBlockScroll={false} className='border-2 rounded-2xl'>
+		                <Dropdown shouldBlockScroll={false} className='bg-content1/90 backdrop-blur-lg backdrop-brightness-200 backdrop-saturate-200 w-64 rounded-2xl p-[2px] border-2 border-content1-foreground/5 flex flex-col gap-[2px]'>
                             <DropdownTrigger>
                                 <Button className='absolute z-10 top-0 left-0 w-full h-full group-hover:opacity-100 opacity-0' variant='light' radius='full' isIconOnly><DotsThreeVertical weight='bold' /></Button>
                             </DropdownTrigger>
-                            <DropdownMenu className="w-56">
-                                <DropdownSection title={track.title}>
-                                    <DropdownItem className='p-0' key='add_to_fav'>
-                                        <Button fullWidth variant='light' className='justify-start'><Heart weight='bold' /> {language.data.app.guilds.player.context_menu.add_to_favorite}</Button>
+                            <DropdownMenu classNames={{
+                                base: 'p-0'
+                            }}>
+                                <DropdownSection title={track.title} classNames={{
+                                    heading: 'mb-2 opacity-100 text-foreground mx-2 mb-1 mt-2 text-sm max-h-none block',
+                                    base: 'm-0'
+                                }}>
+                                    <DropdownItem className='p-0 rounded-xl hover:!bg-default/40' key='add_to_fav'>
+                                        <Button fullWidth variant='light' className='justify-start !bg-transparent'><Heart weight='bold' /> {language.data.app.guilds.player.context_menu.add_to_favorite}</Button>
                                     </DropdownItem>
-                                    <DropdownItem className='p-0' key='add_to_queue'>
-                                        <Button fullWidth variant='light' className='justify-start'><Trash weight='bold' /> {language.data.app.guilds.player.context_menu.rm_from_queue}</Button>
-                                    </DropdownItem>
-                                    <DropdownItem className='p-0' key='goto_artist'>
-                                        <Button fullWidth variant='light' className='justify-start'><PersonSimple weight='bold' /> {language.data.app.guilds.player.context_menu.goto_artist}</Button>
+                                    {
+                                        !active ? (
+                                            <DropdownItem className='p-0 rounded-xl hover:!bg-default/40' key='rm_from_queue'>
+                                                <Button fullWidth variant='light' className='justify-start !bg-transparent' onPress={()=>{
+                                                    toast.promise(
+                                                        new Promise<void>((resolve, reject) => {
+                                                            socket?.emit('rm', track.uniqueId, (error: unknown) => {
+                                                                if (error && (error as { status?: string }).status !== 'ok') {
+                                                                    reject(error);
+                                                                } else {
+                                                                    resolve();
+                                                                }
+                                                            });
+                                                        }),
+                                                        {
+                                                            loading: language.data.app.guilds.player.toast.rm_track.loading.replace('[track_name]', track.title).replace('[artist]', String(track.author)),
+                                                            success: language.data.app.guilds.player.toast.rm_track.success.replace('[track_name]', track.title).replace('[artist]', String(track.author)),
+                                                            error: language.data.app.guilds.player.toast.rm_track.error,
+                                                        },
+                                                        {
+                                                            position: 'top-center'
+                                                        }
+                                                    );
+                                                }}><Trash weight='bold' /> {language.data.app.guilds.player.context_menu.rm_from_queue}</Button>
+                                            </DropdownItem>
+                                        ) : null
+                                    }
+                                    <DropdownItem className='p-0 rounded-xl hover:!bg-default/40' key='goto_artist'>
+                                        <Button fullWidth variant='light' className='justify-start !bg-transparent'><PersonSimple weight='bold' /> {language.data.app.guilds.player.context_menu.goto_artist}</Button>
                                     </DropdownItem>
                                 </DropdownSection>
                             </DropdownMenu>

@@ -429,6 +429,11 @@
                         "success": "สำเร็จ, เพิ่ม[track_name] โดย [artist] ลงในคิวแล้ว!",
                         "error": "บู... มีบางอย่างผิดพลาด :("
                     },
+                    "rm_track": {
+                        "loading": "กำลังลบ [track_name] ของ [artist] ออกจากคิว",
+                        "success": "เข้าใจแล้ว [track_name] ของ [artist] ถูกลบออกจากคิวแล้ว!",
+                        "error": "บู... มีบางอย่างผิดพลาด :("
+                    },
                     "repeat": {
                         "loading": "กำลังเปลี่ยนโหมดการวนซ้ำเป็น [repeat_mode]",
                         "success": "เปลี่ยนโหมดการวนซ้ำเป็น [repeat_mode] แล้ว!",

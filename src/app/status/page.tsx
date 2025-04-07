@@ -6,6 +6,8 @@ import { Cube } from '@phosphor-icons/react/dist/ssr'
 import ManagerChart from '@/components/status/managerChart';
 
 import handshake from '@/server-side-api/handshake';
+import ponlponl123apiHandshake from '@/server-side-api/ponlponl123api';
+import redis from '@/server-side-api/redis';
 import socketio from '@/server-side-api/socketio';
 import lavalink from '@/server-side-api/lavalink';
 import clusterInfo, { ClusterInfo } from '@/server-side-api/clusterInfo';
@@ -22,29 +24,38 @@ function Status() {
     const [viewMode, setViewMode] = React.useState<viewType>('6h');
 
     const [ handshakeStatus, setHandshakeStatus ] = React.useState<boolean | null>(null);
+    const [ ponlponl123ApiStatus, setPonlponl123ApiStatus ] = React.useState<boolean | null>(null);
+    const [ redisStatus, setRedisStatus ] = React.useState<boolean | null>(null);
     const [ websocketStatus, setWebsocketStatus ] = React.useState<boolean | null>(null);
     const [ lavalinkStatus, setLavalinkStatus ] = React.useState<boolean | null>(null);
     const [ clusterInfoStatus, setClusterInfoStatus ] = React.useState<false | ClusterInfo | null>(null);
 
     function setOverallServiceStatus(
         handshake: boolean,
+        ponlponl123api: boolean,
+        redis: boolean,
         websocket: boolean,
         lavalink: boolean,
         cluster: false | ClusterInfo
     ) {
         setHandshakeStatus(handshake);
+        setPonlponl123ApiStatus(ponlponl123api);
+        setRedisStatus(redis);
         setWebsocketStatus(websocket);
         setLavalinkStatus(lavalink);
         setClusterInfoStatus(cluster);
         if (
             !handshake &&
+            !ponlponl123api &&
+            !redis &&
             !websocket &&
             !lavalink &&
             !cluster
         ) return setOverallStatus('down');
         if (
             !handshake ||
-            !websocket ||
+            !ponlponl123api ||
+            !redis ||
             !lavalink ||
             !cluster
         ) return setOverallStatus('degraded');
@@ -56,12 +67,16 @@ function Status() {
         setFetching(true);
 
         const handshakeReq = await handshake();
+        const ponlponl123api = await ponlponl123apiHandshake();
+        const redisReq = await redis();
         const socketioReq = await socketio();
         const lavalinkReq = await lavalink();
         const clusterInfoReq = await clusterInfo();
 
         setOverallServiceStatus(
             handshakeReq,
+            ponlponl123api,
+            redisReq,
             socketioReq,
             lavalinkReq,
             clusterInfoReq
@@ -101,10 +116,12 @@ function Status() {
                         <div className='flex flex-col gap-4 mt-4'>
                             <div className='service-list'><h1>Internal APIs</h1>
                             <div className={`service-status-badge ${handshakeStatus ? 'operational' : handshakeStatus === null ? 'unknown' : 'down'}`}></div></div>
+                            <div className='service-list'><h1>Ponlponl123 APIs</h1>
+                            <div className={`service-status-badge ${ponlponl123ApiStatus ? 'operational' : ponlponl123ApiStatus === null ? 'unknown' : 'down'}`}></div></div>
                             <div className='service-list'><h1>Web Socket Connections</h1>
                             <div className={`service-status-badge ${websocketStatus ? 'operational' : websocketStatus === null ? 'unknown' : 'down'}`}></div></div>
                             <div className='service-list'><h1>Redis networks Connections</h1>
-                            <div className={`service-status-badge unknown`}></div></div>
+                            <div className={`service-status-badge ${redisStatus ? 'operational' : redisStatus === null ? 'unknown' : 'down'}`}></div></div>
                             <div className='service-list'><h1>Lavalink Connection</h1>
                             <div className={`service-status-badge ${lavalinkStatus ? 'operational' : lavalinkStatus === null ? 'unknown' : 'down'}`}></div></div>
                             <div className='service-list'><h1>Cloudflare Workers</h1>

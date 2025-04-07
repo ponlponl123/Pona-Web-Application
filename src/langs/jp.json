@@ -419,6 +419,11 @@
                         "success": "了解しました、[artist]の[track_name]をキューに追加しました！",
                         "error": "あれ...何かがうまくいかなかったようです :("
                     },
+                    "rm_track": {
+                        "loading": "[artist] の [track_name] をキューから削除しています",
+                        "success": "了解しました。[artist] の [track_name] をキューから削除しました!",
+                        "error": "あー、何か問題が発生しました :("
+                    },
                     "repeat": {
                         "loading": "リピートモードを[repeat_mode]に変更しています",
                         "success": "リピートモードが[repeat_mode]に変更されました！",
