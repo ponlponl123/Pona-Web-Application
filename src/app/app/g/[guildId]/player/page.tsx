@@ -5,29 +5,13 @@ import { useLanguageContext } from '@/contexts/languageContext';
 import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo';
 import { useDiscordUserInfo } from '@/contexts/discordUserInfo';
 import fetchHistory, { History } from '@/server-side-api/internal/history';
-import { motion, Variants } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { getCookie } from 'cookies-next';
 import { useRouter } from 'next/navigation';
 import MusicCard from '@/components/music/card';
 import { CaretLeft, CaretRight, CraneTower, Heart, MagnifyingGlass, MicrophoneStage } from '@phosphor-icons/react/dist/ssr';
 import useEmblaCarousel from 'embla-carousel-react';
-import { usePrevNextButtons } from '@/utils/Embla/CarouselArrowButtons'
-
-export const motion_card: Variants = {
-  offscreen: {
-    x: -100,
-    opacity: 0
-  },
-  onscreen: {
-    y: 0,
-    opacity: 1,
-    transition: {
-      type: "spring",
-      stiffness: 150,
-      damping: 15,
-    },
-  },
-}
+import { usePrevNextButtons } from '@/utils/Embla/CarouselArrowButtons';
 
 function Page() {
   const router = useRouter();
@@ -35,30 +19,29 @@ function Page() {
   const { guild } = useDiscordGuildInfo();
   const { language } = useLanguageContext();
   const fetched = React.useRef(false);
-  const [ tracksHistory, setTracksHistory ] = React.useState<History[] | null>(null);
-  const [emblaRef, emblaApi] = useEmblaCarousel({ skipSnaps: true })
+  const [tracksHistory, setTracksHistory] = React.useState<History[] | null>(null);
+  const [emblaRef, emblaApi] = useEmblaCarousel({ skipSnaps: true });
 
   const {
     prevBtnDisabled,
     nextBtnDisabled,
     onPrevButtonClick,
-    onNextButtonClick
+    onNextButtonClick,
   } = usePrevNextButtons(emblaApi);
 
   const fetchHistoryTracks = async () => {
     const accessTokenType = getCookie('LOGIN_TYPE_');
     const accessToken = getCookie('LOGIN_');
-    if ( !accessTokenType || !accessToken ) return false;
+    if (!accessTokenType || !accessToken) return false;
     const tracks = await fetchHistory(accessTokenType, accessToken);
-    if ( tracks ) setTracksHistory(tracks.tracks);
+    if (tracks) setTracksHistory(tracks.tracks);
     fetched.current = true;
-  }
+  };
 
   React.useEffect(() => {
-    if ( !fetched.current )
-    fetchHistoryTracks();
-  }, [fetched])
-  
+    if (!fetched.current) fetchHistoryTracks();
+  }, [fetched]);
+
   return (
     guild ? (
       <>
@@ -143,7 +126,7 @@ function Page() {
         <Spinner />
       </>
     )
-  )
+  );
 }
 
-export default Page
+export default Page;
