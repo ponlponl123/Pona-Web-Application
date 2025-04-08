@@ -184,7 +184,7 @@ function ModalContext ({
                             <p>{language.data.app.updates.error.description}</p>
                         </div>
                     ) : (
-                        <ScrollShadow className='w-full h-full'>
+                        <ScrollShadow className='w-full h-full' style={{scrollbarColor: 'hsl(var(--pona-app-primary)) transparent'}}>
                             <div className='block relative w-full max-w-full h-max prose markdown'>
                                 <Markdown>{
                                     (() => {

@@ -1,7 +1,7 @@
 "use client"
 import { useLanguageContext } from '@/contexts/languageContext';
-import { getArtist, getArtistv1, getUser } from '@/server-side-api/internal/search';
-import { Button, Image as NextImage, Progress } from '@nextui-org/react';
+import { getArtistVideos, getChannel, getUserVideos } from '@/server-side-api/internal/search';
+import { Button, Image as NextImage, Progress, Spinner } from '@nextui-org/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { getCookie } from 'cookies-next';
 import { motion } from 'framer-motion';
@@ -9,7 +9,7 @@ import React from 'react'
 import { AlbumCard, ArtistCard, PlaylistCard, VideoCard } from '@/components/music/card';
 import Track from '@/components/music/searchResult/track';
 import { ArtistFull as ArtistFullv1 } from '@/interfaces/ytmusic';
-import { ArtistFull, ProfileFull, SongDetailed, VideoDetailed } from '@/interfaces/ytmusic-api';
+import { ArtistFull, ArtistVideo, ProfileFull, SongDetailed, VideoDetailed } from '@/interfaces/ytmusic-api';
 import { CaretLeft, CaretRight, FlyingSaucer } from '@phosphor-icons/react/dist/ssr';
 import useEmblaCarousel from 'embla-carousel-react';
 import { usePrevNextButtons } from '@/utils/Embla/CarouselArrowButtons';
@@ -30,6 +30,12 @@ function Page() {
   const [singleEmblaRef, singleEmblaApi] = useEmblaCarousel({ skipSnaps: true })
   const [albumEmblaRef, albumEmblaApi] = useEmblaCarousel({ skipSnaps: true })
   const [artistEmblaRef, artistEmblaApi] = useEmblaCarousel({ skipSnaps: true })
+  const [ fetchingVideos, setFetchingVideos ] = React.useState<boolean | undefined>(undefined);
+  // const [ fetchingSingles, setFetchingSingles ] = React.useState<boolean | undefined>(undefined);
+  // const [ fetchingAlbums, setFetchingAlbums ] = React.useState<boolean | undefined>(undefined);
+  const [ videos, setVideos ] = React.useState<undefined | ArtistVideo[]>(undefined);
+  // const [ singles, setSingles ] = React.useState<undefined | ArtistSingle[]>(undefined);
+  // const [ albums, setAlbums ] = React.useState<undefined | ArtistSingle[]>(undefined);
   const {
     prevBtnDisabled: videoEmblaPrevBtnDisabled,
     nextBtnDisabled: videoEmblaNextBtnDisabled,
@@ -76,17 +82,17 @@ function Page() {
       setChannelDetailv1(null);
 
       try {
-        const [resultv1, result, profile] = await Promise.all([
-          getArtistv1(accessTokenType, accessToken, channelId),
-          getArtist(accessTokenType, accessToken, channelId),
-          getUser(accessTokenType, accessToken, channelId)
-        ]);
-
-        if (resultv1) setChannelDetailv1(resultv1);
-        if (profile) setProfileDetail(profile);
-        if (!result && !resultv1) return exit(false);
-        exit(result);
-
+        const channel = await getChannel(accessTokenType, accessToken, channelId);
+        if (channel)
+        {
+          setChannelDetail(channel.v2 || null);
+          setChannelDetailv1(channel.v1 || null);
+          setProfileDetail(channel.user || null);
+          if (!channel.v1 && !channel.v2) return exit(false);
+          exit(channel.v2 || null);
+        }
+        const result = channel ? channel.v2 || null : null;
+        const resultv1 = channel ? channel.v1 || null : null;
         highResArtworkProxyURI.current = (result && result?.thumbnails) ? `/api/proxy/image?r=` + result?.thumbnails[result?.thumbnails.length - 1].url : (resultv1 && resultv1?.thumbnails) ? `/api/proxy/image?r=` + resultv1?.thumbnails[resultv1?.thumbnails.length - 1].url : "";
         const image = new Image();
         image.src = highResArtworkProxyURI.current;
@@ -222,34 +228,69 @@ function Page() {
                     <h1 className='text-start text-4xl'>{language.data.app.guilds.player.artist.category.topVideos}</h1>
                     <div className='flex-1'></div>
                     {
-                      channelDetail && channelDetail?.videos?.browseId && channelDetail?.videos?.params &&
-                      <Button radius='full' variant='bordered' size='sm' color='primary' className='font-bold max-md:text-sm max-md:min-h-0 max-md:min-w-0 max-md:py-3 max-md:px-4 max-md:h-max'>{language.data.app.guilds.player.artist.showmore}</Button>
+                      !(fetchingVideos===false) &&
+                      <>
+                      <Button radius='full' variant='bordered' size='sm' color='primary' className='font-bold max-md:text-sm max-md:min-h-0 max-md:min-w-0 max-md:py-3 max-md:px-4 max-md:h-max'
+                        onPress={async ()=>{
+                          if ( !channelId ) return;
+                          setFetchingVideos(true);
+                          const accessTokenType = getCookie('LOGIN_TYPE_');
+                          const accessToken = getCookie('LOGIN_');
+                          const [artistVideos, userVideos] = await Promise.all([
+                            getArtistVideos(String(accessTokenType), String(accessToken), channelId),
+                            getUserVideos(String(accessTokenType), String(accessToken), channelId)
+                          ]);
+                          if ( userVideos ) setVideos(userVideos as unknown as ArtistVideo[]);
+                          if ( artistVideos ) setVideos(artistVideos);
+                          setFetchingVideos(false);
+                        }}>{
+                          fetchingVideos ? <Spinner size='sm' /> :
+                          language.data.app.guilds.player.artist.showmore
+                        }</Button>
+                        <div className="embla__buttons gap-3 flex items-center justify-center">
+                          <Button
+                            onPress={videoEmblaOnPrevButtonClick} disabled={videoEmblaPrevBtnDisabled}
+                            title='previous'
+                            className="embla__button embla__button--prev border-2 border-foreground/10 bg-foreground/10 disabled:opacity-30 disabled:bg-transparent disabled:border-foreground/5"
+                            type="button"
+                            size='sm'
+                            radius='full'
+                            isIconOnly
+                          ><CaretLeft/></Button>
+                          <Button
+                            onPress={videoEmblaOnNextButtonClick} disabled={videoEmblaNextBtnDisabled}
+                            title='next'
+                            className="embla__button embla__button--next border-2 border-foreground/10 bg-foreground/10 disabled:opacity-30 disabled:bg-transparent disabled:border-foreground/5"
+                            type="button"
+                            size='sm'
+                            radius='full'
+                            isIconOnly
+                          ><CaretRight/></Button>
+                        </div>
+                      </>
                     }
-                    <div className="embla__buttons gap-3 flex items-center justify-center">
-                      <Button
-                        onPress={videoEmblaOnPrevButtonClick} disabled={videoEmblaPrevBtnDisabled}
-                        title='previous'
-                        className="embla__button embla__button--prev border-2 border-foreground/10 bg-foreground/10 disabled:opacity-30 disabled:bg-transparent disabled:border-foreground/5"
-                        type="button"
-                        size='sm'
-                        radius='full'
-                        isIconOnly
-                      ><CaretLeft/></Button>
-                      <Button
-                        onPress={videoEmblaOnNextButtonClick} disabled={videoEmblaNextBtnDisabled}
-                        title='next'
-                        className="embla__button embla__button--next border-2 border-foreground/10 bg-foreground/10 disabled:opacity-30 disabled:bg-transparent disabled:border-foreground/5"
-                        type="button"
-                        size='sm'
-                        radius='full'
-                        isIconOnly
-                      ><CaretRight/></Button>
-                    </div>
                   </div>
-                  <div className="embla w-full max-w-none mx-0 mt-6 z-10 relative">
-                    <div className="embla__viewport" ref={videoEmblaRef}>
-                      <div className="embla__container gap-5 select-none px-4">
+                  <div className={fetchingVideos===false?"w-full":"embla w-full max-w-none mx-0 mt-6 z-10 relative"}>
+                    <div className={fetchingVideos===false?"w-full":"embla__viewport"} ref={videoEmblaRef}>
+                      <div className={fetchingVideos===false?"grid gap-4 grid-cols-4 max-2xl:grid-cols-3 max-desktop:grid-cols-2 max-tablet:grid-cols-1":"embla__container gap-5 select-none px-4"}>
                       {
+                        (fetchingVideos===false && videos) ? videos.map((videoDetail, index) => (
+                          <React.Fragment key={index}>
+                            <VideoCard video={{
+                              artists: videoDetail.artists,
+                              category: "Videos",
+                              duration_seconds: null,
+                              isExplicit: false,
+                              resultType: "video",
+                              thumbnails: videoDetail.thumbnails,
+                              title: videoDetail.title,
+                              videoId: videoDetail.videoId,
+                              view: videoDetail.views,
+                              videoType: null,
+                              year: null
+                            } as unknown as VideoDetailed} />
+                          </React.Fragment>
+                        )) :
                         (channelDetail && channelDetail.videos && channelDetail.videos.results && channelDetail.videos.results.length > 0) ? channelDetail.videos.results.map((videoDetail, index) => (
                           <React.Fragment key={index}>
                             <VideoCard video={{

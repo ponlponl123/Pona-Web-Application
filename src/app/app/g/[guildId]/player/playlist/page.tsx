@@ -5,7 +5,7 @@ import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo';
 import { useLanguageContext } from '@/contexts/languageContext';
 import { PlaylistFull as PlaylistFullv1 } from '@/interfaces/ytmusic';
 import { AlbumFull, AlbumTrack, PlaylistFull } from '@/interfaces/ytmusic-api';
-import { getAlbum, getArtist, getArtistv1, getPlaylist, getPlaylistv1 } from '@/server-side-api/internal/search';
+import { getAlbum, getChannel, getPlaylist, getPlaylistv1 } from '@/server-side-api/internal/search';
 import { Button, Image, Link, Progress } from '@nextui-org/react';
 import { FlyingSaucer, ShareFat } from '@phosphor-icons/react/dist/ssr';
 import { getCookie } from 'cookies-next';
@@ -40,19 +40,22 @@ function Page() {
       if (playlist_id.endsWith('abm')) {
         const albumResult = await getAlbum(accessTokenType, accessToken, playlist_id.slice(0, playlist_id.length-3));
         if (albumResult) pl_result = albumResult;
-        else if ( !albumResult ) {
-          const playlistResult = await fetchPlaylist(accessTokenType, accessToken, playlist_id.slice(0, playlist_id.length-3));
-          if (playlistResult) pl_result = playlistResult;
-        }
-      } else {
+      }
+      if ( !pl_result )
+      {
         const playlistResult = await fetchPlaylist(accessTokenType, accessToken, playlist_id);
         if (playlistResult) pl_result = playlistResult;
       }
       if ( !pl_result ) {
-        const resultv1 = await getArtistv1(accessTokenType, accessToken, playlist_id);
-        if ( resultv1 ) return router.replace(window.location.pathname.split('/player')[0] + '/player/c?c='+playlist_id);
-        const result = await getArtist(accessTokenType, accessToken, playlist_id);
-        if ( result ) return router.replace(window.location.pathname.split('/player')[0] + '/player/c?c='+playlist_id);
+        const channel = await getChannel(accessTokenType, accessToken, playlist_id);
+        if (
+          channel &&
+          (
+            channel.user ||
+            channel.v1 ||
+            channel.v2
+          )
+        ) return router.replace(window.location.pathname.split('/player')[0] + '/player/c?c='+playlist_id);
       }
       setPlaylist(pl_result);
       setLoading(false);

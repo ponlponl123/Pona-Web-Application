@@ -2,7 +2,7 @@
 import axios from 'axios';
 import { Endpoint, EndpointPort } from '../endpoint';
 import { ArtistFull as ArtistFullv1, PlaylistFull as PlaylistFullv1 } from '@/interfaces/ytmusic';
-import { AlbumFull, ArtistFull, SearchResult as HTTP_SearchResult, PlaylistFull, ProfileFull, SongFull, TopResult_Song } from '@/interfaces/ytmusic-api';
+import { AlbumFull, ArtistFull, ArtistVideo, SearchResult as HTTP_SearchResult, PlaylistFull, ProfileFull, SongFull, TopResult_Song, VideoFull } from '@/interfaces/ytmusic-api';
 
 export type YTMusicSearchResultType = "SONG" | "ALBUM" | "VIDEO" | "PLAYLIST" | "PODCAST" | "ARTIST";
 export type YTMusicSearchCategoryType = "Top result" | null | "Songs" | "Videos" | "Albums" | "Community Playlists" | "Artists" | "Podcasts" | "Episodes" | "Profiles";
@@ -15,6 +15,12 @@ export interface SearchResult {
 export interface SearchSuggestion {
     "message": string,
     "searchSuggestions": string[]
+}
+
+export interface ChannelResult {
+    v1: ArtistFullv1 | undefined;
+    v2: ArtistFull | undefined;
+    user: ProfileFull | undefined;
 }
 
 export async function fetchSearchSuggestionResult(tokenType: string, tokenKey: string, search: string): Promise<false | SearchSuggestion> {
@@ -47,7 +53,17 @@ export default async function fetchSearchResult(tokenType: string, tokenKey: str
         });
         if ( handshakeRequest.status === 200 ) {
             const topResult = (handshakeRequest.data.result as HTTP_SearchResult[]).filter((result: HTTP_SearchResult) => result.category === "Top result");
-            if ( topResult && topResult.length > 0 && topResult[0].resultType === "video" && topResult[0].videoId )
+            if (
+                topResult && topResult.length > 0 && topResult[0].resultType === "video" &&
+                topResult[0].videoType?.includes("MUSIC_VIDEO") &&
+                topResult[0].videoId &&
+                (
+                    !topResult[0].title.toLowerCase().includes("cover") ||
+                    topResult[0].title.toLowerCase().includes("mv") ||
+                    topResult[0].title.toLowerCase().includes("music video") ||
+                    topResult[0].title.toLowerCase().includes("official")
+                )
+            )
             {
                 const track = topResult[0];
                 const fetchSong = await getSong(tokenType, tokenKey, track.title, track.artists[0].name, topResult[0].videoId);
@@ -72,7 +88,7 @@ export default async function fetchSearchResult(tokenType: string, tokenKey: str
                 } as SearchResult;
             }
             return handshakeRequest.data as SearchResult;
-    }
+        }
         else return false;
     } catch {
         // console.error('Failed to handshake with Pona! API:', err);
@@ -167,6 +183,41 @@ export async function getArtist(tokenType: string, tokenKey: string, artistId: s
     }
 }
 
+export async function getArtistVideos(tokenType: string, tokenKey: string, artistId: string): Promise<false | ArtistVideo[]> {
+    try {
+        const endpoint = new URL(`${Endpoint}:${EndpointPort}/v2/music/fetch/artist`);
+        endpoint.searchParams.append('id', artistId);
+        endpoint.searchParams.append('query', 'videos');
+        const handshakeRequest = await axios.get(endpoint.toString(), {
+            headers: {
+                'Authorization': `${tokenType} ${tokenKey}`,
+            },
+        });
+        if ( handshakeRequest.status === 200 && handshakeRequest.data.result ) return handshakeRequest.data.result as ArtistVideo[];
+        else return false;
+    } catch {
+        // console.error('Failed to handshake with Pona! API:', err);
+        return false;
+    }
+}
+
+export async function getChannel(tokenType: string, tokenKey: string, artistId: string): Promise<false | ChannelResult> {
+    try {
+        const endpoint = new URL(`${Endpoint}:${EndpointPort}/v2/music/fetch/channel`);
+        endpoint.searchParams.append('id', artistId);
+        const handshakeRequest = await axios.get(endpoint.toString(), {
+            headers: {
+                'Authorization': `${tokenType} ${tokenKey}`,
+            },
+        });
+        if ( handshakeRequest.status === 200 && handshakeRequest.data.result ) return handshakeRequest.data.result as ChannelResult;
+        else return false;
+    } catch {
+        // console.error('Failed to handshake with Pona! API:', err);
+        return false;
+    }
+}
+
 export async function getUser(tokenType: string, tokenKey: string, userId: string): Promise<false | ProfileFull> {
     try {
         const endpoint = new URL(`${Endpoint}:${EndpointPort}/v2/music/fetch/user`);
@@ -177,6 +228,24 @@ export async function getUser(tokenType: string, tokenKey: string, userId: strin
             },
         });
         if ( handshakeRequest.status === 200 && handshakeRequest.data.result ) return handshakeRequest.data.result as ProfileFull;
+        else return false;
+    } catch {
+        // console.error('Failed to handshake with Pona! API:', err);
+        return false;
+    }
+}
+
+export async function getUserVideos(tokenType: string, tokenKey: string, userId: string): Promise<false | VideoFull[]> {
+    try {
+        const endpoint = new URL(`${Endpoint}:${EndpointPort}/v2/music/fetch/user`);
+        endpoint.searchParams.append('id', userId);
+        endpoint.searchParams.append('query', 'videos');
+        const handshakeRequest = await axios.get(endpoint.toString(), {
+            headers: {
+                'Authorization': `${tokenType} ${tokenKey}`,
+            },
+        });
+        if ( handshakeRequest.status === 200 && handshakeRequest.data.result ) return handshakeRequest.data.result as VideoFull[];
         else return false;
     } catch {
         // console.error('Failed to handshake with Pona! API:', err);
