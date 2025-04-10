@@ -31,3 +31,18 @@ export default async function fetchHistory(tokenType: string, tokenKey: string, 
         return false;
     }
 }
+
+export async function fetchSearchHistory(tokenType: string, tokenKey: string): Promise<false | string[]> {
+    try {
+        const endpoint = new URL(`${Endpoint}:${EndpointPort}/v1/music/history/search`);
+        const handshakeRequest = await axios.get(endpoint.toString(), {
+            headers: {
+                'Authorization': `${tokenType} ${tokenKey}`,
+            }
+        });
+        if ( handshakeRequest.status === 200 ) return handshakeRequest.data.results as string[];
+        else return false;
+    } catch {
+        return false;
+    }
+}

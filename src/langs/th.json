@@ -10,6 +10,13 @@
         "experiment": "คุณสมบัติการทดลอง",
         "comingsoon": "เร็วๆนี้"
     },
+    "common": {
+        "ok": "ตกลง",
+        "cancel": "ยกเลิก",
+        "close": "ปิด",
+        "yes": "ใช่",
+        "no": "ไม่"
+    },
     "cookie": {
         "title": "คุกกี้!",
         "description": "แอปพลิเคชันนี้จะใช้คุกกี้เพื่ออนุมัติบริการบางอย่าง"
@@ -385,8 +392,10 @@
                 },
                 "artist":{
                     "subscribe": "ติดตาม",
+                    "subscriber": "ผู้ติดตาม",
                     "subscribed": "ติดตามแล้ว",
                     "unsubscribe": "ยกเลิกการติดตาม",
+                    "unsubscribe_confirmation": "เลิกติดตาม [artist_name] ใช่ไหม",
                     "showmore": "แสดงเพิ่มเติม",
                     "people": "คน",
                     "category": {
@@ -664,5 +673,8 @@
         "happy": "สนุก",
         "sweet": "หวาน~ (อันนี้ไม่ให้กดนะ! ;_;)",
         "cool": "เจ๋ง"
+    },
+    "spacial": {
+        "little_angel": "นางฟ้าตัวน้อย ໒꒱· ﾟ"
     }
 }

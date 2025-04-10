@@ -13,6 +13,7 @@ import { ArtistFull, ArtistVideo, ProfileFull, SongDetailed, VideoDetailed } fro
 import { CaretLeft, CaretRight, FlyingSaucer } from '@phosphor-icons/react/dist/ssr';
 import useEmblaCarousel from 'embla-carousel-react';
 import { usePrevNextButtons } from '@/utils/Embla/CarouselArrowButtons';
+import SubscribeButton from '@/components/music/subscribe';
 
 function Page() {
   const router = useRouter();
@@ -148,12 +149,12 @@ function Page() {
                 </p>
               }
               <div className='flex gap-4 items-center'>
-                <Button radius='full' size='lg' color='primary' className='font-bold max-md:text-sm max-md:min-h-0 max-md:min-w-0 max-md:py-3 max-md:px-4 max-md:h-max'>
-                  <span>{language.data.app.guilds.player.artist.subscribe}</span>
-                  {
+                {
+                  channelId &&
+                  <SubscribeButton channelId={channelId} artistName={channelDetail && channelDetail.name || channelDetailv1 && channelDetailv1.name || undefined} preset='full' endContent={
                     channelDetail && channelDetail.subscribers && <><span>{channelDetail.subscribers}</span><span>{language.data.app.guilds.player.artist.people}</span></>
-                  }
-                </Button>
+                  }/>
+                }
               </div>
             </div>
             <div className='absolute z-[10] bg-gradient-to-t from-playground-background to-transparent w-full h-full top-0 left-0'></div>
@@ -346,7 +347,13 @@ function Page() {
               </>
             }
             {
-              (channelDetailv1 && channelDetailv1.featuredOn && channelDetailv1.featuredOn.length > 0) && <>
+              (channelDetailv1 && channelDetailv1.featuredOn && channelDetailv1.featuredOn.length > 0)
+                && (
+                  channelDetailv1 && channelDetailv1.featuredOn &&
+                  channelDetail && channelDetail.related.results &&
+                  channelDetailv1.featuredOn[0].name !== channelDetail.related.results[0].title
+                )
+              && <>
                 <section className='c section'>
                   <div className='flex gap-4 items-center justify-between w-full p-1 -mt-2'>
                     <h1 className='w-full text-start text-4xl'>{language.data.app.guilds.player.artist.category.featuredOn} {channelDetail && channelDetail?.name || channelDetailv1 && channelDetailv1.name}</h1>

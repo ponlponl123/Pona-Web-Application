@@ -11,6 +11,7 @@ import PageAnimatePresence from "@/components/HOC/PageAnimatePresence";
 import { usePathname } from 'next/navigation';
 import { Toaster } from 'react-hot-toast';
 import Snowfall from 'react-snowfall';
+import { PonaMusicCacheContextProvider } from '@/contexts/ponaMusicCacheContext';
 
 export function Providers({ children, isMobile }: { children: React.ReactNode; isMobile: boolean; }) {
   const pathname = usePathname() || '';
@@ -22,23 +23,25 @@ export function Providers({ children, isMobile }: { children: React.ReactNode; i
           <UserSettingProvider>
             <DiscordUserInfoProvider>
               <DiscordGuildInfoProvider>
-                <GlobalProvider isMobile={isMobile}>
-                {
-                  date.getMonth() === 11 && (
-                    <Snowfall
-                      snowflakeCount={12}
-                      speed={[0.5, 3]}
-                      wind={[-0.5, 1]}
-                      radius={[0.5, 3]}
-                      style={{zIndex: 99}}
-                    />
-                  )
-                }
-                {
-                  pathname.startsWith('/app') ? children : <PageAnimatePresence>{children}</PageAnimatePresence>
-                }
-                <Toaster />
-                </GlobalProvider>
+                <PonaMusicCacheContextProvider>
+                  <GlobalProvider isMobile={isMobile}>
+                  {
+                    date.getMonth() === 11 && (
+                      <Snowfall
+                        snowflakeCount={12}
+                        speed={[0.5, 3]}
+                        wind={[-0.5, 1]}
+                        radius={[0.5, 3]}
+                        style={{zIndex: 99}}
+                      />
+                    )
+                  }
+                  {
+                    pathname.startsWith('/app') ? children : <PageAnimatePresence>{children}</PageAnimatePresence>
+                  }
+                  <Toaster />
+                  </GlobalProvider>
+                </PonaMusicCacheContextProvider>
               </DiscordGuildInfoProvider>
             </DiscordUserInfoProvider>
           </UserSettingProvider>

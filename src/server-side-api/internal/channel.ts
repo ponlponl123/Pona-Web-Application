@@ -14,7 +14,7 @@ export async function IsSubscribed(tokenType: string, tokenKey: string, channelI
         const handshakeRequest = await axios.get(endpoint.toString(), {
             headers: {
                 'Authorization': `${tokenType} ${tokenKey}`,
-            },
+            }
         });
         if ( handshakeRequest.status === 200 ) return handshakeRequest.data as SubscribeResult;
         else return false;
@@ -27,10 +27,10 @@ export default async function subscribe(tokenType: string, tokenKey: string, cha
     try {
         const endpoint = new URL(`${Endpoint}:${EndpointPort}/v1/channel/subscribe`);
         endpoint.searchParams.append('c', channelId);
-        const handshakeRequest = await axios.post(endpoint.toString(), {
+        const handshakeRequest = await axios.post(endpoint.toString(), null, {
             headers: {
                 'Authorization': `${tokenType} ${tokenKey}`,
-            },
+            }
         });
         if ( handshakeRequest.status === 200 ) return true;
         else return false;
@@ -46,7 +46,7 @@ export async function unsubscribe(tokenType: string, tokenKey: string, channelId
         const handshakeRequest = await axios.delete(endpoint.toString(), {
             headers: {
                 'Authorization': `${tokenType} ${tokenKey}`,
-            },
+            }
         });
         if ( handshakeRequest.status === 200 ) return true;
         else return false;

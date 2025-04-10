@@ -10,6 +10,13 @@
         "experiment": "実験的",
         "comingsoon": "近日公開"
     },
+    "common": {
+        "ok": "OK",
+        "cancel": "キャンセル",
+        "close": "閉じる",
+        "yes": "はい",
+        "no": "いいえ"
+    },
     "cookie": {
         "title": "クッキー！",
         "description": "このアプリケーションは、一部のサービスの認証にクッキーを使用します"
@@ -375,8 +382,10 @@
                 },
                 "artist":{
                     "subscribe": "購読する",
+                    "subscriber": "加入者",
                     "subscribed": "購読済み",
                     "unsubscribe": "購読解除",
+                    "unsubscribe_confirmation": "[artist_name]の登録を解除しますか?",
                     "showmore": "もっと見る",
                     "people": "人",
                     "category": {
@@ -654,5 +663,8 @@
         "happy": "楽しい",
         "sweet": "甘い〜（これは押してはいけません！;_;）",
         "cool": "クール"
+    },
+    "spacial": {
+        "little_angel": "小さな天使 ໒꒱· ﾟ"
     }
 }

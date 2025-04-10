@@ -10,6 +10,13 @@
         "experiment": "Experiment",
         "comingsoon": "Coming Soon"
     },
+    "common": {
+        "ok": "OK",
+        "cancel": "Cancel",
+        "close": "Close",
+        "yes": "Yes",
+        "no": "No"
+    },
     "cookie": {
         "title": "Cookie!",
         "description": "This application will using cookie for authorize some services"
@@ -381,7 +388,9 @@
                 },
                 "artist":{
                     "subscribe": "Subscribe",
+                    "subscriber": "Subscriber",
                     "subscribed": "Subscribed",
+                    "unsubscribe_confirmation": "Unsubscribe [artist_name] right?",
                     "unsubscribe": "Unsubscribe",
                     "showmore": "Show More",
                     "people": "people",
@@ -660,5 +669,8 @@
         "happy": "Fun",
         "sweet": "Sweet~ (this one is not allowed to be pressed! ;_;)",
         "cool": "Cool"
+    },
+    "spacial": {
+        "little_angel": "Little Angel ໒꒱· ﾟ"
     }
 }

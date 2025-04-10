@@ -1,3 +1,5 @@
+import { NextUIPalette } from "@/../themes/utils/nextui-color-palette-gen";
+
 export interface ThumbnailFull {
 	url: string;
 	width: number;
@@ -24,6 +26,8 @@ export type ResultType = "artist" | "artist-detail" | "profile" | "video" | "son
 export interface TopResult {
 	category: "Top result";
 	resultType: ResultType;
+	accentColor?: string;
+	colorPalette?: NextUIPalette;
 }
 
 export interface TopResult_Artist extends TopResult {

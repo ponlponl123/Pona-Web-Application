@@ -5,7 +5,7 @@ import MyButton from '@/components/button'
 import { useGlobalContext } from '@/contexts/globalContext';
 import { useLanguageContext } from '@/contexts/languageContext';
 import { useDiscordUserInfo } from '@/contexts/discordUserInfo';
-import { DiscordLogo, Confetti, Hamburger, Question, Gear, Leaf, MagnifyingGlass } from "@phosphor-icons/react/dist/ssr";
+import { DiscordLogo, Confetti, Hamburger, Question, Gear, Leaf, MagnifyingGlass, ClockCounterClockwise } from "@phosphor-icons/react/dist/ssr";
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Avatar, Button, Form, Input, ScrollShadow } from '@nextui-org/react';
 import { usePathname, useRouter } from 'next/navigation';
 import PonaIcon from '@/app/favicon.ico';
@@ -14,6 +14,7 @@ import Scrollbar from '../scrollbar';
 import Image from 'next/image';
 import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo';
 import { fetchSearchSuggestionResult } from '@/server-side-api/internal/search';
+import { fetchSearchHistory } from '@/server-side-api/internal/history';
 
 function UserAccountAction({className, minimize = false}: {className?: string, minimize?: boolean}) {
     const { userInfo, revokeUserAccessToken } = useDiscordUserInfo();
@@ -67,6 +68,7 @@ function Header() {
     const [searching, setSearching] = React.useState<boolean>(false);
     const [searchValue, setSearchValue] = React.useState<string>("");
     const [searchSuggestions, setSearchSuggestions] = React.useState<string[]>([]);
+    const [searchHistory, setSearchHistory] = React.useState<string[]>([]);
     const [typingTimeout, setTypingTimeout] = React.useState<NodeJS.Timeout | null>(null);
 
     const handleBlur = (event: React.FocusEvent<HTMLInputElement>) => {
@@ -132,17 +134,19 @@ function Header() {
                                 e.preventDefault();
                                 const data = Object.fromEntries(new FormData(e.currentTarget));
                                 router.push(`/app/g/${guild?.id}/player/search?q=${encodeURIComponent(data.search.toString())}`);
+                                setSearchHistory((value) => [...value, data.search.toString()]);
                             }}>
                             <div className='absolute miniscreen:w-80 max-miniscreen:top-24 max-miniscreen:left-4 max-miniscreen:translate-x-0 max-miniscreen:max-w-full max-miniscreen:w-[calc(100%_-_2rem)] max-md:max-w-[32vw] max-md:fixed max-md:-translate-x-1/2 max-md:left-1/2 md:absolute md:left-80 md:[body.sidebar-collapsed_&]:left-24 [body.pona-player-focused_&]:opacity-0 [body.pona-player-focused_&]:pointer-events-none [body.pona-player-focused_&]:-translate-y-6'>
                                 <Input ref={searchInputElement} startContent={<MagnifyingGlass size={18} className='mr-1 max-miniscreen:absolute max-miniscreen:scale-75' />} name='search'
                                     placeholder={language.data.app.guilds.player.search.search_box}
                                     value={searchValue}
+                                    maxLength={512}
                                     onValueChange={(value) => {
                                         setSearching(true);
                                         setSearchValue(value);
                                         if (typingTimeout) clearTimeout(typingTimeout);
                                         setTypingTimeout(setTimeout(async () => {
-                                            if ( !value ) return;
+                                            if ( !value ) return setSearchSuggestions([]);;
                                             const accessTokenType = getCookie('LOGIN_TYPE_');
                                             const accessToken = getCookie('LOGIN_');
                                             if (!accessTokenType || !accessToken) return false;
@@ -151,8 +155,16 @@ function Header() {
                                             else setSearchSuggestions([]);
                                         }, 500));
                                     }}
-                                    onFocus={()=>{
-                                        if ( searchValue ) setSearching(true);
+                                    onFocus={async ()=>{
+                                        setSearching(true);
+                                        if ( !searchValue && !searchHistory.length )
+                                        {
+                                            const accessTokenType = getCookie('LOGIN_TYPE_');
+                                            const accessToken = getCookie('LOGIN_');
+                                            if (!accessTokenType || !accessToken) return false;
+                                            const searchHistory = await fetchSearchHistory(accessTokenType, accessToken);
+                                            if (searchHistory) setSearchHistory(searchHistory);
+                                        }
                                     }}
                                     onBlur={handleBlur}
                                     classNames={{
@@ -167,7 +179,7 @@ function Header() {
                                     }
                                 />
                                 <ScrollShadow id='pona-search-suggestions' ref={searchSuggestionElement} className={
-                                    `absolute w-full min-h-6 h-max max-h-[calc(96vh_-_64px)] bg-foreground/10 max-miniscreen:bg-playground-background border-2 border-foreground/10 miniscreen:backdrop-blur-xl rounded-xl top-12 p-1 z-30 ${(searching && searchValue)?'':'opacity-0 pointer-events-none -translate-y-6'}`
+                                    `absolute w-full min-h-6 h-max max-h-[calc(96vh_-_64px)] bg-foreground/10 max-miniscreen:bg-playground-background border-2 border-foreground/10 miniscreen:backdrop-blur-xl rounded-xl top-12 p-1 z-30 ${(searching && (searchHistory.length > 0 || searchSuggestions.length > 0))?'':'opacity-0 pointer-events-none -translate-y-6'}`
                                 } style={{scrollbarWidth: 'thin',scrollbarColor: 'hsl(var(--pona-app)) transparent'}}>
                                     <div className='flex flex-col gap-1 w-full h-max'>
                                         {
@@ -177,11 +189,19 @@ function Header() {
                                                 className='text-start justify-start gap-3' fullWidth><MagnifyingGlass size={14} /> {searchValue}</Button>
                                         }
                                         {
-                                            searchSuggestions &&
+                                            searchSuggestions.length>0 &&
                                             searchSuggestions?.map((value, index)=>(
                                                 <Button key={index} onPress={()=>{router.push(`/app/g/${guild?.id}/player/search?q=${value}`);setSearching(false);setSearchValue(value)}}
                                                     value={value} variant='light' radius='sm'
                                                     className='text-start justify-start gap-3' fullWidth><MagnifyingGlass size={14} /> {value}</Button>
+                                            ))
+                                        }
+                                        {
+                                            searchHistory.length>0 && !searchSuggestions.length &&
+                                            searchHistory?.map((value, index)=>(
+                                                <Button key={index} onPress={()=>{router.push(`/app/g/${guild?.id}/player/search?q=${value}`);setSearching(false);setSearchValue(value)}}
+                                                    value={value} variant='light' radius='sm'
+                                                    className='text-start justify-start gap-3' fullWidth><ClockCounterClockwise size={14} /> {value}</Button>
                                             ))
                                         }
                                     </div>
