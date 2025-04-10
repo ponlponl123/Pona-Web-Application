@@ -5,6 +5,7 @@ import { useGlobalContext } from '@/contexts/globalContext'
 import { useLanguageContext } from '@/contexts/languageContext'
 import { usePonaMusicContext } from '@/contexts/ponaMusicContext'
 import { useUserSettingContext } from '@/contexts/userSettingContext'
+import { usePlaybackContext } from '@/contexts/playbackContext'
 
 import { msToTime } from '@/utils/time'
 import { useRouter } from 'next/navigation'
@@ -38,7 +39,8 @@ import toast from 'react-hot-toast';
 function DesktopPonaPlayerPanel() {
     const router = useRouter();
     const { language } = useLanguageContext();
-    const { ponaCommonState, ponaTrackQueue, setPonaTrackQueue, isFullscreenMode, setIsFullscreenMode, playback } = useGlobalContext();
+    const { ponaCommonState, ponaTrackQueue, setPonaTrackQueue, isFullscreenMode, setIsFullscreenMode } = useGlobalContext();
+    const { playback } = usePlaybackContext();
     const { userSetting } = useUserSettingContext();
     const { socket, playerPopup } = usePonaMusicContext();
     const currentTrack = ponaCommonState?.current;

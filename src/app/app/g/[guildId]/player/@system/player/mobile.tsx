@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useGlobalContext } from '@/contexts/globalContext'
 import { usePonaMusicContext } from '@/contexts/ponaMusicContext'
 import { useUserSettingContext } from '@/contexts/userSettingContext'
+import { usePlaybackContext } from '@/contexts/playbackContext'
 
 import { CaretDown, CaretUp, Pause, Play } from '@phosphor-icons/react/dist/ssr'
 import { Button, Image, Link, Slider } from '@nextui-org/react'
@@ -13,7 +14,8 @@ export type MobilePonaPlayerPanelAnimationState = 'none' | 'playerPanel' | 'queu
 
 function MobilePonaPlayer() {
   const { userSetting } = useUserSettingContext();
-  const { ponaCommonState, isMobile, playback } = useGlobalContext();
+  const { playback } = usePlaybackContext();
+  const { ponaCommonState, isMobile } = useGlobalContext();
   const { socket, playerPopup, setPlayerPopup } = usePonaMusicContext();
   const [ beforeState, setBeforeState ] = React.useState<MobilePonaPlayerPanelAnimationState>('none');
   const [ afterState, setAfterState ] = React.useState<MobilePonaPlayerPanelAnimationState>('none');

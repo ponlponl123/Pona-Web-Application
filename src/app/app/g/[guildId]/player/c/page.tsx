@@ -1,6 +1,6 @@
 "use client"
 import { useLanguageContext } from '@/contexts/languageContext';
-import { getArtistVideos, getChannel, getUserVideos } from '@/server-side-api/internal/search';
+import { getChannel, getChannelVideos } from '@/server-side-api/internal/search';
 import { Button, Image as NextImage, Progress, Spinner } from '@nextui-org/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { getCookie } from 'cookies-next';
@@ -236,12 +236,8 @@ function Page() {
                           setFetchingVideos(true);
                           const accessTokenType = getCookie('LOGIN_TYPE_');
                           const accessToken = getCookie('LOGIN_');
-                          const [artistVideos, userVideos] = await Promise.all([
-                            getArtistVideos(String(accessTokenType), String(accessToken), channelId),
-                            getUserVideos(String(accessTokenType), String(accessToken), channelId)
-                          ]);
-                          if ( userVideos ) setVideos(userVideos as unknown as ArtistVideo[]);
-                          if ( artistVideos ) setVideos(artistVideos);
+                          const videos = await getChannelVideos(String(accessTokenType), String(accessToken), channelId);
+                          if ( videos ) setVideos(videos as unknown as ArtistVideo[]);
                           setFetchingVideos(false);
                         }}>{
                           fetchingVideos ? <Spinner size='sm' /> :
@@ -272,7 +268,7 @@ function Page() {
                   </div>
                   <div className={fetchingVideos===false?"w-full":"embla w-full max-w-none mx-0 mt-6 z-10 relative"}>
                     <div className={fetchingVideos===false?"w-full":"embla__viewport"} ref={videoEmblaRef}>
-                      <div className={fetchingVideos===false?"grid gap-4 grid-cols-4 max-2xl:grid-cols-3 max-desktop:grid-cols-2 max-tablet:grid-cols-1":"embla__container gap-5 select-none px-4"}>
+                      <div className={fetchingVideos===false?"grid gap-4 grid-cols-4 max-[1660px]:grid-cols-3 max-desktop:grid-cols-2 max-tablet:grid-cols-1":"embla__container gap-5 select-none px-4"}>
                       {
                         (fetchingVideos===false && videos) ? videos.map((videoDetail, index) => (
                           <React.Fragment key={index}>

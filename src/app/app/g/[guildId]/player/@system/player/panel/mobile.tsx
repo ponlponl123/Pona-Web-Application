@@ -5,6 +5,7 @@ import { useGlobalContext } from '@/contexts/globalContext'
 import { useLanguageContext } from '@/contexts/languageContext'
 import { usePonaMusicContext } from '@/contexts/ponaMusicContext'
 import { useUserSettingContext } from '@/contexts/userSettingContext'
+import { usePlaybackContext } from '@/contexts/playbackContext'
 
 import { msToTime } from '@/utils/time'
 import { useRouter } from 'next/navigation'
@@ -32,11 +33,11 @@ function MobilePonaPlayerPanel({
     const router = useRouter();
     const { language } = useLanguageContext();
     const { userSetting } = useUserSettingContext();
-    const { ponaCommonState, playback } = useGlobalContext();
+    const { ponaCommonState } = useGlobalContext();
     const { socket, playerPopup, setPlayerPopup } = usePonaMusicContext();
     const currentTrack = ponaCommonState?.current;
     const lyricsContainerRef = React.useRef<HTMLElement>(null);
-    const playerPos = playback;
+    const { playback } = usePlaybackContext();
         
     const {isOpen: isRepeatModalOpen, onOpen: onRepeatModalOpen, onOpenChange: onRepeatModalOpenChange} = useDisclosure();
     const {isOpen: isEqualizerModalOpen, onOpen: onEqualizerModalOpen, onOpenChange: onEqualizerModalOpenChange} = useDisclosure();
@@ -241,7 +242,7 @@ function MobilePonaPlayerPanel({
                                 <ScrollShadow className='max-h-[80vh] pr-2' style={{scrollbarWidth:'none'}} ref={lyricsContainerRef}>
                                     {lyricsContainerRef.current && (
                                         currentTrack.lyrics?.isTimestamp ?
-                                            <LyricsDisplay playerPosition={playerPos} currentTrack={currentTrack as Track} lyricsProvider={lyricsContainerRef.current} /> :
+                                            <LyricsDisplay playerPosition={playback} currentTrack={currentTrack as Track} lyricsProvider={lyricsContainerRef.current} /> :
                                             (currentTrack.lyrics?.lyrics && currentTrack.lyrics.lyrics.length > 0) && (currentTrack.lyrics.lyrics as string[]).map((lyric, index) => (
                                                 <div key={index} className='flex items-center gap-2'>
                                                     <span className='text-2xl my-6 text-[hsl(var(--pona-app-music-accent-color-500))]'>{lyric}</span>

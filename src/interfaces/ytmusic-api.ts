@@ -19,7 +19,7 @@ export interface AlbumBasic {
 	name: string;
 }
 
-export type ResultType = "artist" | "profile" | "video" | "song" | "album" | "single" | "playlist";
+export type ResultType = "artist" | "artist-detail" | "profile" | "video" | "song" | "album" | "single" | "playlist";
 
 export interface TopResult {
 	category: "Top result";
@@ -31,6 +31,10 @@ export interface TopResult_Artist extends TopResult {
     artists: ArtistBasic[];
     subscribers: string;
 	thumbnails: ThumbnailFull[];
+}
+
+export interface TopResult_ArtistDetail extends ArtistDetailed {
+	resultType: "artist-detail";
 }
 
 export interface TopResult_Album extends TopResult {
@@ -69,6 +73,7 @@ export interface TopResult_Video extends TopResult {
 
 export type TopResults = TopResult_Album |
 	TopResult_Artist |
+	TopResult_ArtistDetail |
 	TopResult_Song |
 	TopResult_Video;
 
@@ -111,7 +116,7 @@ export interface ExtendedVideoDetailed extends VideoDetailed {
 
 export interface ArtistDetailed {
 	category: "Artists";
-	resultType: "artist";
+	resultType: "artist" | string;
 	shuffleId: string;
 	radioId: string;
 	browseId: string;

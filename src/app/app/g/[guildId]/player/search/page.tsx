@@ -118,6 +118,7 @@ function Page() {
                     {
                       (category === 'Top result') ? (() => {
                         const track = searchResult['Top result'][0] as unknown as TopResults;
+                        console.log('track', track)
                         const trackTitle = (
                           track.resultType === 'song' ||
                           track.resultType === 'video' ||
@@ -125,7 +126,13 @@ function Page() {
                         ) ? track.title :
                         (
                           track.resultType === 'artist'
-                        ) ? track.artists[0].name : '';
+                        ) ?
+                          track.artists[0].name
+                        : (
+                          track.resultType === 'artist-detail'
+                        ) ?
+                          track.artist
+                        : ''
                         return (
                           <>
                             <div className='flex gap-6 p-6 max-md:p-4 bg-foreground/5 rounded-3xl relative overflow-hidden'>
@@ -177,7 +184,7 @@ function Page() {
                                   }
                                   </span>
                                   {
-                                    track.resultType !== 'artist' && <> · <span className='max-w-full text-start text-foreground overflow-hidden overflow-ellipsis whitespace-nowrap flex-initial'>{combineArtistName(track.artists, true, router)}</span></>
+                                    (track.resultType !== 'artist' && track.resultType !== 'artist-detail') && <> · <span className='max-w-full text-start text-foreground overflow-hidden overflow-ellipsis whitespace-nowrap flex-initial'>{combineArtistName(track.artists, true, router)}</span></>
                                   }
                                   {
                                     (track.resultType === 'song' || track.resultType === 'video') && <> · <span className='flex-initial'>{track.duration}</span></>

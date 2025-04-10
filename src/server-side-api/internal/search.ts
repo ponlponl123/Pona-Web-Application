@@ -2,7 +2,7 @@
 import axios from 'axios';
 import { Endpoint, EndpointPort } from '../endpoint';
 import { ArtistFull as ArtistFullv1, PlaylistFull as PlaylistFullv1 } from '@/interfaces/ytmusic';
-import { AlbumFull, ArtistFull, ArtistVideo, SearchResult as HTTP_SearchResult, PlaylistFull, ProfileFull, SongFull, TopResult_Song, VideoFull } from '@/interfaces/ytmusic-api';
+import { AlbumFull, ArtistFull, ArtistVideo, SearchResult as HTTP_SearchResult, PlaylistFull, ProfileFull, SongFull, TopResult_Song, VideoDetailed, VideoFull } from '@/interfaces/ytmusic-api';
 
 export type YTMusicSearchResultType = "SONG" | "ALBUM" | "VIDEO" | "PLAYLIST" | "PODCAST" | "ARTIST";
 export type YTMusicSearchCategoryType = "Top result" | null | "Songs" | "Videos" | "Albums" | "Community Playlists" | "Artists" | "Podcasts" | "Episodes" | "Profiles";
@@ -211,6 +211,24 @@ export async function getChannel(tokenType: string, tokenKey: string, artistId: 
             },
         });
         if ( handshakeRequest.status === 200 && handshakeRequest.data.result ) return handshakeRequest.data.result as ChannelResult;
+        else return false;
+    } catch {
+        // console.error('Failed to handshake with Pona! API:', err);
+        return false;
+    }
+}
+
+export async function getChannelVideos(tokenType: string, tokenKey: string, artistId: string): Promise<false | VideoDetailed[] | ArtistVideo[]> {
+    try {
+        const endpoint = new URL(`${Endpoint}:${EndpointPort}/v2/music/fetch/channel`);
+        endpoint.searchParams.append('id', artistId);
+        endpoint.searchParams.append('query', 'videos');
+        const handshakeRequest = await axios.get(endpoint.toString(), {
+            headers: {
+                'Authorization': `${tokenType} ${tokenKey}`,
+            },
+        });
+        if ( handshakeRequest.status === 200 && handshakeRequest.data.result ) return handshakeRequest.data.result as (VideoDetailed[] | ArtistVideo[]);
         else return false;
     } catch {
         // console.error('Failed to handshake with Pona! API:', err);

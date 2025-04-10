@@ -5,6 +5,7 @@ import { useGlobalContext } from '@/contexts/globalContext'
 import { useLanguageContext } from '@/contexts/languageContext'
 import { usePonaMusicContext } from '@/contexts/ponaMusicContext'
 import { useUserSettingContext } from '@/contexts/userSettingContext'
+import { usePlaybackContext } from '@/contexts/playbackContext'
 
 import { msToTime } from '@/utils/time'
 
@@ -15,7 +16,8 @@ import toast from 'react-hot-toast';
 function DesktopPonaPlayer() {
     const { language } = useLanguageContext();
     const { userSetting } = useUserSettingContext();
-    const { ponaCommonState, playback } = useGlobalContext();
+    const { ponaCommonState } = useGlobalContext();
+    const { playback } = usePlaybackContext();
     const { socket, playerPopup, setPlayerPopup } = usePonaMusicContext();
     const currentTrack = ponaCommonState?.current;
     const isLoopTrack = ponaCommonState?.pona.repeat.track;

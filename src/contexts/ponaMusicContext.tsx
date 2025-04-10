@@ -10,6 +10,7 @@ import { MemberVoiceChangedState } from '@/interfaces/member';
 import { usePathname } from 'next/navigation';
 import { useGlobalContext } from './globalContext';
 import { makeTrack, proxyArtwork } from '@/utils/track';
+import { usePlaybackContext } from './playbackContext';
 
 const PonaMusicContext = createContext<{
   socket: Socket | null;
@@ -48,8 +49,8 @@ export const PonaMusicProvider = ({ children }: { children: React.ReactNode }) =
     setPonaCommonState,
     setIsSameVC,
     setPonaTrackQueue,
-    setPlayback
   } = useGlobalContext();
+  const { setPlayback } = usePlaybackContext();
   const pathname = usePathname() || '';
 
   const initialized = useRef(false);
@@ -88,26 +89,27 @@ export const PonaMusicProvider = ({ children }: { children: React.ReactNode }) =
           }
           retryCount++;
           iosocket.connect();
-          iosocket.on('handshake', async (ponaState: {
-            pona?: HTTP_PonaCommonStateWithTracks,
-            isMemberInVC?: VoiceBasedChannel | null
-          }) => {
-            if ( ponaState.pona?.current?.identifier ) {
-              const newTrack = await makeTrack(ponaState.pona.current);
-              ponaState.pona.current = newTrack;
+          iosocket.on('handshake', async (ponaState: string) => {
+            const decodedPonaState = JSON.parse(Buffer.from(ponaState, 'base64').toString('utf-8')) as {
+              pona?: HTTP_PonaCommonStateWithTracks,
+              isMemberInVC?: VoiceBasedChannel | null
+            };
+            if ( decodedPonaState.pona?.current?.identifier ) {
+              const newTrack = await makeTrack(decodedPonaState.pona.current);
+              decodedPonaState.pona.current = newTrack;
             }
-            if ( ponaState.pona?.queue && ponaState.pona.queue.length > 0 ) {
-              ponaState.pona?.queue.map(track => {return proxyArtwork(track)})
+            if ( decodedPonaState.pona?.queue && decodedPonaState.pona.queue.length > 0 ) {
+              decodedPonaState.pona?.queue.map(track => {return proxyArtwork(track)})
             }
-            setPonaCommonState(ponaState.pona || null);
-            setIsMemberInVC(ponaState.isMemberInVC || null);
+            setPonaCommonState(decodedPonaState.pona || null);
+            setIsMemberInVC(decodedPonaState.isMemberInVC || null);
             setPonaTrackQueue({
-              queue: ponaState?.pona?.queue || [],
+              queue: decodedPonaState?.pona?.queue || [],
               updating: false
             });
             if (
-              ponaState.pona?.pona.voiceChannel && ponaState.isMemberInVC?.id &&
-              ponaState.pona.pona.voiceChannel === ponaState.isMemberInVC.id
+              decodedPonaState.pona?.pona.voiceChannel && decodedPonaState.isMemberInVC?.id &&
+              decodedPonaState.pona.pona.voiceChannel === decodedPonaState.isMemberInVC.id
             ) setIsSameVC(true);
             else setIsSameVC(false);
           });
@@ -126,17 +128,11 @@ export const PonaMusicProvider = ({ children }: { children: React.ReactNode }) =
           });
           iosocket.on('track_pos_updated', (position: number) => {
             setPlayback(position);
-            // setPonaCommonState((value) => {
-            //   if (value) {
-            //     return { ...value, pona: { ...value.pona, position: position } };
-            //   }
-            //   return value;
-            // });
           });
-          iosocket.on('pause_updated', (paused: boolean) => {
+          iosocket.on('pause_updated', (paused: number) => {
             setPonaCommonState((value) => {
               if (value) {
-                return { ...value, pona: { ...value.pona, paused: paused } };
+                return { ...value, pona: { ...value.pona, paused: paused===1?true:false } };
               }
               return value;
             });
@@ -149,54 +145,58 @@ export const PonaMusicProvider = ({ children }: { children: React.ReactNode }) =
               return value;
             });
           });
-          iosocket.on('repeat_updated', (repeatState: HTTP_PonaRepeatState) => {
+          iosocket.on('repeat_updated', (repeatState: string) => {
+            const decodedRepeatState = JSON.parse(Buffer.from(repeatState, 'base64').toString('utf-8')) as HTTP_PonaRepeatState;
             setPonaCommonState((value) => {
               if (value) {
-                return { ...value, pona: { ...value.pona, repeat: repeatState } };
+                return { ...value, pona: { ...value.pona, repeat: decodedRepeatState } };
               }
               return value;
             });
           });
-          iosocket.on('track_started', async (track: Track) => {
-            if ( track.identifier ) {
-              const newTrack = await makeTrack(track);
-              track = newTrack as Track;
+          iosocket.on('track_started', async (track: string) => {
+            let decodedTrack = JSON.parse(Buffer.from(track, 'base64').toString('utf-8')) as Track;
+            if ( decodedTrack.identifier ) {
+              const newTrack = await makeTrack(decodedTrack);
+              decodedTrack = newTrack as Track;
             }
             setPonaCommonState((value) => {
               if (value) {
-                return { ...value, current: track, pona: { ...value.pona, position: 0, length: track.duration }};
+                return { ...value, current: decodedTrack, pona: { ...value.pona, position: 0, length: decodedTrack.duration }};
               }
               return value;
             });
           });
-          iosocket.on('track_updated', async (track: Track) => {
-            if ( track?.identifier ) {
-              const newTrack = await makeTrack(track);
-              track = newTrack as Track;
+          iosocket.on('track_updated', async (track: string) => {
+            let decodedTrack = JSON.parse(Buffer.from(track, 'base64').toString('utf-8')) as Track;
+            if ( decodedTrack?.identifier ) {
+              const newTrack = await makeTrack(decodedTrack);
+              decodedTrack = newTrack as Track;
             }
             setPonaCommonState((value) => {
               if (value) {
-                return { ...value, current: track || null, pona: { ...value.pona, length: track?.duration || 0 }};
+                return { ...value, current: decodedTrack || null, pona: { ...value.pona, length: decodedTrack?.duration || 0 }};
               }
               return value;
             });
           });
-          iosocket.on('queue_updated', async (queue: Queue) => {
-            if ( queue.current?.identifier ) {
-              const newTrack = await makeTrack(queue.current);
-              queue.current = newTrack;
+          iosocket.on('queue_updated', async (queue: string) => {
+            const decodedQueue = JSON.parse(Buffer.from(queue, 'base64').toString('utf-8')) as Queue;
+            if ( decodedQueue.current?.identifier ) {
+              const newTrack = await makeTrack(decodedQueue.current);
+              decodedQueue.current = newTrack;
             }
-            if ( queue && queue.length > 0 ) {
-              queue.map(track => {return proxyArtwork(track)});
+            if ( decodedQueue && decodedQueue.length > 0 ) {
+              decodedQueue.map(track => {return proxyArtwork(track)});
             }
             setPonaCommonState((value) => {
               if (value) {
-                return { ...value, queue: queue};
+                return { ...value, queue: decodedQueue};
               }
               return value;
             });
             setPonaTrackQueue({
-              queue: queue,
+              queue: decodedQueue,
               updating: false
             });
           });
@@ -206,17 +206,19 @@ export const PonaMusicProvider = ({ children }: { children: React.ReactNode }) =
               updating: true
             }));
           });
-          iosocket.on('player_created', (pona: HTTP_PonaCommonStateWithTracks | null) => {
-            setPonaCommonState(pona);
+          iosocket.on('player_created', (pona: string) => {
+            const decodedPona = JSON.parse(Buffer.from(pona, 'base64').toString('utf-8')) as HTTP_PonaCommonStateWithTracks | null;
+            setPonaCommonState(decodedPona);
           });
           iosocket.on('player_destroyed', () => {
             document.body.removeAttribute('playing');
             setPonaCommonState(null);
           });
-          iosocket.on('member_state_updated', (memberVoiceState: MemberVoiceChangedState) => {
-            if ( memberVoiceState.isUserJoined && memberVoiceState.newVC ) setIsMemberInVC(memberVoiceState.newVC);
-            else if ( memberVoiceState.isUserSwitched || (memberVoiceState.oldVC && memberVoiceState.newVC) ) setIsMemberInVC(memberVoiceState.newVC);
-            else if ( memberVoiceState.isUserLeaved || !memberVoiceState.newVC ) setIsMemberInVC(null);
+          iosocket.on('member_state_updated', (memberVoiceState: string) => {
+            const decodedMemberVoiceState = JSON.parse(Buffer.from(memberVoiceState, 'base64').toString('utf-8')) as MemberVoiceChangedState;
+            if ( decodedMemberVoiceState.isUserJoined && decodedMemberVoiceState.newVC ) setIsMemberInVC(decodedMemberVoiceState.newVC);
+            else if ( decodedMemberVoiceState.isUserSwitched || (decodedMemberVoiceState.oldVC && decodedMemberVoiceState.newVC) ) setIsMemberInVC(decodedMemberVoiceState.newVC);
+            else if ( decodedMemberVoiceState.isUserLeaved || !decodedMemberVoiceState.newVC ) setIsMemberInVC(null);
           });
           iosocket.on('connect', () => {
             setIsConnected(true);

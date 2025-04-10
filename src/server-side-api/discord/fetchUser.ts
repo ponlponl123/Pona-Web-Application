@@ -5,7 +5,6 @@ const API_ENDPOINT = 'https://discord.com/api/v10';
 export interface UserInfo {
     id: string;
     username: string;
-    email: string;
     avatar: string;
     discriminator: string;
     public_flags: number;
@@ -38,7 +37,29 @@ export async function fetchByAccessToken(key: string, keyType: string): Promise<
                 "User-Agent": "Pona! Application (OpenPonlponl123.com/v1)"
             }
         })
-        if ( user.status === 200 ) return user.data;
+        if ( user.status === 200 )
+        {
+            // cleanup user data before returning
+            // this will remove any sensitive data e.g. email, phone number, etc.
+            // and return only the necessary data
+            const userData = user.data as UserInfo;
+            return {
+                id: userData.id,
+                username: userData.username,
+                avatar: userData.avatar,
+                discriminator: userData.discriminator,
+                public_flags: userData.public_flags,
+                flags: userData.flags,
+                banner: userData.banner,
+                accent_color: userData.accent_color,
+                global_name: userData.global_name,
+                avatar_decoration_data: userData.avatar_decoration_data,
+                banner_color: userData.banner_color,
+                mfa_enabled: userData.mfa_enabled,
+                locale: userData.locale,
+                premium_type: userData.premium_type
+            }
+        }
     } catch { return false }
     return false;
 }

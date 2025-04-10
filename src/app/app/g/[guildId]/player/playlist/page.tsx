@@ -36,18 +36,19 @@ function Page() {
       if (typeof playlist_id !== 'string' || !accessTokenType || !accessToken) return setLoading(false);
       setLoading(true);
       setPlaylist(null);
+      const pl_query = playlist_id.endsWith('abm') ? playlist_id.slice(0, playlist_id.length-3) : playlist_id;
       let pl_result = null;
       if (playlist_id.endsWith('abm')) {
-        const albumResult = await getAlbum(accessTokenType, accessToken, playlist_id.slice(0, playlist_id.length-3));
+        const albumResult = await getAlbum(accessTokenType, accessToken, pl_query);
         if (albumResult) pl_result = albumResult;
       }
       if ( !pl_result )
       {
-        const playlistResult = await fetchPlaylist(accessTokenType, accessToken, playlist_id);
+        const playlistResult = await fetchPlaylist(accessTokenType, accessToken, pl_query);
         if (playlistResult) pl_result = playlistResult;
       }
       if ( !pl_result ) {
-        const channel = await getChannel(accessTokenType, accessToken, playlist_id);
+        const channel = await getChannel(accessTokenType, accessToken, pl_query);
         if (
           channel &&
           (
@@ -55,7 +56,7 @@ function Page() {
             channel.v1 ||
             channel.v2
           )
-        ) return router.replace(window.location.pathname.split('/player')[0] + '/player/c?c='+playlist_id);
+        ) return router.replace(window.location.pathname.split('/player')[0] + '/player/c?c='+pl_query);
       }
       setPlaylist(pl_result);
       setLoading(false);

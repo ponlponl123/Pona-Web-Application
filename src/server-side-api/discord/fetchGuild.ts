@@ -4,7 +4,11 @@ import { EndpointHTTP, EndpointKey } from "../endpoint";
 import { fetchByAccessToken } from "./fetchUser";
 const API_ENDPOINT = 'https://discord.com/api/v10';
 
-export interface GuildInfo {
+export interface GuildInfo extends BasicGuildInfo {
+    basic: false;
+}
+
+export interface BasicGuildInfo {
     id: string;
     name: string;
     icon: string | null;
@@ -72,6 +76,37 @@ export async function fetchGuild(key: string, keyType: string, guildId: string):
             }
         })
         if ( guild.status === 200 ) return guild.data.guild
+    } catch { return false }
+    return false;
+}
+
+export async function fetchBasicGuildInfo(key: string, keyType: string, guildId: string): Promise<false | BasicGuildInfo> {
+    try {
+        const user = await fetchByAccessToken(key, keyType);
+        if ( !user ) return false;
+        const guild = await axios.get(EndpointHTTP + '/v1/guild/' + guildId, {
+            headers: {
+                Authorization: `Pona! ${EndpointKey}`,
+                'Content-Type': 'application/json',
+                "User-Agent": "Pona! Application (OpenPonlponl123.com/v1)",
+                "User-Id": user.id
+            }
+        })
+        if ( guild.status === 200 )
+        {
+            const guildInfo = guild.data.guild as GuildInfo;
+            return {
+                name: guildInfo.name,
+                id: guildInfo.id,
+                icon: guildInfo.icon,
+                banner: guildInfo.banner,
+                memberCount: guildInfo.memberCount,
+                ownerId: guildInfo.ownerId,
+                iconURL: guildInfo.iconURL,
+                nameAcronym: guildInfo.nameAcronym,
+                bannerURL: guildInfo.bannerURL
+            } as BasicGuildInfo;
+        }
     } catch { return false }
     return false;
 }
