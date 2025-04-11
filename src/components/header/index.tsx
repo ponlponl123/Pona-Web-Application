@@ -69,6 +69,7 @@ function Header() {
     const [searchValue, setSearchValue] = React.useState<string>("");
     const [searchSuggestions, setSearchSuggestions] = React.useState<string[]>([]);
     const [searchHistory, setSearchHistory] = React.useState<string[]>([]);
+    const [fetchedSearchHistory, setFetchedSearchHistory] = React.useState<boolean>(false);
     const [typingTimeout, setTypingTimeout] = React.useState<NodeJS.Timeout | null>(null);
 
     const handleBlur = (event: React.FocusEvent<HTMLInputElement>) => {
@@ -84,6 +85,15 @@ function Header() {
             setSearching(false);
         }
     };
+
+    const addToSearchHistory = (value: string) => {
+        setSearchHistory(prev_value => {
+            if (prev_value.includes(value))
+                prev_value.splice(prev_value.indexOf(value), 1);
+            prev_value = [value, ...prev_value.slice(0, 6)];
+            return prev_value;
+        });
+    }
 
     React.useEffect(() => {
         if (searching) {
@@ -134,7 +144,7 @@ function Header() {
                                 e.preventDefault();
                                 const data = Object.fromEntries(new FormData(e.currentTarget));
                                 router.push(`/app/g/${guild?.id}/player/search?q=${encodeURIComponent(data.search.toString())}`);
-                                setSearchHistory((value) => [...value, data.search.toString()]);
+                                addToSearchHistory(data.search.toString());
                             }}>
                             <div className='absolute miniscreen:w-80 max-miniscreen:top-24 max-miniscreen:left-4 max-miniscreen:translate-x-0 max-miniscreen:max-w-full max-miniscreen:w-[calc(100%_-_2rem)] max-md:max-w-[32vw] max-md:fixed max-md:-translate-x-1/2 max-md:left-1/2 md:absolute md:left-80 md:[body.sidebar-collapsed_&]:left-24 [body.pona-player-focused_&]:opacity-0 [body.pona-player-focused_&]:pointer-events-none [body.pona-player-focused_&]:-translate-y-6'>
                                 <Input ref={searchInputElement} startContent={<MagnifyingGlass size={18} className='mr-1 max-miniscreen:absolute max-miniscreen:scale-75' />} name='search'
@@ -157,13 +167,17 @@ function Header() {
                                     }}
                                     onFocus={async ()=>{
                                         setSearching(true);
-                                        if ( !searchValue && !searchHistory.length )
+                                        if ( !searchValue && !fetchedSearchHistory )
                                         {
                                             const accessTokenType = getCookie('LOGIN_TYPE_');
                                             const accessToken = getCookie('LOGIN_');
                                             if (!accessTokenType || !accessToken) return false;
                                             const searchHistory = await fetchSearchHistory(accessTokenType, accessToken);
-                                            if (searchHistory) setSearchHistory(searchHistory);
+                                            if (searchHistory)
+                                            {
+                                                setSearchHistory(searchHistory);
+                                                setFetchedSearchHistory(true);
+                                            }
                                         }
                                     }}
                                     onBlur={handleBlur}
@@ -184,14 +198,15 @@ function Header() {
                                     <div className='flex flex-col gap-1 w-full h-max'>
                                         {
                                             searchValue &&
-                                            <Button onPress={()=>{router.push(`/app/g/${guild?.id}/player/search?q=${searchValue}`);setSearching(false);setSearchValue(searchValue)}}
+                                            <Button onPress={()=>{router.push(`/app/g/${guild?.id}/player/search?q=${searchValue}`);setSearching(false);setSearchValue(searchValue);addToSearchHistory(searchValue)}}
                                                 value={searchValue} variant='light' radius='sm'
                                                 className='text-start justify-start gap-3' fullWidth><MagnifyingGlass size={14} /> {searchValue}</Button>
                                         }
                                         {
                                             searchSuggestions.length>0 &&
                                             searchSuggestions?.map((value, index)=>(
-                                                <Button key={index} onPress={()=>{router.push(`/app/g/${guild?.id}/player/search?q=${value}`);setSearching(false);setSearchValue(value)}}
+                                                <Button key={index} onPress={()=>{router.push(`/app/g/${guild?.id}/player/search?q=${value}`);setSearching(false);setSearchValue(value);addToSearchHistory(value)}}
+                                                    onFocus={()=>{setSearchValue(value)}}
                                                     value={value} variant='light' radius='sm'
                                                     className='text-start justify-start gap-3' fullWidth><MagnifyingGlass size={14} /> {value}</Button>
                                             ))
@@ -199,7 +214,8 @@ function Header() {
                                         {
                                             searchHistory.length>0 && !searchSuggestions.length &&
                                             searchHistory?.map((value, index)=>(
-                                                <Button key={index} onPress={()=>{router.push(`/app/g/${guild?.id}/player/search?q=${value}`);setSearching(false);setSearchValue(value)}}
+                                                <Button key={index} onPress={()=>{router.push(`/app/g/${guild?.id}/player/search?q=${value}`);setSearching(false);setSearchValue(value);addToSearchHistory(value)}}
+                                                    onFocus={()=>{setSearchValue(value)}}
                                                     value={value} variant='light' radius='sm'
                                                     className='text-start justify-start gap-3' fullWidth><ClockCounterClockwise size={14} /> {value}</Button>
                                             ))

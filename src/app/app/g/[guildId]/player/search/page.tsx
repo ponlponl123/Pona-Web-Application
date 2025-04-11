@@ -140,8 +140,8 @@ function Page() {
                     className='flex flex-col gap-4 w-full'>
                     {
                       (category === 'Top result') ? (() => {
-                        const track = searchResult['Top result'][0] as unknown as TopResults;
-                        console.log('track', track)
+                        const track = searchResult['Top result'][0] as TopResults & { colorPalette?: { content1?: { DEFAULT?: string; foreground?: string } }; accentColor?: string };
+                        const textcolor_class = `${track?.colorPalette?.content1?`text-[${track?.colorPalette?.content1?.foreground}] [html.dark_&]:text-[${track?.colorPalette?.content1?.DEFAULT}]`:undefined}`;
                         const trackTitle = (
                           track.resultType === 'song' ||
                           track.resultType === 'video' ||
@@ -199,16 +199,16 @@ function Page() {
                                   track.resultType === 'song' ||
                                   track.resultType === 'video' ?
                                   <Tooltip content='More info'>
-                                    <h1 className='max-w-full cursor-pointer text-start text-foreground text-2xl overflow-hidden overflow-ellipsis whitespace-nowrap'>{trackTitle}</h1>
+                                    <h1 className={'max-w-full cursor-pointer text-start text-2xl overflow-hidden overflow-ellipsis whitespace-nowrap '+textcolor_class}>{trackTitle}</h1>
                                   </Tooltip> :
                                   track.resultType === 'artist' ?
                                     <Link className='cursor-pointer' onPress={()=>{router.push(`/app/g/${guild?.id}/player/c?c=${track?.artists[0].id}`)}}>
-                                      <h1 className='max-w-full text-start text-foreground text-2xl overflow-hidden overflow-ellipsis whitespace-nowrap'>{trackTitle}</h1>
+                                      <h1 className={'max-w-full text-start text-2xl overflow-hidden overflow-ellipsis whitespace-nowrap '+textcolor_class}>{trackTitle}</h1>
                                     </Link>
                                   : <h1 className='max-w-full text-start text-foreground text-2xl overflow-hidden overflow-ellipsis whitespace-nowrap'>{trackTitle}</h1>
                                 }
                                 <div className='flex flex-row w-[calc(100%_-_2rem)] gap-1 items-center justify-start z-10 min-w-0'>
-                                  <span className='flex-initial'>
+                                  <span className={'flex-initial '+textcolor_class}>
                                   {
                                     language.data.app.guilds.player.search.category[(track.resultType[0].toUpperCase()+track.resultType.slice(1,track.resultType.length))+'s' as keyof typeof language.data.app.guilds.player.search.category] ? 
                                     language.data.app.guilds.player.search.category[(track.resultType[0].toUpperCase()+track.resultType.slice(1,track.resultType.length))+'s' as keyof typeof language.data.app.guilds.player.search.category] :
@@ -216,13 +216,13 @@ function Page() {
                                   }
                                   </span>
                                   {
-                                    (track.resultType !== 'artist' && track.resultType !== 'artist-detail') && <> · <span className='max-w-full text-start text-foreground overflow-hidden overflow-ellipsis whitespace-nowrap flex-initial'>{combineArtistName(track.artists, true, router)}</span></>
+                                    (track.resultType !== 'artist' && track.resultType !== 'artist-detail') && <> · <span className={'max-w-full text-start text-foreground overflow-hidden overflow-ellipsis whitespace-nowrap flex-initial '+textcolor_class}>{combineArtistName(track.artists, true, router)}</span></>
                                   }
                                   {
                                     (track.resultType === 'song' || track.resultType === 'video') && <> · <span className='flex-initial'>{track.duration}</span></>
                                   }
                                   {
-                                    track.resultType === 'artist' && <> · <span className='flex-initial'>{language.data.app.guilds.player.artist.subscriber} {track.subscribers}</span></>
+                                    track.resultType === 'artist' && <> · <span className={`flex-initial ${textcolor_class}`}>{language.data.app.guilds.player.artist.subscriber} {track.subscribers}</span></>
                                   }
                                 </div>
                                 <div className='flex flex-row gap-3 items-center justify-start w-full mt-1'>
@@ -252,7 +252,7 @@ function Page() {
                                         <SubscribeButton channelId={track.artists[0].id} artistName={track.artists[0].name} preset='minimal' triggerProps={{
                                           style: track.accentColor&&track.colorPalette?{
                                               background: track.accentColor,
-                                              color: track.colorPalette.content1.foreground
+                                              color: track.colorPalette?.content1?.foreground
                                             }:undefined
                                         }} DynamicIcon={Heart} />
                                       }
