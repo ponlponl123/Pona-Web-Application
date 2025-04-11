@@ -10,10 +10,14 @@ import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import { useLanguageContext } from '@/contexts/languageContext';
 
+export interface CombineArtistNameOptions {
+  className?: string;
+}
 export function combineArtistName(artists: ArtistBasic[]): string;
-export function combineArtistName(artists: ArtistBasic[], isElement: true): React.ReactNode;
-export function combineArtistName(artists: ArtistBasic[], isElement: true, router: AppRouterInstance): React.ReactNode;
-export function combineArtistName(artists: ArtistBasic[], isElement?: boolean, router?: AppRouterInstance): string | React.ReactNode {
+export function combineArtistName(artists: ArtistBasic[], isElement?: boolean): React.ReactNode;
+export function combineArtistName(artists: ArtistBasic[], isElement?: boolean, router?: AppRouterInstance): React.ReactNode;
+export function combineArtistName(artists: ArtistBasic[], isElement?: boolean, router?: AppRouterInstance, options?: CombineArtistNameOptions): React.ReactNode;
+export function combineArtistName(artists: ArtistBasic[], isElement?: boolean, router?: AppRouterInstance, options?: CombineArtistNameOptions): string | React.ReactNode {
   let artist: string = '';
   if ( !artists ) return artist;
   if ( isElement ) {
@@ -25,8 +29,8 @@ export function combineArtistName(artists: ArtistBasic[], isElement?: boolean, r
             <React.Fragment key={index}> & {artist.name}</React.Fragment>
           const href = window.location.pathname.split('/player')[0] + '/player/c?c='+artist.id
           const Linked = () => router ?
-            <Link onPress={()=>{if(router) router.push(href)}} className='cursor-pointer' underline='hover' color='foreground'>{artist.name}</Link> :
-            <Link href={href} underline='hover' color='foreground'>{artist.name}</Link>;
+            <Link onPress={()=>{if(router) router.push(href)}} className={'cursor-pointer '+(options?.className || '')} underline='hover' color='foreground'>{artist.name}</Link> :
+            <Link href={href} underline='hover' color='foreground' className={options?.className}>{artist.name}</Link>;
           return index === 0 ? <Linked key={index} /> :
           <React.Fragment key={index}> & <Linked /></React.Fragment>
         })
@@ -69,7 +73,7 @@ export function TrackDetail({data, isHasPlay = true}: {data: HTTP_SearchResult, 
             (data?.category === 'Songs' ||
             data?.category === 'Videos')
           ) && <PlayButton className='rounded-xl' iconSize={16} detail={{
-            author: combineArtistName(data?.artists),
+            author: 'artists' in data ? combineArtistName(data.artists) : '',
             identifier: data?.videoId,
             sourceName: 'youtube music',
             resultType: data?.resultType,
@@ -115,10 +119,8 @@ function Track({data}: {data: HTTP_SearchResult}) {
   const { guild } = useDiscordGuildInfo();
   return (
     (
-      (data?.category === 'Songs' ||
-      data?.category === 'Videos' ||
-      data?.resultType === 'song' ||
-      data?.resultType === 'video') && data?.videoId
+      data?.category === 'Songs' ||
+      data?.category === 'Videos'
     ) ? <PlayButton className='rounded-xl h-max relative opacity-100 bg-transparent active:!scale-[0.98]' detail={{
       author: combineArtistName(data?.artists),
       identifier: data?.videoId,

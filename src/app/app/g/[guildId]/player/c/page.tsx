@@ -157,7 +157,7 @@ function Page() {
                 }
               </div>
             </div>
-            <div className='absolute z-[10] bg-gradient-to-t from-playground-background to-transparent w-full h-full top-0 left-0'></div>
+            <div className='absolute z-[10] bg-gradient-to-t from-playground-background to-transparent w-full h-full top-0 left-0 outline-8 outline-playground-background -outline-offset-2' style={{outlineStyle:'solid'}}></div>
           </motion.div>
           <div className='w-full z-[4] p-8 max-lg:p-0 flex flex-col max-lg:gap-12 lg:gap-24 items-center justify-start pb-[24vh] -mt-12'>
             <div className='w-full max-w-screen-xl flex flex-row flex-wrap gap-8'>

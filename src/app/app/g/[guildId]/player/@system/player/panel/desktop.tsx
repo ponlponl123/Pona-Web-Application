@@ -35,6 +35,8 @@ import Equalizing from '@/components/equalizing';
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuLabel, ContextMenuTrigger } from '@/components/context-menu';
 import toast from 'react-hot-toast';
 import Related from './related';
+import { combineArtistName } from '@/components/music/searchResult/track';
+import { useRouter } from 'next/navigation';
 
 function DesktopPonaPlayerPanel() {
     const { language } = useLanguageContext();
@@ -104,7 +106,7 @@ function DesktopPonaPlayerPanel() {
                 <div className='w-full h-full flex gap-12 justify-between items-center pt-16'>
                     <motion.div layoutId='pona-music-panel-artwork' className='m-auto flex flex-col items-center gap-6'>
                         <div className='flex flex-wrap gap-4 items-center justify-center -mt-12'>
-                            <Button color='default' variant='ghost' radius='full' className='w-fit' onPress={()=>{setIsFullscreenMode((value)=>!value)}}>
+                            <Button color='default' variant='ghost' radius='full' className='w-fit' isDisabled onPress={()=>{setIsFullscreenMode((value)=>!value)}}>
                                 {
                                     !isFullscreenMode ? <><MonitorPlay />{language.data.app.guilds.player.full_screen_mode.enter}</>
                                     : <Spinner size='sm' />
@@ -283,6 +285,7 @@ export function TrackQueue({index, track, active, isLoading, ref, params}:
         params?: HTMLMotionProps<"div">
     }
 ) {
+    const router = useRouter();
     const { ponaCommonState } = useGlobalContext();
     const { socket } = usePonaMusicContext();
     const paused = ponaCommonState?.pona?.paused || false;
@@ -330,7 +333,12 @@ export function TrackQueue({index, track, active, isLoading, ref, params}:
                             classNames={{
                                 content: 'whitespace-nowrap overflow-hidden overflow-ellipsis'
                             }}>
-                            <span className='max-w-full text-xs text-foreground/40 [div.active_&]:text-[hsl(var(--pona-app-music-accent-color-500)/0.4)]'>{track.author} ({track.requester?.displayName || '@'+track.requester?.username})</span>
+                            {
+                                track.artist ? <div className='max-w-full text-xs text-foreground/40 [div.active_&]:text-[hsl(var(--pona-app-music-accent-color-500)/0.4)]'>
+                                    {combineArtistName(track.artist, true, router, {className:'text-foreground/40 text-sm'})} <span className='text-foreground/40 text-xs'>({track.requester?.displayName || '@'+track.requester?.username})</span>
+                                </div> :
+                                <span className='max-w-full text-xs text-foreground/40 [div.active_&]:text-[hsl(var(--pona-app-music-accent-color-500)/0.4)]'>{track.author} ({track.requester?.displayName || '@'+track.requester?.username})</span>
+                            }
                         </Skeleton>
                     </div>
                     <div className={`flex-[0 1 auto] ml-auto relative w-12 h-12 flex items-center justify-center ${isLoading?'opacity-0 pointer-events-none':''}`}>

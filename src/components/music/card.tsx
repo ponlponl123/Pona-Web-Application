@@ -3,13 +3,14 @@ import React from 'react'
 import { Track } from '@/interfaces/ponaPlayer'
 import { proxyArtwork } from '@/utils/track'
 import PlayButton from './play'
-import { Button, Image } from '@nextui-org/react';
+import { Button, Image, Link } from '@nextui-org/react';
 import { ArtistDetailed, PlaylistDetailed } from '@/interfaces/ytmusic';
 import { useRouter } from 'next/navigation';
 import { AlbumDetailed, VideoDetailed } from '@/interfaces/ytmusic-api';
 import { combineArtistName } from './searchResult/track';
 
 function MusicCard({track}: {track: Track}) {
+  const router = useRouter();
   if (!track?.proxyArtworkUrl) {
     const resolvedTrack = proxyArtwork(track);
     if (resolvedTrack?.proxyArtworkUrl) {
@@ -39,7 +40,11 @@ function MusicCard({track}: {track: Track}) {
             }} />
           </div>
           <h1 className='w-full text-lg whitespace-nowrap overflow-hidden overflow-ellipsis text-start'>{track?.title}</h1>
-          <span className='w-full text-xs text-foreground/40 whitespace-nowrap overflow-hidden overflow-ellipsis text-start'>{track?.author}</span>
+          {
+            track?.artist ?
+            <Link underline='hover' onPress={()=>{router.push('/player/c?c='+track?.artist)}} className='w-full text-xs text-foreground/40 text-start'>{combineArtistName(track?.artist)}</Link>
+            : <span className='w-full text-xs text-foreground/40 whitespace-nowrap overflow-hidden overflow-ellipsis text-start'>{track?.author}</span>
+          }
         </div>
       </div>
     </>

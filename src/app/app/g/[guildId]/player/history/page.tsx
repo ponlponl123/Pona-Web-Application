@@ -57,7 +57,7 @@ function Page() {
                   x: { type: "spring", damping: 15, stiffness: 150 },
                 }}
               ><Track data={{
-                artists: [{
+                artists: result.track.artist ?? [{
                   name: result.track.author,
                 }] as ArtistBasic[],
                 thumbnails: [

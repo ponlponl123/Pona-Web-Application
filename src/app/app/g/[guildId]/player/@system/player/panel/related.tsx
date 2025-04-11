@@ -73,6 +73,77 @@ function Related({videoId}: {videoId?: string}) {
     return fetched ? (
         <div className='flex flex-col gap-4 w-full mx-auto min-h-full py-2 px-6'>
             {
+                relatedInfoCache.watch_playlist && relatedInfoCache.watch_playlist.tracks.length > 0 &&
+                <>
+                <div className='flex gap-4 items-center justify-between w-full p-1 -mt-2'>
+                    <h1 className={`text-3xl -mb-2 font-bold text-[hsl(var(--pona-app-music-accent-color-500)/0.64)]`}>{language.data.app.guilds.player.related.play_continuously}</h1>
+                    <div className='flex-1'></div>
+                    <div className="embla__buttons gap-3 flex items-center justify-center">
+                        <Button
+                            onPress={watchPlaylistEmblaOnPrevButtonClick} disabled={watchPlaylistEmblaPrevBtnDisabled}
+                            title='previous'
+                            className="embla__button embla__button--prev border-2 border-foreground/10 bg-foreground/10 disabled:opacity-30 disabled:bg-transparent disabled:border-foreground/5"
+                            type="button"
+                            size='sm'
+                            radius='full'
+                            isIconOnly
+                        ><CaretLeft/></Button>
+                        <Button
+                            onPress={watchPlaylistEmblaOnNextButtonClick} disabled={watchPlaylistEmblaNextBtnDisabled}
+                            title='next'
+                            className="embla__button embla__button--next border-2 border-foreground/10 bg-foreground/10 disabled:opacity-30 disabled:bg-transparent disabled:border-foreground/5"
+                            type="button"
+                            size='sm'
+                            radius='full'
+                            isIconOnly
+                        ><CaretRight/></Button>
+                    </div>
+                </div>
+                <div className="embla w-full max-w-none mx-0 my-0 z-10 relative">
+                    <div className="embla__viewport" ref={watchPlaylistEmblaRef}>
+                        <div className="embla__container gap-5 select-none flex-row w-full">
+                        {
+                            // map track by saperate 3 tracks for each column
+                            (() => {
+                                const columns = [];
+                                for (let i = 0; i < Math.ceil(relatedInfoCache.watch_playlist.tracks.length / 3); i++) {
+                                    const tracks = [];
+                                    for (let j = 0; j < 3; j++) {
+                                        const track = relatedInfoCache.watch_playlist.tracks[i * 3 + j];
+                                        if (track) {
+                                            tracks.push(
+                                                <Track key={`related-track-${i}-${j}`} data={{
+                                                    album: null,
+                                                    artists: track.artists,
+                                                    category: 'Songs',
+                                                    duration: '',
+                                                    duration_seconds: null,
+                                                    isExplicit: false,
+                                                    resultType: 'song',
+                                                    thumbnails: track.thumbnail,
+                                                    title: track.title,
+                                                    videoId: track.videoId,
+                                                    videoType: '',
+                                                    year: null
+                                                }} />
+                                            );
+                                        }
+                                    }
+                                    columns.push(
+                                        <div className='relative flex flex-col min-w-[50%] overflow-hidden' key={`tracks-col-${i}`}>
+                                            {tracks}
+                                        </div>
+                                    );
+                                }
+                                return columns;
+                            })()
+                        }
+                        </div>
+                    </div>
+                </div>
+                </>
+            }
+            {
                 relatedInfoCache.related && relatedInfoCache.related.length > 0 &&
                 relatedInfoCache.related.map((item, index) => {
                     const title = item.title;
@@ -256,77 +327,6 @@ function Related({videoId}: {videoId?: string}) {
                     </React.Fragment>
                     )
                 })
-            }
-            {
-                relatedInfoCache.watch_playlist && relatedInfoCache.watch_playlist.tracks.length > 0 &&
-                <>
-                <div className='flex gap-4 items-center justify-between w-full p-1 -mt-2'>
-                    <h1 className={`text-3xl -mb-2 font-bold text-[hsl(var(--pona-app-music-accent-color-500)/0.64)]`}>{language.data.app.guilds.player.related.play_continuously}</h1>
-                    <div className='flex-1'></div>
-                    <div className="embla__buttons gap-3 flex items-center justify-center">
-                        <Button
-                            onPress={watchPlaylistEmblaOnPrevButtonClick} disabled={watchPlaylistEmblaPrevBtnDisabled}
-                            title='previous'
-                            className="embla__button embla__button--prev border-2 border-foreground/10 bg-foreground/10 disabled:opacity-30 disabled:bg-transparent disabled:border-foreground/5"
-                            type="button"
-                            size='sm'
-                            radius='full'
-                            isIconOnly
-                        ><CaretLeft/></Button>
-                        <Button
-                            onPress={watchPlaylistEmblaOnNextButtonClick} disabled={watchPlaylistEmblaNextBtnDisabled}
-                            title='next'
-                            className="embla__button embla__button--next border-2 border-foreground/10 bg-foreground/10 disabled:opacity-30 disabled:bg-transparent disabled:border-foreground/5"
-                            type="button"
-                            size='sm'
-                            radius='full'
-                            isIconOnly
-                        ><CaretRight/></Button>
-                    </div>
-                </div>
-                <div className="embla w-full max-w-none mx-0 my-0 z-10 relative">
-                    <div className="embla__viewport" ref={watchPlaylistEmblaRef}>
-                        <div className="embla__container gap-5 select-none flex-row w-full">
-                        {
-                            // map track by saperate 3 tracks for each column
-                            (() => {
-                                const columns = [];
-                                for (let i = 0; i < Math.ceil(relatedInfoCache.watch_playlist.tracks.length / 3); i++) {
-                                    const tracks = [];
-                                    for (let j = 0; j < 3; j++) {
-                                        const track = relatedInfoCache.watch_playlist.tracks[i * 3 + j];
-                                        if (track) {
-                                            tracks.push(
-                                                <Track key={`related-track-${i}-${j}`} data={{
-                                                    album: null,
-                                                    artists: track.artists,
-                                                    category: 'Songs',
-                                                    duration: '',
-                                                    duration_seconds: null,
-                                                    isExplicit: false,
-                                                    resultType: 'song',
-                                                    thumbnails: track.thumbnail,
-                                                    title: track.title,
-                                                    videoId: track.videoId,
-                                                    videoType: '',
-                                                    year: null
-                                                }} />
-                                            );
-                                        }
-                                    }
-                                    columns.push(
-                                        <div className='relative flex flex-col min-w-[50%] overflow-hidden' key={`tracks-col-${i}`}>
-                                            {tracks}
-                                        </div>
-                                    );
-                                }
-                                return columns;
-                            })()
-                        }
-                        </div>
-                    </div>
-                </div>
-                </>
             }
             <div className='h-[16vh]'></div>
         </div>

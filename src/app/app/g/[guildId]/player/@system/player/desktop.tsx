@@ -12,8 +12,11 @@ import { msToTime } from '@/utils/time'
 import { CaretDown, CaretLineLeft, CaretLineRight, CaretUp, Equalizer, Info, MusicNotes, Pause, Play, Repeat, RepeatOnce, SpeakerSimpleHigh } from '@phosphor-icons/react/dist/ssr'
 import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger, Image, Link, Popover, PopoverContent, PopoverTrigger, Slider, Tooltip } from '@nextui-org/react'
 import toast from 'react-hot-toast';
+import { combineArtistName } from '@/components/music/searchResult/track';
+import { useRouter } from 'next/navigation';
 
 function DesktopPonaPlayer() {
+    const router = useRouter();
     const { language } = useLanguageContext();
     const { userSetting } = useUserSettingContext();
     const { ponaCommonState } = useGlobalContext();
@@ -122,7 +125,12 @@ function DesktopPonaPlayer() {
                                 {currentTrack ? <Link href={currentTrack.uri} className='!text-[hsl(var(--pona-app-music-accent-color-500))]' showAnchorIcon target='_blank' /> : <></>}
                             </div>
                             <div className='w-full flex flex-row gap-1 items-center justify-start'>
-                                <span className='text-sm max-lg:text-xs text-foreground/40 max-w-[calc(100%_-_1rem)] whitespace-nowrap overflow-hidden overflow-ellipsis'>{currentTrack ? currentTrack.author : 'Author'}</span>
+                                {
+                                    currentTrack?.artist ? <div className='text-sm max-lg:text-xs text-foreground/40 max-w-[calc(100%_-_1rem)] whitespace-nowrap overflow-hidden overflow-ellipsis'>
+                                        {combineArtistName(currentTrack?.artist, true, router, {className:'text-sm max-lg:text-xs text-foreground/40'})}
+                                    </div> :
+                                    <span className='text-sm max-lg:text-xs text-foreground/40 max-w-[calc(100%_-_1rem)] whitespace-nowrap overflow-hidden overflow-ellipsis'>{currentTrack?.author}</span>
+                                }
                                 <Tooltip content={`${language.data.app.guilds.player.request_by} ${currentTrack.requester?.displayName || '@'+currentTrack.requester?.username}`}>
                                     <div className='relative group w-3 opacity-40'>
                                         <Info size={12} className='group-hover:opacity-0' />

@@ -52,7 +52,7 @@ function Providers({ children }: { children: React.ReactNode }) {
 
     return (
         <>
-            <main id='app-panel' ref={musicAppContent} className='relative bg-gradient-to-t light:from-warning/10 to-primary/20 h-screen overflow-x-hidden overflow-y-auto scrollbar-hide -mb-6 border-l-2 border-foreground/10 pb-12'>
+            <main id='app-panel' ref={musicAppContent} className='relative bg-gradient-to-t light:from-warning/10 to-primary/20 h-screen overflow-x-hidden overflow-y-auto scrollbar-hide -mb-6 border-l-2 border-foreground/10 pb-12 select-none'>
                 <div className='absolute w-full h-1/2 max-h-96 min-h-48 top-0 left-0 z-[1] opacity-40 pointer-events-none'>
                 {
                     userSetting.transparency ? 
