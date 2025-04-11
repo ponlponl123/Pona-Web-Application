@@ -15,7 +15,9 @@
         "cancel": "Cancel",
         "close": "Close",
         "yes": "Yes",
-        "no": "No"
+        "no": "No",
+        "loading": "Loading",
+        "friendly_loading": "Data is running to you... 🏃💨"
     },
     "cookie": {
         "title": "Cookie!",
@@ -359,6 +361,14 @@
                     "lyrics": "Lyrics",
                     "related": "Related",
                     "open_queue": "Show More"
+                },
+                "related": {
+                    "videoId_not_provided": "The bus never comes...",
+                    "you_might_also_like": "You Might Also Like",
+                    "recommended_playlists" : "Recommended Playlists",
+                    "similar_artists": "Similar Artists",
+                    "about_the_artist": "About the artist",
+                    "play_continuously": "Play Continuously"
                 },
                 "notSameVC": {
                     "title": "The party has started!",

@@ -81,6 +81,63 @@ export type TopResults = TopResult_Album |
 	TopResult_Song |
 	TopResult_Video;
 
+export interface WatchPlaylistTrack {
+	videoId: string;
+	title: string;
+	artists: ArtistBasic[];
+	length: string;
+	thumbnail: ThumbnailFull[];
+	feedbackTokens: unknown;
+	likeStatus: string;
+	inLibrary: boolean;
+	videoType: string;
+	views: string;
+}
+export interface WatchPlaylist {
+	tracks: WatchPlaylistTrack[];
+	playlistId: string;
+	lyrics: string;
+	related: string;
+}
+
+export type RelatedType = "You might also like" | "Recommended playlists" | "Similar artists" | "About the artist";
+
+export interface SongRelated_Dummy {
+	title: RelatedType | string;
+	contents: unknown;
+}
+export interface SongRelated_YouMightAlsoLike extends SongRelated_Dummy {
+	title: "You might also like";
+	contents: SongBasic[];
+}
+export interface SongRelated_RecommendedPlaylists extends SongRelated_Dummy {
+	title: "Recommended playlists";
+	contents: PlaylistBasic[];
+}
+export interface SongRelated_SimilarArtists extends SongRelated_Dummy {
+	title: "Similar artists";
+	contents: ArtistRelated[];
+}
+export interface SongRelated_AboutTheArtist extends SongRelated_Dummy {
+	title: "About the artist";
+	contents: string;
+}
+export type SongRelated = Array<
+	SongRelated_YouMightAlsoLike |
+	SongRelated_RecommendedPlaylists |
+	SongRelated_SimilarArtists |
+	SongRelated_AboutTheArtist
+>;
+
+export interface SongBasic {
+	title: string;
+	videoId: string;
+	artists: ArtistBasic[];
+	album: AlbumBasic | string | null;
+	isExplicit: boolean;
+	thumbnails: ThumbnailFull[] | null;
+}
+
 export interface SongDetailed {
 	category: "Songs";
 	resultType: "song";
@@ -259,6 +316,13 @@ export interface AlbumDetailed {
 	isExplicit: boolean;
 	duration: string | null;
 	thumbnails: ThumbnailFull[];
+}
+
+export interface PlaylistBasic {
+	title: string;
+	playlistId: string;
+	thumbnails: ThumbnailFull[];
+	description: string;
 }
 
 export interface PlaylistDetailed {

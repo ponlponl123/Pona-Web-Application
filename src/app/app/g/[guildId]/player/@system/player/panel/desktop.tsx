@@ -8,10 +8,9 @@ import { useUserSettingContext } from '@/contexts/userSettingContext'
 import { usePlaybackContext } from '@/contexts/playbackContext'
 
 import { msToTime } from '@/utils/time'
-import { useRouter } from 'next/navigation'
 
-import { Coffee, DotsThreeVertical, Heart, MonitorPlay, PersonSimple, PictureInPicture, Play, Trash } from '@phosphor-icons/react/dist/ssr'
-import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger, Image, Link, ScrollShadow, Skeleton, Spinner, Tab, Tabs } from '@nextui-org/react'
+import { DotsThreeVertical, Heart, MonitorPlay, PersonSimple, PictureInPicture, Play, Trash } from '@phosphor-icons/react/dist/ssr'
+import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger, Image, ScrollShadow, Skeleton, Spinner, Tab, Tabs } from '@nextui-org/react'
 import LyricsDisplay from '@/components/music/lyricsDisplay';
 import { Track, UnresolvedTrack } from '@/interfaces/ponaPlayer';
 
@@ -35,15 +34,16 @@ import {CSS} from '@dnd-kit/utilities';
 import Equalizing from '@/components/equalizing';
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuLabel, ContextMenuTrigger } from '@/components/context-menu';
 import toast from 'react-hot-toast';
+import Related from './related';
 
 function DesktopPonaPlayerPanel() {
-    const router = useRouter();
     const { language } = useLanguageContext();
     const { ponaCommonState, ponaTrackQueue, setPonaTrackQueue, isFullscreenMode, setIsFullscreenMode } = useGlobalContext();
     const { playback } = usePlaybackContext();
     const { userSetting } = useUserSettingContext();
     const { socket, playerPopup } = usePonaMusicContext();
     const currentTrack = ponaCommonState?.current;
+    const videoId = currentTrack?.identifier;
     const lyricsContainerRef = React.useRef<HTMLElement>(null);
     const playerPos = playback;
     const sensors = useSensors(
@@ -93,7 +93,7 @@ function DesktopPonaPlayerPanel() {
                 exit={{ opacity: 0, pointerEvents: 'none', translateY: 64 }}>
                 {
                     userSetting.transparency &&
-                    <Image src={currentTrack ? currentTrack?.proxyArtworkUrl : '/static/Ponlponl123 (1459).png'} alt={currentTrack ? currentTrack.title : 'Backdrop'}
+                    <Image src={currentTrack ? currentTrack?.proxyArtworkUrl : '/static/Ponlponl123 (1459).png'} alt={currentTrack ? currentTrack?.title : 'Backdrop'}
                         className='absolute -z-10 scale-[2] w-full h-full top-0 left-0 object-cover blur-[128px] [html.dark_&]:brightness-50 [html.light_&]:brightness-200 [html.dark_&]:saturate-150' classNames={{wrapper:'contents'}}/>
                 }
                 <div className={
@@ -113,7 +113,7 @@ function DesktopPonaPlayerPanel() {
                             <Button color='default' variant='ghost' radius='full' className='w-fit' isDisabled><PictureInPicture />{language.data.app.guilds.player.picinpic_mode.enter}</Button>
                         </div>
                         <div className='w-[56vh] max-2xl:w-[42vh] max-xl:w-[32vh] max-xl:[body:not(.sidebar-collapsed)_&]:w-[26vh] aspect-square relative flex group hover:scale-[1.032] active:scale-[1.016]'>
-                            <Image src={currentTrack ? currentTrack.proxyHighResArtworkUrl || currentTrack?.proxyArtworkUrl : '/static/Ponlponl123 (1459).png'} alt={currentTrack ? currentTrack.title : 'Artwork'}
+                            <Image src={currentTrack ? currentTrack?.proxyHighResArtworkUrl || currentTrack?.proxyArtworkUrl : '/static/Ponlponl123 (1459).png'} alt={currentTrack ? currentTrack?.title : 'Artwork'}
                                 className={
                                     'w-full h-full object-cover select-none rounded-2xl'
                                 }
@@ -134,7 +134,7 @@ function DesktopPonaPlayerPanel() {
                                     <div className='flex flex-col gap-2 px-3 py-1'>
                                     {
                                         ponaTrackQueue && ponaTrackQueue.queue && ponaTrackQueue.queue[0] &&
-                                        <TrackQueue active={ponaCommonState.current?.uniqueId === ponaTrackQueue.queue[0].uniqueId} index={0} track={ponaTrackQueue.queue[0]} />
+                                        <TrackQueue active={currentTrack?.uniqueId === ponaTrackQueue.queue[0].uniqueId} index={0} track={ponaTrackQueue.queue[0]} />
                                     }
                                     { ponaTrackQueue && ponaTrackQueue.queue &&
                                     <DndContext
@@ -149,7 +149,7 @@ function DesktopPonaPlayerPanel() {
                                     >
                                     {
                                         ponaTrackQueue.queue.slice(1).map((track, index) => {
-                                            const isThisTrack = ponaCommonState.current?.uniqueId === track.uniqueId;
+                                            const isThisTrack = currentTrack?.uniqueId === track.uniqueId;
                                             return <DraggableTrack isLoading={ponaTrackQueue.updating} active={isThisTrack} index={index+1} key={track.uniqueId} track={track} />
                                         })
                                     }
@@ -158,12 +158,12 @@ function DesktopPonaPlayerPanel() {
                                     }</div>
                                 </ScrollShadow>
                             </Tab>
-                            <Tab key="lyrics" title={language.data.app.guilds.player.tabs.lyrics} isDisabled={!(currentTrack.lyrics && currentTrack.lyrics.lyrics?.length > 0)}>
+                            <Tab key="lyrics" title={language.data.app.guilds.player.tabs.lyrics} isDisabled={!(currentTrack?.lyrics && currentTrack?.lyrics?.lyrics?.length > 0)}>
                                 <ScrollShadow className='h-full pr-2 pt-4 pb-12' style={{scrollbarWidth:'thin',scrollbarColor:'hsl(var(--pona-app-music-accent-color-500)) transparent'}} ref={lyricsContainerRef}>
                                     {lyricsContainerRef.current && (
-                                        currentTrack.lyrics?.isTimestamp ?
+                                        currentTrack?.lyrics?.isTimestamp ?
                                             <LyricsDisplay playerPosition={playerPos} currentTrack={currentTrack as Track} lyricsProvider={lyricsContainerRef.current} /> :
-                                            (currentTrack.lyrics?.lyrics && currentTrack.lyrics.lyrics.length > 0) && (currentTrack.lyrics.lyrics as string[]).map((lyric, index) => (
+                                            (currentTrack?.lyrics?.lyrics && currentTrack?.lyrics?.lyrics?.length > 0) && (currentTrack?.lyrics?.lyrics as string[]).map((lyric, index) => (
                                                 <div key={index} className='flex items-center gap-2'>
                                                     <span className='text-2xl [html.dark_&]:brightness-125 my-4 text-[hsl(var(--pona-app-music-accent-color-500))]'>{lyric}</span>
                                                 </div>
@@ -173,13 +173,7 @@ function DesktopPonaPlayerPanel() {
                             </Tab>
                             <Tab key="related" title={language.data.app.guilds.player.tabs.related}>
                                 <ScrollShadow className='h-full pr-2' style={{scrollbarWidth:'thin',scrollbarColor:'hsl(var(--pona-app-music-accent-color-500)) transparent'}}>
-                                    <div className='flex flex-col gap-4 items-center justify-center w-full h-full'>
-                                        <Coffee size={56} weight='fill' className='text-[hsl(var(--pona-app-music-accent-color-500))]' />
-                                        <h1 className='text-2xl max-w-screen-md text-center text-[hsl(var(--pona-app-music-accent-color-500)/0.64)]'>{language.data.app.guilds.player.dev}</h1>
-                                        <Link href='/app/updates' rel='noopener' onPress={()=>{router.push('/app/updates')}}>
-                                            <Button color='secondary' className='mt-2 bg-[hsl(var(--pona-app-music-accent-color-500))]' radius='full'><Heart weight='fill' /> {language.data.app.updates.follow}</Button>
-                                        </Link>
-                                    </div>
+                                    <Related videoId={videoId} />
                                 </ScrollShadow>
                             </Tab>
                         </Tabs>

@@ -2,7 +2,7 @@
 import axios from 'axios';
 import { Endpoint, EndpointPort } from '../endpoint';
 import { ArtistFull as ArtistFullv1, PlaylistFull as PlaylistFullv1 } from '@/interfaces/ytmusic';
-import { AlbumFull, ArtistFull, ArtistVideo, SearchResult as HTTP_SearchResult, PlaylistFull, ProfileFull, SongFull, TopResult_Song, VideoDetailed, VideoFull } from '@/interfaces/ytmusic-api';
+import { AlbumFull, ArtistFull, ArtistVideo, SearchResult as HTTP_SearchResult, PlaylistFull, ProfileFull, SongFull, SongRelated, TopResult_Song, VideoDetailed, VideoFull, WatchPlaylist } from '@/interfaces/ytmusic-api';
 
 export type YTMusicSearchResultType = "SONG" | "ALBUM" | "VIDEO" | "PLAYLIST" | "PODCAST" | "ARTIST";
 export type YTMusicSearchCategoryType = "Top result" | null | "Songs" | "Videos" | "Albums" | "Community Playlists" | "Artists" | "Podcasts" | "Episodes" | "Profiles";
@@ -21,6 +21,11 @@ export interface ChannelResult {
     v1: ArtistFullv1 | undefined;
     v2: ArtistFull | undefined;
     user: ProfileFull | undefined;
+}
+
+export interface SongRelatedResult {
+    watch_playlist: WatchPlaylist | undefined;
+    related: SongRelated | undefined;
 }
 
 export async function fetchSearchSuggestionResult(tokenType: string, tokenKey: string, search: string): Promise<false | SearchSuggestion> {
@@ -59,12 +64,7 @@ export default async function fetchSearchResult(tokenType: string, tokenKey: str
                 topResult[0].videoId &&
                 (
                     !topResult[0].title.toLowerCase().includes("cover") &&
-                    !topResult[0].title.toLowerCase().includes("nightcore") &&
-                    (
-                        topResult[0].title.toLowerCase().includes("mv") ||
-                        topResult[0].title.toLowerCase().includes("music video") ||
-                        topResult[0].title.toLowerCase().includes("official")
-                    )
+                    !topResult[0].title.toLowerCase().includes("nightcore")
                 )
             )
             {
@@ -200,6 +200,22 @@ export async function getArtistVideos(tokenType: string, tokenKey: string, artis
         else return false;
     } catch {
         // console.error('Failed to handshake with Pona! API:', err);
+        return false;
+    }
+}
+
+export async function getSongRelated(tokenType: string, tokenKey: string, videoId: string): Promise<false | SongRelatedResult> {
+    try {
+        const endpoint = new URL(`${Endpoint}:${EndpointPort}/v2/music/fetch/related`);
+        endpoint.searchParams.append('id', videoId);
+        const handshakeRequest = await axios.get(endpoint.toString(), {
+            headers: {
+                'Authorization': `${tokenType} ${tokenKey}`,
+            },
+        });
+        if ( handshakeRequest.status === 200 && handshakeRequest.data.result ) return handshakeRequest.data.result as SongRelatedResult;
+        else return false;
+    } catch {
         return false;
     }
 }

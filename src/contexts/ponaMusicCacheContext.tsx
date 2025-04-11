@@ -1,4 +1,5 @@
 "use client";
+import { SongRelated, WatchPlaylist } from '@/interfaces/ytmusic-api';
 import { IsSubscribed } from '@/server-side-api/internal/channel';
 import { getCookie } from 'cookies-next';
 import React, { createContext, Dispatch, SetStateAction, useContext, useState } from 'react';
@@ -13,23 +14,34 @@ export interface favoriteState {
   state: boolean;
 }
 
+export interface relatedInfo {
+  videoId: string;
+  watch_playlist: WatchPlaylist | undefined;
+  related: SongRelated | undefined;
+}
+
 const PonaMusicCacheContext = createContext<{
   subscribe_state_cache: subscribeState[];
   GetSubscribeStateFromChannelId: (channelId: string) => Promise<subscribeState>;
   SetSubscribeStateCache: Dispatch<SetStateAction<subscribeState[]>>;
   favorite_state_cache: favoriteState[];
   SetFavoriteStateCache: Dispatch<SetStateAction<favoriteState[]>>;
+  relatedInfoCache: relatedInfo;
+  SetRelatedInfoCache: Dispatch<SetStateAction<relatedInfo>>;
 }>({
   subscribe_state_cache: [],
   SetSubscribeStateCache: () => {},
   GetSubscribeStateFromChannelId: async () => ({ channelId: '', state: false }),
   favorite_state_cache: [],
   SetFavoriteStateCache: () => {},
+  relatedInfoCache: { videoId: '', watch_playlist: undefined, related: undefined },
+  SetRelatedInfoCache: () => {},
 });
 
 export const PonaMusicCacheContextProvider = ({ children }: { children: React.ReactNode; }) => {
   const [subscribe_state_cache, SetSubscribeStateCache] = useState<subscribeState[]>([]);
   const [favorite_state_cache, SetFavoriteStateCache] = useState<favoriteState[]>([]);
+  const [relatedInfoCache, SetRelatedInfoCache] = useState<relatedInfo>({ videoId: '', watch_playlist: undefined, related: undefined });
 
   const FetchSubscibeStateFromChannelId = async (channelId: string) => {
     const accessToken = getCookie('LOGIN_');
@@ -58,6 +70,7 @@ export const PonaMusicCacheContextProvider = ({ children }: { children: React.Re
     <PonaMusicCacheContext.Provider value={{
       subscribe_state_cache, SetSubscribeStateCache, GetSubscribeStateFromChannelId,
       favorite_state_cache, SetFavoriteStateCache,
+      relatedInfoCache, SetRelatedInfoCache
     }}>
       {children}
     </PonaMusicCacheContext.Provider>
