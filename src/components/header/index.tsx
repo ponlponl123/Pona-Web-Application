@@ -200,7 +200,7 @@ function Header() {
                                             searchValue &&
                                             <Button onPress={()=>{router.push(`/app/g/${guild?.id}/player/search?q=${searchValue}`);setSearching(false);setSearchValue(searchValue);addToSearchHistory(searchValue)}}
                                                 value={searchValue} variant='light' radius='sm'
-                                                className='text-start justify-start gap-3' fullWidth><MagnifyingGlass size={14} /> {searchValue}</Button>
+                                                className='text-start justify-start gap-3 flex flex-row items-center' fullWidth><MagnifyingGlass size={14} /> <span className='flex-1 overflow-hidden overflow-ellipsis whitespace-nowrap'>{searchValue}</span></Button>
                                         }
                                         {
                                             searchSuggestions.length>0 &&
@@ -208,7 +208,7 @@ function Header() {
                                                 <Button key={index} onPress={()=>{router.push(`/app/g/${guild?.id}/player/search?q=${value}`);setSearching(false);setSearchValue(value);addToSearchHistory(value)}}
                                                     onFocus={()=>{setSearchValue(value)}}
                                                     value={value} variant='light' radius='sm'
-                                                    className='text-start justify-start gap-3' fullWidth><MagnifyingGlass size={14} /> {value}</Button>
+                                                    className='text-start justify-start gap-3 flex flex-row items-center' fullWidth><MagnifyingGlass size={14} /> <span className='flex-1 overflow-hidden overflow-ellipsis whitespace-nowrap'>{value}</span></Button>
                                             ))
                                         }
                                         {
@@ -217,7 +217,7 @@ function Header() {
                                                 <Button key={index} onPress={()=>{router.push(`/app/g/${guild?.id}/player/search?q=${value}`);setSearching(false);setSearchValue(value);addToSearchHistory(value)}}
                                                     onFocus={()=>{setSearchValue(value)}}
                                                     value={value} variant='light' radius='sm'
-                                                    className='text-start justify-start gap-3' fullWidth><ClockCounterClockwise size={14} /> {value}</Button>
+                                                    className='text-start justify-start gap-3 flex flex-row items-center' fullWidth><ClockCounterClockwise size={14} /> <span className='flex-1 overflow-hidden overflow-ellipsis whitespace-nowrap'>{value}</span></Button>
                                             ))
                                         }
                                     </div>
