@@ -167,7 +167,7 @@ function Header() {
                                     }}
                                     onFocus={async ()=>{
                                         setSearching(true);
-                                        if ( !searchValue && !fetchedSearchHistory )
+                                        if ( !fetchedSearchHistory )
                                         {
                                             const accessTokenType = getCookie('LOGIN_TYPE_');
                                             const accessToken = getCookie('LOGIN_');

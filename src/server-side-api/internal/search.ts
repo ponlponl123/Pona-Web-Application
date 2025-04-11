@@ -58,10 +58,13 @@ export default async function fetchSearchResult(tokenType: string, tokenKey: str
                 topResult[0].videoType?.includes("MUSIC_VIDEO") &&
                 topResult[0].videoId &&
                 (
-                    !topResult[0].title.toLowerCase().includes("cover") ||
-                    topResult[0].title.toLowerCase().includes("mv") ||
-                    topResult[0].title.toLowerCase().includes("music video") ||
-                    topResult[0].title.toLowerCase().includes("official")
+                    !topResult[0].title.toLowerCase().includes("cover") &&
+                    !topResult[0].title.toLowerCase().includes("nightcore") &&
+                    (
+                        topResult[0].title.toLowerCase().includes("mv") ||
+                        topResult[0].title.toLowerCase().includes("music video") ||
+                        topResult[0].title.toLowerCase().includes("official")
+                    )
                 )
             )
             {
