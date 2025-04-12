@@ -10,7 +10,7 @@ import { usePlaybackContext } from '@/contexts/playbackContext'
 import { msToTime } from '@/utils/time'
 
 import { DotsThreeVertical, Heart, MonitorPlay, PersonSimple, PictureInPicture, Play, Trash } from '@phosphor-icons/react/dist/ssr'
-import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger, Image, ScrollShadow, Skeleton, Spinner, Tab, Tabs } from '@nextui-org/react'
+import { Button, Chip, Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger, Image, ScrollShadow, Skeleton, Spinner, Tab, Tabs } from '@nextui-org/react'
 import LyricsDisplay from '@/components/music/lyricsDisplay';
 import { Track, UnresolvedTrack } from '@/interfaces/ponaPlayer';
 
@@ -160,7 +160,10 @@ function DesktopPonaPlayerPanel() {
                                     }</div>
                                 </ScrollShadow>
                             </Tab>
-                            <Tab key="lyrics" title={language.data.app.guilds.player.tabs.lyrics} isDisabled={!(currentTrack?.lyrics && currentTrack?.lyrics?.lyrics?.length > 0)}>
+                            <Tab key="lyrics" title={<>
+                                    {language.data.app.guilds.player.tabs.lyrics}
+                                    <Chip size='sm' className='mx-3'>{language.data.extensions.beta}</Chip>
+                                </>} isDisabled={!(currentTrack?.lyrics && currentTrack?.lyrics?.lyrics?.length > 0)}>
                                 <ScrollShadow className='h-full pr-2 pt-4 pb-12' style={{scrollbarWidth:'thin',scrollbarColor:'hsl(var(--pona-app-music-accent-color-500)) transparent'}} ref={lyricsContainerRef}>
                                     {lyricsContainerRef.current && (
                                         currentTrack?.lyrics?.isTimestamp ?
@@ -235,14 +238,15 @@ export function DraggableTrack({index, track, active, isLoading}:
 
 export function TrackQueueContextFunction({ track }: { track: Track | UnresolvedTrack })
 {
+    const router = useRouter();
     const { language } = useLanguageContext();
     const { ponaCommonState } = useGlobalContext();
     const { socket } = usePonaMusicContext();
     return (
         <>
             <ContextMenuLabel>{track.title}</ContextMenuLabel>
-            <ContextMenuItem className='contents'>
-                <Button fullWidth variant='light' className='justify-start'><Heart weight='bold' /> {language.data.app.guilds.player.context_menu.add_to_favorite}</Button>
+            <ContextMenuItem className='contents' disabled>
+                <Button fullWidth variant='light' className='justify-start' isDisabled><Heart weight='bold' /> {language.data.app.guilds.player.context_menu.add_to_favorite}</Button>
             </ContextMenuItem>
             {
                 ponaCommonState?.current?.uniqueId !== track.uniqueId &&
@@ -268,7 +272,7 @@ export function TrackQueueContextFunction({ track }: { track: Track | Unresolved
                     <Button fullWidth variant='light' className='justify-start'><Trash weight='bold' /> {language.data.app.guilds.player.context_menu.rm_from_queue}</Button>
                 </ContextMenuItem>
             }
-            <ContextMenuItem className='contents'>
+            <ContextMenuItem className='contents' disabled={!track?.artist} onClick={()=>{if(track?.artist&&track?.artist[0]) router.push('player/c?c='+track?.artist[0].id)}}>
                 <Button fullWidth variant='light' className='justify-start'><PersonSimple weight='bold' /> {language.data.app.guilds.player.context_menu.goto_artist}</Button>
             </ContextMenuItem>
         </>
@@ -355,7 +359,7 @@ export function TrackQueue({index, track, active, isLoading, ref, params}:
                                     base: 'm-0'
                                 }}>
                                     <DropdownItem className='p-0 rounded-xl hover:!bg-default/40' key='add_to_fav'>
-                                        <Button fullWidth variant='light' className='justify-start !bg-transparent'><Heart weight='bold' /> {language.data.app.guilds.player.context_menu.add_to_favorite}</Button>
+                                        <Button isDisabled fullWidth variant='light' className='justify-start !bg-transparent'><Heart weight='bold' /> {language.data.app.guilds.player.context_menu.add_to_favorite}</Button>
                                     </DropdownItem>
                                     {
                                         !active ? (
@@ -385,7 +389,7 @@ export function TrackQueue({index, track, active, isLoading, ref, params}:
                                         ) : null
                                     }
                                     <DropdownItem className='p-0 rounded-xl hover:!bg-default/40' key='goto_artist'>
-                                        <Button fullWidth variant='light' className='justify-start !bg-transparent'><PersonSimple weight='bold' /> {language.data.app.guilds.player.context_menu.goto_artist}</Button>
+                                        <Button fullWidth variant='light' className='justify-start !bg-transparent' isDisabled={!track.artist} onPress={()=>{if(track?.artist&&track?.artist[0]) router.push('player/c?c='+track?.artist[0].id)}}><PersonSimple weight='bold' /> {language.data.app.guilds.player.context_menu.goto_artist}</Button>
                                     </DropdownItem>
                                 </DropdownSection>
                             </DropdownMenu>

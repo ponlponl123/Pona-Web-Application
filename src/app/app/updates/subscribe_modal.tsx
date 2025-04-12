@@ -33,7 +33,7 @@ function SubscribeModal(props: SubscribeModalProps) {
                   value={groupSelected}
                   onChange={setGroupSelected}
               >
-                  {(userInfo && userInfo.email) && (
+                  {(userInfo && userInfo?.email) && (
                       <CustomCheckbox className='rounded-2xl' name='Email' description={userInfo.email} value={userInfo.email} isDisabled />
                   )}
                   {(userInfo && userInfo.username) && (

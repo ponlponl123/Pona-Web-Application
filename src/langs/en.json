@@ -387,6 +387,7 @@
                 "home": {
                     "title": "Home",
                     "listen_again": "Listen Again",
+                    "subscribed_channels": "Artists you subscribed",
                     "no_history": {
                         "title": "There are no history",
                         "description": "Haven't tried Pona! Music yet? Then start listening to your first favorite songs here!",

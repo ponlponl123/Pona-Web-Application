@@ -4,43 +4,61 @@ import { Button, Image, Spinner, Link } from '@nextui-org/react';
 import { useLanguageContext } from '@/contexts/languageContext';
 import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo';
 import { useDiscordUserInfo } from '@/contexts/discordUserInfo';
+import { usePonaMusicCacheContext } from '@/contexts/ponaMusicCacheContext';
 import fetchHistory, { History } from '@/server-side-api/internal/history';
 import { motion } from 'framer-motion';
 import { getCookie } from 'cookies-next';
 import { useRouter } from 'next/navigation';
-import MusicCard from '@/components/music/card';
+import MusicCard, { ArtistCard } from '@/components/music/card';
 import { CaretLeft, CaretRight, CraneTower, Heart, MagnifyingGlass, MicrophoneStage } from '@phosphor-icons/react/dist/ssr';
 import useEmblaCarousel from 'embla-carousel-react';
 import { usePrevNextButtons } from '@/utils/Embla/CarouselArrowButtons';
+import { fetchSubscribedChannels, SubscribedChannelsResult } from '@/server-side-api/internal/channel';
 
 function Page() {
   const router = useRouter();
   const { userInfo } = useDiscordUserInfo();
   const { guild } = useDiscordGuildInfo();
   const { language } = useLanguageContext();
+  const { SetSubscribeStateCache } = usePonaMusicCacheContext();
   const fetched = React.useRef(false);
   const [tracksHistory, setTracksHistory] = React.useState<History[] | null>(null);
+  const [subscribedArtists, setSubscribedArtists] = React.useState<SubscribedChannelsResult[] | null>(null);
   const [emblaRef, emblaApi] = useEmblaCarousel({ skipSnaps: true });
-
+  const [subscribedChannelsEmblaRef, subscribedChannelsEmblaApi] = useEmblaCarousel({ skipSnaps: true });
   const {
     prevBtnDisabled,
     nextBtnDisabled,
     onPrevButtonClick,
     onNextButtonClick,
   } = usePrevNextButtons(emblaApi);
-
-  const fetchHistoryTracks = async () => {
-    const accessTokenType = getCookie('LOGIN_TYPE_');
-    const accessToken = getCookie('LOGIN_');
-    if (!accessTokenType || !accessToken) return false;
-    const tracks = await fetchHistory(accessTokenType, accessToken);
-    if (tracks) setTracksHistory(tracks.tracks);
-    fetched.current = true;
-  };
+  const {
+    prevBtnDisabled: subscribedChannelsPrevBtnDisabled,
+    nextBtnDisabled: subscribedChannelsNextBtnDisabled,
+    onPrevButtonClick: subscribedChannelsOnPrevButtonClick,
+    onNextButtonClick: subscribedChannelsOnNextButtonClick,
+  } = usePrevNextButtons(subscribedChannelsEmblaApi);
 
   React.useEffect(() => {
+    const fetchHistoryTracks = async () => {
+      const accessTokenType = getCookie('LOGIN_TYPE_');
+      const accessToken = getCookie('LOGIN_');
+      if (!accessTokenType || !accessToken) return false;
+      const tracks = await fetchHistory(accessTokenType, accessToken);
+      const fetchSubscribedArtists = await fetchSubscribedChannels(accessTokenType, accessToken);
+      if (tracks) setTracksHistory(tracks.tracks);
+      if ( fetchSubscribedArtists ) {
+        setSubscribedArtists(fetchSubscribedArtists);
+        fetchSubscribedArtists.forEach(channel=>{
+          SetSubscribeStateCache((value)=>{
+            return value.filter((item) => item.channelId !== channel.artistId).concat({ channelId: channel.artistId, state: true });
+          })
+        })
+      }
+      fetched.current = true;
+    }
     if (!fetched.current) fetchHistoryTracks();
-  }, [fetched]);
+  }, [SetSubscribeStateCache, fetched]);
 
   return (
     guild ? (
@@ -112,6 +130,58 @@ function Page() {
               </div>
             </div>
           </div>
+          {
+            subscribedArtists && subscribedArtists.length > 0 &&
+            <div className="embla w-full max-w-none mx-0 mt-24 z-10 relative">
+              <div className="embla__controls max-sm:hidden w-full justify-between items-center flex mb-6">
+                <h1 className='text-5xl'>{language.data.app.guilds.player.home.subscribed_channels}</h1>
+                <div className="embla__buttons gap-3 flex items-center justify-center">
+                  <Button
+                    onPress={subscribedChannelsOnPrevButtonClick} disabled={subscribedChannelsPrevBtnDisabled}
+                    title='previous'
+                    className="embla__button embla__button--prev border-2 border-foreground/10 bg-foreground/10 disabled:opacity-30 disabled:bg-transparent disabled:border-foreground/5"
+                    type="button"
+                    size='sm'
+                    radius='full'
+                    isIconOnly
+                  ><CaretLeft/></Button>
+                  <Button
+                    onPress={subscribedChannelsOnNextButtonClick} disabled={subscribedChannelsNextBtnDisabled}
+                    title='next'
+                    className="embla__button embla__button--next border-2 border-foreground/10 bg-foreground/10 disabled:opacity-30 disabled:bg-transparent disabled:border-foreground/5"
+                    type="button"
+                    size='sm'
+                    radius='full'
+                    isIconOnly
+                  ><CaretRight/></Button>
+                </div>
+              </div>
+              <div className="embla__viewport" ref={subscribedChannelsEmblaRef}>
+                <div className="embla__container gap-5">
+                  {
+                    subscribedArtists.map((channel, index) => (
+                      <motion.div
+                        initial={{ opacity: 0, x: -100 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{
+                          delay: 0.08 * index,
+                          ease: 'easeInOut',
+                          x: { type: "spring", damping: 15, stiffness: 150 },
+                        }}
+                      className='embla__slide w-max flex-none select-none' key={`home-subscribed-channels-${index}`}>
+                        <ArtistCard artist={{
+                          artistId: channel.artistId,
+                          name: channel.info.v1?.name || channel.info.v2?.name || channel.info.user?.name || '',
+                          thumbnails: channel.info.v1?.thumbnails || channel.info.v2?.thumbnails || [],
+                          type: 'ARTIST'
+                        }} />
+                      </motion.div>
+                    ))
+                  }
+                </div>
+              </div>
+            </div>
+          }
           <div className='w-full min-h-max h-96 flex flex-col items-center justify-center gap-4'>
             <CraneTower size={48} weight='fill' />
             <h1 className='text-xl max-w-screen-md text-center mt-2'>{language.data.app.guilds.player.dev}</h1>

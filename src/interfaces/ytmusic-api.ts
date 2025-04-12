@@ -233,6 +233,7 @@ export interface ArtistFull {
 	name: string;
 	description: string | null;
 	view: string | null;
+	channelId: string;
 	shuffleId: string;
 	radioId: string;
 	browseId: string;

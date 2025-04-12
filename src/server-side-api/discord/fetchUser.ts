@@ -10,6 +10,7 @@ export interface UserInfo {
     public_flags: number;
     flags: number;
     banner: string;
+    email?: string;
     accent_color: number;
     global_name: string;
     avatar_decoration_data: {

@@ -381,6 +381,7 @@
                 "home": {
                     "title": "ホーム",
                     "listen_again": "もう一度聴く",
+                    "subscribed_channels": "購読しているアーティスト",
                     "no_history": {
                         "title": "履歴がありません",
                         "description": "まだPona！ミュージックを試したことがありませんか？それなら、ここで最初の好きな曲を聴いてみましょう！",
