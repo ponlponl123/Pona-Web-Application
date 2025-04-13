@@ -1,7 +1,7 @@
 "use server";
 import { Track } from '@/interfaces/ponaPlayer';
 import axios from 'axios';
-import { Endpoint, EndpointPort } from '../endpoint';
+import { EndpointHTTP } from '../endpoint';
 
 export interface History {
     id: number,
@@ -17,7 +17,7 @@ export interface Tracks {
 
 export default async function fetchHistory(tokenType: string, tokenKey: string, limit?: number): Promise<false | Tracks> {
     try {
-        const endpoint = new URL(`${Endpoint}:${EndpointPort}/v1/music/history`);
+        const endpoint = new URL(`${EndpointHTTP}/v1/music/history`);
         endpoint.searchParams.append('l', String(limit || 14));
         const handshakeRequest = await axios.get(endpoint.toString(), {
             headers: {
@@ -34,7 +34,7 @@ export default async function fetchHistory(tokenType: string, tokenKey: string, 
 
 export async function fetchSearchHistory(tokenType: string, tokenKey: string): Promise<false | string[]> {
     try {
-        const endpoint = new URL(`${Endpoint}:${EndpointPort}/v1/music/history/search`);
+        const endpoint = new URL(`${EndpointHTTP}/v1/music/history/search`);
         const handshakeRequest = await axios.get(endpoint.toString(), {
             headers: {
                 'Authorization': `${tokenType} ${tokenKey}`,

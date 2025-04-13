@@ -1,6 +1,6 @@
 "use server";
 import axios from 'axios';
-import { Endpoint, EndpointPort } from '../endpoint';
+import { EndpointHTTP } from '../endpoint';
 import { ArtistFull as ArtistFullv1 } from '@/interfaces/ytmusic';
 import { ArtistFull, ProfileFull } from '@/interfaces/ytmusic-api';
 
@@ -19,7 +19,7 @@ export interface SubscribedChannelsResult {
 
 export async function IsSubscribed(tokenType: string, tokenKey: string, channelId: string): Promise<false | SubscribeResult> {
     try {
-        const endpoint = new URL(`${Endpoint}:${EndpointPort}/v1/channel/subscribe`);
+        const endpoint = new URL(`${EndpointHTTP}/v1/channel/subscribe`);
         endpoint.searchParams.append('c', channelId);
         const handshakeRequest = await axios.get(endpoint.toString(), {
             headers: {
@@ -35,7 +35,7 @@ export async function IsSubscribed(tokenType: string, tokenKey: string, channelI
 
 export default async function subscribe(tokenType: string, tokenKey: string, channelId: string): Promise<boolean> {
     try {
-        const endpoint = new URL(`${Endpoint}:${EndpointPort}/v1/channel/subscribe`);
+        const endpoint = new URL(`${EndpointHTTP}/v1/channel/subscribe`);
         endpoint.searchParams.append('c', channelId);
         const handshakeRequest = await axios.post(endpoint.toString(), null, {
             headers: {
@@ -51,7 +51,7 @@ export default async function subscribe(tokenType: string, tokenKey: string, cha
 
 export async function fetchSubscribedChannels(tokenType: string, tokenKey: string, lim?: number): Promise<false | SubscribedChannelsResult[]> {
     try {
-        const endpoint = new URL(`${Endpoint}:${EndpointPort}/v1/channel/subscribe/s`);
+        const endpoint = new URL(`${EndpointHTTP}/v1/channel/subscribe/s`);
         if (lim) endpoint.searchParams.append('limit', String(lim));
         const handshakeRequest = await axios.get(endpoint.toString(), {
             headers: {
@@ -67,7 +67,7 @@ export async function fetchSubscribedChannels(tokenType: string, tokenKey: strin
 
 export async function unsubscribe(tokenType: string, tokenKey: string, channelId: string): Promise<boolean> {
     try {
-        const endpoint = new URL(`${Endpoint}:${EndpointPort}/v1/channel/subscribe`);
+        const endpoint = new URL(`${EndpointHTTP}/v1/channel/subscribe`);
         endpoint.searchParams.append('c', channelId);
         const handshakeRequest = await axios.delete(endpoint.toString(), {
             headers: {

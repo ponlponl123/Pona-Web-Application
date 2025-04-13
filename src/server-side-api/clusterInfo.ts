@@ -1,5 +1,6 @@
 "use server";
 import axios from 'axios';
+import { EndpointHTTP, EndpointKey } from './endpoint';
 
 export interface ClusterInfo {
     "message": string,
@@ -11,10 +12,9 @@ export interface ClusterInfo {
 
 export default async function clusterInfo(): Promise<false | ClusterInfo> {
     try {
-        const env = process.env;
-        const handshakeRequest = await axios.get(`${env.PONA_APPLICATION_ENDPOINT}:${env.PONA_APPLICATION_ENDPOINT_PORT}/v1/cluster`, {
+        const handshakeRequest = await axios.get(`${EndpointHTTP}/v1/cluster`, {
             headers: {
-                'Authorization': `Pona! ${env.PONA_APPLICATION_ENDPOINT_KEY}`,
+                'Authorization': `Pona! ${EndpointKey}`,
             },
         });
         if ( handshakeRequest.status === 200 ) return handshakeRequest.data as ClusterInfo;

@@ -1,6 +1,6 @@
 "use server";
 import axios from 'axios';
-import { Endpoint, EndpointPort } from '../endpoint';
+import { EndpointHTTP } from '../endpoint';
 import { ArtistFull as ArtistFullv1, PlaylistFull as PlaylistFullv1 } from '@/interfaces/ytmusic';
 import { AlbumFull, ArtistFull, ArtistVideo, SearchResult as HTTP_SearchResult, PlaylistFull, ProfileFull, SongFull, SongRelated, TopResult_Song, VideoDetailed, VideoFull, WatchPlaylist } from '@/interfaces/ytmusic-api';
 
@@ -30,7 +30,7 @@ export interface SongRelatedResult {
 
 export async function fetchSearchSuggestionResult(tokenType: string, tokenKey: string, search: string): Promise<false | SearchSuggestion> {
     try {
-        const endpoint = new URL(`${Endpoint}:${EndpointPort}/v1/music/search`);
+        const endpoint = new URL(`${EndpointHTTP}/v1/music/search`);
         endpoint.searchParams.append('is_suggestion', 'true');
         endpoint.searchParams.append('q', search);
         const handshakeRequest = await axios.get(endpoint.toString(), {
@@ -48,7 +48,7 @@ export async function fetchSearchSuggestionResult(tokenType: string, tokenKey: s
 
 export default async function fetchSearchResult(tokenType: string, tokenKey: string, search: string, filter?: string): Promise<false | SearchResult> {
     try {
-        const endpoint = new URL(`${Endpoint}:${EndpointPort}/v1/music/search`);
+        const endpoint = new URL(`${EndpointHTTP}/v1/music/search`);
         if (filter) endpoint.searchParams.append('filter', filter);
         endpoint.searchParams.append('q', search);
         const handshakeRequest = await axios.get(endpoint.toString(), {
@@ -101,7 +101,7 @@ export default async function fetchSearchResult(tokenType: string, tokenKey: str
 
 export async function getPlaylistv1(tokenType: string, tokenKey: string, playlistId: string): Promise<false | PlaylistFullv1> {
     try {
-        const endpoint = new URL(`${Endpoint}:${EndpointPort}/v1/music/fetch`);
+        const endpoint = new URL(`${EndpointHTTP}/v1/music/fetch`);
         endpoint.searchParams.append('type', 'playlist');
         endpoint.searchParams.append('id', playlistId);
         const handshakeRequest = await axios.get(endpoint.toString(), {
@@ -119,7 +119,7 @@ export async function getPlaylistv1(tokenType: string, tokenKey: string, playlis
 
 export async function getPlaylist(tokenType: string, tokenKey: string, playlistId: string): Promise<false | PlaylistFull> {
     try {
-        const endpoint = new URL(`${Endpoint}:${EndpointPort}/v2/music/fetch/playlist`);
+        const endpoint = new URL(`${EndpointHTTP}/v2/music/fetch/playlist`);
         endpoint.searchParams.append('id', playlistId);
         const handshakeRequest = await axios.get(endpoint.toString(), {
             headers: {
@@ -136,7 +136,7 @@ export async function getPlaylist(tokenType: string, tokenKey: string, playlistI
 
 export async function getAlbum(tokenType: string, tokenKey: string, albumId: string): Promise<false | AlbumFull> {
     try {
-        const endpoint = new URL(`${Endpoint}:${EndpointPort}/v2/music/fetch/album`);
+        const endpoint = new URL(`${EndpointHTTP}/v2/music/fetch/album`);
         endpoint.searchParams.append('id', albumId);
         const handshakeRequest = await axios.get(endpoint.toString(), {
             headers: {
@@ -153,7 +153,7 @@ export async function getAlbum(tokenType: string, tokenKey: string, albumId: str
 
 export async function getArtistv1(tokenType: string, tokenKey: string, artistId: string): Promise<false | ArtistFullv1> {
     try {
-        const endpoint = new URL(`${Endpoint}:${EndpointPort}/v1/music/fetch`);
+        const endpoint = new URL(`${EndpointHTTP}/v1/music/fetch`);
         endpoint.searchParams.append('type', 'artist');
         endpoint.searchParams.append('id', artistId);
         const handshakeRequest = await axios.get(endpoint.toString(), {
@@ -171,7 +171,7 @@ export async function getArtistv1(tokenType: string, tokenKey: string, artistId:
 
 export async function getArtist(tokenType: string, tokenKey: string, artistId: string): Promise<false | ArtistFull> {
     try {
-        const endpoint = new URL(`${Endpoint}:${EndpointPort}/v2/music/fetch/artist`);
+        const endpoint = new URL(`${EndpointHTTP}/v2/music/fetch/artist`);
         endpoint.searchParams.append('id', artistId);
         const handshakeRequest = await axios.get(endpoint.toString(), {
             headers: {
@@ -188,7 +188,7 @@ export async function getArtist(tokenType: string, tokenKey: string, artistId: s
 
 export async function getArtistVideos(tokenType: string, tokenKey: string, artistId: string): Promise<false | ArtistVideo[]> {
     try {
-        const endpoint = new URL(`${Endpoint}:${EndpointPort}/v2/music/fetch/artist`);
+        const endpoint = new URL(`${EndpointHTTP}/v2/music/fetch/artist`);
         endpoint.searchParams.append('id', artistId);
         endpoint.searchParams.append('query', 'videos');
         const handshakeRequest = await axios.get(endpoint.toString(), {
@@ -206,7 +206,7 @@ export async function getArtistVideos(tokenType: string, tokenKey: string, artis
 
 export async function getSongRelated(tokenType: string, tokenKey: string, videoId: string): Promise<false | SongRelatedResult> {
     try {
-        const endpoint = new URL(`${Endpoint}:${EndpointPort}/v2/music/fetch/related`);
+        const endpoint = new URL(`${EndpointHTTP}/v2/music/fetch/related`);
         endpoint.searchParams.append('id', videoId);
         const handshakeRequest = await axios.get(endpoint.toString(), {
             headers: {
@@ -222,7 +222,7 @@ export async function getSongRelated(tokenType: string, tokenKey: string, videoI
 
 export async function getChannel(tokenType: string, tokenKey: string, artistId: string): Promise<false | ChannelResult> {
     try {
-        const endpoint = new URL(`${Endpoint}:${EndpointPort}/v2/music/fetch/channel`);
+        const endpoint = new URL(`${EndpointHTTP}/v2/music/fetch/channel`);
         endpoint.searchParams.append('id', artistId);
         const handshakeRequest = await axios.get(endpoint.toString(), {
             headers: {
@@ -239,7 +239,7 @@ export async function getChannel(tokenType: string, tokenKey: string, artistId: 
 
 export async function getChannelVideos(tokenType: string, tokenKey: string, artistId: string): Promise<false | VideoDetailed[] | ArtistVideo[]> {
     try {
-        const endpoint = new URL(`${Endpoint}:${EndpointPort}/v2/music/fetch/channel`);
+        const endpoint = new URL(`${EndpointHTTP}/v2/music/fetch/channel`);
         endpoint.searchParams.append('id', artistId);
         endpoint.searchParams.append('query', 'videos');
         const handshakeRequest = await axios.get(endpoint.toString(), {
@@ -257,7 +257,7 @@ export async function getChannelVideos(tokenType: string, tokenKey: string, arti
 
 export async function getUser(tokenType: string, tokenKey: string, userId: string): Promise<false | ProfileFull> {
     try {
-        const endpoint = new URL(`${Endpoint}:${EndpointPort}/v2/music/fetch/user`);
+        const endpoint = new URL(`${EndpointHTTP}/v2/music/fetch/user`);
         endpoint.searchParams.append('id', userId);
         const handshakeRequest = await axios.get(endpoint.toString(), {
             headers: {
@@ -274,7 +274,7 @@ export async function getUser(tokenType: string, tokenKey: string, userId: strin
 
 export async function getUserVideos(tokenType: string, tokenKey: string, userId: string): Promise<false | VideoFull[]> {
     try {
-        const endpoint = new URL(`${Endpoint}:${EndpointPort}/v2/music/fetch/user`);
+        const endpoint = new URL(`${EndpointHTTP}/v2/music/fetch/user`);
         endpoint.searchParams.append('id', userId);
         endpoint.searchParams.append('query', 'videos');
         const handshakeRequest = await axios.get(endpoint.toString(), {
@@ -292,7 +292,7 @@ export async function getUserVideos(tokenType: string, tokenKey: string, userId:
 
 export async function getSong(tokenType: string, tokenKey: string, title: string, artist: string, identifier: string): Promise<false | SongFull> {
     try {
-        const endpoint = new URL(`${Endpoint}:${EndpointPort}/v2/music/fetch/av`);
+        const endpoint = new URL(`${EndpointHTTP}/v2/music/fetch/av`);
         endpoint.searchParams.append('type', 'song');
         endpoint.searchParams.append('t', title);
         endpoint.searchParams.append('a', artist);
