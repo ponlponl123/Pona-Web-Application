@@ -5,6 +5,9 @@ const nextConfig: NextConfig = {
   output: "standalone",
   env: {
     NEXT_PUBLIC_APP_VERSION: version,
+    NEXT_PUBLIC_DISCORD_CLIENT_ID: process.env["NEXT_PUBLIC_DISCORD_CLIENT_ID"],
+    NEXT_PUBLIC_DISCORD_OWNER_ID: process.env["NEXT_PUBLIC_DISCORD_OWNER_ID"],
+    NEXT_PUBLIC_DISCORD_REDIRECT_ENDPOINT: process.env["NEXT_PUBLIC_DISCORD_REDIRECT_ENDPOINT"]
   },
   images: {
     remotePatterns: [
@@ -37,12 +40,12 @@ const nextConfig: NextConfig = {
     },
   },
   async rewrites() {
-    const host = process.env.PONA_APPLICATION_ENDPOINT;
+    const host = process.env.PONA_APPLICATION_ENDPOINT_HOST;
     const port = process.env.PONA_APPLICATION_ENDPOINT_PORT;
     return [
       {
         source: '/socket.io/:path*',
-        destination: `${host}:${port}/socket.io//:path*`
+        destination: `http://${host}:${port}/socket.io//:path*`
       }
     ]
   },

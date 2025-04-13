@@ -4,12 +4,12 @@ import { Manager } from "socket.io-client";
 
 const getEndpoint = () => {
   if (typeof window !== 'undefined') {
-    return process.env.NEXT_PUBLIC_PONA_APPLICATION_WS_ENDPOINT || window.location.origin;
+    return process.env["NEXT_PUBLIC_PONA_APPLICATION_WS_ENDPOINT"] || window.location.origin;
   }
-  return process.env.NEXT_PUBLIC_PONA_APPLICATION_WS_ENDPOINT || '';
+  return process.env["NEXT_PUBLIC_PONA_APPLICATION_WS_ENDPOINT"] || '';
 };
 
-const endpoint_port = process.env.NEXT_PUBLIC_PONA_APPLICATION_WS_ENDPOINT_PORT || '';
+const endpoint_port = process.env["NEXT_PUBLIC_PONA_APPLICATION_WS_ENDPOINT_PORT"] || '';
 
 const endpoint = getEndpoint();
 

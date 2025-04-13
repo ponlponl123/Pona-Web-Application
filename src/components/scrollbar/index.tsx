@@ -34,7 +34,7 @@ function Scrollbar(
     }
 ) {
     const pathname = usePathname() || '';
-    const ownerId = process.env.NEXT_PUBLIC_DISCORD_OWNER_ID;
+    const ownerId = process.env["NEXT_PUBLIC_DISCORD_OWNER_ID"];
     const isOwner = userInfo.id === ownerId;
     const { guild } = useDiscordGuildInfo();
     const { language } = useLanguageContext();
