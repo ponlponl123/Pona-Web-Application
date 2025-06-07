@@ -36,7 +36,7 @@
     "marked-react": "^3.0.0",
     "ml-kmeans": "^6.0.0",
     "mysql2": "^3.11.3",
-    "next": "^15.2.1",
+    "next": "^15.3.3",
     "nextjs-toploader": "^3.7.15",
     "react": "^19.0.0",
     "react-countup": "^6.5.3",
