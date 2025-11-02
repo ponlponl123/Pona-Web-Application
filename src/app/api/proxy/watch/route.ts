@@ -30,7 +30,7 @@ export async function GET(req: NextRequest) {
   const now = Date.now();
 
   if (cachedImage && now - cachedImage.timestamp < CACHE_DURATION) {
-    return new NextResponse(cachedImage.buffer, {
+    return new NextResponse(new Uint8Array(cachedImage.buffer), {
       headers: {
         'Content-Type': cachedImage.contentType,
         'Cache-Control': 's-maxage=86400, stale-while-revalidate',
@@ -78,7 +78,7 @@ export async function GET(req: NextRequest) {
 
     cache.set(videoId, { buffer: imageBuffer, contentType, timestamp: now });
 
-    return new NextResponse(imageBuffer, {
+    return new NextResponse(new Uint8Array(imageBuffer), {
       headers: {
         'Content-Type': contentType,
         'Cache-Control': 's-maxage=86400, stale-while-revalidate',

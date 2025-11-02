@@ -1,13 +1,13 @@
 import type { Metadata } from 'next';
-import { headers } from 'next/headers';
 import localFont from 'next/font/local';
+import { headers } from 'next/headers';
 import NextTopLoader from 'nextjs-toploader';
 
-import '@/styles/globals.css';
-import { Providers } from './providers';
-import Header from '@/components/header';
 import Footer from '@/components/footer';
+import Header from '@/components/header';
+import '@/styles/globals.css';
 import { isMobile } from '@/utils/isMobile';
+import { Providers } from './providers';
 
 const ponlponl123Article = localFont({
   src: './fonts/Ponlponl123_Article-Regular.woff',
@@ -35,9 +35,12 @@ export const metadata: Metadata = {
   description: 'Pona! is a useful discord application and free to use.',
 };
 
-export default async function RootLayout(props: {
+export default async function RootLayout({
+  children,
+  modal,
+}: {
   children: React.ReactNode;
-  modal: React.ReactNode;
+  modal?: React.ReactNode;
 }) {
   const headersList = await headers();
   const userAgent = headersList.get('user-agent') || '';
@@ -60,10 +63,10 @@ export default async function RootLayout(props: {
         />
         <Providers isMobile={mobileCheck}>
           <Header />
-          <main id='app'>{props.children}</main>
+          <main id='app'>{children}</main>
           <Footer />
         </Providers>
-        {props.modal}
+        {modal}
         <div id='modal-root' />
       </body>
     </html>

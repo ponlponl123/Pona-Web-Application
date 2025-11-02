@@ -36,7 +36,7 @@ export async function GET(req: NextRequest) {
         { status: 400 }
       );
     }
-  } catch (urlError) {
+  } catch {
     return NextResponse.json(
       {
         error: 'Invalid URL format',
@@ -171,7 +171,8 @@ export async function GET(req: NextRequest) {
         }
 
         // Convert to buffer with appropriate format
-        imageBuffer = await image.toFormat(outputFormat).toBuffer();
+        const processedBuffer = await image.toFormat(outputFormat).toBuffer();
+        imageBuffer = Buffer.from(processedBuffer);
       } catch (imageProcessError) {
         console.error('Image processing error:', imageProcessError);
         // If image processing fails, return original image
