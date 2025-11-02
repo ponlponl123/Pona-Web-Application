@@ -1,5 +1,11 @@
-"use client";
-import React, { createContext, Dispatch, SetStateAction, useContext, useState } from 'react';
+'use client';
+import React, {
+  createContext,
+  Dispatch,
+  SetStateAction,
+  useContext,
+  useState,
+} from 'react';
 
 const PlaybackContext = createContext<{
   playback: number;
@@ -9,11 +15,15 @@ const PlaybackContext = createContext<{
   setPlayback: () => {},
 });
 
-export const PlaybackProvider = ({ children }: { children: React.ReactNode; }) => {
+export const PlaybackProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const [playback, setPlayback] = useState<number>(0);
 
   return (
-    <PlaybackContext.Provider value={{playback, setPlayback}}>
+    <PlaybackContext.Provider value={{ playback, setPlayback }}>
       {children}
     </PlaybackContext.Provider>
   );

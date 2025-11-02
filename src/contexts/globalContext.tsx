@@ -1,7 +1,13 @@
-"use client";
+'use client';
 import { VoiceBasedChannel } from 'discord.js';
 import { HTTP_PonaCommonStateWithTracks, Queue } from '@/interfaces/ponaPlayer';
-import React, { createContext, Dispatch, SetStateAction, useContext, useState } from 'react';
+import React, {
+  createContext,
+  Dispatch,
+  SetStateAction,
+  useContext,
+  useState,
+} from 'react';
 
 export type FullScreenMode = boolean | 'changing';
 export interface PonaQueue {
@@ -13,7 +19,9 @@ const GlobalContext = createContext<{
   isMobile: boolean;
 
   ponaCommonState: HTTP_PonaCommonStateWithTracks | null;
-  setPonaCommonState: Dispatch<SetStateAction<HTTP_PonaCommonStateWithTracks | null>>;
+  setPonaCommonState: Dispatch<
+    SetStateAction<HTTP_PonaCommonStateWithTracks | null>
+  >;
 
   ponaTrackQueue: PonaQueue;
   setPonaTrackQueue: Dispatch<SetStateAction<PonaQueue>>;
@@ -51,29 +59,50 @@ const GlobalContext = createContext<{
   setSocketRequesting: () => {},
 });
 
-export const GlobalProvider = ({ children, isMobile }: { children: React.ReactNode; isMobile: boolean; }) => {
-  const [ponaCommonState, setPonaCommonState] = useState<HTTP_PonaCommonStateWithTracks | null>(null);
-  const [isMemberInVC, setIsMemberInVC] = useState<VoiceBasedChannel | null>(null);
+export const GlobalProvider = ({
+  children,
+  isMobile,
+}: {
+  children: React.ReactNode;
+  isMobile: boolean;
+}) => {
+  const [ponaCommonState, setPonaCommonState] =
+    useState<HTTP_PonaCommonStateWithTracks | null>(null);
+  const [isMemberInVC, setIsMemberInVC] = useState<VoiceBasedChannel | null>(
+    null
+  );
   const [socketRequesting, setSocketRequesting] = useState<boolean>(false);
-  const [ponaTrackQueue, setPonaTrackQueue] = useState<PonaQueue>({ queue: null, updating: false });
+  const [ponaTrackQueue, setPonaTrackQueue] = useState<PonaQueue>({
+    queue: null,
+    updating: false,
+  });
   const [isSameVC, setIsSameVC] = useState<boolean>(false);
-  const [isFullscreenMode, setIsFullscreenMode] = useState<FullScreenMode>(false);
+  const [isFullscreenMode, setIsFullscreenMode] =
+    useState<FullScreenMode>(false);
 
-  React.useEffect(()=>{
-    if ( ponaCommonState?.pona.voiceChannel && isMemberInVC?.id )
-      setIsSameVC((ponaCommonState.pona.voiceChannel === isMemberInVC.id));
-  }, [isMemberInVC, ponaCommonState])
+  React.useEffect(() => {
+    if (ponaCommonState?.pona.voiceChannel && isMemberInVC?.id)
+      setIsSameVC(ponaCommonState.pona.voiceChannel === isMemberInVC.id);
+  }, [isMemberInVC, ponaCommonState]);
 
   return (
-    <GlobalContext.Provider value={{
-      isMobile,
-      ponaCommonState, setPonaCommonState,
-      ponaTrackQueue, setPonaTrackQueue,
-      socketRequesting, setSocketRequesting,
-      isMemberInVC, setIsMemberInVC,
-      isSameVC, setIsSameVC,
-      isFullscreenMode, setIsFullscreenMode,
-    }}>
+    <GlobalContext.Provider
+      value={{
+        isMobile,
+        ponaCommonState,
+        setPonaCommonState,
+        ponaTrackQueue,
+        setPonaTrackQueue,
+        socketRequesting,
+        setSocketRequesting,
+        isMemberInVC,
+        setIsMemberInVC,
+        isSameVC,
+        setIsSameVC,
+        isFullscreenMode,
+        setIsFullscreenMode,
+      }}
+    >
       {children}
     </GlobalContext.Provider>
   );

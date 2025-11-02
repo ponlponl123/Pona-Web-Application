@@ -5,7 +5,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
 html {
   scrollbar-width: thin;
   scrollbar-color: hsl(var(--pona-app-primary)) hsl(var(--pona-app-background));
@@ -14,44 +13,49 @@ html {
 html.animation-30fps *,
 .animation-30fps * {
   animation-timing-function: steps(30) !important;
-  transition-timing-function: steps(30) !important
+  transition-timing-function: steps(30) !important;
 }
 
-html.animation-disabled *:not([aria-label="Loading"],.animate-spinner-ease-spin,.animate-spinner-linear-spin),
-.animation-disabled *:not([aria-label="Loading"],.animate-spinner-ease-spin,.animate-spinner-linear-spin) {
+html.animation-disabled
+  *:not(
+    [aria-label='Loading'],
+    .animate-spinner-ease-spin,
+    .animate-spinner-linear-spin
+  ),
+.animation-disabled
+  *:not(
+    [aria-label='Loading'],
+    .animate-spinner-ease-spin,
+    .animate-spinner-linear-spin
+  ) {
   animation: none !important;
-  transition: none !important
+  transition: none !important;
 }
 
-*:not(
-  .animation-disabled,
-  .animation-30fps,
-  html,
-  body
-) *:not(
-  [data-slot="popover"],
-  [data-slot="cursor"],
-  div[style],
-  .disable-default-transition,
-  .leaflet-pane .leaflet-marker-draggable
-), .apply-transition {
-  transition: .24s cubic-bezier(0.175, 0.885, 0.32, 1.275)
+*:not(.animation-disabled, .animation-30fps, html, body)
+  *:not(
+    [data-slot='popover'],
+    [data-slot='cursor'],
+    div[style],
+    .disable-default-transition,
+    .leaflet-pane .leaflet-marker-draggable
+  ),
+.apply-transition {
+  transition: 0.24s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .apply-soft-transition {
-  transition: .16s cubic-bezier(0.39, 0.575, 0.565, 1)
+  transition: 0.16s cubic-bezier(0.39, 0.575, 0.565, 1);
 }
 
-*:not(
-  .animation-disabled,
-  .animation-30fps
-):active {
-  transition: .024s cubic-bezier(0.19, 1, 0.22, 1)
+*:not(.animation-disabled, .animation-30fps):active {
+  transition: 0.024s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
 body {
   @apply bg-background text-foreground;
-  font-family: var(--font-ponlponl123-article), var(--font-sn-sanafon-maru-j30), sans-serif;
+  font-family:
+    var(--font-ponlponl123-article), var(--font-sn-sanafon-maru-j30), sans-serif;
 }
 
 main#app {
@@ -62,19 +66,19 @@ main#app {
 main.scrollbar > a,
 main.scrollbar > button,
 main.scrollbar > a > button {
-  @apply w-full
+  @apply w-full;
 }
 
 main.scrollbar > div,
 main.scrollbar > div > main {
-  @apply w-full flex flex-col gap-2
+  @apply w-full flex flex-col gap-2;
 }
 
 main.scrollbar > button,
 main.scrollbar > a > button,
 main.scrollbar > div > button,
 main.scrollbar > div > main > button {
-  @apply text-start justify-start
+  @apply text-start justify-start;
 }
 
 main#app-workspace {
@@ -82,33 +86,69 @@ main#app-workspace {
 }
 
 .main-bg {
-  background: linear-gradient(0deg, hsl(var(--pona-app-background)), hsl(var(--pona-app-background) / 0.48)), url(/static/backdrop.png) center no-repeat;
+  background:
+    linear-gradient(
+      0deg,
+      hsl(var(--pona-app-background)),
+      hsl(var(--pona-app-background) / 0.48)
+    ),
+    url(/static/backdrop.png) center no-repeat;
   background-size: cover;
 }
 
 .main-bg-2 {
-  background: linear-gradient(0deg, hsl(var(--pona-app-background)), hsl(var(--pona-app-background) / 0.48)), url(/static/backdrop2025.png) center no-repeat;
+  background:
+    linear-gradient(
+      0deg,
+      hsl(var(--pona-app-background)),
+      hsl(var(--pona-app-background) / 0.48)
+    ),
+    url(/static/backdrop2025.png) center no-repeat;
   background-size: cover;
 }
 
 .welcome-banner {
-  background:  linear-gradient(0deg, hsl(var(--pona-app-playground-background)), hsl(var(--pona-app-playground-background) / 0.24)), url(/static/welcome_banner.png) center no-repeat;
+  background:
+    linear-gradient(
+      0deg,
+      hsl(var(--pona-app-playground-background)),
+      hsl(var(--pona-app-playground-background) / 0.24)
+    ),
+    url(/static/welcome_banner.png) center no-repeat;
   background-size: cover;
 }
 
 .apphome-banner.evening,
 .apphome-banner.morning {
-  background:  linear-gradient(0deg, hsl(var(--pona-app-playground-background)), hsl(var(--pona-app-playground-background) / 0.24)), url(/static/app/PonaWebViewMorning.png) center no-repeat;
+  background:
+    linear-gradient(
+      0deg,
+      hsl(var(--pona-app-playground-background)),
+      hsl(var(--pona-app-playground-background) / 0.24)
+    ),
+    url(/static/app/PonaWebViewMorning.png) center no-repeat;
   background-size: cover;
 }
 
 .apphome-banner.afternoon {
-  background:  linear-gradient(0deg, hsl(var(--pona-app-playground-background)), hsl(var(--pona-app-playground-background) / 0.24)), url(/static/app/PonaWebViewAfternoon.png) center no-repeat;
+  background:
+    linear-gradient(
+      0deg,
+      hsl(var(--pona-app-playground-background)),
+      hsl(var(--pona-app-playground-background) / 0.24)
+    ),
+    url(/static/app/PonaWebViewAfternoon.png) center no-repeat;
   background-size: cover;
 }
 
 .apphome-banner.night {
-  background:  linear-gradient(0deg, hsl(var(--pona-app-playground-background)), hsl(var(--pona-app-playground-background) / 0.24)), url(/static/app/PonaWebViewNight.png) center no-repeat;
+  background:
+    linear-gradient(
+      0deg,
+      hsl(var(--pona-app-playground-background)),
+      hsl(var(--pona-app-playground-background) / 0.24)
+    ),
+    url(/static/app/PonaWebViewNight.png) center no-repeat;
   background-size: cover;
 }
 
@@ -131,22 +171,30 @@ main#app-workspace {
 .service-status-badge {
   @apply bg-opacity-25 rounded-full text-medium m-auto py-1 px-2 bg-gray-700 text-gray-700;
 }
-.service-status-badge::before { content: "Unknown" }
+.service-status-badge::before {
+  content: 'Unknown';
+}
 
 .service-status-badge.operational {
   @apply bg-opacity-25 bg-success-700 text-success-700;
 }
-.service-status-badge.operational::before { content: "Operational" }
+.service-status-badge.operational::before {
+  content: 'Operational';
+}
 
 .service-status-badge.degraded {
   @apply bg-opacity-25 bg-warning-400 text-warning-400;
 }
-.service-status-badge.degraded::before { content: "Degraded" }
+.service-status-badge.degraded::before {
+  content: 'Degraded';
+}
 
 .service-status-badge.down {
   @apply bg-opacity-25 bg-danger-700 text-danger-700;
 }
-.service-status-badge.down::before { content: "Down" }
+.service-status-badge.down::before {
+  content: 'Down';
+}
 
 .group-menu {
   @apply w-full max-w-screen-lg rounded-2xl bg-transparent flex flex-col gap-2 relative overflow-hidden;
@@ -166,7 +214,10 @@ main#app-workspace {
   @apply w-full justify-start;
 }
 .group-menu.active {
-  @apply bg-foreground-100/20 gap-0;
+  @apply bg-foreground-100/15 border-transparent gap-0;
+}
+.group-menu.active:not(.collapsed) {
+  @apply border-4;
 }
 .group-menu.active > .group-title > * {
   @apply justify-center;
@@ -185,11 +236,10 @@ main#app-workspace {
 }
 
 .pona-music-searchbox {
-  
 }
 
 .btn {
-  @apply relative flex items-center justify-center active:opacity-90 mx-2 min-w-24
+  @apply relative flex items-center justify-center active:opacity-90 mx-2 min-w-24;
 }
 
 .btn > svg {
@@ -200,42 +250,43 @@ main#app-workspace {
 }
 
 .btn > div {
-  @apply flex flex-row items-center justify-center gap-2 z-10 py-4 px-8 text-xl
+  @apply flex flex-row items-center justify-center gap-2 z-10 py-4 px-8 text-xl;
 }
 
-.btn:active, .interactive:active {
+.btn:active,
+.interactive:active {
   transform: scale(96%);
 }
 
 .btn.btn-icon {
-  @apply min-w-4
+  @apply min-w-4;
 }
 
 .btn.btn-icon > div {
-  @apply p-3
+  @apply p-3;
 }
 
 .btn.btn-size-small > div {
-  @apply px-4 py-2 text-lg
+  @apply px-4 py-2 text-lg;
 }
 
 @media (max-width: 480px) {
   .btn.btn-responsive > div {
-    @apply px-4 py-2 text-lg
+    @apply px-4 py-2 text-lg;
   }
 }
 
 .btn.btn-size-large > div {
-  @apply px-8 py-3 text-2xl
+  @apply px-8 py-3 text-2xl;
 }
 
 .btn:not(.btn-rounded) > div {
-  @apply px-6
+  @apply px-6;
 }
 
 .btn.btn-normal > div,
 .btn.btn-primary > div {
-  @apply text-white
+  @apply text-white;
 }
 
 /* .btn.btn-normal > div > svg,
@@ -244,52 +295,52 @@ main#app-workspace {
 } */
 
 .btn.btn-invert > div {
-  @apply text-black
+  @apply text-black;
 }
 
 .btn.btn-text > div,
 .btn.btn-border > div {
-  @apply text-primary-200
+  @apply text-primary-200;
 }
 
 .btn.btn-text > div > svg,
 .btn.btn-border > div > svg {
-  @apply fill-primary-200
+  @apply fill-primary-200;
 }
 
 .btn.btn-normal > svg * {
-  @apply fill-black
+  @apply fill-black;
 }
 
 .btn.btn-invert > svg * {
-  @apply fill-white
+  @apply fill-white;
 }
 
 .btn.btn-border > svg *,
 .btn.btn-primary > svg *,
 .btn.btn-text > svg * {
-  @apply fill-primary
+  @apply fill-primary;
 }
 
 .btn.btn-text > svg * {
-  @apply opacity-0
+  @apply opacity-0;
 }
 
 .btn.btn-normal:hover > svg * {
-  @apply fill-gray-900
+  @apply fill-gray-900;
 }
 
 .btn.btn-invert:hover > svg * {
-  @apply fill-gray-100
+  @apply fill-gray-100;
 }
 
-.btn.btn-border:hover > svg * ,
+.btn.btn-border:hover > svg *,
 .btn.btn-primary:hover > svg * {
-  @apply fill-primary-200
+  @apply fill-primary-200;
 }
 
 .btn.btn-text:hover > svg * {
-  @apply opacity-25
+  @apply opacity-25;
 }
 
 section.c.section {
@@ -297,7 +348,7 @@ section.c.section {
 }
 
 .nextui-ripple {
-  filter: blur(2rem)
+  filter: blur(2rem);
 }
 
 footer.pona-footer {
@@ -350,11 +401,11 @@ header.pona-header {
 }
 
 @media not all and (max-width: 767px) {
-  .sidebar-collapsed header.pona-header > div > div h1 > img{
+  .sidebar-collapsed header.pona-header > div > div h1 > img {
     @apply w-8 h-8 -translate-x-4;
   }
 
-  .sidebar-collapsed header.pona-header > div > div h1 > span{
+  .sidebar-collapsed header.pona-header > div > div h1 > span {
     @apply hidden;
   }
 }
@@ -364,13 +415,13 @@ header.pona-header {
     @apply invisible pointer-events-none opacity-0;
   }
   header.pona-header nav > div:not(.header) {
-    @apply flex flex-col items-center gap-5
+    @apply flex flex-col items-center gap-5;
   }
   header.pona-header nav > div:nth-child(2) {
-    @apply h-full
+    @apply h-full;
   }
   header.pona-header nav > div {
-    @apply w-full items-stretch px-6
+    @apply w-full items-stretch px-6;
   }
   header.pona-header nav button {
     @apply w-full;
@@ -384,7 +435,8 @@ header.pona-header {
   header.pona-header.nav-opened-true {
     @apply fixed;
   }
-  footer.pona-footer > div:first-child, footer > div {
+  footer.pona-footer > div:first-child,
+  footer > div {
     width: 100% !important;
     justify-content: center !important;
   }

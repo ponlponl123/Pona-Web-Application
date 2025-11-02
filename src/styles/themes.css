@@ -2,12 +2,14 @@
   color-scheme: light;
   --mapfilter: grayscale(1);
 }
-.dark, [data-theme="dark"] {
+.dark,
+[data-theme='dark'] {
   color-scheme: dark;
   --mapfilter: invert(1) grayscale(1);
 }
 
-.map-layer, .leaflet-tile-container {
+.map-layer,
+.leaflet-tile-container {
   filter: var(--mapfilter);
   -webkit-filter: var(--mapfilter);
 }
@@ -24,7 +26,7 @@
 }
 .theme-preview > .tp-body {
   @apply w-full flex flex-col gap-2 pt-4 px-6;
-  height: calc(100% - 32px - 40px)
+  height: calc(100% - 32px - 40px);
 }
 .theme-preview > .tp-footer {
   @apply w-full h-10 flex flex-col items-center justify-center gap-1 p-3;
@@ -74,7 +76,7 @@
 
 button.theme-dot {
   @apply w-8 h-8 rounded-full border-2 border-foreground-400 flex items-center justify-center bg-transparent;
-  padding: 3px
+  padding: 3px;
 }
 
 button.theme-dot.active {
@@ -91,7 +93,7 @@ button.theme-dot > div > div {
 
 button.theme-dot > div > div::before,
 button.theme-dot > div > div::after {
-  content: "";
+  content: '';
   @apply w-full h-1/2;
   filter: blur(1px);
 }
@@ -103,10 +105,10 @@ button.theme-dot > div > :nth-child(1)::after {
   filter: blur(10px);
 }
 button.theme-dot > div > :nth-child(2)::before {
-  @apply bg-primary ;
+  @apply bg-primary;
 }
 button.theme-dot > div > :nth-child(2)::after {
-  @apply bg-secondary ;
+  @apply bg-secondary;
 }
 
 button.theme-dot > div > :nth-child(1) {

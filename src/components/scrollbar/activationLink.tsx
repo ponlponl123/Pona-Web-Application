@@ -1,127 +1,187 @@
-"use client";
-import { Button } from '@nextui-org/react'
-import { usePathname } from 'next/navigation'
-import { useRouter } from 'nextjs-toploader/app';
+'use client';
+import { Button } from '@nextui-org/react';
 import type { Icon as IconType } from '@phosphor-icons/react';
-import React, { useEffect, useRef, useState, useCallback } from 'react'
+import { usePathname } from 'next/navigation';
+import { useRouter } from 'nextjs-toploader/app';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-function ActivationLink({ href, children, icon, iconSize, onClick, className, isActive = false, iconOnly }: { href?: string, children: React.ReactNode, icon?: IconType, iconSize?: number, onClick?: () => void, className?: string, isActive?: boolean, iconOnly?: boolean | undefined }) {
-    const router = useRouter();
-    const sections = useRef<NodeListOf<HTMLElement> | null>(null);
-    const pathname = usePathname() || '';
-    const isSection = href?.startsWith('#');
-    const app = useRef<HTMLElement | null>(null);
-    const button = useRef<HTMLButtonElement | null>(null);
-    const [activeSection, setActiveSection] = useState<string | null>(null);
-    const [activeSectionGroup, setActiveSectionGroup] = useState<boolean>(false);
-    const group = button.current?.parentElement?.parentElement?.classList.contains('group-menu') ? button.current.parentElement.parentElement : undefined;
-    const group_title = button.current?.parentElement?.classList.contains('group-title') ? button.current.parentElement : undefined;
-    // const group_content = button.current?.parentElement?.classList.contains('group-content') ? button.current.parentElement : undefined;
-    const isHere = ((isSection ? (activeSectionGroup || activeSection === href?.substring(1)) : pathname === href) || (group?.classList.contains('active') && group_title)) || isActive;
-    const Icon = icon;
-    const iconContent = Icon ? <Icon weight={isHere ? 'fill' : 'regular'} size={iconSize || 16} /> : null;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    const hrefIndex = href ? href.split('/') : [];
+function ActivationLink({
+  href,
+  children,
+  icon,
+  iconSize,
+  onClick,
+  className,
+  isActive = false,
+  iconOnly,
+  isDisabled = false,
+}: {
+  href?: string;
+  children: React.ReactNode;
+  icon?: IconType;
+  iconSize?: number;
+  onClick?: () => void;
+  className?: string;
+  isActive?: boolean;
+  iconOnly?: boolean | undefined;
+  isDisabled?: boolean | undefined;
+}) {
+  const router = useRouter();
+  const sections = useRef<NodeListOf<HTMLElement> | null>(null);
+  const pathname = usePathname() || '';
+  const isSection = href?.startsWith('#');
+  const app = useRef<HTMLElement | null>(null);
+  const button = useRef<HTMLButtonElement | null>(null);
+  const [activeSection, setActiveSection] = useState<string | null>(null);
+  const [activeSectionGroup, setActiveSectionGroup] = useState<boolean>(false);
+  const group =
+    button.current?.parentElement?.parentElement?.classList.contains(
+      'group-menu'
+    )
+      ? button.current.parentElement.parentElement
+      : undefined;
+  const group_title = button.current?.parentElement?.classList.contains(
+    'group-title'
+  )
+    ? button.current.parentElement
+    : undefined;
+  // const group_content = button.current?.parentElement?.classList.contains('group-content') ? button.current.parentElement : undefined;
+  const isHere =
+    (isSection
+      ? activeSectionGroup || activeSection === href?.substring(1)
+      : pathname === href) ||
+    (group?.classList.contains('active') && group_title) ||
+    isActive;
+  const Icon = icon;
+  const iconContent = Icon ? (
+    <Icon weight={isHere ? 'fill' : 'bold'} size={iconSize || 16} />
+  ) : null;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const hrefIndex = href ? href.split('/') : [];
 
-    const clicked = () => {
-        if (isSection) {
-            const sectionElement = document.querySelector(`#${href?.substring(1)}`);
-            if (sectionElement && app.current) {
-                const appTop = app.current.getBoundingClientRect().top;
-                const offset = sectionElement.id.match(/(-)/g) ? 156 : 96;
-                const sectionTop = sectionElement.getBoundingClientRect().top - offset;
-                app.current.scrollTo({
-                    top: sectionTop - appTop + app.current.scrollTop,
-                    behavior: 'smooth'
-                });
-            }
-        }
-        if (onClick) onClick();
-        if (!isSection && href) router.push(href);
+  const clicked = () => {
+    if (isSection) {
+      const sectionElement = document.querySelector(`#${href?.substring(1)}`);
+      if (sectionElement && app.current) {
+        const appTop = app.current.getBoundingClientRect().top;
+        const offset = sectionElement.id.match(/(-)/g) ? 156 : 96;
+        const sectionTop = sectionElement.getBoundingClientRect().top - offset;
+        app.current.scrollTo({
+          top: sectionTop - appTop + app.current.scrollTop,
+          behavior: 'smooth',
+        });
+      }
     }
+    if (onClick) onClick();
+    if (!isSection && href) router.push(href);
+  };
 
-    const handleScroll = useCallback(() => {
-        if (app.current) {
-            const pageYOffset = app.current.scrollTop;
-            let newActiveSection: string | null = null;
+  const handleScroll = useCallback(() => {
+    if (app.current) {
+      const pageYOffset = app.current.scrollTop;
+      let newActiveSection: string | null = null;
 
-            sections.current?.forEach((section: HTMLElement) => {
-                const sectionOffsetTop = section.offsetTop - 256;
-                const sectionHeight = section.offsetHeight;
+      sections.current?.forEach((section: HTMLElement) => {
+        const sectionOffsetTop = section.offsetTop - 256;
+        const sectionHeight = section.offsetHeight;
 
-                if (pageYOffset >= sectionOffsetTop && pageYOffset < sectionOffsetTop + sectionHeight) {
-                    newActiveSection = section.id;
-                }
-            });
-
-            setActiveSection(() => {
-                if ( button.current?.parentElement && button.current.parentElement?.parentElement && button.current.parentElement.parentElement.classList.contains('group-menu') ) {
-                    if (String(newActiveSection).split('-')[0] === href?.substring(1).split('-')[0])
-                    {
-                        button.current.parentElement.parentElement.classList.add('active');
-                        if ( !href.match(/(-)/g) ) setActiveSectionGroup(true);
-                        else setActiveSectionGroup(false);
-                    }
-                    else
-                    {
-                        button.current.parentElement.parentElement.classList.remove('active');
-                        if ( !href?.match(/(-)/g) ) setActiveSectionGroup(false);
-                    }
-                }
-                return newActiveSection;
-            });
+        if (
+          pageYOffset >= sectionOffsetTop &&
+          pageYOffset < sectionOffsetTop + sectionHeight
+        ) {
+          newActiveSection = section.id;
         }
-    }, [href]);
+      });
 
-    useEffect(() => {
-        if (isSection) {
-            app.current = document.querySelector('#app-content');
-            if (app.current) {
-                sections.current = document.querySelectorAll('[data-section]');
-                app.current.addEventListener('scroll', handleScroll);
-
-                handleScroll();
-
-                return () => {
-                    app.current?.removeEventListener('scroll', handleScroll);
-                }
-            }
+      setActiveSection(() => {
+        if (
+          button.current?.parentElement &&
+          button.current.parentElement?.parentElement &&
+          button.current.parentElement.parentElement.classList.contains(
+            'group-menu'
+          )
+        ) {
+          if (
+            String(newActiveSection).split('-')[0] ===
+            href?.substring(1).split('-')[0]
+          ) {
+            button.current.parentElement.parentElement.classList.add('active');
+            if (!href.match(/(-)/g)) setActiveSectionGroup(true);
+            else setActiveSectionGroup(false);
+          } else {
+            button.current.parentElement.parentElement.classList.remove(
+              'active'
+            );
+            if (!href?.match(/(-)/g)) setActiveSectionGroup(false);
+          }
         }
-        else if ( href && button.current?.parentElement && button.current.parentElement?.parentElement && button.current.parentElement.parentElement.classList.contains('group-menu') )
-        {
-            const group = button.current.parentElement.parentElement;
-            if ( !group ) return;
-            const controlby = group.getAttribute('aria-label');
-            // const parentPathname = hrefIndex.map((text, index) => {
-            //     if ( index === 0 ) return text;
-            //     else if ( (index === hrefIndex.length - 1) && href.includes('player') && !href.endsWith('player') ) return;
-            //     else return `/${text.toLowerCase()}`;
-            // }).join('').replace(',','');
-            if (controlby && pathname.includes(controlby))
-            {
-                button.current.parentElement.parentElement.classList.add('active');
-                // if ( href === controlby ) setActiveSectionGroup(true);
-                // else setActiveSectionGroup(false);
-            }
-            // else if (pathname.includes(parentPathname))
-            // {
-                // button.current.parentElement.parentElement.classList.add('active');
-            //     if ( href === parentPathname ) setActiveSectionGroup(true);
-            //     else setActiveSectionGroup(false);
-            // }
-            else
-            {
-                button.current.parentElement.parentElement.classList.remove('active');
-                // if ( href === controlby || href === parentPathname ) setActiveSectionGroup(false);
-            }
-        }
-    }, [isSection, handleScroll, href, hrefIndex, pathname, group]);
+        return newActiveSection;
+      });
+    }
+  }, [href]);
 
-    return (
-        <Button onPress={clicked} ref={button} className={'justify-start ' + className} color='primary' startContent={!iconOnly && iconContent} variant={isHere ? 'flat' : 'light'} size='lg' isIconOnly={iconOnly}>
-            {iconOnly ? <div className='m-auto'>{iconContent}</div> : children}
-        </Button>
-    );
+  useEffect(() => {
+    if (isSection) {
+      app.current = document.querySelector('#app-content');
+      if (app.current) {
+        sections.current = document.querySelectorAll('[data-section]');
+        app.current.addEventListener('scroll', handleScroll);
+
+        handleScroll();
+
+        return () => {
+          app.current?.removeEventListener('scroll', handleScroll);
+        };
+      }
+    } else if (
+      href &&
+      button.current?.parentElement &&
+      button.current.parentElement?.parentElement &&
+      button.current.parentElement.parentElement.classList.contains(
+        'group-menu'
+      )
+    ) {
+      const group = button.current.parentElement.parentElement;
+      if (!group) return;
+      const controlby = group.getAttribute('aria-label');
+      // const parentPathname = hrefIndex.map((text, index) => {
+      //     if ( index === 0 ) return text;
+      //     else if ( (index === hrefIndex.length - 1) && href.includes('player') && !href.endsWith('player') ) return;
+      //     else return `/${text.toLowerCase()}`;
+      // }).join('').replace(',','');
+      if (controlby && pathname.includes(controlby)) {
+        button.current.parentElement.parentElement.classList.add('active');
+        // if ( href === controlby ) setActiveSectionGroup(true);
+        // else setActiveSectionGroup(false);
+      }
+      // else if (pathname.includes(parentPathname))
+      // {
+      // button.current.parentElement.parentElement.classList.add('active');
+      //     if ( href === parentPathname ) setActiveSectionGroup(true);
+      //     else setActiveSectionGroup(false);
+      // }
+      else {
+        button.current.parentElement.parentElement.classList.remove('active');
+        // if ( href === controlby || href === parentPathname ) setActiveSectionGroup(false);
+      }
+    }
+  }, [isSection, handleScroll, href, hrefIndex, pathname, group]);
+
+  return (
+    <Button
+      onPress={clicked}
+      ref={button}
+      className={'justify-start ' + className}
+      color='primary'
+      startContent={!iconOnly && iconContent}
+      variant={isHere ? 'flat' : 'light'}
+      size='lg'
+      isIconOnly={iconOnly}
+      isDisabled={isDisabled}
+    >
+      {iconOnly ? <div className='m-auto'>{iconContent}</div> : children}
+    </Button>
+  );
 }
 
 export default ActivationLink;

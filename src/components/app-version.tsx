@@ -1,8 +1,8 @@
-"use client"
-import React from 'react'
+'use client';
+import React from 'react';
 
 function AppVersion() {
-  return (<>{process.env["NEXT_PUBLIC_APP_VERSION"] || 'unknown'}</>)
+  return <>{process.env['NEXT_PUBLIC_APP_VERSION'] || 'unknown'}</>;
 }
 
-export default AppVersion
+export default AppVersion;

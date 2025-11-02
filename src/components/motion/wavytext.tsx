@@ -1,7 +1,7 @@
-import { FC } from "react";
-import { motion, Variants, HTMLMotionProps } from "framer-motion";
+import { FC } from 'react';
+import { motion, Variants, HTMLMotionProps } from 'framer-motion';
 
-interface Props extends HTMLMotionProps<"div"> {
+interface Props extends HTMLMotionProps<'div'> {
   text: string;
   delay?: number;
   replay: boolean;
@@ -19,12 +19,12 @@ const WavyText: FC<Props> = ({
 
   const container: Variants = {
     hidden: {
-      opacity: 0
+      opacity: 0,
     },
     visible: (i: number = 1) => ({
       opacity: 1,
-      transition: { staggerChildren: duration, delayChildren: i * delay }
-    })
+      transition: { staggerChildren: duration, delayChildren: i * delay },
+    }),
   };
 
   const child: Variants = {
@@ -32,28 +32,28 @@ const WavyText: FC<Props> = ({
       opacity: 1,
       y: 0,
       transition: {
-        type: "spring",
+        type: 'spring',
         damping: 12,
-        stiffness: 200
-      }
+        stiffness: 200,
+      },
     },
     hidden: {
       opacity: 0,
       y: 20,
       transition: {
-        type: "spring",
+        type: 'spring',
         damping: 12,
-        stiffness: 200
-      }
-    }
+        stiffness: 200,
+      },
+    },
   };
 
   return (
     <motion.h1
-      style={{ display: "flex", overflow: "hidden" }}
+      style={{ display: 'flex', overflow: 'hidden' }}
       variants={container}
-      initial="hidden"
-      animate={replay ? "visible" : "hidden"}
+      initial='hidden'
+      animate={replay ? 'visible' : 'hidden'}
       {...props}
     >
       {letters.map((letter, index) => {
@@ -62,9 +62,9 @@ const WavyText: FC<Props> = ({
           <motion.span
             key={index}
             variants={child}
-            className={isEmoji ? "font-mono" : ""}
+            className={isEmoji ? 'font-mono' : ''}
           >
-            {letter === " " ? "\u2002" : letter === "\n" ? ",\u2002" : letter}
+            {letter === ' ' ? '\u2002' : letter === '\n' ? ',\u2002' : letter}
           </motion.span>
         );
       })}

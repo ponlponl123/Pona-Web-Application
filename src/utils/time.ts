@@ -10,5 +10,5 @@ export function msToTime(ms: number): string {
   const f_M = remainingMinutes.toString().padStart(2, '0');
   const f_S = remainingSeconds.toString().padStart(2, '0');
 
-  return `${f_H!=='00'?f_H+':':''}${f_M}:${f_S}`;
+  return `${f_H !== '00' ? f_H + ':' : ''}${f_M}:${f_S}`;
 }

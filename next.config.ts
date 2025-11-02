@@ -41,7 +41,7 @@ const nextConfig: NextConfig = {
   },
   async rewrites() {
     const host = process.env.PONA_APPLICATION_ENDPOINT_HOST;
-    const port = process.env.PONA_APPLICATION_ENDPOINT_PORT;
+    const port = process.env.NEXT_PUBLIC_PONA_APPLICATION_WS_ENDPOINT_PORT;
     return [
       {
         source: '/socket.io/:path*',

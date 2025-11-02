@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import React, { createContext, useContext, useState } from 'react';
 import { getCookie, setCookie } from 'cookies-next';
 import { LatLngExpression } from 'leaflet';
@@ -25,7 +25,7 @@ export const defaultUserSetting: UserSetting = {
   animation: true,
   location: 'auto',
   dev_pona_player_style: 'compact',
-}
+};
 
 const UserSettingContext = createContext<{
   userSetting: UserSetting;
@@ -35,19 +35,23 @@ const UserSettingContext = createContext<{
   setUserSetting: () => {},
 });
 
-export const UserSettingProvider = ({ children }: { children: React.ReactNode }) => {
+export const UserSettingProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const [userSetting, setUserSettingState] = useState<UserSetting>({});
 
   React.useEffect(() => {
     const userSettingFromCookie = getCookie('USR');
-    if ( userSettingFromCookie ) {
+    if (userSettingFromCookie) {
       const decodedSetting = atob(userSettingFromCookie || '');
       if (decodedSetting) {
         const parsedUserSetting = JSON.parse(decodedSetting) as UserSetting;
         setUserSettingState(parsedUserSetting);
-        if ( parsedUserSetting.animation === '30 fps' )
+        if (parsedUserSetting.animation === '30 fps')
           document.documentElement.classList.add('animation-30fps');
-        else if ( parsedUserSetting.animation === false )
+        else if (parsedUserSetting.animation === false)
           document.documentElement.classList.remove('animation-disabled');
       }
     } else setUserSettingState(defaultUserSetting);

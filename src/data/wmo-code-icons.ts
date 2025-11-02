@@ -1,8 +1,20 @@
-import { Icon as IconType } from "@phosphor-icons/react";
-import { Cloud, CloudSun, Fire, Wind, CloudFog, Lightning, RainbowCloud, CloudRain, CloudSnow, Snowflake, Tornado } from "@phosphor-icons/react/dist/ssr";
+import { Icon as IconType } from '@phosphor-icons/react';
+import {
+  Cloud,
+  CloudSun,
+  Fire,
+  Wind,
+  CloudFog,
+  Lightning,
+  RainbowCloud,
+  CloudRain,
+  CloudSnow,
+  Snowflake,
+  Tornado,
+} from '@phosphor-icons/react/dist/ssr';
 
-export const WMO_CODES_ICONS: { "wmo-code": { [key: number]: IconType } } = {
-  "wmo-code": {
+export const WMO_CODES_ICONS: { 'wmo-code': { [key: number]: IconType } } = {
+  'wmo-code': {
     0: Cloud,
     1: Cloud,
     2: CloudSun,
@@ -102,6 +114,6 @@ export const WMO_CODES_ICONS: { "wmo-code": { [key: number]: IconType } } = {
     96: Lightning,
     97: Lightning,
     98: Lightning,
-    99: Lightning
-  }
-}
+    99: Lightning,
+  },
+};

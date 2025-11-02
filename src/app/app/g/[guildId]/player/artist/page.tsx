@@ -1,13 +1,17 @@
-"use client"
-import React from 'react'
+'use client';
+import React from 'react';
 import { useRouter } from 'next/navigation';
 
 function Page() {
   const router = useRouter();
   React.useEffect(() => {
-    router.replace(window.location.href.replace('/player/artist', '/player/c').replace('?id=', '?c='));
-  })
-  return (<></>)
+    router.replace(
+      window.location.href
+        .replace('/player/artist', '/player/c')
+        .replace('?id=', '?c=')
+    );
+  });
+  return <></>;
 }
 
-export default Page
+export default Page;

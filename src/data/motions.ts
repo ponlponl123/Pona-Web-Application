@@ -1,17 +1,17 @@
-import { Variants } from "framer-motion";
+import { Variants } from 'framer-motion';
 
 export const motion_card: Variants = {
-    offscreen: {
-      x: -100,
-      opacity: 0,
+  offscreen: {
+    x: -100,
+    opacity: 0,
+  },
+  onscreen: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      type: 'spring',
+      stiffness: 150,
+      damping: 15,
     },
-    onscreen: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        type: "spring",
-        stiffness: 150,
-        damping: 15,
-      },
-    },
-}
+  },
+};

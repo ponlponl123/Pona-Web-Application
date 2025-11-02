@@ -1,5 +1,5 @@
-import React from 'react'
-import { motion } from 'framer-motion'
+import React from 'react';
+import { motion } from 'framer-motion';
 import { useLanguageContext } from '@/contexts/languageContext';
 import { ScrollShadow } from '@nextui-org/react';
 import { Confetti } from '@phosphor-icons/react/dist/ssr';
@@ -23,19 +23,26 @@ function NotInSameVC() {
         transition={{
           duration: 0.48,
           delay: 0.2,
-          type: 'spring'
+          type: 'spring',
         }}
       >
-        <ScrollShadow className="w-full h-64 px-2 py-4">
+        <ScrollShadow className='w-full h-64 px-2 py-4'>
           <div className='flex flex-col gap-2 items-center justify-center h-full w-full m-auto'>
             <Confetti className='text-foreground/60' size={48} />
-            <h1 className='text-2xl text-foreground/60'>{language.data.app.guilds.player.notSameVC.title}</h1>
-            <span className='text-base text-foreground/30'>{language.data.app.guilds.player.notSameVC.description.replace('[guildName]',guild?.name||'')}</span>
+            <h1 className='text-2xl text-foreground/60'>
+              {language.data.app.guilds.player.notSameVC.title}
+            </h1>
+            <span className='text-base text-foreground/30'>
+              {language.data.app.guilds.player.notSameVC.description.replace(
+                '[guildName]',
+                guild?.name || ''
+              )}
+            </span>
           </div>
         </ScrollShadow>
       </motion.div>
     </motion.div>
-  )
+  );
 }
 
-export default NotInSameVC
+export default NotInSameVC;

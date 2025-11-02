@@ -1,9 +1,9 @@
-'use client'
+'use client';
 
-import { usePathname } from 'next/navigation'
-import { AnimatePresence, AnimatePresenceProps, motion } from 'framer-motion'
-import FrozenRoute from './FrozenRoute'
-import React from 'react'
+import { usePathname } from 'next/navigation';
+import { AnimatePresence, AnimatePresenceProps, motion } from 'framer-motion';
+import FrozenRoute from './FrozenRoute';
+import React from 'react';
 
 interface AnimationPresence extends AnimatePresenceProps {
   children: React.ReactNode;
@@ -11,19 +11,16 @@ interface AnimationPresence extends AnimatePresenceProps {
 }
 
 const PageAnimatePresence = (props: AnimationPresence) => {
-  const pathnameFromHook = usePathname() || ''
-  const pathname = props.customKey || pathnameFromHook
+  const pathnameFromHook = usePathname() || '';
+  const pathname = props.customKey || pathnameFromHook;
 
   return (
-    <AnimatePresence 
-      mode={props.mode || 'wait'}
-      {...props}
-    >
+    <AnimatePresence mode={props.mode || 'wait'} {...props}>
       <motion.div key={pathname}>
         <FrozenRoute>{props.children}</FrozenRoute>
       </motion.div>
     </AnimatePresence>
-  )
-}
+  );
+};
 
-export default PageAnimatePresence
+export default PageAnimatePresence;

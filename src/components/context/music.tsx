@@ -1,9 +1,7 @@
-import React from 'react'
+import React from 'react';
 
 function MusicContext() {
-  return (
-    <div>MusicContext</div>
-  )
+  return <div>MusicContext</div>;
 }
 
-export default MusicContext
+export default MusicContext;

@@ -1,0 +1,57 @@
+# Dependencies
+node_modules/
+bun.lockb
+package-lock.json
+yarn.lock
+
+# Build outputs
+.next/
+dist/
+build/
+out/
+
+# Cache directories
+.cache/
+.turbo/
+
+# Environment files
+.env*
+
+# Logs
+*.log
+
+# Editor directories and files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Generated files
+*.d.ts.map
+*.js.map
+
+# Public assets (optional - remove if you want to format these)
+public/
+
+# Docs
+docs/
+
+# Docker files
+Dockerfile*
+docker-compose*.yml
+
+# Config files that should maintain specific formatting
+*.config.js
+*.config.ts
+*.config.mjs
+deployment.yml
+service.yml

@@ -1,5 +1,8 @@
 .markdown * {
-  color: hsl(var(--pona-app-foreground) / var(--pona-app-foreground-opacity, var(--tw-text-opacity))) !important;
+  color: hsl(
+    var(--pona-app-foreground) /
+      var(--pona-app-foreground-opacity, var(--tw-text-opacity))
+  ) !important;
 }
 .markdown code {
   @apply bg-default-200 rounded-lg p-1;

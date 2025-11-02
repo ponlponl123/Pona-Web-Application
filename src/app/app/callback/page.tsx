@@ -1,19 +1,19 @@
-import React, { Suspense } from 'react'
+import React, { Suspense } from 'react';
 import { Spinner } from '@nextui-org/react';
 import Authorize from './authorize';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
 function Page() {
-    return (
-        <div className='w-full h-full min-h-screen flex'>
-            <div className='m-auto flex flex-col gap-2 text-center items-center'>
-                <Suspense fallback={<Spinner color='current' />}>
-                    <Authorize />
-                </Suspense>
-            </div>
-        </div>
-    )
+  return (
+    <div className='w-full h-full min-h-screen flex'>
+      <div className='m-auto flex flex-col gap-2 text-center items-center'>
+        <Suspense fallback={<Spinner color='current' />}>
+          <Authorize />
+        </Suspense>
+      </div>
+    </div>
+  );
 }
 
-export default Page
+export default Page;

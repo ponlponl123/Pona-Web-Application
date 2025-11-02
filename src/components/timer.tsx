@@ -1,9 +1,17 @@
-"use client";
+'use client';
 import { useEffect, useState } from 'react';
 
-export type format = "default" | "h:m:s" | "h:m" | "m:s" | "h" | "m" | "s";
+export type format = 'default' | 'h:m:s' | 'h:m' | 'm:s' | 'h' | 'm' | 's';
 
-export default function CountdownTimer({timeLeft, format, onEnd}: {timeLeft: number, format?: format, onEnd?: () => void}) {
+export default function CountdownTimer({
+  timeLeft,
+  format,
+  onEnd,
+}: {
+  timeLeft: number;
+  format?: format;
+  onEnd?: () => void;
+}) {
   const [S_timeLeft, S_setTimeLeft] = useState(timeLeft); // Countdown starting at 1 hour (in seconds)
 
   useEffect(() => {
@@ -22,26 +30,30 @@ export default function CountdownTimer({timeLeft, format, onEnd}: {timeLeft: num
   }, [onEnd]);
 
   const formatTime = (seconds: number) => {
-    const h = Math.floor(seconds / 3600).toString().padStart(2, '0');
-    const m = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
+    const h = Math.floor(seconds / 3600)
+      .toString()
+      .padStart(2, '0');
+    const m = Math.floor((seconds % 3600) / 60)
+      .toString()
+      .padStart(2, '0');
     const s = (seconds % 60).toString().padStart(2, '0');
-    switch ( format ) {
-      case "s":
+    switch (format) {
+      case 's':
         return s.toString();
-      case "m":
+      case 'm':
         return m.toString();
-      case "h":
+      case 'h':
         return h.toString();
-      case "m:s":
+      case 'm:s':
         return `${m}:${s}`;
-      case "h:m":
+      case 'h:m':
         return `${h}:${m}`;
 
-      case "h:m:s":
-      default: 
+      case 'h:m:s':
+      default:
         return `${h}:${m}:${s}`;
     }
   };
 
-  return <span>{formatTime(S_timeLeft)}</span>
+  return <span>{formatTime(S_timeLeft)}</span>;
 }
