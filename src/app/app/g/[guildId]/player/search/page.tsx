@@ -1,17 +1,19 @@
 'use client';
-import React, { Key } from 'react';
-import { motion } from 'framer-motion';
+import nextuiColorPalette from '@/../themes/utils/nextui-color-palette-gen';
+import PlayButton from '@/components/music/play';
 import Track, {
   combineArtistName,
 } from '@/components/music/searchResult/track';
-import { useLanguageContext } from '@/contexts/languageContext';
+import SubscribeButton from '@/components/music/subscribe';
 import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo';
 import { useGlobalContext } from '@/contexts/globalContext';
-import fetchSearchResult from '@/server-side-api/internal/search';
+import { useLanguageContext } from '@/contexts/languageContext';
 import {
   SearchResult as HTTP_SearchResult,
   TopResults,
 } from '@/interfaces/ytmusic-api';
+import fetchSearchResult from '@/server-side-api/internal/search';
+import { getAccentHEXColorFromUrl } from '@/utils/colorUtils';
 import {
   Button,
   Chip,
@@ -31,12 +33,10 @@ import {
   MagnifyingGlass,
   ShareFat,
 } from '@phosphor-icons/react/dist/ssr';
-import { useRouter, useSearchParams } from 'next/navigation';
 import { getCookie } from 'cookies-next';
-import PlayButton from '@/components/music/play';
-import { getAccentHEXColorFromUrl } from '@/utils/colorUtils';
-import nextuiColorPalette from '@/../themes/utils/nextui-color-palette-gen';
-import SubscribeButton from '@/components/music/subscribe';
+import { motion } from 'framer-motion';
+import { useRouter, useSearchParams } from 'next/navigation';
+import React, { Key } from 'react';
 
 function Page() {
   const router = useRouter();
@@ -46,6 +46,10 @@ function Page() {
   } | null>(null);
   const [loading, setLoading] = React.useState<boolean>(true);
   const [filter, setFilter] = React.useState<Key | false>(false);
+
+  const handleFilterChange = (key: Key | null) => {
+    setFilter(key || false);
+  };
   const { ponaCommonState } = useGlobalContext();
   const { language } = useLanguageContext();
   const searchParams = useSearchParams();
@@ -177,7 +181,7 @@ function Page() {
                 radius='full'
                 variant='light'
                 isDisabled={loading}
-                onSelectionChange={setFilter}
+                onSelectionChange={handleFilterChange}
               >
                 <Tab
                   key='all'

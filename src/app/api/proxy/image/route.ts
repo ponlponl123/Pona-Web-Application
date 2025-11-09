@@ -1,5 +1,7 @@
+import { fetchWithSSLFallback } from '@/utils/fetchWithSSLFallback';
+import { processImageBuffer } from '@/utils/image-processor';
 import { NextRequest, NextResponse } from 'next/server';
-import sharp from 'sharp';
+import { Buffer } from 'node:buffer';
 
 const cache = new Map<
   string,
@@ -7,11 +9,44 @@ const cache = new Map<
 >();
 const CACHE_DURATION = 3600 * 1000; // 1 hour in milliseconds
 
+function resolveRelativeUrl(req: NextRequest, path: string): string {
+  const forwardedProto = req.headers
+    .get('x-forwarded-proto')
+    ?.split(',')[0]
+    .trim();
+  const forwardedHost = req.headers
+    .get('x-forwarded-host')
+    ?.split(',')[0]
+    .trim();
+
+  const headerHost = req.headers.get('host')?.split(',')[0].trim();
+
+  let host = forwardedHost || headerHost || req.nextUrl.host;
+  let protocol = forwardedProto || req.nextUrl.protocol.replace(':', '');
+
+  if (!host) {
+    host = '127.0.0.1:3000';
+  }
+
+  if (host.startsWith('0.0.0.0')) {
+    const [, port] = host.split(':');
+    host = `127.0.0.1${port ? `:${port}` : ''}`;
+  }
+
+  const loopbackHosts = ['127.', 'localhost'];
+  if (loopbackHosts.some(prefix => host.startsWith(prefix))) {
+    protocol = 'http';
+  }
+
+  return `${protocol}://${host}${path}`;
+}
+
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
-  const ref = searchParams.get('r')?.startsWith('/')
-    ? req.nextUrl.origin + searchParams.get('r')
-    : searchParams.get('r');
+  const rawRef = searchParams.get('r');
+  const ref = rawRef?.startsWith('/')
+    ? resolveRelativeUrl(req, rawRef)
+    : rawRef;
   const size = searchParams.get('s');
   const blur = searchParams.get('blur');
   const brightness = searchParams.get('brightness');
@@ -62,7 +97,12 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const response = await fetch(imageUrl.toString());
+    // Use the utility function to handle SSL certificate issues automatically
+    const response = await fetchWithSSLFallback(imageUrl.toString(), {
+      method: 'GET',
+      timeout: 15000,
+      ignoreSSLErrors: process.env.NODE_ENV === 'production', // Allow SSL relaxation in production for trusted domains
+    });
 
     if (!response.ok) {
       return NextResponse.json(
@@ -74,105 +114,23 @@ export async function GET(req: NextRequest) {
     const contentType =
       response.headers.get('content-type') || 'application/octet-stream';
     const arrayBuffer = await response.arrayBuffer();
-    let imageBuffer = Buffer.from(arrayBuffer);
+    let imageBuffer: Buffer = Buffer.from(arrayBuffer);
 
     // Process image if any filter parameters are provided
     if (blur || size || brightness || contrast || saturation) {
       try {
-        let image = sharp(imageBuffer);
-
-        // Resize image if size parameter is provided (do this first for better performance)
-        if (size) {
-          const targetSize = parseInt(size, 10);
-          if (!isNaN(targetSize) && targetSize > 0 && targetSize <= 4096) {
-            image = image.resize(targetSize, null, {
-              fit: 'inside',
-              withoutEnlargement: true,
-            });
-          }
-        }
-
-        // Apply blur filter if requested (0.3-1000, recommended 1-10)
-        if (blur) {
-          const blurAmount = parseFloat(blur);
-          if (!isNaN(blurAmount) && blurAmount > 0 && blurAmount <= 128) {
-            // Sharp blur uses sigma: 0.3-1000
-            image = image.blur(blurAmount);
-          }
-        }
-
-        // Build modulate options for brightness, saturation, etc.
-        const modulateOptions: { brightness?: number; saturation?: number } =
-          {};
-
-        // Apply brightness filter if requested (-100 to 100, where 0 is no change)
-        if (brightness) {
-          const brightnessValue = parseInt(brightness, 10);
-          if (
-            !isNaN(brightnessValue) &&
-            brightnessValue >= -100 &&
-            brightnessValue <= 100
-          ) {
-            // Sharp brightness uses multiplier: 0.5 = darker, 2.0 = brighter
-            // Convert -100 to 100 range to 0 to 2 range
-            modulateOptions.brightness = 1 + brightnessValue / 100;
-          }
-        }
-
-        // Apply saturation filter if requested (-100 to 100, where 0 is no change)
-        if (saturation) {
-          const saturationValue = parseInt(saturation, 10);
-          if (
-            !isNaN(saturationValue) &&
-            saturationValue >= -100 &&
-            saturationValue <= 100
-          ) {
-            // Sharp saturation uses multiplier: 0 = grayscale, 1 = normal, >1 = more saturated
-            // Convert -100 to 100 range to 0 to 2 range
-            modulateOptions.saturation = 1 + saturationValue / 100;
-          }
-        }
-
-        // Apply modulate if any options are set
-        if (Object.keys(modulateOptions).length > 0) {
-          image = image.modulate(modulateOptions);
-        }
-
-        // Apply contrast filter if requested (-100 to 100, where 0 is no change)
-        if (contrast) {
-          const contrastValue = parseInt(contrast, 10);
-          if (
-            !isNaN(contrastValue) &&
-            contrastValue >= -100 &&
-            contrastValue <= 100
-          ) {
-            // Sharp linear uses a + bx formula for contrast adjustment
-            // Positive values increase contrast, negative decrease
-            const factor = 1 + contrastValue / 100;
-            const offset = 128 * (1 - factor);
-            image = image.linear(factor, offset);
-          }
-        }
-
-        // Determine output format based on content type
-        let outputFormat: 'png' | 'jpeg' | 'webp' | 'gif' | 'tiff' | 'avif';
-        if (contentType.includes('png')) {
-          outputFormat = 'png';
-        } else if (contentType.includes('webp')) {
-          outputFormat = 'webp';
-        } else if (contentType.includes('gif')) {
-          outputFormat = 'gif';
-        } else if (contentType.includes('tiff')) {
-          outputFormat = 'tiff';
-        } else if (contentType.includes('avif')) {
-          outputFormat = 'avif';
-        } else {
-          outputFormat = 'jpeg';
-        }
-
-        // Convert to buffer with appropriate format
-        const processedBuffer = await image.toFormat(outputFormat).toBuffer();
-        imageBuffer = Buffer.from(processedBuffer);
+        const processedBuffer = await processImageBuffer(
+          imageBuffer,
+          {
+            size: size ? parseInt(size, 10) : undefined,
+            blur: blur ? parseFloat(blur) : undefined,
+            brightness: brightness ? parseInt(brightness, 10) : undefined,
+            contrast: contrast ? parseInt(contrast, 10) : undefined,
+            saturation: saturation ? parseInt(saturation, 10) : undefined,
+          },
+          contentType
+        );
+        imageBuffer = processedBuffer as Buffer;
       } catch (imageProcessError) {
         console.error('Image processing error:', imageProcessError);
         // If image processing fails, return original image

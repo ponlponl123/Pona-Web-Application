@@ -1,4 +1,6 @@
+import { fetchWithSSLFallback } from '@/utils/fetchWithSSLFallback';
 import { NextRequest, NextResponse } from 'next/server';
+import { Buffer } from 'node:buffer';
 
 const cache = new Map<
   string,
@@ -8,8 +10,20 @@ const CACHE_DURATION = 3600 * 1000; // 1 hour in milliseconds
 
 async function fetchThumbnail(urls: string[]): Promise<Response> {
   for (const url of urls) {
-    const response = await fetch(url);
-    if (response.ok) return response;
+    try {
+      const response = await fetchWithSSLFallback(url, {
+        method: 'GET',
+        timeout: 15000,
+        ignoreSSLErrors: true,
+      });
+
+      if (response.ok) {
+        return response;
+      }
+      console.warn(`Thumbnail fetch failed (${response.status}): ${url}`);
+    } catch (error) {
+      console.warn(`Thumbnail fetch error for ${url}:`, error);
+    }
   }
   throw new Error('Failed to fetch thumbnail from any endpoints');
 }
@@ -26,7 +40,8 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  const cachedImage = cache.get(videoId + size);
+  const cacheKey = `${videoId}|${size || 'default'}`;
+  const cachedImage = cache.get(cacheKey);
   const now = Date.now();
 
   if (cachedImage && now - cachedImage.timestamp < CACHE_DURATION) {
@@ -76,7 +91,7 @@ export async function GET(req: NextRequest) {
       response.headers.get('content-type') || 'application/octet-stream';
     const imageBuffer = Buffer.from(await response.arrayBuffer());
 
-    cache.set(videoId, { buffer: imageBuffer, contentType, timestamp: now });
+    cache.set(cacheKey, { buffer: imageBuffer, contentType, timestamp: now });
 
     return new NextResponse(new Uint8Array(imageBuffer), {
       headers: {

@@ -2,68 +2,76 @@ FROM oven/bun:1.1.29-alpine AS base
 
 # Install dependencies only when needed
 FROM base AS deps
-# Install required libraries for sharp and build tools
-RUN apk add --no-cache \
-    libstdc++ \
-    gcc \
-    g++ \
-    make \
-    python3 \
-    py3-pip \
-    vips-dev
-
 WORKDIR /app
 
+# Install basic dependencies for sharp
+RUN apk add --no-cache \
+    libstdc++ \
+    vips-dev \
+    build-base \
+    python3 \
+    make \
+    g++
+
 # Install dependencies
-COPY package.json bun.lock ./
-# Install dependencies with frozen lockfile
+COPY package.json bun.lock* ./
 RUN bun install --frozen-lockfile
-# Rebuild sharp for the current platform
-RUN bun install sharp --force
+
+# Try to rebuild sharp for the current platform, continue if it fails
+RUN bun install sharp --force || echo "Sharp rebuild failed, continuing..."
 
 # Rebuild the source code only when needed
 FROM base AS builder
-# Install required libraries for sharp and build tools
+WORKDIR /app
+
+# Install build dependencies
 RUN apk add --no-cache \
     libstdc++ \
-    gcc \
-    g++ \
-    make \
+    vips-dev \
+    build-base \
     python3 \
-    py3-pip \
-    vips-dev
+    make \
+    g++
 
-WORKDIR /app
+# Copy dependencies
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Next.js collects completely anonymous telemetry data about general usage.
-# Learn more here: https://nextjs.org/telemetry
-# Disable telemetry during the build
+# Set environment variables for build
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_ENV=production
+
+# Build the application
 RUN bun run build
 
 # Production image, copy all the files and run next
 FROM base AS runner
-# Install runtime libraries for sharp
+WORKDIR /app
+
+# Install only runtime dependencies for sharp
 RUN apk add --no-cache \
     libstdc++ \
     vips
 
-WORKDIR /app
 ENV NODE_ENV=production
-
-# Disable telemetry
 ENV NEXT_TELEMETRY_DISABLED=1
+
+# Create user
 RUN adduser --system --uid 1001 nextjs
-RUN mkdir .next
-RUN chown nextjs:bun .next
+
+# Create .next directory with proper permissions
+RUN mkdir -p .next && chown nextjs:bun .next
+
+# Copy built application
 COPY --from=builder --chown=nextjs:bun /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:bun /app/docs ./docs
 COPY --from=builder --chown=nextjs:bun /app/public ./public
 COPY --from=builder --chown=nextjs:bun /app/.next/static ./.next/static
+
 USER nextjs
+
 EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
+
 CMD ["bun", "server.js"]

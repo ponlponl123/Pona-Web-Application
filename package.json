@@ -12,7 +12,10 @@
     "lint:fix": "next lint --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "format:all": "next lint --fix && prettier --write ."
+    "format:all": "next lint --fix && prettier --write .",
+    "install:sharp": "npm install --platform=linux --arch=x64 sharp",
+    "postinstall": "npm run install:sharp || echo 'Sharp installation failed, image processing will be disabled'",
+    "test:image-proxy": "node test-image-proxy.js"
   },
   "overrides": {
     "react-is": "^19.0.0-rc-69d4b800-20241021"

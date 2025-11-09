@@ -1,6 +1,16 @@
 import type { NextConfig } from "next";
 import { version } from "./package.json";
 
+// Import SSL configuration for server-side SSL handling
+import "./src/utils/ssl-config";
+
+// Handle SSL certificate issues in containerized environments
+if (process.env.NODE_ENV === 'production' && process.env.NODE_TLS_REJECT_UNAUTHORIZED !== '0') {
+  // In production, ensure we have proper SSL certificate handling
+  // This helps with Docker container SSL issues while maintaining security
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '1';
+}
+
 const nextConfig: NextConfig = {
   output: "standalone",
   env: {
