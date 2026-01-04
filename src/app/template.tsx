@@ -14,7 +14,7 @@ export default function Template({ children }: { children: React.ReactNode }) {
       initial='hidden'
       exit='hidden'
       animate='enter'
-      transition={{ type: 'linear', duration: 0.25 }}
+      transition={{ type: 'tween', duration: 0.25 }}
       key='LandingPage'
     >
       {children}

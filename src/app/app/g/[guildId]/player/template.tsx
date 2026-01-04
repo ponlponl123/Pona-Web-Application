@@ -15,7 +15,7 @@ export default function Template({ children }: { children: React.ReactNode }) {
       initial='hidden'
       exit='exit'
       animate='enter'
-      transition={{ type: 'linear', duration: 0.24 }}
+      transition={{ type: 'tween', duration: 0.24 }}
       key='PonaMusic'
     >
       {children}

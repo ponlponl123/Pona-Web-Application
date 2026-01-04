@@ -119,7 +119,7 @@ function Scrollbar({
                 initial='hidden'
                 exit='exit'
                 animate='enter'
-                transition={{ type: 'linear', duration: 0.12 }}
+                transition={{ type: 'tween', duration: 0.12 }}
                 className='flex flex-col gap-2 min-h-max'
                 key='Menu'
               >
@@ -436,7 +436,7 @@ function Scrollbar({
               initial='hidden'
               exit='exit'
               animate='enter'
-              transition={{ type: 'linear', duration: 0.12 }}
+              transition={{ type: 'tween', duration: 0.12 }}
               key='Bottom-Menu'
             >
               {inSetting ? (

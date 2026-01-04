@@ -1,19 +1,19 @@
 'use client';
-import React from 'react';
 import MyButton from '@/components/button';
+import { useLanguageContext } from '@/contexts/languageContext';
+import { Link as NextLink } from '@nextui-org/react';
 import {
   ClockCountdown,
   Confetti as ConfettiIcon,
   Cookie,
 } from '@phosphor-icons/react/dist/ssr';
-import { useLanguageContext } from '@/contexts/languageContext';
-import { Link as NextLink } from '@nextui-org/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import Link from 'next/link';
+import React from 'react';
 
-import confetti from 'canvas-confetti';
-import CountdownTimer from '@/components/timer';
 import WavyText from '@/components/motion/wavytext';
+import CountdownTimer from '@/components/timer';
+import confetti from 'canvas-confetti';
 import { usePathname, useRouter } from 'next/navigation';
 
 const TextVariants = {
@@ -31,11 +31,12 @@ export default function Home() {
 
   const newYearIn =
     new Date(date.getFullYear() + 1, 0, 1).getTime() - date.getTime();
-  const newYearEvent = date.getDate() < 7 && date.getMonth() === 0;
+  const newYearEvent = date.getDate() < 3 && date.getMonth() === 0;
 
   const TEXTS = language.data.home.features.before;
   const TEXTS1 = language.data.home.features.after;
   const [index, setIndex] = React.useState(0);
+  const [timerHidden, setTimerHidden] = React.useState(false);
 
   React.useEffect(() => {
     const intervalId = setInterval(() => setIndex(index => index + 1), 3200);
@@ -80,6 +81,49 @@ export default function Home() {
       }
     })();
   });
+
+  const handleTimerEnd = React.useCallback(() => {
+    const duration = 15 * 1000;
+    const animationEnd = Date.now() + duration;
+    const defaults = {
+      startVelocity: 30,
+      spread: 360,
+      ticks: 60,
+      zIndex: 0,
+    };
+
+    setTimerHidden(true);
+
+    function randomInRange(min: number, max: number) {
+      return Math.random() * (max - min) + min;
+    }
+
+    const interval = setInterval(function () {
+      const timeLeft = animationEnd - Date.now();
+
+      if (timeLeft <= 0) {
+        return clearInterval(interval);
+      }
+
+      const particleCount = 50 * (timeLeft / duration);
+      confetti({
+        ...defaults,
+        particleCount,
+        origin: {
+          x: randomInRange(0.1, 0.3),
+          y: Math.random() - 0.2,
+        },
+      });
+      confetti({
+        ...defaults,
+        particleCount,
+        origin: {
+          x: randomInRange(0.7, 0.9),
+          y: Math.random() - 0.2,
+        },
+      });
+    }, 250);
+  }, []);
 
   return (
     <main className='w-full min-h-screen main-bg-2 mb-24'>
@@ -237,63 +281,16 @@ export default function Home() {
         {(newYearIn / 1000 < 24 * 60 * 60 || newYearEvent) && (
           <div
             id='newYearTimer'
-            className='flex gap-2 items-center justify-center z-40 fixed bottom-4 left-1/2 -translate-x-1/2 p-3 bg-white bg-opacity-60 border-white border-2 rounded-full max-sm:hidden backdrop-blur-sm'
+            className={`flex gap-2 items-center justify-center z-40 fixed bottom-4 left-1/2 -translate-x-1/2 p-3 bg-white bg-opacity-60 border-white border-2 rounded-full max-sm:hidden backdrop-blur-sm transition-all duration-1000 ${
+              timerHidden ? 'opacity-0 bottom-0 pointer-events-none' : ''
+            }`}
           >
             <ClockCountdown size={18} />
             <p className='text-sm font-bold max-sm:text-xxs'>
               Happy New Year in{' '}
               <CountdownTimer
                 timeLeft={!newYearEvent ? Math.floor(newYearIn / 1000) : 0}
-                onEnd={() => {
-                  const duration = 15 * 1000;
-                  const animationEnd = Date.now() + duration;
-                  const defaults = {
-                    startVelocity: 30,
-                    spread: 360,
-                    ticks: 60,
-                    zIndex: 0,
-                  };
-
-                  document
-                    .getElementById('newYearTimer')
-                    ?.classList.add('opacity-0');
-                  document
-                    .getElementById('newYearTimer')
-                    ?.classList.add('bottom-0');
-                  document
-                    .getElementById('newYearTimer')
-                    ?.classList.add('pointer-events-none');
-
-                  function randomInRange(min: number, max: number) {
-                    return Math.random() * (max - min) + min;
-                  }
-
-                  const interval = setInterval(function () {
-                    const timeLeft = animationEnd - Date.now();
-
-                    if (timeLeft <= 0) {
-                      return clearInterval(interval);
-                    }
-
-                    const particleCount = 50 * (timeLeft / duration);
-                    confetti({
-                      ...defaults,
-                      particleCount,
-                      origin: {
-                        x: randomInRange(0.1, 0.3),
-                        y: Math.random() - 0.2,
-                      },
-                    });
-                    confetti({
-                      ...defaults,
-                      particleCount,
-                      origin: {
-                        x: randomInRange(0.7, 0.9),
-                        y: Math.random() - 0.2,
-                      },
-                    });
-                  }, 250);
-                }}
+                onEnd={handleTimerEnd}
               />
             </p>
           </div>

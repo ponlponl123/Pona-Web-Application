@@ -1,6 +1,5 @@
-import { PonaConfigThemes } from "../themes.config";
+import { PonaConfigThemes, PonaThemeColors } from "../themes.config";
 import nextuiColorPalette from "./utils/nextui-color-palette-gen";
-import { PonaThemeColors } from "../themes.config";
 
 const colorPalette: Partial<PonaThemeColors> = {
   // ...nextuiColorPalette({name: "default", baseColor: "#d4d4d8"}),
