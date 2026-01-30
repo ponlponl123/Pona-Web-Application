@@ -1,5 +1,4 @@
 'use client';
-import AppVersion from '@/components/app-version';
 import Button from '@/components/button';
 import { useDiscordUserInfo } from '@/contexts/discordUserInfo';
 import { useLanguageContext } from '@/contexts/languageContext';
@@ -63,19 +62,19 @@ function Page() {
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.32, delay: 0.48 }}
-            className='relative overflow-hidden w-full p-16 max-sm:p-8 rounded-3xl flex flex-col gap-3 bg-gradient-to-br from-primary-50/10 to-primary-300/10 shadow-2xl shadow-primary-300/10'
+            className='relative overflow-hidden w-full p-16 max-sm:p-8 rounded-3xl flex flex-col gap-3 bg-linear-to-br from-primary-50/10 to-primary-300/10 shadow-2xl shadow-primary-300/10'
           >
             <h1 className='text-4xl max-sm:text-2xl font-bold'>
-              What's new in Pona! v<AppVersion />?
+              {language.data.app.home.whatnew.title.replace(
+                '[version]',
+                ('v' + process.env.NEXT_PUBLIC_APP_VERSION) as string
+              )}
             </h1>
-            <p>
-              See all the latest features, improvements, and bug fixes in our
-              newest release.
-            </p>
+            <p>{language.data.app.home.whatnew.description}</p>
             <div className='flex flex-col gap-2 mt-4'>
-              <Link as={NextLink} href='/app/updates'>
+              <Link as={NextLink} href='/app/updates' className='w-max'>
                 <Button size='small' variant='primary' className='w-max'>
-                  Take a look
+                  {language.data.app.home.whatnew.button}
                 </Button>
               </Link>
             </div>

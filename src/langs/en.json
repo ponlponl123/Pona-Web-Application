@@ -150,6 +150,11 @@
     "home": {
       "name": "Home",
       "title": "Welcome back, [user]!",
+      "whatnew": {
+        "title": "What's New in Pona! [version]?",
+        "description": "Check out the latest features and improvements in Pona! App.",
+        "button": "See what's new"
+      },
       "weather": {
         "status": {
           "wmo-code": {

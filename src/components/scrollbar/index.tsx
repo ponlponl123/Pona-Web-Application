@@ -91,10 +91,10 @@ function Scrollbar({
     <main
       className={`scrollbar disable-default-transition apply-long-soft-transition !duration-700 ${!nav ? `${canCollapsed && sidebarCollapsed ? 'min-w-16 w-16 max-w-16 p-2' : 'min-w-72 w-72 max-w-72 p-6'} relative h-screen max-md:hidden pt-24 flex flex-col gap-2` : 'md:hidden w-full flex flex-col gap-2'}`}
     >
-      <AnimatePresence mode='wait'>
+      <AnimatePresence mode='popLayout'>
         <motion.div
           className='max-h-[calc(100%_-_64px)] w-full'
-          key={String(`${inGuild} ${inSetting}`)}
+          key={String(`${inGuild} ${inSetting} ${sidebarCollapsed}`)}
         >
           <ScrollShadow
             className='w-full max-h-full flex flex-col'
@@ -428,8 +428,11 @@ function Scrollbar({
       <div
         className={clsx('flex', !sidebarCollapsed ? '!flex-row' : 'flex-col')}
       >
-        <AnimatePresence mode='wait'>
-          <motion.div className='flex-1 min-w-0' key={String(`${inSetting}`)}>
+        <AnimatePresence mode='popLayout'>
+          <motion.div
+            className='flex-1 min-w-0'
+            key={String(`${inSetting} ${sidebarCollapsed}`)}
+          >
             <FrozenRoute>
               <motion.main
                 variants={variants}

@@ -154,6 +154,11 @@
     "home": {
       "name": "หน้าหลัก",
       "title": "ยินดีต้อนรับกลับ, [user]!",
+      "whatnew": {
+        "title": "มีอะไรใหม่ใน [version] บ้าง",
+        "description": "ตรวจสอบคุณสมบัติและการปรับปรุงล่าสุดใน Pona! แอป",
+        "button": "ดูมีอะไรใหม่"
+      },
       "weather": {
         "status": {
           "wmo-code": {

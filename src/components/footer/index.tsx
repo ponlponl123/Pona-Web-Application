@@ -9,6 +9,7 @@ import {
   Cube,
   Gavel,
   GithubLogo,
+  GlobeSimpleIcon,
   PersonSimpleRun,
   PottedPlant,
   SmileyWink,
@@ -111,6 +112,7 @@ function Footer() {
               'border-2 border-default-700/10 dark:border-default-900/10 px-4',
             label: '-mt-3',
           }}
+          startContent={<GlobeSimpleIcon weight='bold' />}
           size='sm'
           label={language.data.footer.settings.lang.label}
           selectedKeys={[language.key]}
