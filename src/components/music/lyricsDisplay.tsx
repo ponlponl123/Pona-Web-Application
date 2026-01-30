@@ -1,5 +1,6 @@
 import { Lyric, TimestampLyrics } from '@/interfaces/ponaPlayer';
-import { useState, useEffect, useRef } from 'react';
+import { clsx } from 'clsx';
+import { useEffect, useRef, useState } from 'react';
 
 interface Track {
   lyrics?: Lyric;
@@ -57,6 +58,24 @@ const LyricsDisplay: React.FC<LyricsDisplayProps> = ({
     );
   }
 
+  const getLyricsClassName = (index: number): string => {
+    const baseClasses =
+      'w-full h-max flex items-center text-start justify-between px-2.5 my-8 disable-default-transition transition-all ease-out duration-400 tracking-wide';
+
+    const conditions = {
+      'text-3xl text-[hsl(var(--pona-app-music-accent-color-500))]! font-bold [html.dark_&]:brightness-150 [html.light_&]:brightness-50':
+        index === activeIndex,
+      'text-xl text-[hsl(var(--pona-app-music-accent-color-500)/0.4)]! [html.light_&]:brightness-90 [html.dark_&]:brightness-125':
+        index === activeIndex + 1 || index === activeIndex - 1,
+      'text-base text-[hsl(var(--pona-app-music-accent-color-500)/0.48)]!':
+        index < activeIndex,
+      'text-base text-[hsl(var(--pona-app-music-accent-color-500)/0.16)]!':
+        index > activeIndex && index !== activeIndex + 1,
+    };
+
+    return clsx(baseClasses, conditions);
+  };
+
   return (
     <div className='w-full text-center pb-[24vh]'>
       {(currentTrack?.lyrics.lyrics as TimestampLyrics[]).map(
@@ -64,15 +83,7 @@ const LyricsDisplay: React.FC<LyricsDisplayProps> = ({
           <div
             key={index}
             id={`lyrics-index-${index}`}
-            className={`w-full h-max flex items-center text-start justify-between px-2.5 my-8 disable-default-transition transition-all ease-out duration-400 tracking-wide ${
-              index === activeIndex
-                ? 'text-3xl text-[hsl(var(--pona-app-music-accent-color-500))] font-bold [html.dark_&]:brightness-150 [html.light_&]:brightness-50'
-                : index === activeIndex + 1 || index === activeIndex - 1
-                  ? 'text-xl text-[hsl(var(--pona-app-music-accent-color-500)/0.4)] [html.light_&]:brightness-90 [html.dark_&]:brightness-125'
-                  : index < activeIndex
-                    ? 'text-base text-[hsl(var(--pona-app-music-accent-color-500)/0.48)]'
-                    : 'text-base text-[hsl(var(--pona-app-music-accent-color-500)/0.16)]'
-            }`}
+            className={getLyricsClassName(index)}
           >
             {lyrics.lyrics}
           </div>
