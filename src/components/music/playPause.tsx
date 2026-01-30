@@ -1,7 +1,7 @@
 import { useGlobalContext } from '@/contexts/globalContext';
 import { useLanguageContext } from '@/contexts/languageContext';
 import { usePonaMusicContext } from '@/contexts/ponaMusicContext';
-import { Button } from '@nextui-org/react';
+import { Button } from "@heroui/react";
 import { Pause, Play } from '@phosphor-icons/react/dist/ssr';
 import React from 'react';
 import toast from 'react-hot-toast';

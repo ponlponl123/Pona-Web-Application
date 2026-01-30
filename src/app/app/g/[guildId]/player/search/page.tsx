@@ -1,5 +1,5 @@
 'use client';
-import nextuiColorPalette from '@/../themes/utils/nextui-color-palette-gen';
+import nextuiColorPalette from '@/../themes/utils/nextui-color-palette-gen.ts';
 import PlayButton from '@/components/music/play';
 import Track, {
   combineArtistName,
@@ -24,7 +24,7 @@ import {
   Tab,
   Tabs,
   Tooltip,
-} from '@nextui-org/react';
+} from '@heroui/react';
 import {
   CaretRight,
   Cloud,
@@ -64,13 +64,15 @@ function Page() {
 
   React.useEffect(() => {
     const letSearch = async () => {
-      const accessTokenType = getCookie('LOGIN_TYPE_');
-      const accessToken = getCookie('LOGIN_');
+      const accessTokenType = String(getCookie('LOGIN_TYPE_'));
+      const accessToken = String(getCookie('LOGIN_'));
       if (
         !search ||
         typeof search !== 'string' ||
         !accessTokenType ||
-        !accessToken
+        accessTokenType === 'undefined' ||
+        !accessToken ||
+        accessToken === 'undefined'
       )
         return setLoading(false);
       setLoading(true);
@@ -519,7 +521,7 @@ function Page() {
                                         />
                                         <Button
                                           color='default'
-                                          className='bg-opacity-40'
+                                          className='bg-default/40'
                                           radius='full'
                                           isIconOnly
                                         >
@@ -527,7 +529,7 @@ function Page() {
                                         </Button>
                                         <Button
                                           color='default'
-                                          className='bg-opacity-40'
+                                          className='bg-default/40'
                                           radius='full'
                                           isIconOnly
                                         >
@@ -568,7 +570,7 @@ function Page() {
                                               );
                                             }}
                                             color='default'
-                                            className='bg-opacity-40'
+                                            className='bg-default/40'
                                             radius='full'
                                             isIconOnly
                                           >

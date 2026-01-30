@@ -10,7 +10,7 @@ import {
 } from '@/server-side-api/internal/channel';
 import fetchHistory, { History } from '@/server-side-api/internal/history';
 import { usePrevNextButtons } from '@/utils/Embla/CarouselArrowButtons';
-import { Button, Image, Link, Spinner } from '@nextui-org/react';
+import { Button, Image, Link, Spinner } from "@heroui/react";
 import {
   CaretLeft,
   CaretRight,
@@ -56,9 +56,15 @@ function Page() {
 
   React.useEffect(() => {
     const fetchHistoryTracks = async () => {
-      const accessTokenType = getCookie('LOGIN_TYPE_');
-      const accessToken = getCookie('LOGIN_');
-      if (!accessTokenType || !accessToken) return false;
+      const accessTokenType = String(getCookie('LOGIN_TYPE_'));
+      const accessToken = String(getCookie('LOGIN_'));
+      if (
+        !accessTokenType ||
+        accessTokenType === 'undefined' ||
+        !accessToken ||
+        accessToken === 'undefined'
+      )
+        return false;
       const tracks = await fetchHistory(accessTokenType, accessToken);
       const fetchSubscribedArtists = await fetchSubscribedChannels(
         accessTokenType,

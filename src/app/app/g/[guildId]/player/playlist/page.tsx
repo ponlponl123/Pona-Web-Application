@@ -11,7 +11,7 @@ import {
   getPlaylist,
   getPlaylistv1,
 } from '@/server-side-api/internal/search';
-import { Button, Image, Link, Progress } from '@nextui-org/react';
+import { Button, Image, Link, Progress } from "@heroui/react";
 import { FlyingSaucer, ShareFat } from '@phosphor-icons/react/dist/ssr';
 import { getCookie } from 'cookies-next';
 import { motion } from 'framer-motion';
@@ -50,9 +50,9 @@ function Page() {
       return null;
     };
     const letSearch = async () => {
-      const accessTokenType = getCookie('LOGIN_TYPE_');
-      const accessToken = getCookie('LOGIN_');
-      if (typeof playlist_id !== 'string' || !accessTokenType || !accessToken)
+      const accessTokenType = String(getCookie('LOGIN_TYPE_'));
+      const accessToken = String(getCookie('LOGIN_'));
+      if (typeof playlist_id !== 'string' || !accessTokenType || accessTokenType === 'undefined' || !accessToken || accessToken === 'undefined')
         return setLoading(false);
       setLoading(true);
       setPlaylist(null);
@@ -98,6 +98,16 @@ function Page() {
 
   const title =
     (playlist as AlbumFull)?.title || (playlist as PlaylistFull)?.name;
+
+  const authorDisplay = React.useMemo(() => {
+    const p: any = playlist;
+    if (!p) return '';
+    // Album case handled elsewhere
+    if (typeof p.author === 'string') return p.author;
+    if (p.author && typeof p.author === 'object') return p.author.name ?? '';
+    if (p.artist && typeof p.artist === 'object') return p.artist.name ?? '';
+    return '';
+  }, [playlist]);
 
   return (
     <div className='flex flex-col gap-4 items-center justify-center w-full'>
@@ -148,7 +158,7 @@ function Page() {
                       {combineArtistName((playlist as AlbumFull)?.artists)}
                     </Link>
                   ) : (
-                    (playlist as PlaylistFull)?.author
+                    authorDisplay
                   )}
                 </h3>
                 <Image

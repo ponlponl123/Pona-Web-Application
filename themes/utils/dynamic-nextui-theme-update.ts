@@ -1,5 +1,5 @@
 import { hexToHSL } from '@/utils/colorUtils';
-import { ColorScale } from '@nextui-org/theme';
+import { ColorScale } from "@heroui/theme";
 
 function DynamicNextUIThemeUpdate(vkey: string, theme: ColorScale): void {
   'use client';

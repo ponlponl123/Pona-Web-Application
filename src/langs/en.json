@@ -108,13 +108,14 @@
     }
   },
   "app": {
-    "title": "Control Panel",
+    "title": "App",
     "welcome": {},
     "updates": {
       "name": "Updates",
       "latest": "Latest version",
       "follow": "Follow the updates",
       "read": "Read",
+      "loading": "Looking past updates...",
       "subscription": {
         "title": "Subscribe",
         "notify": {
@@ -280,6 +281,7 @@
     "guilds": {
       "name": "Guilds",
       "title": "The server you and Pona join together.",
+      "loading": "Looking for guilds...",
       "not_found": {
         "title": "Guilds not found",
         "description": "Or the party hasn't started yet!? Then let's make our party!"
@@ -510,6 +512,25 @@
         "amoled_black": {
           "title": "Amoled Black",
           "description": "When enabled, Dark theme uses a pitch-black background, which saves up to 60% on AMOLED screens! 🌙💡"
+        },
+        "player": {
+          "title": "Player Layout",
+          "preview": {
+            "title": "Preview",
+            "description": "This is how the player layout looks like.",
+            "component": {
+              "artist": "Artist Name",
+              "title": "Track Title"
+            }
+          },
+          "compact": {
+            "title": "Compact",
+            "description": "Compact player layout, shows more information in less space."
+          },
+          "comfortable": {
+            "title": "Comfortable",
+            "description": "Comfortable player layout, with more spacing and larger controls."
+          }
         },
         "transparency": {
           "title": "Transparency Effects",

@@ -3,9 +3,9 @@ import { useDiscordUserInfo } from '@/contexts/discordUserInfo';
 import { useLanguageContext } from '@/contexts/languageContext';
 import { useUserSettingContext } from '@/contexts/userSettingContext';
 import { numberToHexColor } from '@/utils/colorUtils';
-import { Avatar, Chip, Image, Link } from '@nextui-org/react';
+import { Avatar, Chip, Image, Link } from '@heroui/react';
 import { DiscordLogo, StarAndCrescent } from '@phosphor-icons/react/dist/ssr';
-import React from 'react';
+import { motion } from 'framer-motion';
 
 function Account() {
   const { language } = useLanguageContext();
@@ -17,14 +17,26 @@ function Account() {
       id='account'
       data-section
     >
-      <h1 className='text-5xl flex items-center gap-4 pt-4'>
+      <motion.h1
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 1 }}
+        className='text-5xl flex items-center gap-4 pt-4'
+      >
         <StarAndCrescent weight='fill' />
         {userInfo
           ? userInfo.global_name
           : language.data.app.setting.account.title}
-      </h1>
-      <div>
-        <div className='rounded-3xl'>
+      </motion.h1>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 1, delay: 0.4 }}
+        className='flex flex-col gap-6'
+      >
+        <div className='rounded-4xl'>
           {userInfo?.banner ? (
             <Image
               isBlurred={userSetting.transparency}
@@ -34,7 +46,7 @@ function Account() {
                   ? `https://cdn.discordapp.com/banners/${userInfo.id}/${userInfo.banner}.png?size=1024`
                   : ''
               }
-              className='object-cover object-center bg-primary'
+              className='object-cover object-center bg-primary rounded-4xl'
               width='100%'
             />
           ) : (
@@ -47,7 +59,7 @@ function Account() {
                       ? `https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}.png?size=256`
                       : '/static/Ponlponl123 (1459).png'
                   }
-                  className='object-cover object-center w-full h-full blur-2xl scale-110'
+                  className='object-cover object-center w-full h-full blur-2xl scale-110 rounded-4xl'
                   width='100%'
                   height='100%'
                   classNames={{
@@ -60,19 +72,35 @@ function Account() {
         </div>
         <div className='flex gap-6 z-10 relative px-12 max-md:px-6'>
           <div className='flex flex-col items-center max-md:absolute max-md:left-12'>
-            <div className='-translate-y-1/2 outline outline-8 outline-playground-background rounded-full block overflow-hidden min-w-32 w-32 h-32 max-md:outline-4 max-md:min-w-24 max-md:w-24 max-md:h-24'>
-              <Avatar
-                alt={`${userInfo && userInfo.global_name} Avatar`}
-                src={
-                  userInfo
-                    ? `https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}.png?size=128`
-                    : '/static/Ponlponl123 (1459).png'
-                }
-                name={userInfo ? userInfo.username : 'Me'}
-                className='object-cover object-center max-md:w-24 max-md:h-24 bg-primary w-32 h-32'
-              />
+            <div className='-translate-y-1/2 outline-8 outline-playground-background bg-playground-background rounded-full block overflow-hidden min-w-32 w-32 h-32 max-md:outline-4 max-md:min-w-24 max-md:w-24 max-md:h-24'>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{
+                  duration: 1,
+                  delay: 0.6,
+                }}
+              >
+                <Avatar
+                  alt={`${userInfo && userInfo.global_name} Avatar`}
+                  src={
+                    userInfo
+                      ? `https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}.png?size=128`
+                      : '/static/Ponlponl123 (1459).png'
+                  }
+                  name={userInfo ? userInfo.username : 'Me'}
+                  className='object-cover object-center max-md:w-24 max-md:h-24 bg-primary w-32 h-32'
+                />
+              </motion.div>
             </div>
-            <div className='flex gap-4 -mt-12 z-10 max-md:hidden'>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1, delay: 1.2 }}
+              className='flex gap-4 -mt-12 z-10 max-md:hidden'
+            >
               {userInfo ? (
                 userInfo.accent_color ? (
                   <div
@@ -92,9 +120,15 @@ function Account() {
               ) : (
                 <></>
               )}
-            </div>
+            </motion.div>
           </div>
-          <div className='bg-foreground-100/25 w-full p-8 max-md:pt-12 rounded-3xl md:rounded-ss-lg mt-4 flex flex-col gap-4'>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1, delay: 0.8 }}
+            className='bg-foreground-100/25 w-full p-8 max-md:pt-12 rounded-3xl md:rounded-ss-lg mt-4 flex flex-col gap-4'
+          >
             <Chip
               color='primary'
               className='md:-mt-4 md:-ml-4 md:-mb-1 max-md:-mt-10 max-md:ml-24 max-md:-mb-2'
@@ -141,9 +175,9 @@ function Account() {
                 Privacy Policy
               </Link>
             </div>
-          </div>
+          </motion.div>
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }

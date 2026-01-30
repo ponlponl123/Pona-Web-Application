@@ -10,7 +10,7 @@ import {
   Link,
   Spinner,
   useDisclosure,
-} from '@nextui-org/react';
+} from "@heroui/react";
 import Markdown from 'marked-react';
 import { useParams, useRouter } from 'next/navigation';
 import { BellSimple, CaretLeft } from '@phosphor-icons/react/dist/ssr';

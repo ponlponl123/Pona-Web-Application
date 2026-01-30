@@ -1,12 +1,12 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { useLanguageContext } from '@/contexts/languageContext';
-import { Button, Chip, Progress, ScrollShadow } from '@nextui-org/react';
-import { Island, SpeakerHigh } from '@phosphor-icons/react/dist/ssr';
-import { usePonaMusicContext } from '@/contexts/ponaMusicContext';
-import { VoiceBasedChannel } from 'discord.js';
 import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo';
 import { useGlobalContext } from '@/contexts/globalContext';
+import { useLanguageContext } from '@/contexts/languageContext';
+import { usePonaMusicContext } from '@/contexts/ponaMusicContext';
+import { Button, Chip, Progress, ScrollShadow } from "@heroui/react";
+import { Island, SpeakerHigh } from '@phosphor-icons/react/dist/ssr';
+import { VoiceBasedChannel } from 'discord.js';
+import { motion } from 'framer-motion';
+import React from 'react';
 
 function JoinVoiceChannelButton({
   voiceChannel,
@@ -72,7 +72,7 @@ function LetsPonaJoin() {
       transition={{ duration: 0.48, delay: 0.1 }}
     >
       <motion.div
-        className='relative bg-primary/10 border-2 border-primary/10 rounded-3xl p-8 overflow-hidden w-full max-w-96 flex flex-col gap-4 items-center justify-center'
+        className='relative bg-primary/10 border-3 border-primary/10 backdrop-blur-sm backdrop-saturate-200 rounded-3xl p-8 overflow-hidden w-full max-w-96 flex flex-col gap-4 items-center justify-center'
         initial={{ opacity: 0, scale: 1.32 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{

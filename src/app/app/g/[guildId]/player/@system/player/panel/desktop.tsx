@@ -25,7 +25,7 @@ import {
   Spinner,
   Tab,
   Tabs,
-} from '@nextui-org/react';
+} from '@heroui/react';
 import {
   DotsThreeVertical,
   Heart,
@@ -157,9 +157,9 @@ function DesktopPonaPlayerPanel() {
             <div className='w-full h-full flex gap-12 justify-between items-center pt-16'>
               <motion.div
                 layoutId='pona-music-panel-artwork'
-                className='m-auto flex flex-col items-center gap-6'
+                className='m-auto flex flex-col items-center gap-6 max-lg:[body:not(.sidebar-collapsed)_&]:hidden'
               >
-                <div className='flex flex-wrap gap-4 items-center justify-center -mt-12'>
+                <div className='flex flex-wrap max-xl:flex-col gap-4 items-center justify-center -mt-12'>
                   <Button
                     color='default'
                     variant='ghost'
@@ -190,7 +190,7 @@ function DesktopPonaPlayerPanel() {
                     {language.data.app.guilds.player.picinpic_mode.enter}
                   </Button>
                 </div>
-                <div className='w-[56vh] max-2xl:w-[42vh] max-xl:w-[32vh] max-xl:[body:not(.sidebar-collapsed)_&]:w-[26vh] aspect-square relative flex group hover:scale-[1.032] active:scale-[1.016]'>
+                <div className='w-[56vh] max-2xl:w-[42vh] max-xl:w-[28vh] max-xl:[body:not(.sidebar-collapsed)_&]:w-[20vh] max-lg:w-[12vh] aspect-square relative flex group hover:scale-[1.032] active:scale-[1.016]'>
                   <Image
                     src={
                       currentTrack
@@ -206,11 +206,11 @@ function DesktopPonaPlayerPanel() {
                     shadow='lg'
                     id='pona-music-artwork'
                   />
-                  <div className='absolute top-0 left-0 z-[14] w-full h-full bg-gradient-to-t to-transparent rounded-2xl [html.light_&]:from-white/40 [html.dark_&]:from-black/40 opacity-0 group-hover:opacity-100 pointer-events-none'></div>
+                  <div className='absolute top-0 left-0 z-14 w-full h-full bg-gradient-to-t to-transparent rounded-2xl [html.light_&]:from-white/40 [html.dark_&]:from-black/40 opacity-0 group-hover:opacity-100 pointer-events-none'></div>
                 </div>
               </motion.div>
               <div
-                className='w-full h-full max-w-screen-md'
+                className='flex-1 min-w-0 h-full max-w-3xl'
                 id='pona-music-queue'
               >
                 <Tabs
@@ -340,6 +340,7 @@ function DesktopPonaPlayerPanel() {
                   <Tab
                     key='related'
                     title={language.data.app.guilds.player.tabs.related}
+                    className='w-full max-w-full'
                   >
                     <ScrollShadow
                       className='h-full pr-2 overflow-y-scroll'

@@ -1,6 +1,6 @@
 'use client';
 import { useLanguageContext } from '@/contexts/languageContext';
-import { Button, Link } from '@nextui-org/react';
+import { Button, Link } from "@heroui/react";
 import { Coffee, Heart } from '@phosphor-icons/react/dist/ssr';
 import { useRouter } from 'next/navigation';
 import React from 'react';

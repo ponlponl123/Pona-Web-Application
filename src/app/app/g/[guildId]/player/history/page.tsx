@@ -4,7 +4,7 @@ import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo';
 import { useLanguageContext } from '@/contexts/languageContext';
 import { ArtistBasic, VideoDetailed } from '@/interfaces/ytmusic-api';
 import fetchHistory, { History } from '@/server-side-api/internal/history';
-import { Button, Progress } from '@nextui-org/react';
+import { Button, Progress } from "@heroui/react";
 import {
   MagnifyingGlass,
   MicrophoneStage,

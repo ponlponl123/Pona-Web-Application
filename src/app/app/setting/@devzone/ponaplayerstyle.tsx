@@ -4,7 +4,7 @@ import {
   type PonaPlayerStyle,
   useUserSettingContext,
 } from '@/contexts/userSettingContext';
-import { RadioGroup } from '@nextui-org/react';
+import { RadioGroup } from "@heroui/react";
 import React from 'react';
 
 function PonaPlayerStyle() {

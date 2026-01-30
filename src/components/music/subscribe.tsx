@@ -9,7 +9,7 @@ import {
   ModalFooter,
   ModalHeader,
   useDisclosure,
-} from '@nextui-org/react';
+} from "@heroui/react";
 import { IconProps, type Icon } from '@phosphor-icons/react';
 import { clsx } from 'clsx';
 import { getCookie } from 'cookies-next';

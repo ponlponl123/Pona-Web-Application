@@ -1,6 +1,6 @@
 'use client';
 import { Radio } from '@/components/radio';
-import { RadioGroup } from '@nextui-org/react';
+import { RadioGroup } from "@heroui/react";
 import { SunHorizon } from '@phosphor-icons/react/dist/ssr';
 import { useLanguageContext } from '@/contexts/languageContext';
 import {

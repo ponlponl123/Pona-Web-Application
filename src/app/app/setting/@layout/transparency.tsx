@@ -2,7 +2,7 @@
 import { Radio } from '@/components/radio';
 import { useLanguageContext } from '@/contexts/languageContext';
 import { useUserSettingContext } from '@/contexts/userSettingContext';
-import { RadioGroup } from '@nextui-org/react';
+import { RadioGroup } from "@heroui/react";
 import { CubeTransparent } from '@phosphor-icons/react/dist/ssr';
 import React from 'react';
 

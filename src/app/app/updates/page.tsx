@@ -14,7 +14,7 @@ import {
   Snippet,
   Spinner,
   useDisclosure,
-} from '@nextui-org/react';
+} from '@heroui/react';
 import {
   BellSimple,
   CaretRight,
@@ -22,8 +22,10 @@ import {
   SmileyXEyes,
   Wrench,
 } from '@phosphor-icons/react/dist/ssr';
+import { motion } from 'framer-motion';
 import Markdown from 'marked-react';
 import React from 'react';
+import { ClockLoader } from 'react-spinners';
 import SubscribeModal from './subscribe_modal';
 
 export interface notes {
@@ -92,20 +94,54 @@ function Page() {
         </SubscribeModal>
         {isLoading ? (
           <div className='w-full h-full flex flex-col justify-center items-center m-auto gap-3 my-24'>
-            <Spinner color='current' />
+            <ClockLoader
+              cssOverride={{
+                borderColor: 'var(--heroui-color-current) !important',
+                color: 'var(--heroui-color-current) !important',
+              }}
+              color='currentColor'
+              size={64}
+            />
+            <motion.span
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{
+                duration: 1,
+                repeat: Infinity,
+                repeatType: 'mirror',
+                repeatDelay: 1,
+                ease: 'linear',
+              }}
+            >
+              {language.data.app.updates.loading}
+            </motion.span>
           </div>
         ) : error ? (
-          <div className='w-full h-full flex flex-col justify-center items-center m-auto gap-3 my-24'>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.48 }}
+            className='w-full h-full flex flex-col justify-center items-center m-auto gap-3 my-24'
+          >
             <SmileyXEyes size={48} />
             <h1 className='text-3xl'>
               {language.data.app.updates.error.title}
             </h1>
             <span>{language.data.app.updates.error.description}</span>
-          </div>
+          </motion.div>
         ) : (
           <div className='flex flex-col gap-6 w-full mt-6'>
             {data.map((note: notes, index: number) => (
-              <React.Fragment key={`react-note-tag-group` + index}>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.64, delay: 0.1 * index }}
+                key={`react-note-tag-group` + index}
+                className='flex flex-col gap-4 w-full'
+              >
                 <Chip
                   key={`note-tag-chip` + index}
                   size='lg'
@@ -128,38 +164,46 @@ function Page() {
                 </Chip>
                 <div
                   key={`note-tag-group` + index}
-                  className='flex flex-col gap-2 w-full -mt-3'
+                  className='flex flex-col gap-2 w-full -mt-1'
                 >
                   {note.versions.map((version: string, nindex: number) => {
                     return (
-                      <Button
-                        key={`note` + nindex}
-                        className='w-full py-12 group bg-foreground/10'
-                        style={{ borderRadius: '32px' }}
-                        onClick={() => setSelectedNote({ note, version })}
+                      <motion.div
+                        key={`note-version-button-wrapper` + nindex}
+                        initial={{ opacity: 0, y: 12 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 12 }}
+                        transition={{ duration: 1, delay: 0.1 * nindex }}
                       >
-                        <div className='w-full p-2 flex items-center justify-center gap-3 max-h-none'>
-                          <div className='flex flex-col gap-1'>
-                            <h1 className='text-2xl leading-8'>
-                              {language.data.app.updates.version}{' '}
-                              {version.replace('.md', '')}
-                            </h1>
+                        <Button
+                          key={`note` + nindex}
+                          className='w-full py-12 group bg-foreground/10'
+                          style={{ borderRadius: '32px' }}
+                          onPress={() => setSelectedNote({ note, version })}
+                        >
+                          <div className='w-full p-2 flex items-center justify-center gap-3 max-h-none'>
+                            <div className='flex flex-col gap-1'>
+                              <h1 className='text-2xl leading-8'>
+                                {language.data.app.updates.version}{' '}
+                                {version.replace('.md', '')}
+                              </h1>
+                            </div>
+                            <div className='m-auto mr-4 flex flex-row gap-3 items-center'>
+                              <span className='group-hover:translate-x-1 group-active:-translate-x-1'>
+                                {language.data.app.updates.read}
+                              </span>
+                              <CaretRight
+                                className='group-hover:translate-x-1 group-active:-translate-x-1'
+                                size={18}
+                              />
+                            </div>
                           </div>
-                          <div className='m-auto mr-4 flex flex-row gap-3 items-center'>
-                            <span className='group-hover:translate-x-1 group-active:-translate-x-1'>
-                              {language.data.app.updates.read}
-                            </span>
-                            <CaretRight
-                              className='group-hover:translate-x-1 group-active:-translate-x-1'
-                              size={18}
-                            />
-                          </div>
-                        </div>
-                      </Button>
+                        </Button>
+                      </motion.div>
                     );
                   })}
                 </div>
-              </React.Fragment>
+              </motion.div>
             ))}
           </div>
         )}

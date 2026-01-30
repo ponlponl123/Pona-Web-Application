@@ -4,7 +4,7 @@ import { authorizeUserAccessToken } from '@/server-side-api/discord/fetchUser';
 import { MagicWand, Confetti } from '@phosphor-icons/react/dist/ssr';
 import { useLanguageContext } from '@/contexts/languageContext';
 import { useSearchParams } from 'next/navigation';
-import { Spinner } from '@nextui-org/spinner';
+import { Spinner } from "@heroui/spinner";
 import MyButton from '@/components/button';
 import { setCookie } from 'cookies-next';
 import confetti from 'canvas-confetti';

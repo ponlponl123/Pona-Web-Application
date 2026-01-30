@@ -10,7 +10,7 @@ import {
   Themes,
   useThemeContext,
 } from '@/contexts/themeContext';
-import { Chip } from '@nextui-org/react';
+import { Chip } from "@heroui/react";
 import { MoonStars, PaintBrush, Tree } from '@phosphor-icons/react/dist/ssr';
 import Switch from '@/components/switch';
 import React from 'react';

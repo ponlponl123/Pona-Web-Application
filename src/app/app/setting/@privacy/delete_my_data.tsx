@@ -7,7 +7,7 @@ import {
   ModalContent,
   ModalHeader,
   Spinner,
-} from '@nextui-org/react';
+} from "@heroui/react";
 import { deleteCookie, getCookie } from 'cookies-next';
 import { useRouter } from 'next/navigation';
 import React from 'react';

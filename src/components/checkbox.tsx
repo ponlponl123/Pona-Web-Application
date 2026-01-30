@@ -1,5 +1,5 @@
 import React from 'react';
-import { Checkbox, cn, CheckboxProps } from '@nextui-org/react';
+import { Checkbox, cn, CheckboxProps } from "@heroui/react";
 
 interface CustomCheckboxProps extends CheckboxProps {
   name: string;

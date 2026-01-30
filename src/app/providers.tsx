@@ -1,6 +1,6 @@
 'use client';
 
-import { NextUIProvider } from '@nextui-org/react';
+import { HeroUIProvider } from "@heroui/react";
 import { GlobalProvider } from '@/contexts/globalContext';
 import ThemeContextProvider from '@/contexts/themeContext';
 import { LanguageProvider } from '@/contexts/languageContext';
@@ -24,7 +24,7 @@ export function Providers({
   const date = new Date();
   return (
     <ThemeContextProvider>
-      <NextUIProvider>
+      <HeroUIProvider>
         <LanguageProvider>
           <UserSettingProvider>
             <DiscordUserInfoProvider>
@@ -52,7 +52,7 @@ export function Providers({
             </DiscordUserInfoProvider>
           </UserSettingProvider>
         </LanguageProvider>
-      </NextUIProvider>
+      </HeroUIProvider>
     </ThemeContextProvider>
   );
 }

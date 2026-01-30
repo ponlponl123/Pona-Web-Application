@@ -5,7 +5,7 @@ import {
   Animation,
   useUserSettingContext,
 } from '@/contexts/userSettingContext';
-import { RadioGroup } from '@nextui-org/react';
+import { RadioGroup } from "@heroui/react";
 import { PersonSimpleRun } from '@phosphor-icons/react/dist/ssr';
 import React from 'react';
 

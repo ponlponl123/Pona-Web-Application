@@ -17,19 +17,19 @@ import {
   Form,
   Input,
   ScrollShadow,
-} from '@nextui-org/react';
+} from '@heroui/react';
 import {
+  CaretDownIcon,
   ClockCounterClockwise,
   Confetti,
   DiscordLogo,
   Gear,
-  Hamburger,
   Leaf,
   MagnifyingGlass,
   Question,
 } from '@phosphor-icons/react/dist/ssr';
 import { getCookie } from 'cookies-next';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -196,26 +196,46 @@ function Header() {
                   <Image
                     src={PonaIcon}
                     alt='Pona! Application'
-                    className='max-md:h-6 max-md:w-6'
+                    className='max-md:h-6 max-md:w-6 disable-default-transition apply-long-soft-transition'
                     width={32}
                     height={32}
                   />
-                  {pathname.includes('player') ? (
-                    <>
-                      <span className='max-md:hidden md:contents'>
-                        Pona! {language.data.app.title}
-                      </span>
-                      <span className='max-md:contents hidden'>
-                        {language.data.app.guilds.player.name}
-                      </span>
-                    </>
-                  ) : (
-                    <>
-                      <span className='max-sm:hidden sm:contents'>
-                        Pona! {language.data.app.title}
-                      </span>
-                    </>
-                  )}
+                  <AnimatePresence>
+                    {pathname.includes('player') ? (
+                      <>
+                        <motion.span
+                          layoutId='app-title'
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ duration: 0.16 }}
+                          className='max-md:hidden md:contents'
+                        >
+                          Pona! {language.data.app.title}
+                        </motion.span>
+                        <motion.span
+                          layoutId='app-title'
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ duration: 0.16 }}
+                          className='max-md:contents hidden'
+                        >
+                          {language.data.app.guilds.player.name}
+                        </motion.span>
+                      </>
+                    ) : (
+                      <>
+                        <motion.span
+                          layoutId='app-title'
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ duration: 0.16 }}
+                          className='max-sm:hidden sm:contents'
+                        >
+                          Pona! {language.data.app.title}
+                        </motion.span>
+                      </>
+                    )}
+                  </AnimatePresence>
                 </>
               ) : (
                 'Pona!'
@@ -276,10 +296,18 @@ function Header() {
                           setTypingTimeout(
                             setTimeout(async () => {
                               if (!value) return setSearchSuggestions([]);
-                              const accessTokenType = getCookie('LOGIN_TYPE_');
-                              const accessToken = getCookie('LOGIN_');
-                              if (!accessTokenType || !accessToken)
+                              const accessTokenType = String(
+                                getCookie('LOGIN_TYPE_')
+                              );
+                              const accessToken = String(getCookie('LOGIN_'));
+                              if (
+                                !accessTokenType ||
+                                accessTokenType === 'undefined' ||
+                                !accessToken ||
+                                accessToken === 'undefined'
+                              )
                                 return false;
+
                               const searcher =
                                 await fetchSearchSuggestionResult(
                                   accessTokenType,
@@ -297,9 +325,17 @@ function Header() {
                         onFocus={async () => {
                           setSearching(true);
                           if (!fetchedSearchHistory) {
-                            const accessTokenType = getCookie('LOGIN_TYPE_');
-                            const accessToken = getCookie('LOGIN_');
-                            if (!accessTokenType || !accessToken) return false;
+                            const accessTokenType = String(
+                              getCookie('LOGIN_TYPE_')
+                            );
+                            const accessToken = String(getCookie('LOGIN_'));
+                            if (
+                              !accessTokenType ||
+                              accessTokenType === 'undefined' ||
+                              !accessToken ||
+                              accessToken === 'undefined'
+                            )
+                              return false;
                             const searchHistory = await fetchSearchHistory(
                               accessTokenType,
                               accessToken
@@ -440,20 +476,24 @@ function Header() {
                 </Form>
               </div>
             )}
+          <UserAccountAction minimize={true} className='md:hidden' />
           <MyButton
-            className={`md:hidden btn-icon m-0 ${isMusicApp ? 'max-miniscreen:hidden' : ''}`}
+            className={`md:hidden! btn-icon m-0 !mr-0 ${isMusicApp ? 'max-miniscreen:hidden' : ''}`}
             style='rounded'
             variant='text'
             onClick={() => {
               setNavOpened(value => !value);
             }}
           >
-            <Hamburger size={26} weight={navOpened ? 'fill' : 'regular'} />
+            <CaretDownIcon
+              size={16}
+              weight='bold'
+              className={navOpened ? '-rotate-180' : 'rotate-0'}
+            />
           </MyButton>
-          <UserAccountAction minimize={true} className='md:hidden' />
         </div>
         <nav className={`nav-opened-${navOpened}`}>
-          <div className='md:hidden w-full h-28 border-b mb-6 header border-foreground/10'></div>
+          <div className='md:hidden w-full h-24 border-b mb-6 header border-foreground/10'></div>
           <div className='flex gap-3'>
             {isApp && userInfo && (
               <Scrollbar

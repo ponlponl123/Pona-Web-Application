@@ -7,7 +7,7 @@ import {
   ResultType,
 } from '@/interfaces/ytmusic-api';
 import { msToTime } from '@/utils/time';
-import { Button, Image, Link } from '@nextui-org/react';
+import { Button, Image, Link } from "@heroui/react";
 import { Play } from '@phosphor-icons/react/dist/ssr';
 import clsx from 'clsx';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';

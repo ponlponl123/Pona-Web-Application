@@ -1,5 +1,5 @@
-import { BaseColors, ConfigTheme, ConfigThemes, ThemeColors } from "@nextui-org/react";
-import { NextUIPalette } from "./themes/utils/nextui-color-palette-gen";
+import { BaseColors, ConfigTheme, ConfigThemes, ThemeColors } from "@heroui/react";
+import { NextUIPalette } from "./themes/utils/nextui-color-palette-gen.ts";
 
 import chocolate from "./themes/chocolate.config.ts";
 import cupcake from "./themes/cupcake.config.ts";

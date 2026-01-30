@@ -5,7 +5,7 @@ import {
   useUserSettingContext,
 } from '@/contexts/userSettingContext';
 import { Thermometer as ThermometerIcon } from '@phosphor-icons/react/dist/ssr';
-import { RadioGroup } from '@nextui-org/react';
+import { RadioGroup } from "@heroui/react";
 import { Radio } from '@/components/radio';
 import React from 'react';
 

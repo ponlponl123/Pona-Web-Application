@@ -1,5 +1,5 @@
 'use client';
-import { Button } from '@nextui-org/react';
+import { Button } from "@heroui/react";
 import type { Icon as IconType } from '@phosphor-icons/react';
 import { usePathname } from 'next/navigation';
 import { useRouter } from 'nextjs-toploader/app';

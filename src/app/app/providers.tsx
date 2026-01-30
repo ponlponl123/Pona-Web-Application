@@ -1,11 +1,11 @@
 'use client';
-import React from 'react';
-import { usePathname } from 'next/navigation';
-import { useDiscordUserInfo } from '@/contexts/discordUserInfo';
 import PageAnimatePresence from '@/components/HOC/PageAnimatePresence';
 import Scrollbar from '@/components/scrollbar';
+import { useDiscordUserInfo } from '@/contexts/discordUserInfo';
+import { Spinner } from "@heroui/react";
+import { usePathname } from 'next/navigation';
+import React from 'react';
 import RedirectOauth from './redirectOauth';
-import { Spinner } from '@nextui-org/react';
 
 function Providers({ children }: { children: React.ReactNode }) {
   const pathname = usePathname() || '';

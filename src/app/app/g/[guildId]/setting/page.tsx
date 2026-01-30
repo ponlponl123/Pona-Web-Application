@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { Alert, Chip, Spinner } from '@nextui-org/react';
+import { Alert, Chip, Spinner } from "@heroui/react";
 import { useLanguageContext } from '@/contexts/languageContext';
 import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo';
 import { Gear } from '@phosphor-icons/react/dist/ssr';

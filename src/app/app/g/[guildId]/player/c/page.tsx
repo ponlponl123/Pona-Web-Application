@@ -26,7 +26,7 @@ import {
   Image as NextImage,
   Progress,
   Spinner,
-} from '@nextui-org/react';
+} from "@heroui/react";
 import {
   CaretLeft,
   CaretRight,

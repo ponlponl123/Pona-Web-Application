@@ -1,4 +1,4 @@
-import { NextUIPalette } from '@/../themes/utils/nextui-color-palette-gen';
+import { NextUIPalette } from '@/../themes/utils/nextui-color-palette-gen.ts';
 
 export interface ThumbnailFull {
   url: string;

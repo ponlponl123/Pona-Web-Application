@@ -6,7 +6,7 @@ import { useUserSettingContext } from '@/contexts/userSettingContext';
 import { AnimatePresence, motion } from 'framer-motion';
 import React from 'react';
 
-import { Button, Image, Link, Slider } from '@nextui-org/react';
+import { Button, Image, Link, Slider } from "@heroui/react";
 import {
   CaretDown,
   CaretUp,

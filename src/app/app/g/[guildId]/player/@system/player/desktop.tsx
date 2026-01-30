@@ -24,7 +24,7 @@ import {
   PopoverTrigger,
   Slider,
   Tooltip,
-} from '@nextui-org/react';
+} from "@heroui/react";
 import {
   CaretDown,
   CaretLineLeft,

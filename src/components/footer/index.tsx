@@ -1,22 +1,22 @@
 'use client';
-import React, { ChangeEvent } from 'react';
+import { useLanguageContext } from '@/contexts/languageContext';
+import { langs, languageKeys } from '@/utils/i18n';
+import { Avatar, Select, SelectItem, Tooltip } from '@heroui/react';
 import {
-  GithubLogo,
   Atom,
   Bird,
+  Coffee,
   Cube,
   Gavel,
+  GithubLogo,
+  PersonSimpleRun,
+  PottedPlant,
   SmileyWink,
   Sunglasses,
-  PersonSimpleRun,
-  Coffee,
-  PottedPlant,
 } from '@phosphor-icons/react/dist/ssr';
-import { useLanguageContext } from '@/contexts/languageContext';
-import { Select, SelectItem, Avatar, Tooltip } from '@nextui-org/react';
-import { langs, languageKeys } from '@/utils/i18n';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { ChangeEvent } from 'react';
 import AppVersion from '../app-version';
 
 function Footer() {
@@ -32,9 +32,9 @@ function Footer() {
           <AppVersion />
         </span>
         <span className='opacity-50 text-xs max-md:text-center'>
-          © 2024 - 2025 Pona! Application - Ponlponl123 Projects And the
-          Ponlponl123.com Design are trademarks, services marks, and/or
-          registered trademarks of Ponlponl123.com
+          © 2024 - {new Date().getFullYear()} Pona! Application - Ponlponl123
+          Projects And the Ponlponl123.com Design are trademarks, services
+          marks, and/or registered trademarks of Ponlponl123.com
         </span>
         <span className='opacity-30 text-xs max-md:text-center flex flex-wrap gap-1 items-center'>
           PhosphorIcons <SmileyWink size={12} />, Framer Motion{' '}
@@ -104,6 +104,13 @@ function Footer() {
         <Select
           color='default'
           className='w-32'
+          radius='full'
+          variant='bordered'
+          classNames={{
+            trigger:
+              'border-2 border-default-700/10 dark:border-default-900/10 px-4',
+            label: '-mt-3',
+          }}
           size='sm'
           label={language.data.footer.settings.lang.label}
           selectedKeys={[language.key]}

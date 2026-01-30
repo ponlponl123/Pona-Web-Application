@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useLanguageContext } from '@/contexts/languageContext';
-import { ScrollShadow } from '@nextui-org/react';
+import { ScrollShadow } from "@heroui/react";
 import { Confetti } from '@phosphor-icons/react/dist/ssr';
 import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo';
 

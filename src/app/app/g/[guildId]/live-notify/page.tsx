@@ -1,7 +1,7 @@
 'use client';
 import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo';
 import { useLanguageContext } from '@/contexts/languageContext';
-import { Alert, Chip, Spinner } from '@nextui-org/react';
+import { Alert, Chip, Spinner } from "@heroui/react";
 import { Broadcast } from '@phosphor-icons/react/dist/ssr';
 import React from 'react';
 

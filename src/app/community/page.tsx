@@ -10,7 +10,7 @@ import {
 } from '@phosphor-icons/react/dist/ssr';
 import React from 'react';
 
-import { Avatar, Image, Link } from '@nextui-org/react';
+import { Avatar, Image, Link } from "@heroui/react";
 import confetti from 'canvas-confetti';
 import { langs } from '@/utils/i18n';
 import { fonts_credits } from '@/data/fonts-author';

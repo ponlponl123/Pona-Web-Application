@@ -1,7 +1,7 @@
 import { Track, UnresolvedTrack } from '@/interfaces/ponaPlayer';
+import DynamicNextUIThemeUpdate from '../../themes/utils/dynamic-nextui-theme-update.ts';
+import nextuiColorPalette from '../../themes/utils/nextui-color-palette-gen.ts';
 import { getAccentHEXColorFromUrl } from './colorUtils';
-import nextuiColorPalette from '../../themes/utils/nextui-color-palette-gen';
-import DynamicNextUIThemeUpdate from '../../themes/utils/dynamic-nextui-theme-update';
 
 export function proxyArtwork(
   track: Track | UnresolvedTrack

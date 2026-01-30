@@ -1,11 +1,12 @@
 'use client';
-import React from 'react';
-import * as motion from 'framer-motion/client';
-import { useLanguageContext } from '@/contexts/languageContext';
+import AppVersion from '@/components/app-version';
+import Button from '@/components/button';
 import { useDiscordUserInfo } from '@/contexts/discordUserInfo';
-import { Confetti, Smiley, SmileyWink } from '@phosphor-icons/react/dist/ssr';
-import { Button, Spinner } from '@nextui-org/react';
-import WeatherCard from '@/components/weathercard';
+import { useLanguageContext } from '@/contexts/languageContext';
+import { Link } from '@heroui/react';
+import { NutIcon, SmileyWinkIcon } from '@phosphor-icons/react/dist/ssr';
+import { motion } from 'framer-motion';
+import NextLink from 'next/link';
 
 function Page() {
   const { language } = useLanguageContext();
@@ -21,17 +22,6 @@ function Page() {
           ? 'evening'
           : 'night';
 
-  const pona_chat_suggests = [
-    {
-      title: language.data.app.home.pona_ai.suggests.surprise_me,
-      icon: Confetti,
-    },
-    {
-      title: language.data.app.home.pona_ai.suggests.howareutoday,
-      icon: Smiley,
-    },
-  ];
-
   return (
     <main id='app-panel'>
       <div className='min-h-36 max-h-96 h-screen w-full absolute'>
@@ -41,13 +31,12 @@ function Page() {
         ></div>
       </div>
       <main id='app-workspace' className='relative z-10'>
-        <h1 className='text-2xl mb-4 mt-64'>
-          {language.data.app.home.title.replace(
-            '[user]',
-            userInfo?.global_name as string
-          )}
-        </h1>
-        <h1 className='text-5xl'>
+        <motion.h1
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.32, delay: 0.24 }}
+          className='text-2xl mb-4 mt-64'
+        >
           {hours > 4 && hours < 10
             ? language.data.home.welcome_message.morning
             : hours > 9 && hours < 16
@@ -55,90 +44,47 @@ function Page() {
               : hours > 15 && hours < 20
                 ? language.data.home.welcome_message.evening
                 : language.data.home.welcome_message.night}
-        </h1>
+        </motion.h1>
+        <motion.h1
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.32, delay: 0.32 }}
+          className='text-6xl font-bold flex items-center gap-3'
+        >
+          <SmileyWinkIcon weight='fill' size={64} />{' '}
+          {language.data.app.home.title.replace(
+            '[user]',
+            userInfo?.global_name as string
+          )}
+        </motion.h1>
         <div className='mt-16'></div>
         <div className='flex max-lg:flex-wrap items-start gap-6 p-4 mt-4 w-full'>
           <motion.div
-            initial={{ opacity: 0, y: -12, scale: 1.06 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{
-              duration: 0.4,
-              scale: { type: 'spring', visualDuration: 0.4, bounce: 0.5 },
-            }}
-            className='w-full lg:max-w-sm'
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.32, delay: 0.48 }}
+            className='relative overflow-hidden w-full p-16 max-sm:p-8 rounded-3xl flex flex-col gap-3 bg-gradient-to-br from-primary-50/10 to-primary-300/10 shadow-2xl shadow-primary-300/10'
           >
-            <WeatherCard />
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, scale: 1.06 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{
-              duration: 0.4,
-              delay: 0.2,
-              scale: { type: 'spring', visualDuration: 0.4, bounce: 0.5 },
-            }}
-            className='w-full'
-          >
-            <div className='pona-chat-card w-full min-h-96 p-6 rounded-3xl flex flex-col gap-3 bg-primary-300/5'>
-              <div className='flex gap-4 items-center justify-between'>
-                <div className='flex items-center justify-center gap-4'>
-                  <SmileyWink weight='fill' size={64} />
-                  <div className='flex flex-col gap-2'>
-                    <h1 className='text-3xl'>
-                      {language.data.app.home.pona_ai.hello}
-                    </h1>
-                    <h3 className='flex flex-row flex-wrap text-sm gap-2 justify-start items-center'>
-                      {pona_chat_suggests.map((suggest, index) => (
-                        <motion.div
-                          key={index}
-                          initial={{ opacity: 0, scale: 1.96 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{
-                            duration: 0.32,
-                            delay: 0.64 + 0.32 * index,
-                            scale: {
-                              type: 'spring',
-                              visualDuration: 0.4,
-                              bounce: 0.5,
-                            },
-                          }}
-                        >
-                          <Button
-                            radius='full'
-                            color='primary'
-                            size='sm'
-                            startContent={<suggest.icon weight='fill' />}
-                            className='px-2 gap-1'
-                          >
-                            {suggest.title}
-                          </Button>
-                        </motion.div>
-                      ))}
-                    </h3>
-                  </div>
-                </div>
-              </div>
-              <div className='flex flex-col gap-4'>
-                <div className='flex flex-col'>
-                  <Spinner color='primary' size='lg' className='mt-20' />
-                  <motion.span
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 0.48 }}
-                    transition={{
-                      duration: 1.6,
-                      delay: 4.8,
-                      scale: {
-                        type: 'spring',
-                        visualDuration: 0.4,
-                        bounce: 0.5,
-                      },
-                    }}
-                    className='w-full text-center mt-4'
-                  >
-                    {language.data.app.home.pona_ai.connecting}
-                  </motion.span>
-                </div>
-              </div>
+            <h1 className='text-4xl max-sm:text-2xl font-bold'>
+              What's new in Pona! v<AppVersion />?
+            </h1>
+            <p>
+              See all the latest features, improvements, and bug fixes in our
+              newest release.
+            </p>
+            <div className='flex flex-col gap-2 mt-4'>
+              <Link as={NextLink} href='/app/updates'>
+                <Button size='small' variant='primary' className='w-max'>
+                  Take a look
+                </Button>
+              </Link>
+            </div>
+            <div className='absolute bottom-4 right-4'>
+              <NutIcon
+                size={128}
+                className='fill-current opacity-10 scale-200 -rotate-z-45'
+                weight='fill'
+              />
             </div>
           </motion.div>
         </div>

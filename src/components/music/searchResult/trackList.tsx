@@ -1,7 +1,7 @@
 import { useGlobalContext } from '@/contexts/globalContext';
 import { AlbumTrack } from '@/interfaces/ytmusic-api';
 import { msToTime } from '@/utils/time';
-import { Image } from '@nextui-org/react';
+import { Image } from "@heroui/react";
 import PlayButton from '../play';
 import { combineArtistName } from './track';
 

@@ -1,6 +1,6 @@
 'use client';
 import { useLanguageContext } from '@/contexts/languageContext';
-import { Chip } from '@nextui-org/react';
+import { Chip } from "@heroui/react";
 import { Info, Keyboard } from '@phosphor-icons/react/dist/ssr';
 import React from 'react';
 

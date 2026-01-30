@@ -1,5 +1,5 @@
 'use client';
-import { Tooltip } from '@nextui-org/react';
+import { Tooltip } from "@heroui/react";
 import { getCookie, setCookie } from 'cookies-next';
 import React, {
   createContext,
@@ -103,9 +103,24 @@ export function ThemeContextProvider({
   children: React.ReactNode;
 }) {
   const cookieTheme = getCookie('theme');
-  const getTheme: DynamicTheme = cookieTheme
-    ? (JSON.parse(String(cookieTheme)) as DynamicTheme)
-    : defaultDynamicTheme;
+  let getTheme: DynamicTheme = defaultDynamicTheme;
+  if (cookieTheme) {
+    const raw = String(cookieTheme);
+    if (raw.trim().startsWith('{') || raw.trim().startsWith('[')) {
+      try {
+        getTheme = JSON.parse(raw) as DynamicTheme;
+      } catch (e) {
+        getTheme = defaultDynamicTheme;
+      }
+    } else {
+      const singleTheme = raw.replace(/^\s+|\s+$/g, '') as Themes;
+      getTheme = {
+        ...defaultDynamicTheme,
+        sync: false,
+        single: singleTheme,
+      };
+    }
+  }
   const [theme, setThemeState] = React.useState<DynamicTheme>(getTheme);
 
   useEffect(() => {

@@ -3,7 +3,7 @@ import { Track } from '@/interfaces/ponaPlayer';
 import { ArtistDetailed, PlaylistDetailed } from '@/interfaces/ytmusic';
 import { AlbumDetailed, VideoDetailed } from '@/interfaces/ytmusic-api';
 import { proxyArtwork } from '@/utils/track';
-import { Button, Image } from '@nextui-org/react';
+import { Button, Image } from "@heroui/react";
 import { useRouter } from 'next/navigation';
 import PlayButton from './play';
 import { combineArtistName } from './searchResult/track';

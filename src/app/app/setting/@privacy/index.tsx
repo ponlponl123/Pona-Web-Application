@@ -15,7 +15,7 @@ import {
   ModalHeader,
   useDisclosure,
   User,
-} from '@nextui-org/react';
+} from "@heroui/react";
 import DeleteMyData from './delete_my_data';
 
 function Privacy() {

@@ -1,7 +1,7 @@
 import { useLanguageContext } from '@/contexts/languageContext';
 import { useUserSettingContext } from '@/contexts/userSettingContext';
 import { WMO_CODES_ICONS } from '@/data/wmo-code-icons';
-import { Spinner } from '@nextui-org/react';
+import { Spinner } from "@heroui/react";
 import { IconProps } from '@phosphor-icons/react';
 import {
   ArrowDown,
@@ -68,67 +68,85 @@ const WeatherCard: React.FC = () => {
 
   React.useEffect(() => {
     (async () => {
-      let lat = 0;
-      let lng = 0;
-      if (userSetting.location === 'auto') {
-        // get latitude and longitude from ip address
-        await fetch('https://ipapi.co/json/')
-          .then(response => {
-            if (!response.ok) {
-              throw new Error(`HTTP error! status: ${response.status}`);
+      try {
+        let lat: number | null = null;
+        let lng: number | null = null;
+
+        if (userSetting.location === 'auto') {
+          // Try IP-based geolocation first
+          try {
+            const ipRes = await fetch('https://ipapi.co/json/');
+            if (ipRes.ok) {
+              const ipData = await ipRes.json();
+              lat = ipData?.latitude ?? null;
+              lng = ipData?.longitude ?? null;
+            } else {
+              console.error('ipapi.co returned non-ok status', ipRes.status);
             }
-            return response.json();
-          })
-          .then(data => {
-            lat = data.latitude;
-            lng = data.longitude;
-          })
-          .catch(error => {
-            console.error(
-              'There has been a problem with your fetch operation:',
-              error
-            );
-          });
+          } catch (err) {
+            console.error('Failed to fetch ip location:', err);
+          }
 
-        // navigator.geolocation.getCurrentPosition(async (position) => {
-        //   lat = position.coords.latitude;
-        //   lng = position.coords.longitude;
-        // });
-        // // Handle error
-        // navigator.geolocation.getCurrentPosition(
-        //   () => {},
-        //   (error: GeolocationPositionError) => {
-        //     if (error.code === error.PERMISSION_DENIED) {
-        //       console.log('User denied the request for Geolocation.');
-        //     } else if (error.code === error.POSITION_UNAVAILABLE) {
-        //       console.log('Location information is unavailable.');
-        //     } else if (error.code === error.TIMEOUT) {
-        //       console.log('The request to get user location timed out.');
-        //     } else {
-        //       console.log('An unknown error occurred.', error);
-        //     }
-        //   }
-        // );
-        // // Fallback to default location if autolocation fails
-        // lat = 37.7749; // Default latitude
-        // lng = -122.4194; // Default longitude
-      } else if (userSetting.location === 'surprise') {
-        lat = Math.random() * (90 - -90) + -90;
-        lng = Math.random() * (180 - -180) + -180;
-      } else if (
-        typeof userSetting.location === 'object' &&
-        'lat' in userSetting.location &&
-        'lng' in userSetting.location
-      ) {
-        lat = userSetting.location.lat;
-        lng = userSetting.location.lng;
+          // If IP lookup failed, try browser geolocation (best-effort)
+          if (
+            (lat === null || lng === null) &&
+            typeof navigator !== 'undefined' &&
+            'geolocation' in navigator
+          ) {
+            await new Promise<void>(resolve => {
+              navigator.geolocation.getCurrentPosition(
+                position => {
+                  lat = position.coords.latitude;
+                  lng = position.coords.longitude;
+                  resolve();
+                },
+                () => {
+                  resolve();
+                },
+                { timeout: 5000 }
+              );
+            });
+          }
+        } else if (userSetting.location === 'surprise') {
+          lat = Math.random() * (90 - -90) + -90;
+          lng = Math.random() * (180 - -180) + -180;
+        } else if (
+          typeof userSetting.location === 'object' &&
+          'lat' in userSetting.location &&
+          'lng' in userSetting.location
+        ) {
+          lat = userSetting.location.lat;
+          lng = userSetting.location.lng;
+        }
+
+        // Fallback to a sane default if we still don't have coordinates
+        if (lat === null || lng === null) {
+          lat = 37.7749; // San Francisco fallback
+          lng = -122.4194;
+        }
+
+        const url = `/api/weather/${lat}/${lng}${userSetting.thermometer === 'f' ? '?tmp_unit=fahrenheit' : ''}`;
+        let response: Response;
+        try {
+          response = await fetch(url);
+        } catch (err) {
+          console.error(
+            'There has been a problem with your fetch operation:',
+            err
+          );
+          return;
+        }
+
+        if (!response.ok) {
+          console.error('Weather API returned non-ok status:', response.status);
+          return;
+        }
+
+        const data = await response.json();
+        if (data?.data) setWeatherData(data as ResponseData);
+      } catch (err) {
+        console.error('Unexpected error in WeatherCard effect:', err);
       }
-
-      const response = await fetch(
-        `/api/weather/${lat}/${lng}${userSetting.thermometer === 'f' ? '?tmp_unit=fahrenheit' : ''}`
-      );
-      const data = await response.json();
-      if (response.ok && data.data) setWeatherData(data as ResponseData);
     })();
   }, [userSetting]);
 

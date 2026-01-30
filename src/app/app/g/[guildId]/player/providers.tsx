@@ -1,5 +1,5 @@
 'use client';
-import { Image } from '@nextui-org/react';
+import { Image } from '@heroui/react';
 import React from 'react';
 import { useMediaQuery } from 'react-responsive';
 
@@ -65,7 +65,7 @@ function Providers({ children }: { children: React.ReactNode }) {
       <main
         id='app-panel'
         ref={musicAppContent}
-        className='relative bg-gradient-to-t light:from-warning/10 to-primary/20 h-screen overflow-x-hidden overflow-y-auto scrollbar-hide -mb-6 pb-12 select-none'
+        className='relative h-screen overflow-x-hidden overflow-y-auto scrollbar-hide -mb-6 pb-12 select-none'
       >
         <div className='absolute w-full h-max max-h-[48vh] min-h-48 top-0 left-0 z-[1] opacity-40 pointer-events-none scale-[2]'>
           {userSetting.transparency ? (

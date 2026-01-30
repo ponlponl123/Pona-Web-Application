@@ -10,7 +10,7 @@ import {
   ModalFooter,
   ModalHeader,
   useDisclosure,
-} from '@nextui-org/react';
+} from "@heroui/react";
 import { Play } from '@phosphor-icons/react/dist/ssr';
 import clsx from 'clsx';
 import { getCookie } from 'cookies-next';

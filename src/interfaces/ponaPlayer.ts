@@ -1,10 +1,10 @@
 import {
-  TextBasedChannel,
-  VoiceBasedChannel,
-  User,
   ClientUser,
+  TextBasedChannel,
+  User,
+  VoiceBasedChannel,
 } from 'discord.js';
-import { NextUIPalette } from '../../themes/utils/nextui-color-palette-gen';
+import { NextUIPalette } from '../../themes/utils/nextui-color-palette-gen.ts';
 
 export interface Band {
   band: number;

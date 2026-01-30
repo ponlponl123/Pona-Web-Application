@@ -3,7 +3,7 @@ import Map from '@/components/map-picker';
 import { Radio } from '@/components/radio';
 import { useLanguageContext } from '@/contexts/languageContext';
 import { useUserSettingContext } from '@/contexts/userSettingContext';
-import { RadioGroup } from '@nextui-org/react';
+import { RadioGroup } from "@heroui/react";
 import { MapPinArea } from '@phosphor-icons/react/dist/ssr';
 import React from 'react';
 

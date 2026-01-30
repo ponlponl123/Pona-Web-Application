@@ -1,17 +1,17 @@
 'use client';
 import MyButton from '@/components/button';
+import { useLanguageContext } from '@/contexts/languageContext';
+import { minds } from '@/data/minds';
+import { Select, SelectItem } from '@heroui/react';
 import {
   ClockCountdown,
   Confetti,
   Cookie,
 } from '@phosphor-icons/react/dist/ssr';
-import { useLanguageContext } from '@/contexts/languageContext';
-import { Select, SelectItem } from '@nextui-org/react';
-import { minds } from '@/data/minds';
 import Link from 'next/link';
 
-import confetti from 'canvas-confetti';
 import CountdownTimer from '@/components/timer';
+import confetti from 'canvas-confetti';
 
 export default function Home() {
   const { language } = useLanguageContext();
@@ -26,7 +26,7 @@ export default function Home() {
     <main className='w-full min-h-screen main-bg'>
       <div className='grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20'>
         <main className='w-full max-w-screen-lg flex flex-col gap-8 row-start-2 items-center sm:items-start'>
-          <div className='bg-white bg-opacity-30 max-miniscreen:hidden rounded-2xl flex flex-col gap-2 p-4 max-sm:p-3 backdrop-blur-sm max-sm:text-sm max-sm:absolute max-sm:bottom-24'>
+          <div className='bg-white/30 max-miniscreen:hidden rounded-2xl flex flex-col gap-2 p-4 max-sm:p-3 backdrop-blur-sm max-sm:text-sm max-sm:absolute max-sm:bottom-24'>
             <h1 className='flex gap-3 items-center text-xl mb-0 max-sm:text-lg'>
               <Cookie
                 alt='Cookie!'
@@ -99,7 +99,7 @@ export default function Home() {
         {(newYearIn / 1000 < 24 * 60 * 60 || newYearEvent) && (
           <div
             id='newYearTimer'
-            className='flex gap-2 items-center justify-center z-40 fixed bottom-4 left-1/2 -translate-x-1/2 p-3 bg-white bg-opacity-60 border-white border-2 rounded-full max-sm:hidden backdrop-blur-sm'
+            className='flex gap-2 items-center justify-center z-40 fixed bottom-4 left-1/2 -translate-x-1/2 p-3 bg-white/60 border-white border-2 rounded-full max-sm:hidden backdrop-blur-sm'
           >
             <ClockCountdown size={18} />
             <p className='text-sm font-bold max-sm:text-xxs'>

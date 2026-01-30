@@ -1,7 +1,5 @@
-import { nextui } from "@nextui-org/react";
 import Typography from "@tailwindcss/typography";
 import type { Config } from "tailwindcss";
-import themes from "./themes.config.ts";
 
 const config: Config = {
   content: [
@@ -9,7 +7,7 @@ const config: Config = {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/styles/themes.css",
-    "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}",
+    "./node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
@@ -27,11 +25,7 @@ const config: Config = {
   darkMode: "class",
   plugins: [
     Typography,
-    nextui({
-      prefix: "pona-app",
-      addCommonColors: true,
-      themes: themes,
-    })
+    
   ],
 };
 export default config;

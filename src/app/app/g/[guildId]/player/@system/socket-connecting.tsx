@@ -2,7 +2,7 @@
 import React from 'react';
 import CountUp from 'react-countup';
 import { motion } from 'framer-motion';
-import { Chip, Progress } from '@nextui-org/react';
+import { Chip, Progress } from "@heroui/react";
 import { Plugs, Warning } from '@phosphor-icons/react/dist/ssr';
 import { useLanguageContext } from '@/contexts/languageContext';
 

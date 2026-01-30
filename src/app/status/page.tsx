@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import MyButton from '@/components/button';
-import { Spinner } from '@nextui-org/spinner';
+import { Spinner } from "@heroui/spinner";
 import { Cube } from '@phosphor-icons/react/dist/ssr';
 import ManagerChart from '@/components/status/managerChart';
 
@@ -11,7 +11,7 @@ import redis from '@/server-side-api/redis';
 import socketio from '@/server-side-api/socketio';
 import lavalink from '@/server-side-api/lavalink';
 import clusterInfo, { ClusterInfo } from '@/server-side-api/clusterInfo';
-import { Button } from '@nextui-org/react';
+import { Button } from "@heroui/react";
 import { useLanguageContext } from '@/contexts/languageContext';
 
 export type viewType =

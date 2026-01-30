@@ -6,7 +6,7 @@ import {
   Playlist,
   Plus,
 } from '@phosphor-icons/react/dist/ssr';
-import { Button } from '@nextui-org/react';
+import { Button } from "@heroui/react";
 
 function Page() {
   const { language } = useLanguageContext();

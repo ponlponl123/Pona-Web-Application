@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import { CaretRight } from '@phosphor-icons/react/dist/ssr';
-import { Spinner, Avatar, Button } from '@nextui-org/react';
+import { Spinner, Avatar, Button } from "@heroui/react";
 import { useRouter } from 'next/navigation';
 import { GuildInfo } from '@/server-side-api/discord/fetchGuild';
 

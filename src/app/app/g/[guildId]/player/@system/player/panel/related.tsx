@@ -8,7 +8,7 @@ import {
 } from '@/contexts/ponaMusicCacheContext';
 import { getSongRelated } from '@/server-side-api/internal/search';
 import { usePrevNextButtons } from '@/utils/Embla/CarouselArrowButtons';
-import { Button, Spinner } from '@nextui-org/react';
+import { Button, Spinner } from "@heroui/react";
 import { CaretLeft, CaretRight, Ghost } from '@phosphor-icons/react/dist/ssr';
 import { getCookie } from 'cookies-next';
 import useEmblaCarousel from 'embla-carousel-react';
@@ -234,9 +234,9 @@ const Related = React.memo(({ videoId }: { videoId?: string }) => {
     };
 
     const fetchRelated = async () => {
-      const accessToken = getCookie('LOGIN_');
-      const accessTokenType = getCookie('LOGIN_TYPE_');
-      if (!accessToken || !accessTokenType) return setFetchedCache(null);
+      const accessToken = String(getCookie('LOGIN_'));
+      const accessTokenType = String(getCookie('LOGIN_TYPE_'));
+      if (!accessToken || accessTokenType === 'undefined') return setFetchedCache(null);
       const songRelated = await getSongRelated(
         accessTokenType,
         accessToken,

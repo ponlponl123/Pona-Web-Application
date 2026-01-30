@@ -12,7 +12,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalProps,
-} from '@nextui-org/react';
+} from "@heroui/react";
 import { Wrench } from '@phosphor-icons/react/dist/ssr';
 import React from 'react';
 

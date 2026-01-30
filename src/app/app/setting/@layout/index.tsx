@@ -1,12 +1,12 @@
 'use client';
 import { useLanguageContext } from '@/contexts/languageContext';
 import { Palette } from '@phosphor-icons/react/dist/ssr';
-import React from 'react';
-import Theme from './theme';
-import Transparency from './transparency';
-import TimeFormat from './timeformat';
-import Thermometer from './thermometer';
 import Animations from './animations';
+import Player from './player';
+import Theme from './theme';
+import Thermometer from './thermometer';
+import TimeFormat from './timeformat';
+import Transparency from './transparency';
 
 function Layout() {
   const { language } = useLanguageContext();
@@ -21,6 +21,7 @@ function Layout() {
         {language.data.app.setting.layout.title}
       </h1>
       <Theme />
+      <Player />
       <Transparency />
       <TimeFormat />
       <Thermometer />

@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { Switch, SwitchProps, cn } from '@nextui-org/react';
+import { Switch, SwitchProps, cn } from "@heroui/react";
 
 interface CustomSwitchProps extends SwitchProps {
   name: string;

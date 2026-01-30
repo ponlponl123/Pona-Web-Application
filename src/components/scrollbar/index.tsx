@@ -3,11 +3,12 @@ import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo';
 import { useGlobalContext } from '@/contexts/globalContext';
 import { useLanguageContext } from '@/contexts/languageContext';
 import { UserInfo } from '@/server-side-api/discord/fetchUser';
-import { Avatar, Button, Chip, ScrollShadow } from '@nextui-org/react';
+import { Avatar, Button, Chip, ScrollShadow } from '@heroui/react';
 import {
   Broadcast,
   Bug,
   CaretLeft,
+  CaretLineLeftIcon,
   ChartPieSlice,
   ClockCounterClockwise,
   Compass,
@@ -19,6 +20,7 @@ import {
   HouseSimple,
   Keyboard,
   MapPinArea,
+  MonitorPlayIcon,
   MusicNoteSimple,
   PaintBrush,
   Palette,
@@ -26,15 +28,16 @@ import {
   Planet,
   Playlist,
   ShieldCheckered,
-  Sparkle,
   StarAndCrescent,
   SunHorizon,
   Thermometer,
   Wrench,
 } from '@phosphor-icons/react/dist/ssr';
+import clsx from 'clsx';
 import { AnimatePresence, motion } from 'framer-motion';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useState } from 'react';
+import AppVersion from '../app-version';
 import FrozenRoute from '../HOC/FrozenRoute';
 import ActivationLink from './activationLink';
 
@@ -86,24 +89,8 @@ function Scrollbar({
 
   return (
     <main
-      className={`scrollbar ${!nav ? `${canCollapsed && sidebarCollapsed ? 'min-w-16 w-16 max-w-16 p-2' : 'min-w-72 w-72 max-w-72 p-6'} relative h-screen max-md:hidden pt-24 flex flex-col gap-2` : 'md:hidden w-full flex flex-col gap-2'}`}
+      className={`scrollbar disable-default-transition apply-long-soft-transition !duration-700 ${!nav ? `${canCollapsed && sidebarCollapsed ? 'min-w-16 w-16 max-w-16 p-2' : 'min-w-72 w-72 max-w-72 p-6'} relative h-screen max-md:hidden pt-24 flex flex-col gap-2` : 'md:hidden w-full flex flex-col gap-2'}`}
     >
-      {canCollapsed && (
-        <Button
-          className={`absolute -right-[0.2rem] top-24 min-w-0 w-1 max-w-1 h-[calc(100vh_-_12rem)] z-20 opacity-0 hover:scale-[1.15] hover:opacity-100`}
-          isIconOnly
-          onPress={() => {
-            setSidebarCollapsed(value => {
-              if (onCollapsed) onCollapsed(!value);
-              if (!value) document.body.classList.add('sidebar-collapsed');
-              else document.body.classList.remove('sidebar-collapsed');
-              return !value;
-            });
-          }}
-        >
-          <CaretLeft />
-        </Button>
-      )}
       <AnimatePresence mode='wait'>
         <motion.div
           className='max-h-[calc(100%_-_64px)] w-full'
@@ -159,6 +146,14 @@ function Scrollbar({
                           icon={PaintBrush}
                         >
                           {language.data.app.setting.layout.theme.title}
+                        </ActivationLink>
+                        <ActivationLink
+                          iconOnly={canCollapsed && sidebarCollapsed}
+                          onClick={handlePushLocation}
+                          href={`#layout-player`}
+                          icon={MonitorPlayIcon}
+                        >
+                          {language.data.app.setting.layout.player.title}
                         </ActivationLink>
                         <ActivationLink
                           iconOnly={canCollapsed && sidebarCollapsed}
@@ -253,7 +248,7 @@ function Scrollbar({
                     >
                       {language.data.app.guilds.name}
                     </ActivationLink>
-                    <ActivationLink
+                    {/* <ActivationLink
                       iconOnly={canCollapsed && sidebarCollapsed}
                       onClick={handlePushLocation}
                       href='/app/chat'
@@ -263,7 +258,7 @@ function Scrollbar({
                       <Chip size='sm'>
                         {language.data.extensions.comingsoon}
                       </Chip>
-                    </ActivationLink>
+                    </ActivationLink> */}
                     <ActivationLink
                       iconOnly={canCollapsed && sidebarCollapsed}
                       onClick={handlePushLocation}
@@ -281,7 +276,9 @@ function Scrollbar({
                     >
                       {language.data.app.updates.name}{' '}
                       <Chip color='primary' size='sm'>
-                        {language.data.extensions.new}
+                        <span className='font-bold'>
+                          v<AppVersion />
+                        </span>
                       </Chip>
                     </ActivationLink>
                   </>
@@ -416,7 +413,7 @@ function Scrollbar({
         </motion.div>
       </AnimatePresence>
       {!nav && <div className='mt-auto'></div>}
-      {isOwner && (
+      {false && isOwner && (
         <>
           <ActivationLink
             iconOnly={canCollapsed && sidebarCollapsed}
@@ -428,43 +425,77 @@ function Scrollbar({
           </ActivationLink>
         </>
       )}
-      <AnimatePresence mode='wait'>
-        <motion.div key={String(`${inSetting}`)}>
-          <FrozenRoute>
-            <motion.main
-              variants={variants}
-              initial='hidden'
-              exit='exit'
-              animate='enter'
-              transition={{ type: 'tween', duration: 0.12 }}
-              key='Bottom-Menu'
-            >
-              {inSetting ? (
-                <>
-                  <ActivationLink
-                    iconOnly={canCollapsed && sidebarCollapsed}
-                    onClick={handleBackNavigation}
-                    icon={CaretLeft}
-                  >
-                    {language.data.app.setting.back}
-                  </ActivationLink>
-                </>
-              ) : (
-                <>
-                  <ActivationLink
-                    iconOnly={canCollapsed && sidebarCollapsed}
-                    onClick={handlePushLocation}
-                    href='/app/setting'
-                    icon={Gear}
-                  >
-                    {language.data.app.setting.name}
-                  </ActivationLink>
-                </>
+      <div
+        className={clsx('flex', !sidebarCollapsed ? '!flex-row' : 'flex-col')}
+      >
+        <AnimatePresence mode='wait'>
+          <motion.div className='flex-1 min-w-0' key={String(`${inSetting}`)}>
+            <FrozenRoute>
+              <motion.main
+                variants={variants}
+                initial='hidden'
+                exit='exit'
+                animate='enter'
+                transition={{ type: 'tween', duration: 0.12 }}
+                key='Bottom-Menu'
+              >
+                {inSetting ? (
+                  <>
+                    <ActivationLink
+                      className='w-full'
+                      iconOnly={canCollapsed && sidebarCollapsed}
+                      onClick={handleBackNavigation}
+                      icon={CaretLeft}
+                    >
+                      {language.data.app.setting.back}
+                    </ActivationLink>
+                  </>
+                ) : (
+                  <>
+                    <ActivationLink
+                      className='w-full'
+                      iconOnly={canCollapsed && sidebarCollapsed}
+                      onClick={handlePushLocation}
+                      href='/app/setting'
+                      icon={Gear}
+                    >
+                      {language.data.app.setting.name}
+                    </ActivationLink>
+                  </>
+                )}
+              </motion.main>
+            </FrozenRoute>
+          </motion.div>
+        </AnimatePresence>
+        {canCollapsed && (
+          <Button
+            isIconOnly
+            className={'flex items-center !justify-center'}
+            color='primary'
+            variant={'light'}
+            size='lg'
+            onPress={() => {
+              setSidebarCollapsed(value => {
+                if (onCollapsed) onCollapsed(!value);
+                if (!value) document.body.classList.add('sidebar-collapsed');
+                else document.body.classList.remove('sidebar-collapsed');
+                return !value;
+              });
+            }}
+          >
+            <CaretLineLeftIcon
+              className={clsx(
+                'block',
+                sidebarCollapsed && 'rotate-180',
+                sidebarCollapsed && 'text-foreground',
+                !sidebarCollapsed && 'text-primary'
               )}
-            </motion.main>
-          </FrozenRoute>
-        </motion.div>
-      </AnimatePresence>
+              size={16}
+              weight='bold'
+            />
+          </Button>
+        )}
+      </div>
     </main>
   );
 }

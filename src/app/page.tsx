@@ -1,7 +1,7 @@
 'use client';
 import MyButton from '@/components/button';
 import { useLanguageContext } from '@/contexts/languageContext';
-import { Link as NextLink } from '@nextui-org/react';
+import { Link as NextLink } from '@heroui/react';
 import {
   ClockCountdown,
   Confetti as ConfettiIcon,
@@ -131,9 +131,9 @@ export default function Home() {
         <main className='w-full sm:h-[calc(100vh_-_10rem)] h-[calc(100vh_-_6rem)] flex flex-col gap-8 row-start-2 items-center relative'>
           <motion.span
             initial={{ opacity: 0, y: -24 }}
-            animate={{ opacity: 0.4, y: 0 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 2 }}
-            className='text-sm tracking-wider opacity-40 mt-6 flex items-center gap-2'
+            className='text-sm tracking-wider z-10 px-3 py-1 bg-white/20 border-2 border-white/30 rounded-xl backdrop-blur backdrop-saturate-200 mt-6 flex items-center gap-2'
           >
             <Cookie weight='fill' /> {language.data.cookie.description}
           </motion.span>
@@ -281,7 +281,7 @@ export default function Home() {
         {(newYearIn / 1000 < 24 * 60 * 60 || newYearEvent) && (
           <div
             id='newYearTimer'
-            className={`flex gap-2 items-center justify-center z-40 fixed bottom-4 left-1/2 -translate-x-1/2 p-3 bg-white bg-opacity-60 border-white border-2 rounded-full max-sm:hidden backdrop-blur-sm transition-all duration-1000 ${
+            className={`flex gap-2 items-center justify-center z-40 fixed bottom-4 left-1/2 -translate-x-1/2 p-3 bg-white/60 border-white border-2 rounded-full max-sm:hidden backdrop-blur-sm transition-all duration-1000 ${
               timerHidden ? 'opacity-0 bottom-0 pointer-events-none' : ''
             }`}
           >
