@@ -30,6 +30,7 @@ export interface PlayDetail {
 export interface PlaylistDetail {
   title: string;
   author: string;
+  thumbnails: string[];
   tracks: PlayDetail[];
 }
 
@@ -81,7 +82,14 @@ function PlayButton<T extends 'song' | 'playlist' = 'song'>({
             const playlistDetail = detail as PlaylistDetail;
             socket.emit(
               'add-playlist',
-              playlistDetail.tracks,
+              playlistDetail.tracks.map(track => {
+                return track.uri;
+              }),
+              {
+                title: playlistDetail.title,
+                author: playlistDetail.author,
+                thumbnails: playlistDetail.thumbnails,
+              },
               (error: unknown) => {
                 setLoading(false);
                 if (error && (error as { status?: string }).status !== 'ok') {

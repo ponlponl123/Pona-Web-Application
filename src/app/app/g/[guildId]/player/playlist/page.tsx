@@ -266,6 +266,8 @@ function Page() {
                         detail={{
                           title: title || '',
                           author: authorDisplay,
+                          thumbnails:
+                            playlist?.thumbnails.map(t => t.url) || [],
                           tracks: tracks.map(track => ({
                             title: track && 'title' in track ? track.title : '',
                             author:
