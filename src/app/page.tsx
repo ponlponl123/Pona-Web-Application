@@ -209,7 +209,7 @@ export default function Home() {
               initial={{ opacity: 0, x: -6, marginTop: -82 }}
               animate={{ opacity: 1, x: 0, marginTop: 0 }}
               transition={{ delay: 0.86 }}
-              className='text-2xl -mb-2 text-primary-700 leading-relaxed w-full max-lg:mt-6 max-lg:text-lg items-center justify-center text-center max-sm:text-sm max-lg:mt-3 max-miniscreen:text-2xl max-sm:leading-10'
+              className='text-2xl -mb-2 text-primary-700 dark:text-primary-200 leading-relaxed w-full max-lg:text-lg items-center justify-center text-center max-sm:text-sm max-lg:mt-3 max-miniscreen:text-2xl max-sm:leading-10'
             >
               <WavyText
                 className='text-center justify-center flex flex-wrap'

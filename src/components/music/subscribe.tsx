@@ -176,12 +176,14 @@ export function UnSubscribeModal({
               <Button
                 color='danger'
                 variant='light'
-                onPress={e => {
+                onPress={async e => {
                   if (onSubmit) onSubmit(e);
                   const accessToken = getCookie('LOGIN_');
                   const accessTokenType = getCookie('LOGIN_TYPE_');
-                  if (!accessToken || !accessTokenType) return onClose();
-                  unsubscribe(accessTokenType, accessToken, channelId);
+                  const resolvedAccessToken = await Promise.resolve(accessToken);
+                  const resolvedAccessTokenType = await Promise.resolve(accessTokenType);
+                  if (!resolvedAccessToken || !resolvedAccessTokenType) return onClose();
+                  unsubscribe(resolvedAccessTokenType as string, resolvedAccessToken as string, channelId);
                   SetSubscribeStateCache(value => {
                     return value
                       .filter(item => item.channelId !== channelId)
@@ -244,14 +246,22 @@ export function SubscribeButtonTrigger({
         if (currentState) {
           if (currentState.state) {
             if (noUnsubscribe) return;
-            unsubscribe(accessTokenType, accessToken, channelId);
+            const resolvedAccessToken = await Promise.resolve(accessToken);
+            const resolvedAccessTokenType = await Promise.resolve(accessTokenType);
+            if (resolvedAccessToken && resolvedAccessTokenType) {
+              unsubscribe(resolvedAccessTokenType as string, resolvedAccessToken as string, channelId);
+            }
             SetSubscribeStateCache(value => {
               return value
                 .filter(item => item.channelId !== channelId)
                 .concat({ channelId, state: false });
             });
           } else {
-            subscribe(accessTokenType, accessToken, channelId);
+            const resolvedAccessToken = await Promise.resolve(accessToken);
+            const resolvedAccessTokenType = await Promise.resolve(accessTokenType);
+            if (resolvedAccessToken && resolvedAccessTokenType) {
+              subscribe(resolvedAccessTokenType as string, resolvedAccessToken as string, channelId);
+            }
             SetSubscribeStateCache(value => {
               return value
                 .filter(item => item.channelId !== channelId)
@@ -259,7 +269,11 @@ export function SubscribeButtonTrigger({
             });
           }
         } else {
-          subscribe(accessTokenType, accessToken, channelId);
+          const resolvedAccessToken = await Promise.resolve(accessToken);
+          const resolvedAccessTokenType = await Promise.resolve(accessTokenType);
+          if (resolvedAccessToken && resolvedAccessTokenType) {
+            subscribe(resolvedAccessTokenType as string, resolvedAccessToken as string, channelId);
+          }
           SetSubscribeStateCache([
             ...subscribe_state_cache,
             { channelId, state: true },

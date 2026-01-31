@@ -113,12 +113,14 @@ function Page() {
       setLoading(false);
     };
     const letSearch = async () => {
-      const accessTokenType = getCookie('LOGIN_TYPE_');
-      const accessToken = getCookie('LOGIN_');
+      const accessTokenType = String(getCookie('LOGIN_TYPE_'));
+      const accessToken = String(getCookie('LOGIN_'));
       if (
         typeof channelId !== 'string' ||
         !accessTokenType ||
+        accessTokenType === 'undefined' ||
         !accessToken ||
+        accessToken === 'undefined' ||
         !channelId
       )
         return exit(false);

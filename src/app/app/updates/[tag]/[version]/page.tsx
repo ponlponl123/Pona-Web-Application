@@ -1,8 +1,6 @@
 'use client';
 
-import React from 'react';
 import { useLanguageContext } from '@/contexts/languageContext';
-import { Translations } from '../../page';
 import {
   Avatar,
   Button,
@@ -10,10 +8,12 @@ import {
   Link,
   Spinner,
   useDisclosure,
-} from "@heroui/react";
+} from '@heroui/react';
+import { BellSimple, CaretLeft } from '@phosphor-icons/react/dist/ssr';
 import Markdown from 'marked-react';
 import { useParams, useRouter } from 'next/navigation';
-import { BellSimple, CaretLeft } from '@phosphor-icons/react/dist/ssr';
+import React from 'react';
+import { Translations } from '../../page';
 import SubscribeModal from '../../subscribe_modal';
 
 function PatchNote({
@@ -108,7 +108,7 @@ function PatchNote({
             </>
           )}
         </div>
-        <div className='block relative my-6 w-full max-w-full h-max prose markdown text-foreground'>
+        <div className='block relative my-6 w-full max-w-full h-max prose markdown text-foreground dark:prose-invert'>
           <Markdown>
             {(() => {
               const lines = note.split('\n');

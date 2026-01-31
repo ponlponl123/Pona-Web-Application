@@ -68,8 +68,8 @@ export const PonaMusicCacheContextProvider = ({
   });
 
   const FetchSubscibeStateFromChannelId = async (channelId: string) => {
-    const accessToken = getCookie('LOGIN_');
-    const accessTokenType = getCookie('LOGIN_TYPE_');
+    const accessToken = await getCookie('LOGIN_');
+    const accessTokenType = await getCookie('LOGIN_TYPE_');
     if (!accessToken || !accessTokenType) return { channelId, state: false };
     const state = await IsSubscribed(accessTokenType, accessToken, channelId);
     if (state) return { channelId, state: state.state === 1 };

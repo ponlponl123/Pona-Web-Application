@@ -4,15 +4,15 @@ import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo';
 import { useLanguageContext } from '@/contexts/languageContext';
 import { ArtistBasic, VideoDetailed } from '@/interfaces/ytmusic-api';
 import fetchHistory, { History } from '@/server-side-api/internal/history';
-import { Button, Progress } from "@heroui/react";
+import { Button, Progress } from '@heroui/react';
 import {
   MagnifyingGlass,
   MicrophoneStage,
   MusicNotesSimple,
 } from '@phosphor-icons/react/dist/ssr';
 import { getCookie } from 'cookies-next';
-import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 import React from 'react';
 
 function Page() {
@@ -25,8 +25,8 @@ function Page() {
   React.useEffect(() => {
     setLoading(true);
     const letSearch = async () => {
-      const accessTokenType = getCookie('LOGIN_TYPE_');
-      const accessToken = getCookie('LOGIN_');
+      const accessTokenType = String(getCookie('LOGIN_TYPE_'));
+      const accessToken = String(getCookie('LOGIN_'));
       if (!accessTokenType || !accessToken) return;
       const trackHistory = await fetchHistory(
         accessTokenType,

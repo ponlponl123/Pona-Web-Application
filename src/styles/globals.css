@@ -1,12 +1,24 @@
 @import 'tailwindcss';
-@import './themes.css';
 @import './markdown.css';
 @import './embla-carousel.css';
-@plugin '../hero.ts';
-@source '../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
-@config "../../tailwind.config.ts";
+@import './themes.css';
 
-@custom-variant dark (&:is(.dark *));
+@source "../**/*.{js,ts,jsx,tsx,mdx}";
+@source "../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}";
+
+@plugin "@tailwindcss/typography";
+@plugin "../hero.ts";
+
+@theme {
+  --color-app-background: var(--app-background);
+
+  --breakpoint-miniscreen: 480px;
+  --breakpoint-tablet: 640px;
+  --breakpoint-laptop: 1024px;
+  --breakpoint-desktop: 1280px;
+}
+
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
   --breakpoint-miniscreen: 480px;

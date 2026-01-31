@@ -1,7 +1,7 @@
 'use client';
-import React, { createContext, useContext, useState } from 'react';
 import { getCookie, setCookie } from 'cookies-next';
 import { LatLngExpression } from 'leaflet';
+import React, { createContext, useContext, useState } from 'react';
 
 export type TimeFormat = 'auto' | 12 | 24;
 export type Thermometer = 'c' | 'f';
@@ -45,7 +45,9 @@ export const UserSettingProvider = ({
   React.useEffect(() => {
     const userSettingFromCookie = getCookie('USR');
     if (userSettingFromCookie) {
-      const decodedSetting = atob(userSettingFromCookie || '');
+      const cookieValue =
+        typeof userSettingFromCookie === 'string' ? userSettingFromCookie : '';
+      const decodedSetting = atob(cookieValue);
       if (decodedSetting) {
         const parsedUserSetting = JSON.parse(decodedSetting) as UserSetting;
         setUserSettingState(parsedUserSetting);

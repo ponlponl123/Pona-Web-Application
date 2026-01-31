@@ -1,11 +1,11 @@
 'use client';
-import { getCookie, setCookie, deleteCookie } from 'cookies-next';
 import {
   UserInfo as UserInfoType,
   fetchByAccessToken,
   revokeUserAccessToken as removeAccessToken,
 } from '@/server-side-api/discord/fetchUser';
-import { useContext, createContext, useState, useEffect } from 'react';
+import { deleteCookie, getCookie, setCookie } from 'cookies-next';
+import { createContext, useContext, useEffect, useState } from 'react';
 
 const discordUserInfo = createContext<{
   userInfo: UserInfoType | null;
@@ -29,16 +29,20 @@ export const DiscordUserInfoProvider = ({
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
-    const currentAccessToken = getCookie('LOGIN_');
-    const currentAccessTokenType = getCookie('LOGIN_TYPE_');
-    if (
-      currentAccessToken &&
-      currentAccessTokenType &&
-      currentAccessToken !== 'false'
-    )
-      setUserAccInfo(currentAccessToken, currentAccessTokenType);
-    else setLoading(false);
+    const fetchCookies = async () => {
+      const currentAccessToken = await getCookie('LOGIN_');
+      const currentAccessTokenType = await getCookie('LOGIN_TYPE_');
+      if (
+        currentAccessToken &&
+        currentAccessTokenType &&
+        currentAccessToken !== 'false'
+      )
+        setUserAccInfo(currentAccessToken, currentAccessTokenType);
+      else setLoading(false);
+    };
+    fetchCookies();
   }, []);
+
   const setUserAccessToken = async (key: string, type: string) => {
     setCookie('LOGIN_', key);
     setCookie('LOGIN_TYPE_', type);

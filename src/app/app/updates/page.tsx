@@ -334,7 +334,7 @@ function ModalContext({
                     scrollbarColor: 'hsl(var(--pona-app-primary)) transparent',
                   }}
                 >
-                  <div className='block relative w-full max-w-full h-max prose markdown'>
+                  <div className='block relative w-full max-w-full h-max prose markdown text-foreground dark:prose-invert'>
                     <Markdown>
                       {(() => {
                         const lines = README.split('\n');
