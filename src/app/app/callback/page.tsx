@@ -1,5 +1,6 @@
-import React, { Suspense } from 'react';
-import { Spinner } from "@heroui/react";
+'use client';
+import { Spinner } from '@heroui/react';
+import { Suspense } from 'react';
 import Authorize from './authorize';
 
 export const dynamic = 'force-dynamic';

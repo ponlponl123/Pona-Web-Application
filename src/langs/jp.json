@@ -404,6 +404,17 @@
         "browse": {
           "title": "ブラウズ"
         },
+        "playlist": {
+          "title": "プレイリスト",
+          "by": "作成者",
+          "created": "作成日",
+          "track_count": "[count] 曲",
+          "actions": {
+            "favorite": "プレイリストをお気に入りに追加 (近日公開)",
+            "add_to_queue": "すべてキューに追加",
+            "share": "プレイリストを共有 (近日公開)"
+          }
+        },
         "artist": {
           "subscribe": "購読する",
           "subscriber": "加入者",

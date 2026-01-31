@@ -1,4 +1,5 @@
 'use client';
+import PlayButton from '@/components/music/button/play';
 import { combineArtistName } from '@/components/music/searchResult/track';
 import TrackList from '@/components/music/searchResult/trackList';
 import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo';
@@ -11,8 +12,14 @@ import {
   getPlaylist,
   getPlaylistv1,
 } from '@/server-side-api/internal/search';
-import { Button, Image, Link, Progress } from "@heroui/react";
-import { FlyingSaucer, ShareFat } from '@phosphor-icons/react/dist/ssr';
+import { Button, Image, Link, Progress, Tooltip } from '@heroui/react';
+import {
+  FlyingSaucer,
+  HeartIcon,
+  MusicNoteSimpleIcon,
+  PlayIcon,
+  ShareFat,
+} from '@phosphor-icons/react/dist/ssr';
 import { getCookie } from 'cookies-next';
 import { motion } from 'framer-motion';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -29,6 +36,29 @@ function Page() {
   const searchParams = useSearchParams();
   const playlist_id = searchParams && searchParams.get('list');
 
+  const trackCount =
+    (playlist &&
+      (typeof playlist === 'object' &&
+      'tracks' in playlist &&
+      Array.isArray(playlist.tracks)
+        ? playlist.tracks.length
+        : 0)) ||
+    0;
+
+  const durationHumanReadable =
+    playlist && 'duration' in playlist && playlist.duration
+      ? playlist.duration
+      : null;
+
+  const year = playlist && 'year' in playlist ? playlist.year : null;
+
+  const tracks =
+    playlist && 'tracks' in playlist && Array.isArray(playlist.tracks)
+      ? playlist.tracks
+      : playlist && 'videos' in playlist && Array.isArray(playlist.videos)
+        ? playlist.videos
+        : [];
+
   React.useEffect(() => {
     const fetchPlaylist = async (
       accessTokenType: string,
@@ -40,6 +70,7 @@ function Page() {
         accessToken,
         playlistId
       );
+      console.log('playlistResult', playlistResult);
       if (playlistResult) return playlistResult;
       const playlistV1Result = await getPlaylistv1(
         accessTokenType,
@@ -52,7 +83,13 @@ function Page() {
     const letSearch = async () => {
       const accessTokenType = String(getCookie('LOGIN_TYPE_'));
       const accessToken = String(getCookie('LOGIN_'));
-      if (typeof playlist_id !== 'string' || !accessTokenType || accessTokenType === 'undefined' || !accessToken || accessToken === 'undefined')
+      if (
+        typeof playlist_id !== 'string' ||
+        !accessTokenType ||
+        accessTokenType === 'undefined' ||
+        !accessToken ||
+        accessToken === 'undefined'
+      )
         return setLoading(false);
       setLoading(true);
       setPlaylist(null);
@@ -125,7 +162,7 @@ function Page() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             key={'playlist-backdrop'}
-            className='absolute w-full top-0 left-0 z-[1] bg-playground-background pointer-events-none'
+            className='absolute w-full top-0 left-0 z-1 bg-playground-background pointer-events-none'
           >
             <div className='absolute top-0 left-0 w-full h-full bg-[hsl(var(--pona-app-background))] -z-10 scale-[200]' />
             {playlist?.thumbnails.length > 0 && (
@@ -137,17 +174,17 @@ function Page() {
                   '&s=512&blur=16&saturation=96&contrast=12'
                 }
                 alt='backdrop'
-                className='w-full h-[64vh] object-cover saturate-200 brightness-125 [.light_&]:brightness-200 opacity-1'
+                className='w-full h-[64vh] object-cover saturate-200 brightness-125 in-[.light]:brightness-200 opacity-1'
                 classNames={{
                   wrapper: 'opacity-40 !max-w-full',
                 }}
               />
             )}
-            <div className='absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent to-[hsl(var(--pona-app-background))] z-10' />
+            <div className='absolute top-0 left-0 w-full h-full bg-linear-to-b from-transparent to-[hsl(var(--pona-app-background))] z-10' />
           </motion.div>
-          <div className='w-full z-[4] p-8 flex max-lg:flex-col max-lg:gap-12 lg:gap-24 max-lg:items-center items-start lg:justify-center pb-[24vh]'>
+          <div className='w-full z-4 p-8 flex max-lg:flex-col max-lg:gap-12 lg:gap-24 max-lg:items-center items-start lg:justify-center pb-[24vh]'>
             {playlist?.thumbnails.length > 0 && (
-              <div className='w-full max-w-xs lg:sticky lg:top-24 flex flex-col gap-4 justify-center items-start'>
+              <div className='w-full max-w-xs lg:sticky lg:top-24 flex flex-col gap-2 justify-center items-start'>
                 <h3 className='text-center w-full'>
                   {(playlist as AlbumFull)?.artists ? (
                     <Link
@@ -158,7 +195,10 @@ function Page() {
                       {combineArtistName((playlist as AlbumFull)?.artists)}
                     </Link>
                   ) : (
-                    authorDisplay
+                    <span className='text-foreground/40'>
+                      {language.data.app.guilds.player.playlist.by}{' '}
+                      {authorDisplay}
+                    </span>
                   )}
                 </h3>
                 <Image
@@ -173,25 +213,105 @@ function Page() {
                     wrapper: 'w-full aspect-square',
                   }}
                 />
-                <h1 className='text-center text-3xl w-full'>{title}</h1>
-                {playlist?.type === 'ALBUM' ? (
-                  <>
-                    <span className='text-center text-foreground/40 w-full'>
-                      {playlist.year}
+                <h1 className='text-center text-3xl w-full mt-3'>{title}</h1>
+                {year && (
+                  <div className='flex items-center justify-center mx-auto gap-1 -mt-2 mb-2'>
+                    <span className='text-foreground/40! whitespace-nowrap'>
+                      {language.data.app.guilds.player.playlist.created}
                     </span>
-                  </>
-                ) : (
-                  <></>
+                    <span className='text-center text-foreground/40 w-full'>
+                      {year}
+                    </span>
+                  </div>
                 )}
-                <div className='flex flex-row items-center justify-center gap-6 w-full'>
-                  <Button radius='full' isIconOnly>
-                    <ShareFat weight='fill' />
-                  </Button>
+                {trackCount > 0 && (
+                  <div className='flex items-center justify-center mx-auto gap-1 px-3 py-1 bg-foreground/10 rounded-full '>
+                    <MusicNoteSimpleIcon weight='bold' />
+                    <span className='text-center text-foreground/40 w-full'>
+                      {language.data.app.guilds.player.playlist.track_count.replace(
+                        '[count]',
+                        trackCount.toString()
+                      )}
+                    </span>
+                  </div>
+                )}
+                <div className='flex flex-row items-center justify-center gap-6 mt-3 w-full'>
+                  <Tooltip
+                    size='sm'
+                    content={
+                      language.data.app.guilds.player.playlist.actions.favorite
+                    }
+                  >
+                    <div>
+                      <Button
+                        radius='full'
+                        variant='bordered'
+                        isIconOnly
+                        isDisabled
+                      >
+                        <HeartIcon weight='fill' />
+                      </Button>
+                    </div>
+                  </Tooltip>
+                  <Tooltip
+                    size='sm'
+                    content={
+                      language.data.app.guilds.player.playlist.actions
+                        .add_to_queue
+                    }
+                  >
+                    <div>
+                      <PlayButton
+                        type='playlist'
+                        detail={{
+                          title: title || '',
+                          author: authorDisplay,
+                          tracks: tracks.map(track => ({
+                            title: track && 'title' in track ? track.title : '',
+                            author:
+                              track && 'artists' in track
+                                ? combineArtistName(track.artists)
+                                : authorDisplay,
+                            resultType:
+                              track && 'resultType' in track
+                                ? track.resultType
+                                : 'video',
+                            uri:
+                              track && 'videoId' in track
+                                ? `https://music.youtube.com/watch?v=${track.videoId}`
+                                : '',
+                            identifier: track.videoId,
+                            sourceName: 'youtube music',
+                          })),
+                        }}
+                        className='relative top-[unset] left-[unset] opacity-100 rounded-full bg-primary w-max h-max p-5'
+                      >
+                        <PlayIcon weight='fill' size={20} />
+                      </PlayButton>
+                    </div>
+                  </Tooltip>
+                  <Tooltip
+                    size='sm'
+                    content={
+                      language.data.app.guilds.player.playlist.actions.share
+                    }
+                  >
+                    <div>
+                      <Button
+                        variant='bordered'
+                        radius='full'
+                        isIconOnly
+                        isDisabled
+                      >
+                        <ShareFat weight='fill' />
+                      </Button>
+                    </div>
+                  </Tooltip>
                 </div>
               </div>
             )}
             <div
-              className={`w-full ${playlist?.thumbnails.length > 0 ? 'max-w-lg' : 'max-w-screen-xl'} flex flex-col gap-4 justify-start items-center`}
+              className={`w-full ${playlist?.thumbnails.length > 0 ? 'max-w-lg' : 'max-w-7xl'} flex flex-col gap-4 justify-start items-center`}
             >
               {playlist &&
               (playlist as PlaylistFull)?.tracks &&

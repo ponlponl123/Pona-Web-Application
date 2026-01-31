@@ -1,6 +1,6 @@
 'use client';
 import nextuiColorPalette from '@/../themes/utils/nextui-color-palette-gen.ts';
-import PlayButton from '@/components/music/play';
+import PlayButton from '@/components/music/button/play';
 import Track, {
   combineArtistName,
 } from '@/components/music/searchResult/track';

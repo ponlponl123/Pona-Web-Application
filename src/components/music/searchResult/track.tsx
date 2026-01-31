@@ -7,13 +7,13 @@ import {
   ResultType,
 } from '@/interfaces/ytmusic-api';
 import { msToTime } from '@/utils/time';
-import { Button, Image, Link } from "@heroui/react";
+import { Button, Image, Link } from '@heroui/react';
 import { Play } from '@phosphor-icons/react/dist/ssr';
 import clsx from 'clsx';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import { useRouter } from 'next/navigation';
 import React from 'react';
-import PlayButton, { PlayButtonClassNames } from '../play';
+import PlayButton, { PlayButtonClassNames } from '../button/play';
 
 export interface TrackClassNames {
   title?: string;

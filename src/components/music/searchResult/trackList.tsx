@@ -1,8 +1,8 @@
 import { useGlobalContext } from '@/contexts/globalContext';
 import { AlbumTrack } from '@/interfaces/ytmusic-api';
 import { msToTime } from '@/utils/time';
-import { Image } from "@heroui/react";
-import PlayButton from '../play';
+import { Image } from '@heroui/react';
+import PlayButton from '../button/play';
 import { combineArtistName } from './track';
 
 function TrackList({

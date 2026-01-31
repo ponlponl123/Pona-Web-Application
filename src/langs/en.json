@@ -400,6 +400,17 @@
         "browse": {
           "title": "Browse"
         },
+        "playlist": {
+          "title": "Playlist",
+          "by": "by",
+          "created": "Created on",
+          "track_count": "[count] songs",
+          "actions": {
+            "favorite": "Add playlist to favorite (Coming Soon)",
+            "add_to_queue": "Add all to queue",
+            "share": "Share Playlist (Coming Soon)"
+          }
+        },
         "artist": {
           "subscribe": "Subscribe",
           "subscriber": "Subscriber",

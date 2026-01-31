@@ -10,12 +10,12 @@ import {
   ModalFooter,
   ModalHeader,
   useDisclosure,
-} from "@heroui/react";
+} from '@heroui/react';
 import { Play } from '@phosphor-icons/react/dist/ssr';
-import clsx from 'clsx';
 import { getCookie } from 'cookies-next';
 import React from 'react';
 import toast from 'react-hot-toast';
+import { twMerge } from 'tailwind-merge';
 import PlayPauseButton from './playPause';
 
 export interface PlayDetail {
@@ -27,12 +27,31 @@ export interface PlayDetail {
   identifier: string;
 }
 
+export interface PlaylistDetail {
+  title: string;
+  author: string;
+  tracks: PlayDetail[];
+}
+
+export interface PlayButtonProps<T extends 'song' | 'playlist' = 'song'> {
+  s?: number;
+  type?: T;
+  iconSize?: number;
+  className?: string;
+  classNames?: PlayButtonClassNames;
+  detail: T extends 'playlist' ? PlaylistDetail : PlayDetail;
+  children?: React.ReactNode;
+  style?: React.CSSProperties;
+  playPause?: boolean;
+}
+
 export interface PlayButtonClassNames {
   playpause?: string;
 }
 
-function PlayButton({
+function PlayButton<T extends 'song' | 'playlist' = 'song'>({
   s,
+  type = 'song' as T,
   iconSize = 32,
   className,
   classNames,
@@ -40,16 +59,7 @@ function PlayButton({
   children,
   style,
   playPause,
-}: {
-  s?: number;
-  iconSize?: number;
-  className?: string;
-  classNames?: PlayButtonClassNames;
-  detail: PlayDetail;
-  children?: React.ReactNode;
-  style?: React.CSSProperties;
-  playPause?: boolean;
-}) {
+}: PlayButtonProps<T>) {
   const { socket } = usePonaMusicContext();
   const { language } = useLanguageContext();
   const { isSameVC, ponaCommonState } = useGlobalContext();
@@ -65,31 +75,48 @@ function PlayButton({
       setLoading(true);
       toast.promise(
         new Promise<void>(async (resolve, reject) => {
-          let uri = detail.uri;
-          if (detail.resultType === 'need-to-fetch') {
-            const oauth_type = getCookie('LOGIN_TYPE_');
-            const oauth_token = getCookie('LOGIN_');
-            if (oauth_type && oauth_token) {
-              const result = await getSong(
-                oauth_type.toString(),
-                oauth_token.toString(),
-                detail.title,
-                detail.author,
-                detail.identifier
-              );
-              if (result) {
-                uri = `https://music.youtube.com/watch?v=${result.videoId}`;
+          const oauth_type = getCookie('LOGIN_TYPE_');
+          const oauth_token = getCookie('LOGIN_');
+          if (type === 'playlist') {
+            const playlistDetail = detail as PlaylistDetail;
+            socket.emit(
+              'add-playlist',
+              playlistDetail.tracks,
+              (error: unknown) => {
+                setLoading(false);
+                if (error && (error as { status?: string }).status !== 'ok') {
+                  reject(error);
+                } else {
+                  resolve();
+                }
+              }
+            );
+          } else {
+            const playDetail = detail as PlayDetail;
+            let uri = playDetail.uri;
+            if (playDetail.resultType === 'need-to-fetch') {
+              if (oauth_type && oauth_token) {
+                const result = await getSong(
+                  oauth_type.toString(),
+                  oauth_token.toString(),
+                  playDetail.title,
+                  playDetail.author,
+                  playDetail.identifier
+                );
+                if (result) {
+                  uri = `https://music.youtube.com/watch?v=${result.videoId}`;
+                }
               }
             }
+            socket.emit('add', uri, playDetail.sourceName, (error: unknown) => {
+              setLoading(false);
+              if (error && (error as { status?: string }).status !== 'ok') {
+                reject(error);
+              } else {
+                resolve();
+              }
+            });
           }
-          socket.emit('add', uri, detail.sourceName, (error: unknown) => {
-            setLoading(false);
-            if (error && (error as { status?: string }).status !== 'ok') {
-              reject(error);
-            } else {
-              resolve();
-            }
-          });
         }),
         {
           loading: language.data.app.guilds.player.toast.add_track.loading
@@ -115,7 +142,7 @@ function PlayButton({
         />
       ) : (
         <Button
-          className={clsx(
+          className={twMerge(
             'absolute top-0 left-0 w-full h-full z-10 rounded-3xl group-hover:opacity-100 opacity-0 ' +
               className,
             classNames?.playpause
@@ -126,16 +153,45 @@ function PlayButton({
           isDisabled={loading}
           onPress={() => {
             if (socket && socket.connected && isSameVC) {
-              const findDuplicatedTrack = ponaCommonState?.queue.filter(
-                refTrack => refTrack.identifier === detail.identifier
-              );
-              if (
-                ponaCommonState &&
-                ponaCommonState.current &&
-                (ponaCommonState.current.identifier === detail.identifier ||
-                  (findDuplicatedTrack && findDuplicatedTrack.length > 0))
-              )
-                onDuplicatedTrackOpen();
+              // Check if detail is a playlist (has tracks array)
+              const isPlaylist =
+                'tracks' in detail &&
+                Array.isArray((detail as PlaylistDetail).tracks);
+
+              let hasDuplicates = false;
+
+              if (isPlaylist) {
+                // Check if any track in the playlist is duplicated in the queue
+                const playlistDetail = detail as PlaylistDetail;
+                hasDuplicates = playlistDetail.tracks.some(track => {
+                  // Check if track is currently playing
+                  if (
+                    ponaCommonState?.current?.identifier === track.identifier
+                  ) {
+                    return true;
+                  }
+                  // Check if track is in the queue
+                  const findDuplicatedTrack = ponaCommonState?.queue.filter(
+                    refTrack => refTrack.identifier === track.identifier
+                  );
+                  return findDuplicatedTrack && findDuplicatedTrack.length > 0;
+                });
+              } else {
+                // Single track check (existing logic)
+                const singleDetail = detail as PlayDetail;
+                const findDuplicatedTrack = ponaCommonState?.queue.filter(
+                  refTrack => refTrack.identifier === singleDetail.identifier
+                );
+                hasDuplicates = !!(
+                  ponaCommonState &&
+                  ponaCommonState.current &&
+                  (ponaCommonState.current.identifier ===
+                    singleDetail.identifier ||
+                    (findDuplicatedTrack && findDuplicatedTrack.length > 0))
+                );
+              }
+
+              if (hasDuplicates) onDuplicatedTrackOpen();
               else if (ponaCommonState?.current) onOpen();
               else addToQueue();
             }
