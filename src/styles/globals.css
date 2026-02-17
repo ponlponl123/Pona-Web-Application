@@ -181,46 +181,46 @@ main#app-workspace {
 }
 
 .status-block {
-  @apply w-full max-w-screen-lg rounded-3xl p-6 flex flex-col border-4 border-foreground/20;
+  @apply w-full max-w-5xl rounded-3xl p-6 flex flex-col border-4 border-foreground/20;
 }
 
 .service-list {
-  @apply flex justify-between items-center p-4 rounded-xl bg-foreground/0;
+  @apply flex justify-between items-center p-3 rounded-2xl bg-foreground/0;
 }
 .service-list:hover {
-  @apply bg-foreground/20;
+  @apply bg-foreground/5;
 }
-.service-list > h1 {
+.service-list h1 {
   width: 100%;
-  font-size: 14px;
+  font-size: 12px;
   font-family: var(--font-geist-mono);
 }
 
 .service-status-badge {
-  @apply rounded-full text-medium m-auto py-1 px-2 bg-gray-700/25 text-gray-700;
+  @apply rounded-xl text-sm m-auto py-1 px-2 bg-gray-700/25 text-gray-700;
 }
-.service-status-badge::before {
+.service-status-badge:not(.no-label)::before {
   content: 'Unknown';
 }
 
 .service-status-badge.operational {
   @apply bg-success-700/25 text-success-700;
 }
-.service-status-badge.operational::before {
+.service-status-badge:not(.no-label).operational::before {
   content: 'Operational';
 }
 
 .service-status-badge.degraded {
   @apply bg-warning-400/25 text-warning-400;
 }
-.service-status-badge.degraded::before {
+.service-status-badge:not(.no-label).degraded::before {
   content: 'Degraded';
 }
 
 .service-status-badge.down {
   @apply bg-danger-700/25 text-danger-700;
 }
-.service-status-badge.down::before {
+.service-status-badge:not(.no-label).down::before {
   content: 'Down';
 }
 

@@ -6,6 +6,9 @@
     "source.removeUnusedImports": "explicit",
     "source.organizeImports": "explicit"
   },
+  "editor.quickSuggestions": {
+    "strings": "on"
+  },
   "[typescript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },

@@ -6,6 +6,7 @@ import { proxyArtwork } from '@/utils/track';
 import { Button, Image } from '@heroui/react';
 import { useRouter } from 'next/navigation';
 import PlayButton from './button/play';
+import NextLink from "next/link";
 import { combineArtistName } from './searchResult/track';
 
 function MusicCard({ track }: { track: Track }) {
@@ -199,11 +200,9 @@ export function ArtistCard({ artist }: { artist: ArtistDetailed }) {
   return (
     <>
       <Button
+        as={NextLink}
         className='min-h-max min-w-max w-max h-max p-4 rounded-[2rem] bg-transparent'
         href={href}
-        onPress={() => {
-          router.push(href);
-        }}
       >
         <div className='music-card w-48' aria-label={artist?.name}>
           <div className='flex flex-col items-start justify-start gap-3 w-full'>
@@ -214,8 +213,9 @@ export function ArtistCard({ artist }: { artist: ArtistDetailed }) {
                   wrapper: 'w-full h-full',
                 }}
                 src={
+                  artist?.thumbnails.length &&
                   '/api/proxy/image?r=' +
-                  artist?.thumbnails[artist?.thumbnails.length - 1].url
+                  artist?.thumbnails[artist?.thumbnails.length - 1]?.url
                 }
                 alt={artist?.name}
               />

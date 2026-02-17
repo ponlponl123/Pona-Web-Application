@@ -1,14 +1,14 @@
 'use client';
+import { viewType } from '@/app/status/page';
 import React from 'react';
 import {
-  AreaChart,
   Area,
-  XAxis,
+  AreaChart,
   CartesianGrid,
-  Tooltip,
   ResponsiveContainer,
+  Tooltip,
+  XAxis,
 } from 'recharts';
-import { viewType } from '@/app/status/page';
 
 type ShardData = {
   [key: string]: number;
@@ -87,6 +87,7 @@ function ManagerChart({ mode }: { mode?: viewType }) {
           left: 12,
           bottom: 12,
         }}
+        className='rounded-xl'
       >
         <defs>
           <linearGradient id='colorManager' x1='0' y1='0' x2='0' y2='1'>

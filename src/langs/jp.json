@@ -82,12 +82,13 @@
   },
   "status": {
     "title": "ステータス",
+    "unit": "ミリ秒",
     "refresh": "更新",
     "refreshing": "更新中...",
     "last_refreshed": "最終更新",
     "overall": "全体的なステータス",
     "regionsloads": "リージョン負荷",
-    "app_res_ms": "アプリケーションの応答時間（ミリ秒）",
+    "app_res_ms": "アプリケーションの応答時間",
     "active_shards": "アクティブなシャード",
     "active_clusters": "アクティブなクラスター"
   },

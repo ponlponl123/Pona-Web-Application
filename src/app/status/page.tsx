@@ -1,18 +1,19 @@
 'use client';
-import React from 'react';
 import MyButton from '@/components/button';
-import { Spinner } from "@heroui/spinner";
-import { Cube } from '@phosphor-icons/react/dist/ssr';
 import ManagerChart from '@/components/status/managerChart';
+import { Spinner } from '@heroui/spinner';
+import { Cube } from '@phosphor-icons/react/dist/ssr';
+import React from 'react';
 
+import { useLanguageContext } from '@/contexts/languageContext';
+import clusterInfo, { ClusterInfo } from '@/server-side-api/clusterInfo';
 import handshake from '@/server-side-api/handshake';
+import lavalink from '@/server-side-api/lavalink';
 import ponlponl123apiHandshake from '@/server-side-api/ponlponl123api';
 import redis from '@/server-side-api/redis';
 import socketio from '@/server-side-api/socketio';
-import lavalink from '@/server-side-api/lavalink';
-import clusterInfo, { ClusterInfo } from '@/server-side-api/clusterInfo';
-import { Button } from "@heroui/react";
-import { useLanguageContext } from '@/contexts/languageContext';
+import { Button } from '@heroui/react';
+import clsx from 'clsx';
 
 export type viewType =
   | '24h'
@@ -112,7 +113,7 @@ function Status() {
     <main className='w-full min-h-screen'>
       <div className='flex flex-col grid-rows-[20px_1fr_20px] items-center min-h-screen p-8 pb-20 gap-8 sm:p-20'>
         <div className='mt-16'></div>
-        <main className='w-full max-w-screen-lg flex flex-col justify-start gap-10'>
+        <main className='w-full max-w-5xl flex flex-col justify-start gap-10'>
           <div className='flex flex-row items-center justify-between'>
             <div className='flex flex-col gap-4'>
               <h1 className='text-5xl flex items-center gap-4'>
@@ -197,38 +198,74 @@ function Status() {
           <div className='flex gap-3 max-lg:flex-col'>
             <div className='status-block'>
               <h1 className='text-3xl'>{language.data.status.regionsloads}</h1>
-              <div className='flex flex-col gap-4 mt-4'>
+              <div className='flex flex-col gap-1 mt-4'>
                 <div className='service-list'>
-                  <h1>AP-TH_TH-10.0</h1>
-                  <div className={`service-status-badge unknown`}></div>
+                  <div className='flex flex-1 flex-col items-start justify-start'>
+                    <h1>AP-TH_TH-10.0</h1>
+                    <span className='text-xs text-foreground/40! tracking-widest select-all'>
+                      th.bangkok.ponl.fun
+                    </span>
+                  </div>
+                  <div className={`service-status-badge`}></div>
                 </div>
                 <div className='service-list'>
-                  <h1>AP-TH_TH-11.4</h1>
+                  <div className='flex flex-1 flex-col items-start justify-start'>
+                    <h1>AP-TH_TH-11.6</h1>
+                    <span className='text-xs text-foreground/40! tracking-widest select-all'>
+                      th.samutprakan.ponl.fun
+                    </span>
+                  </div>
                   <div className={`service-status-badge operational`}></div>
                 </div>
                 <div className='service-list'>
-                  <h1>AP-TH_TH-11.6</h1>
-                  <div className={`service-status-badge down`}></div>
+                  <div className='flex flex-1 flex-col items-start justify-start'>
+                    <h1>AP-SG_1</h1>
+                    <span className='text-xs text-foreground/40! tracking-widest select-all'>
+                      sg.singapore.ponl.fun
+                    </span>
+                  </div>
+                  <div className={`service-status-badge`}></div>
                 </div>
                 <div className='service-list'>
-                  <h1>AP-SG_1</h1>
+                  <div className='flex flex-1 flex-col items-start justify-start'>
+                    <h1>AP-HK_1</h1>
+                    <span className='text-xs text-foreground/40! tracking-widest select-all'>
+                      hk.hongkong.ponl.fun
+                    </span>
+                  </div>
+                  <div className={`service-status-badge`}></div>
+                </div>
+                <div className='service-list'>
+                  <div className='flex flex-1 flex-col items-start justify-start'>
+                    <h1>AP-JP_1</h1>
+                    <span className='text-xs text-foreground/40! tracking-widest select-all'>
+                      jp.tokyo.ponl.fun
+                    </span>
+                  </div>
                   <div className={`service-status-badge`}></div>
                 </div>
               </div>
             </div>
             <div className='status-block'>
-              <h1 className='text-3xl'>{language.data.status.app_res_ms}</h1>
-              <div className='flex flex-wrap items-center justify-start gap-2 mt-2'>
+              <div className='flex items-center gap-2'>
+                <h1 className='text-3xl'>{language.data.status.app_res_ms}</h1>
+                <div className={`service-status-badge no-label m-0!`}>
+                  {language.data.status.unit}
+                </div>
+              </div>
+              <div className='flex flex-wrap items-center justify-start gap-1 mt-3'>
+                <span className='text-foreground/40!'>Filter: </span>
                 {
                   // create all viewType buttons
                   ['24h', '12h', '9h', '6h', '3h', '1h'].map((mode, index) => (
                     <Button
                       key={index}
-                      variant={viewMode === mode ? 'solid' : 'ghost'}
+                      variant={viewMode === mode ? 'solid' : 'light'}
                       color='primary'
                       size='sm'
-                      radius='full'
-                      onClick={() => {
+                      radius='md'
+                      className='text-xs font-bold min-w-0 min-h-0 px-3'
+                      onPress={() => {
                         setViewMode(mode as viewType);
                       }}
                     >
@@ -243,16 +280,37 @@ function Status() {
             </div>
           </div>
           <div className='flex gap-3'>
-            <div className='status-block'>
-              <h1 className='text-3xl'>
-                {language.data.status.active_shards} (
-                {clusterInfoStatus ? clusterInfoStatus.totalShards : '0'})
-              </h1>
+            <div className='status-block flex-row! justify-between! items-center!'>
+              <h1 className='text-3xl'>{language.data.status.active_shards}</h1>
+              <div
+                className={clsx(
+                  `service-status-badge no-label m-0!`,
+                  clusterInfoStatus && clusterInfoStatus.totalShards > 0
+                    ? 'operational'
+                    : clusterInfoStatus === null
+                      ? 'unknown'
+                      : 'down'
+                )}
+              >
+                {clusterInfoStatus ? clusterInfoStatus.totalShards : '0'}
+              </div>
             </div>
-            <div className='status-block'>
+            <div className='status-block flex-row! justify-between! items-center!'>
               <h1 className='text-3xl'>
-                {language.data.status.active_clusters} (1)
+                {language.data.status.active_clusters}
               </h1>
+              <div
+                className={clsx(
+                  `service-status-badge no-label m-0!`,
+                  1 > 0
+                    ? 'operational'
+                    : clusterInfoStatus === null
+                      ? 'unknown'
+                      : 'down'
+                )}
+              >
+                1
+              </div>
             </div>
           </div>
         </main>

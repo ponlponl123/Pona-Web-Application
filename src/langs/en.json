@@ -82,12 +82,13 @@
   },
   "status": {
     "title": "Status",
+    "unit": "ms",
     "refresh": "Refresh",
     "refreshing": "Refreshing...",
     "last_refreshed": "Last Refreshed",
     "overall": "Overall Status",
     "regionsloads": "Regions Loads",
-    "app_res_ms": "Application Response time (ms)",
+    "app_res_ms": "Application Response time",
     "active_shards": "Active Shards",
     "active_clusters": "Active Cluster"
   },
