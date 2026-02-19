@@ -26,6 +26,8 @@ export type viewType =
   | '30min'
   | '15min';
 
+const filterOptions: viewType[] = ['24h', '12h', '9h', '6h', '3h', '1h'];
+
 function Status() {
   const { language } = useLanguageContext();
   const [fetching, setFetching] = React.useState<boolean>(false);
@@ -247,32 +249,52 @@ function Status() {
               </div>
             </div>
             <div className='status-block'>
-              <div className='flex items-center gap-2'>
-                <h1 className='text-3xl'>{language.data.status.app_res_ms}</h1>
-                <div className={`service-status-badge no-label m-0!`}>
-                  {language.data.status.unit}
+              <div className='flex items-center justify-between'>
+                <div className='flex items-center gap-2'>
+                  <h1 className='text-3xl'>
+                    {language.data.status.app_res_ms}
+                  </h1>
+                  <div
+                    className={`service-status-badge operational no-label m-0!`}
+                  >
+                    {language.data.status.unit}
+                  </div>
                 </div>
-              </div>
-              <div className='flex flex-wrap items-center justify-start gap-1 mt-3'>
-                <span className='text-foreground/40!'>Filter: </span>
-                {
-                  // create all viewType buttons
-                  ['24h', '12h', '9h', '6h', '3h', '1h'].map((mode, index) => (
-                    <Button
-                      key={index}
-                      variant={viewMode === mode ? 'solid' : 'light'}
-                      color='primary'
-                      size='sm'
-                      radius='md'
-                      className='text-xs font-bold min-w-0 min-h-0 px-3'
-                      onPress={() => {
-                        setViewMode(mode as viewType);
-                      }}
-                    >
-                      {mode}
-                    </Button>
-                  ))
-                }
+                <div className='flex flex-wrap items-center justify-start gap-2 mt-3'>
+                  <div className='flex flex-wrap items-center justify-start gap-1 bg-foreground/5! p-1 rounded-2xl'>
+                    <span className='text-foreground/40! ml-2 mr-1 text-sm'>
+                      Filter:{' '}
+                    </span>
+                    {
+                      // create all viewType buttons
+                      filterOptions.map((mode, index) => (
+                        <Button
+                          key={index}
+                          variant={viewMode === mode ? 'solid' : 'light'}
+                          color='primary'
+                          size='sm'
+                          radius='md'
+                          className={clsx(
+                            'text-xs font-bold min-w-0 min-h-0 px-3 rounded-md',
+                            viewMode === mode
+                              ? 'bg-primary text-primary-foreground!'
+                              : 'bg-background text-foreground',
+                            index === 0
+                              ? 'rounded-l-xl'
+                              : index === filterOptions.length - 1
+                                ? 'rounded-r-xl'
+                                : ''
+                          )}
+                          onPress={() => {
+                            setViewMode(mode as viewType);
+                          }}
+                        >
+                          {mode}
+                        </Button>
+                      ))
+                    }
+                  </div>
+                </div>
               </div>
               <div className='w-full h-full relative'>
                 <ManagerChart mode={viewMode} />

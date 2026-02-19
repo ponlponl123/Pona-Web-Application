@@ -181,7 +181,7 @@ main#app-workspace {
 }
 
 .status-block {
-  @apply w-full max-w-5xl rounded-3xl p-6 flex flex-col border-4 border-foreground/20;
+  @apply w-full max-w-5xl rounded-3xl p-6 flex flex-col border-3 border-foreground/5;
 }
 
 .service-list {
