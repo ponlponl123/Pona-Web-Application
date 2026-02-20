@@ -128,7 +128,7 @@ export default function Home() {
   return (
     <main className='w-full min-h-screen main-bg-2 mb-24'>
       <div className='relative flex items-center justify-center min-h-screen p-12 sm:p-20'>
-        <main className='w-full sm:h-[calc(100vh_-_10rem)] h-[calc(100vh_-_6rem)] flex flex-col gap-8 row-start-2 items-center relative'>
+        <main className='w-full sm:h-[calc(100vh-10rem)] h-[calc(100vh-6rem)] flex flex-col gap-8 row-start-2 items-center relative'>
           <motion.span
             initial={{ opacity: 0, y: -24 }}
             animate={{ opacity: 1, y: 0 }}

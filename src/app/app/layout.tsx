@@ -1,8 +1,8 @@
-import React from 'react';
-import { Metadata } from 'next';
-import Providers from './providers';
-import App_notOk from './app_notOk';
 import handshake from '@/server-side-api/handshake';
+import { Metadata } from 'next';
+import React from 'react';
+import App_notOk from './app_notOk';
+import Providers from './providers';
 
 export const metadata: Metadata = {
   title: 'Pona! Application',
