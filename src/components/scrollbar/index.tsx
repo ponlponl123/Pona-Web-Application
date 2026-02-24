@@ -107,7 +107,7 @@ function Scrollbar({
                 exit='exit'
                 animate='enter'
                 transition={{ type: 'tween', duration: 0.12 }}
-                className='flex flex-col gap-2 min-h-max'
+                className='flex flex-col gap-1 min-h-max'
                 key='Menu'
               >
                 {inSetting ? (
@@ -426,7 +426,7 @@ function Scrollbar({
         </>
       )}
       <div
-        className={clsx('flex', !sidebarCollapsed ? '!flex-row' : 'flex-col')}
+        className={clsx('flex gap-1!', !sidebarCollapsed ? 'flex-row!' : 'flex-col')}
       >
         <AnimatePresence mode='popLayout'>
           <motion.div
@@ -473,7 +473,7 @@ function Scrollbar({
         {canCollapsed && (
           <Button
             isIconOnly
-            className={'flex items-center !justify-center'}
+            className={'flex items-center justify-center!'}
             color='primary'
             variant={'light'}
             size='lg'

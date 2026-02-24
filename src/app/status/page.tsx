@@ -254,14 +254,12 @@ function Status() {
                   <h1 className='text-3xl -mt-1'>
                     {language.data.status.app_res_ms}
                   </h1>
-                  <div
-                    className={`service-status-badge operational no-label`}
-                  >
+                  <div className={`service-status-badge operational no-label`}>
                     {language.data.status.unit}
                   </div>
                 </div>
                 <div className='flex flex-wrap items-center justify-start gap-2'>
-                  <div className='flex items-center justify-start gap-1 bg-foreground/5! p-1 rounded-2xl'>
+                  <div className='flex items-center justify-start gap-1 border-2 border-foreground/5! p-1 rounded-2xl'>
                     <span className='text-foreground/40! ml-2 mr-1 text-sm'>
                       Filter:{' '}
                     </span>
@@ -306,7 +304,7 @@ function Status() {
               <h1 className='text-3xl'>{language.data.status.active_shards}</h1>
               <div
                 className={clsx(
-                  `service-status-badge no-label m-0!`,
+                  `service-status-badge no-label text-lg! m-0!`,
                   clusterInfoStatus && clusterInfoStatus.totalShards > 0
                     ? 'operational'
                     : clusterInfoStatus === null
@@ -323,7 +321,7 @@ function Status() {
               </h1>
               <div
                 className={clsx(
-                  `service-status-badge no-label m-0!`,
+                  `service-status-badge no-label text-lg! m-0!`,
                   1 > 0
                     ? 'operational'
                     : clusterInfoStatus === null
