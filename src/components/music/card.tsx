@@ -213,9 +213,10 @@ export function ArtistCard({ artist }: { artist: ArtistDetailed }) {
                   wrapper: 'w-full h-full',
                 }}
                 src={
-                  artist?.thumbnails.length &&
-                  '/api/proxy/image?r=' +
-                  artist?.thumbnails[artist?.thumbnails.length - 1]?.url
+                  artist?.thumbnails.length
+                    ? '/api/proxy/image?r=' +
+                      artist?.thumbnails[artist?.thumbnails.length - 1]?.url
+                    : undefined
                 }
                 alt={artist?.name}
               />
