@@ -1,0 +1,26 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@layer base {
+  @import "./themes/default.css";
+  @import "./themes/chocolate.css";
+
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-mono;
+  }
+}
+
+@layer components {
+  @import "./components/button.css";
+  @import "./components/embla-carousel.css";
+  @import "./components/markdown.css";
+}

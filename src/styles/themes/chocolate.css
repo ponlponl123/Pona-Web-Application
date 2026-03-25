@@ -1,0 +1,23 @@
+[data-theme='chocolate'] {
+  --accent: oklch(54.632% 0.03538 51.073);
+  --accent-foreground: oklch(100% 0.00011 271.152);
+
+  --primary: oklch(57.371% 0.06312 51.38);
+  --primary-foreground: oklch(100% 0.00011 271.152);
+
+  --secondary: oklch(27.893% 0.05206 55.068);
+  --secondary-foreground: oklch(100% 0.00011 271.152);
+
+  --foreground: oklch(37.045% 0.0309 46.537);
+  --background: oklch(98.662% 0.02257 95.984);
+
+  --color-playground-background: oklch(98.662% 0.02257 95.984);
+
+  &.dark, 
+  & .dark,
+  &:is(.dark *) {
+    --foreground: oklch(73.653% 0.04812 52.896);
+    --background: oklch(37.045% 0.0309 46.537);
+    --color-playground-background: oklch(20.514% 0.02298 47.529);
+  }
+}
