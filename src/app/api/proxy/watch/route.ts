@@ -1,108 +1,97 @@
-import { fetchWithSSLFallback } from '@/utils/fetchWithSSLFallback';
-import { NextRequest, NextResponse } from 'next/server';
-import { Buffer } from 'node:buffer';
+import { fetchWithSSLFallback } from "@/lib/ssl/fetch"
+import { NextRequest, NextResponse } from "next/server"
+import { LRUCache } from "lru-cache"
 
-const cache = new Map<
-  string,
-  { buffer: Buffer; contentType: string; timestamp: number }
->();
-const CACHE_DURATION = 3600 * 1000; // 1 hour in milliseconds
+interface CacheEntry {
+  data: Uint8Array
+  contentType: string
+  timestamp: number
+}
 
-async function fetchThumbnail(urls: string[]): Promise<Response> {
-  for (const url of urls) {
-    try {
-      const response = await fetchWithSSLFallback(url, {
-        method: 'GET',
-        timeout: 15000,
-        ignoreSSLErrors: true,
-      });
+const cache = new LRUCache<string, CacheEntry>({
+  max: 500,
+  ttl: 1000 * 60 * 60,
+})
 
-      if (response.ok) {
-        return response;
-      }
-      console.warn(`Thumbnail fetch failed (${response.status}): ${url}`);
-    } catch (error) {
-      console.warn(`Thumbnail fetch error for ${url}:`, error);
-    }
+const sizes = ["lg", "md", "sm", "default", "max", "hq", "mq", "sd"]
+
+function getYouTubeUrls(videoId: string, size: string | null): string[] {
+  const base = {
+    max: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
+    hq: `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`,
+    mq: `https://i.ytimg.com/vi/${videoId}/mqdefault.jpg`,
+    sd: `https://i.ytimg.com/vi/${videoId}/sddefault.jpg`,
+    default: `https://i.ytimg.com/vi/${videoId}/default.jpg`,
   }
-  throw new Error('Failed to fetch thumbnail from any endpoints');
+
+  if (size === "lg") return [base.max, base.hq, base.mq]
+  if (size === "md") return [base.mq, base.sd, base.default]
+  if (size === "sm") return [base.default, base.sd, base.mq]
+
+  return Object.values(base)
 }
 
 export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url);
-  const videoId = searchParams.get('v');
-  const size = searchParams.get('s');
+  const { searchParams } = new URL(req.url)
+  const videoId = searchParams.get("v")
+  const size = searchParams.get("s")
 
   if (!videoId) {
-    return NextResponse.json(
-      { error: 'Missing videoId parameter' },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: "Missing videoId" }, { status: 400 })
+  }
+  if (!sizes.includes(size || "default")) {
+    return NextResponse.json({ error: "Invalid size" }, { status: 400 })
   }
 
-  const cacheKey = `${videoId}|${size || 'default'}`;
-  const cachedImage = cache.get(cacheKey);
-  const now = Date.now();
+  const cacheKey = `${videoId}:${size || "default"}`
+  const cachedImage = cache.get(cacheKey)
 
-  if (cachedImage && now - cachedImage.timestamp < CACHE_DURATION) {
-    return new NextResponse(new Uint8Array(cachedImage.buffer), {
+  if (cachedImage) {
+    return new NextResponse(cachedImage.data as unknown as BodyInit, {
       headers: {
-        'Content-Type': cachedImage.contentType,
-        'Cache-Control': 's-maxage=86400, stale-while-revalidate',
+        "Content-Type": cachedImage.contentType,
+        "Cache-Control": "public, s-maxage=86400, stale-while-revalidate",
       },
-    });
+    })
   }
 
-  let youtubeThumbnailUrls = [
-    `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
-    `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`,
-    `https://i.ytimg.com/vi/${videoId}/mqdefault.jpg`,
-    `https://i.ytimg.com/vi/${videoId}/sddefault.jpg`,
-    `https://i.ytimg.com/vi/${videoId}/default.jpg`,
-  ];
+  const urls = getYouTubeUrls(videoId, size)
 
-  switch (size) {
-    case 'lg':
-      youtubeThumbnailUrls = [
-        `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
-        `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`,
-        `https://i.ytimg.com/vi/${videoId}/mqdefault.jpg`,
-      ];
-      break;
-    case 'md':
-      youtubeThumbnailUrls = [
-        `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`,
-        `https://i.ytimg.com/vi/${videoId}/sddefault.jpg`,
-        `https://i.ytimg.com/vi/${videoId}/default.jpg`,
-      ];
-      break;
-    case 'sm':
-      youtubeThumbnailUrls = [
-        `https://img.youtube.com/vi/${videoId}/default.jpg`,
-        `https://i.ytimg.com/vi/${videoId}/sddefault.jpg`,
-        `https://i.ytimg.com/vi/${videoId}/mqdefault.jpg`,
-      ];
-      break;
+  for (const url of urls) {
+    try {
+      const response = await fetchWithSSLFallback(url, {
+        method: "GET",
+        timeout: 8000,
+        ignoreSSLErrors: true,
+      })
+
+      if (response.ok) {
+        const contentType = response.headers.get("content-type") || "image/jpeg"
+
+        const arrayBuffer = await response.arrayBuffer()
+        const uint8Array = new Uint8Array(arrayBuffer)
+
+        cache.set(cacheKey, {
+          data: uint8Array,
+          contentType: contentType,
+          timestamp: Date.now(),
+        })
+
+        return new NextResponse(uint8Array, {
+          headers: {
+            "Content-Type": contentType,
+            "Cache-Control": "public, s-maxage=86400, stale-while-revalidate",
+            "X-Cache-Hit": "false",
+          },
+        })
+      }
+    } catch (error) {
+      console.warn(
+        `[Thumbnail] Failed: ${url}`,
+        error instanceof Error ? error.message : error
+      )
+    }
   }
 
-  try {
-    const response = await fetchThumbnail(youtubeThumbnailUrls);
-    const contentType =
-      response.headers.get('content-type') || 'application/octet-stream';
-    const imageBuffer = Buffer.from(await response.arrayBuffer());
-
-    cache.set(cacheKey, { buffer: imageBuffer, contentType, timestamp: now });
-
-    return new NextResponse(new Uint8Array(imageBuffer), {
-      headers: {
-        'Content-Type': contentType,
-        'Cache-Control': 's-maxage=86400, stale-while-revalidate',
-      },
-    });
-  } catch (err) {
-    return NextResponse.json(
-      { error: 'Failed to fetch thumbnail', debug_for_dev: err },
-      { status: 500 }
-    );
-  }
+  return NextResponse.json({ error: "All endpoints failed" }, { status: 502 })
 }

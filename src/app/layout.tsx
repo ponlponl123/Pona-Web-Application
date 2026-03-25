@@ -1,74 +1,30 @@
-import type { Metadata } from 'next';
-import localFont from 'next/font/local';
-import { headers } from 'next/headers';
-import NextTopLoader from 'nextjs-toploader';
+import { Geist, Geist_Mono, JetBrains_Mono } from "next/font/google"
 
-import Footer from '@/components/footer';
-import Header from '@/components/header';
-import '@/styles/globals.css';
-import { isMobile } from '@/utils/isMobile';
-import { Providers } from './providers';
+import "./globals.css"
+import { ThemeProvider } from "@/components/theme-provider"
+import { cn } from "@/lib/utils";
 
-const ponlponl123Article = localFont({
-  src: './fonts/Ponlponl123_Article-Regular.woff',
-  variable: '--font-ponlponl123-article',
-  weight: '100 900',
-});
-const SNsanafonMaruJ30 = localFont({
-  src: './fonts/SNsanafonMaruJ30.ttf',
-  variable: '--font-sn-sanafon-maru-j30',
-  weight: '100 900',
-});
-const geistSans = localFont({
-  src: './fonts/GeistVF.woff',
-  variable: '--font-geist-sans',
-  weight: '100 900',
-});
-const geistMono = localFont({
-  src: './fonts/GeistMonoVF.woff',
-  variable: '--font-geist-mono',
-  weight: '100 900',
-});
+const fontSans = Geist({
+  subsets: ["latin"],
+  variable: "--font-sans",
+})
 
-export const metadata: Metadata = {
-  title: 'Pona! - Ponlponl123',
-  description: 'Pona! is a useful discord application and free to use.',
-};
+const jetbrainsMono = JetBrains_Mono({subsets:['latin'],variable:'--font-mono'})
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
-  modal,
-}: {
-  children: React.ReactNode;
-  modal?: React.ReactNode;
-}) {
-  const headersList = await headers();
-  const userAgent = headersList.get('user-agent') || '';
-  const mobileCheck = isMobile(userAgent);
+}: Readonly<{
+  children: React.ReactNode
+}>) {
   return (
-    <html lang='en'>
-      <body
-        className={`${ponlponl123Article.variable} ${geistSans.variable} ${geistMono.variable} ${SNsanafonMaruJ30.variable} antialiased overflow-x-hidden`}
-      >
-        <NextTopLoader
-          color='#ff80c6'
-          initialPosition={0.08}
-          crawlSpeed={200}
-          height={3}
-          crawl={true}
-          showSpinner={true}
-          easing='ease'
-          speed={200}
-          shadow='0 0 24px #ff80c6,0 0 12px #ff80c6'
-        />
-        <Providers isMobile={mobileCheck}>
-          <Header />
-          <main id='app'>{children}</main>
-          <Footer />
-        </Providers>
-        {modal}
-        <div id='modal-root' />
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={cn("antialiased", fontSans.variable, "font-mono", jetbrainsMono.variable)}
+    >
+      <body>
+        <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
-  );
+  )
 }

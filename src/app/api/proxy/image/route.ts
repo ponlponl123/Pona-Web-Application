@@ -1,170 +1,194 @@
-import { fetchWithSSLFallback } from '@/utils/fetchWithSSLFallback';
-import { processImageBuffer } from '@/utils/image-processor';
-import { NextRequest, NextResponse } from 'next/server';
-import { Buffer } from 'node:buffer';
+import { fetchWithSSLFallback } from "@/lib/ssl/fetch"
+import { NextRequest, NextResponse } from "next/server"
+import { LRUCache } from "lru-cache"
+import {
+  OutputOptions,
+  ResizeOptions,
+  transform,
+  TransformOptions,
+} from "imgkit"
 
-const cache = new Map<
-  string,
-  { buffer: Buffer; contentType: string; timestamp: number }
->();
-const CACHE_DURATION = 3600 * 1000; // 1 hour in milliseconds
+interface CacheEntry {
+  buffer: Buffer
+  contentType: string
+}
+
+const cache = new LRUCache<string, CacheEntry>({
+  max: 200,
+  ttl: 3600 * 1000,
+})
 
 function resolveRelativeUrl(req: NextRequest, path: string): string {
-  const forwardedProto = req.headers
-    .get('x-forwarded-proto')
-    ?.split(',')[0]
-    .trim();
-  const forwardedHost = req.headers
-    .get('x-forwarded-host')
-    ?.split(',')[0]
-    .trim();
+  if (path.startsWith("http")) return path
 
-  const headerHost = req.headers.get('host')?.split(',')[0].trim();
+  const protocol =
+    req.headers.get("x-forwarded-proto")?.split(",")[0].trim() || "http"
+  let host =
+    req.headers.get("x-forwarded-host")?.split(",")[0].trim() ||
+    req.headers.get("host")?.split(",")[0].trim() ||
+    "localhost:3000"
 
-  let host = forwardedHost || headerHost || req.nextUrl.host;
-  let protocol = forwardedProto || req.nextUrl.protocol.replace(':', '');
-
-  if (!host) {
-    host = '127.0.0.1:3000';
+  if (
+    host.startsWith("0.0.0.0") ||
+    host.includes("localhost") ||
+    host.includes("127.")
+  ) {
+    const [, port] = host.split(":")
+    host = `127.0.0.1${port ? `:${port}` : ""}`
+    return `http://${host}${path}`
   }
 
-  if (host.startsWith('0.0.0.0')) {
-    const [, port] = host.split(':');
-    host = `127.0.0.1${port ? `:${port}` : ''}`;
-  }
-
-  const loopbackHosts = ['127.', 'localhost'];
-  if (loopbackHosts.some(prefix => host.startsWith(prefix))) {
-    protocol = 'http';
-  }
-
-  return `${protocol}://${host}${path}`;
+  return `${protocol}://${host}${path}`
 }
 
 export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url);
-  const rawRef = searchParams.get('r');
-  const ref = rawRef?.startsWith('/')
-    ? resolveRelativeUrl(req, rawRef)
-    : rawRef;
-  const size = searchParams.get('s');
-  const blur = searchParams.get('blur');
-  const brightness = searchParams.get('brightness');
-  const contrast = searchParams.get('contrast');
-  const saturation = searchParams.get('saturation');
+  const { searchParams } = new URL(req.url)
+  const rawRef = searchParams.get("r")
+  const size = searchParams.get("s")
+  const blur = searchParams.get("blur")
+  const brightness = searchParams.get("brightness")
+  const contrast = searchParams.get("contrast")
 
-  if (!ref) {
+  if (!rawRef) {
     return NextResponse.json(
-      { error: 'Missing ref parameter' },
+      { error: "Missing ref parameter" },
       { status: 400 }
-    );
+    )
   }
 
-  // Validate that ref is a valid URL
-  let imageUrl: URL;
-  try {
-    imageUrl = new URL(ref);
-    // Only allow http and https protocols for security
-    if (!['http:', 'https:'].includes(imageUrl.protocol)) {
-      return NextResponse.json(
-        { error: 'Invalid URL protocol. Only http and https are allowed.' },
-        { status: 400 }
-      );
-    }
-  } catch {
+  if (blur && isNaN(parseFloat(blur))) {
+    return NextResponse.json(
+      { error: "Invalid blur parameter" },
+      { status: 400 }
+    )
+  } else if (blur && (parseFloat(blur) < 0 || parseFloat(blur) > 100)) {
     return NextResponse.json(
       {
-        error: 'Invalid URL format',
-        details: 'The ref parameter must be a valid HTTP/HTTPS URL',
-        received: ref,
+        error:
+          "Blur parameter must be greater than or equal to 0 and less than or equal to 100",
       },
       { status: 400 }
-    );
+    )
   }
 
-  // Create consistent cache key using all parameters
-  const cacheKey = `${ref}|${size || 'original'}|${blur || 'none'}|${brightness || 'none'}|${contrast || 'none'}|${saturation || 'none'}`;
-  const cachedImage = cache.get(cacheKey);
-  const now = Date.now();
-
-  if (cachedImage && now - cachedImage.timestamp < CACHE_DURATION) {
-    return new NextResponse(new Uint8Array(cachedImage.buffer), {
-      headers: {
-        'Content-Type': cachedImage.contentType,
-        'Cache-Control': 's-maxage=86400, stale-while-revalidate',
+  if (brightness && isNaN(parseInt(brightness, 10))) {
+    return NextResponse.json(
+      { error: "Invalid brightness parameter" },
+      { status: 400 }
+    )
+  } else if (
+    brightness &&
+    (parseInt(brightness, 10) < 0 || parseInt(brightness, 10) > 100)
+  ) {
+    return NextResponse.json(
+      {
+        error:
+          "Brightness parameter must be greater than or equal to 0 and less than or equal to 100",
       },
-    });
+      { status: 400 }
+    )
+  }
+
+  if (contrast && isNaN(parseInt(contrast, 10))) {
+    return NextResponse.json(
+      { error: "Invalid contrast parameter" },
+      { status: 400 }
+    )
+  } else if (
+    contrast &&
+    (parseInt(contrast, 10) < 0 || parseInt(contrast, 10) > 100)
+  ) {
+    return NextResponse.json(
+      {
+        error:
+          "Contrast parameter must be greater than or equal to 0 and less than or equal to 100",
+      },
+      { status: 400 }
+    )
+  }
+
+  const ref = rawRef.startsWith("/") ? resolveRelativeUrl(req, rawRef) : rawRef
+
+  try {
+    const imageUrl = new URL(ref)
+    if (!["http:", "https:"].includes(imageUrl.protocol)) {
+      throw new Error("Invalid protocol")
+    }
+  } catch {
+    return NextResponse.json({ error: "Invalid URL format" }, { status: 400 })
+  }
+
+  const cacheKey = `${ref}|${size || "orig"}|${blur || "0"}|${brightness || "0"}|${contrast || "0"}`
+
+  const cached = cache.get(cacheKey)
+  if (cached) {
+    return new NextResponse(cached.buffer as unknown as BodyInit, {
+      headers: {
+        "Content-Type": cached.contentType,
+        "Cache-Control": "public, s-maxage=86400, stale-while-revalidate",
+      },
+    })
   }
 
   try {
-    // Use the utility function to handle SSL certificate issues automatically
-    const response = await fetchWithSSLFallback(imageUrl.toString(), {
-      method: 'GET',
+    const response = await fetchWithSSLFallback(ref, {
+      method: "GET",
       timeout: 15000,
-      ignoreSSLErrors: process.env.NODE_ENV === 'production', // Allow SSL relaxation in production for trusted domains
-    });
+      ignoreSSLErrors: process.env.NODE_ENV === "production",
+    })
 
     if (!response.ok) {
       return NextResponse.json(
         { error: `Failed to fetch image: ${response.statusText}` },
         { status: response.status }
-      );
+      )
     }
 
-    const contentType =
-      response.headers.get('content-type') || 'application/octet-stream';
-    const arrayBuffer = await response.arrayBuffer();
-    let imageBuffer: Buffer = Buffer.from(arrayBuffer);
+    let contentType =
+      response.headers.get("content-type") || "application/octet-stream"
 
-    // Process image if any filter parameters are provided
-    if (blur || size || brightness || contrast || saturation) {
-      try {
-        const processedBuffer = await processImageBuffer(
-          imageBuffer,
-          {
-            size: size ? parseInt(size, 10) : undefined,
-            blur: blur ? parseFloat(blur) : undefined,
-            brightness: brightness ? parseInt(brightness, 10) : undefined,
-            contrast: contrast ? parseInt(contrast, 10) : undefined,
-            saturation: saturation ? parseInt(saturation, 10) : undefined,
-          },
-          contentType
-        );
-        imageBuffer = processedBuffer as Buffer;
-      } catch (imageProcessError) {
-        console.error('Image processing error:', imageProcessError);
-        // If image processing fails, return original image
+    const arrayBuffer = await response.arrayBuffer()
+    let imageBuffer = Buffer.from(arrayBuffer)
+
+    if (size || blur || brightness || contrast) {
+      const transformOptions: TransformOptions = {}
+
+      if (size) {
+        transformOptions.resize = {
+          width: parseInt(size, 10),
+          fit: "cover",
+        } as ResizeOptions
       }
+      if (blur) transformOptions.blur = parseFloat(blur)
+      if (brightness) transformOptions.brightness = parseInt(brightness, 10)
+      if (contrast) transformOptions.contrast = parseInt(contrast, 10)
+
+      transformOptions.output = {
+        format: "webp",
+        webp: { quality: 80 },
+      } as OutputOptions
+
+      imageBuffer = Buffer.from(await transform(imageBuffer, transformOptions))
+
+      contentType = "image/webp"
     }
 
-    // Cache the processed image with the correct cache key
-    cache.set(cacheKey, { buffer: imageBuffer, contentType, timestamp: now });
+    cache.set(cacheKey, { buffer: imageBuffer, contentType })
 
-    // Periodically clean up old cache entries
-    if (cache.size > 100) {
-      const entriesToDelete: string[] = [];
-      cache.forEach((value, key) => {
-        if (now - value.timestamp > CACHE_DURATION) {
-          entriesToDelete.push(key);
-        }
-      });
-      entriesToDelete.forEach(key => cache.delete(key));
-    }
-
-    return new NextResponse(new Uint8Array(imageBuffer), {
+    return new NextResponse(imageBuffer as unknown as BodyInit, {
       headers: {
-        'Content-Type': contentType,
-        'Cache-Control': 's-maxage=86400, stale-while-revalidate',
+        "Content-Type": contentType,
+        "Cache-Control": "public, s-maxage=86400, stale-while-revalidate",
       },
-    });
+    })
   } catch (err) {
-    console.error('Image proxy error:', err);
+    console.error("Image proxy error:", err)
     return NextResponse.json(
       {
-        error: 'Failed to fetch image',
-        details: err instanceof Error ? err.message : 'Unknown error',
+        error: "Failed to process image",
+        details: err instanceof Error ? err.message : "Unknown",
       },
       { status: 500 }
-    );
+    )
   }
 }
