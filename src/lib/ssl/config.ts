@@ -24,16 +24,16 @@ export function getSSLConfig(): SSLConfig {
   if (cachedConfig) return cachedConfig
 
   const isProduction =
-    (Bun.env.NODE_ENV || process.env.NODE_ENV) === "production"
+    (process.env.NODE_ENV || process.env.NODE_ENV) === "production"
 
   cachedConfig = {
     rejectUnauthorized:
-      (Bun.env.NODE_TLS_REJECT_UNAUTHORIZED ||
+      (process.env.NODE_TLS_REJECT_UNAUTHORIZED ||
         process.env.NODE_TLS_REJECT_UNAUTHORIZED) !== "0",
     trustedDomains: new Set(TRUSTED_DOMAINS_LIST),
     fallbackToHTTP: isProduction,
     timeout: parseInt(
-      Bun.env.SSL_TIMEOUT || process.env.SSL_TIMEOUT || "15000",
+      process.env.SSL_TIMEOUT || process.env.SSL_TIMEOUT || "15000",
       10
     ),
   }

@@ -1,0 +1,88 @@
+.status-block {
+  @apply flex w-full max-w-5xl flex-col rounded-3xl border-3 border-foreground/5 p-6;
+}
+
+.service-list {
+  @apply flex items-center justify-between rounded-2xl bg-foreground/0 p-3;
+}
+.service-list:hover {
+  @apply bg-foreground/5;
+}
+.service-list h1 {
+  width: 100%;
+  font-size: 1.2rem;
+  font-family: var(--font-geist-mono);
+}
+
+.service-status-badge {
+  @apply m-auto rounded-xl bg-gray-700/25 px-2 py-1 text-sm text-gray-700;
+}
+.service-status-badge:not(.no-label)::before {
+  content: "Unknown";
+}
+
+.service-status-badge.operational {
+  @apply bg-green-700/25 text-green-700;
+}
+.service-status-badge:not(.no-label).operational::before {
+  content: "Operational";
+}
+
+.service-status-badge.degraded {
+  @apply bg-amber-400/25 text-amber-400;
+}
+.service-status-badge:not(.no-label).degraded::before {
+  content: "Degraded";
+}
+
+.service-status-badge.down {
+  @apply bg-red-700/25 text-red-700;
+}
+.service-status-badge:not(.no-label).down::before {
+  content: "Down";
+}
+
+.group-menu {
+  @apply relative flex w-full max-w-5xl flex-col gap-2 overflow-hidden rounded-2xl bg-transparent;
+}
+.group-menu > .group-title,
+.group-menu > .group-content {
+  @apply flex flex-col gap-2;
+}
+.group-menu.collapsed > .group-title {
+  @apply gap-1;
+}
+.group-menu.collapsed > .group-content {
+  @apply gap-0;
+}
+.group-menu > .group-title > *,
+.group-menu > .group-content > * {
+  @apply w-full justify-start;
+}
+.group-menu.active {
+  @apply gap-0 border-transparent bg-foreground/15;
+}
+.group-menu.active:not(.collapsed) {
+  @apply border-4;
+}
+.group-menu.active > .group-title > * {
+  @apply justify-center;
+}
+.group-menu.active > .group-title > :last-child {
+  @apply rounded-b-md;
+}
+.group-menu:not(.active) > .group-content {
+  @apply pointer-events-none absolute top-12 left-2 -mt-4 opacity-0;
+}
+.group-menu.active:not(.collapsed) > .group-content {
+  @apply p-2;
+}
+.group-menu.collapsed > .group-content > * {
+  @apply scale-80;
+}
+
+@media (max-width: 640px) {
+  .service-list > h1 {
+    @apply text-base;
+  }
+}

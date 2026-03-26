@@ -1,4 +1,5 @@
 header.pona-header {
+  @apply absolute;
   z-index: 90;
 }
 

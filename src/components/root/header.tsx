@@ -193,7 +193,7 @@ function Header() {
     <header
       className={clsx(
         `nav-opened-${navOpened}`,
-        "pona-header absolute flex h-20 w-full items-center justify-center gap-3 p-6 px-8",
+        "pona-header flex h-20 w-full items-center justify-center gap-3 p-6 px-8",
         !isIndex && !isMusicApp && "max-md:backdrop-blur-md",
         !isIndex &&
           isMusicApp &&
