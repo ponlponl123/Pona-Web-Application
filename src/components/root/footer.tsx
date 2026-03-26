@@ -11,15 +11,17 @@ import {
   PottedPlantIcon,
 } from "@phosphor-icons/react/dist/ssr"
 import { usePathname } from "next/navigation"
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
-import Link from "next/link"
+import { useGlobalContext } from "@/contexts/globalContext"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 import { Button } from "../ui/button"
+import { motion } from "motion/react"
+import Link from "next/link"
 import clsx from "clsx"
 
 function Footer() {
   const pathname = usePathname() || ""
-  const { language, setLanguage } = useLanguageContext()
+  const { language } = useLanguageContext()
+  const { setIsLanguageModalOpen } = useGlobalContext()
   const isAppRoute = pathname.startsWith("/app")
 
   return (
@@ -30,14 +32,14 @@ function Footer() {
       )}
     >
       <div className="div w-fit max-md:order-1 md:max-w-64">
-        <span className="-mb-4 block text-xs opacity-50 max-md:text-center">
+        <span className="block text-xs opacity-50 max-md:text-center">
           Hello Pona! v.{process.env["NEXT_PUBLIC_APP_VERSION"] || "unknown"}
         </span>
-        <span className="mt-4 block text-xs opacity-50 max-md:text-center">
+        <span className="block text-xs opacity-50 max-md:text-center">
           © 2024 - {new Date().getFullYear()} Pona! Application - Ponlponl123
           Projects. Licensed under MIT and Apache 2.0.
         </span>
-        <span className="mt-2 flex flex-wrap items-center gap-1 text-xs opacity-30 max-md:text-center">
+        <span className="flex flex-wrap items-center gap-1 text-xs opacity-30 max-md:text-center">
           Made with <HeartIcon weight="fill" className="mx-1 text-red-500" /> by{" "}
           <Link
             href="https://ponlponl123.com"
@@ -51,7 +53,7 @@ function Footer() {
       </div>
 
       <div className="flex flex-1 flex-col items-center justify-center gap-2">
-        <div className="flex flex-wrap justify-center gap-4">
+        <div className="flex flex-wrap justify-center gap-6">
           <Link
             href="https://github.com/ponlponl123/Pona-Discord-Application"
             target="_blank"
@@ -107,9 +109,12 @@ function Footer() {
       </div>
 
       <div className="div max-md:-order-1 md:max-w-64">
-        <Popover>
-          <PopoverTrigger
-            render={<Button variant="outline" className="flex gap-2" />}
+        <motion.div layoutId="language-selector-modal">
+          <Button
+            className="rounded-2xl border-2"
+            size="lg"
+            variant="outline"
+            onClick={() => setIsLanguageModalOpen(true)}
           >
             <Avatar className="h-4 w-4">
               <AvatarImage
@@ -118,30 +123,11 @@ function Footer() {
               />
               <AvatarFallback>{language.key.toUpperCase()}</AvatarFallback>
             </Avatar>
-            <span className="uppercase">{language.key}</span>
-          </PopoverTrigger>
-          <PopoverContent className="border-default-700/10 dark:border-default-900/10 w-32 border-2 px-2 py-2">
-            <div className="flex flex-col gap-1">
-              {langs.map((lang) => (
-                <Button
-                  key={lang.key}
-                  variant="ghost"
-                  className="justify-start gap-2"
-                  onClick={() => setLanguage(lang.key)}
-                >
-                  <Avatar className="h-4 w-4">
-                    <AvatarImage
-                      alt={lang.key}
-                      src={`https://flagcdn.com/${lang.country}.svg`}
-                    />
-                    <AvatarFallback>{lang.key.toUpperCase()}</AvatarFallback>
-                  </Avatar>
-                  {lang.label}
-                </Button>
-              ))}
-            </div>
-          </PopoverContent>
-        </Popover>
+            <span className="font-medium tracking-widest">
+              {language.label}
+            </span>
+          </Button>
+        </motion.div>
       </div>
     </footer>
   )

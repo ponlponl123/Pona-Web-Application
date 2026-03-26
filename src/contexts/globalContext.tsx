@@ -37,6 +37,9 @@ const GlobalContext = createContext<{
 
   socketRequesting: boolean
   setSocketRequesting: Dispatch<SetStateAction<boolean>>
+
+  isLanguageModalOpen: boolean
+  setIsLanguageModalOpen: Dispatch<SetStateAction<boolean>>
 }>({
   isMobile: false,
 
@@ -57,6 +60,9 @@ const GlobalContext = createContext<{
 
   socketRequesting: false,
   setSocketRequesting: () => {},
+
+  isLanguageModalOpen: false,
+  setIsLanguageModalOpen: () => {},
 })
 
 export const GlobalProvider = ({
@@ -79,6 +85,7 @@ export const GlobalProvider = ({
   const [isSameVC, setIsSameVC] = useState<boolean>(false)
   const [isFullscreenMode, setIsFullscreenMode] =
     useState<FullScreenMode>(false)
+  const [isLanguageModalOpen, setIsLanguageModalOpen] = useState<boolean>(false)
 
   React.useEffect(() => {
     if (ponaCommonState?.pona.voiceChannel && isMemberInVC?.id)
@@ -101,6 +108,8 @@ export const GlobalProvider = ({
         setIsSameVC,
         isFullscreenMode,
         setIsFullscreenMode,
+        isLanguageModalOpen,
+        setIsLanguageModalOpen,
       }}
     >
       {children}

@@ -211,7 +211,11 @@ export default function Home() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 2.12 }}
               >
-                <Link href="/app" rel="noopener noreferrer">
+                <Link
+                  href="/app"
+                  rel="noopener noreferrer"
+                  className="tracking-widest hover:text-foreground/80 active:text-foreground/50"
+                >
                   {language.data.home.actions.login}
                 </Link>
               </motion.div>

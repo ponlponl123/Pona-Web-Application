@@ -36,6 +36,12 @@
       "logout": "Log Out"
     }
   },
+  "modal": {
+    "language-selector": {
+      "title": "What language do you use to communicate?",
+      "description": "Pick the language you're most comfortable with! You can change this later in your settings."
+    }
+  },
   "home": {
     "welcome_message": {
       "morning": "☀️ Good morning!\nHow are you today? (≧∇≦)ﾉ",

@@ -10,6 +10,7 @@ import { PonaMusicCacheContextProvider } from "@/contexts/ponaMusicCacheContext"
 import { usePathname } from "next/navigation"
 import { Toaster } from "@/components/ui/sonner"
 import { languageKeys } from "@/lib/i18n"
+import LanguageSelectorModal from "@/components/modal/language-selector-modal"
 
 export function Providers({
   children,
@@ -31,7 +32,10 @@ export function Providers({
                 {pathname.startsWith("/app") ? (
                   children
                 ) : (
-                  <PageAnimatePresence>{children}</PageAnimatePresence>
+                  <PageAnimatePresence>
+                    {children}
+                    <LanguageSelectorModal />
+                  </PageAnimatePresence>
                 )}
                 <Toaster />
               </GlobalProvider>
