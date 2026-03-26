@@ -1,23 +1,24 @@
-'use server';
-import axios from 'axios';
-import { EndpointHTTP, EndpointKey } from '../endpoint';
-import { fetchByAccessToken } from './fetchUser';
-const API_ENDPOINT = 'https://discord.com/api/v10';
+"use server"
+import { EndpointHTTP, EndpointKey } from "../endpoint"
+import { fetchByAccessToken } from "./fetchUser"
+
+const API_ENDPOINT = "https://discord.com/api/v10"
+const COMMON_USER_AGENT = "Pona! Application (OpenPonlponl123.com/v1)"
 
 export interface GuildInfo extends BasicGuildInfo {
-  basic: false;
+  basic: false
 }
 
 export interface BasicGuildInfo {
-  id: string;
-  name: string;
-  icon: string | null;
-  banner: string | null;
-  memberCount: number;
-  ownerId: string;
-  iconURL: string | null;
-  nameAcronym: string;
-  bannerURL: string | null;
+  id: string
+  name: string
+  icon: string | null
+  banner: string | null
+  memberCount: number
+  ownerId: string
+  iconURL: string | null
+  nameAcronym: string
+  bannerURL: string | null
 }
 
 export async function fetchGuildsV1(
@@ -25,33 +26,45 @@ export async function fetchGuildsV1(
   keyType: string
 ): Promise<false | GuildInfo[]> {
   try {
-    const guildsFromUser = await axios.get(API_ENDPOINT + '/users/@me/guilds', {
+    const discordResponse = await fetch(`${API_ENDPOINT}/users/@me/guilds`, {
+      method: "GET",
       headers: {
         Authorization: `${keyType} ${key}`,
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'User-Agent': 'Pona! Application (OpenPonlponl123.com/v1)',
+        "User-Agent": COMMON_USER_AGENT,
       },
-    });
-    if (guildsFromUser.status === 200 && guildsFromUser.data.length > 0) {
-      try {
-        const guilds = await axios.get(EndpointHTTP + '/v1/guilds', {
-          headers: {
-            Authorization: `Pona! ${EndpointKey}`,
-            'Content-Type': 'application/json',
-            'User-Agent': 'Pona! Application (OpenPonlponl123.com/v1)',
-          },
-          data: guildsFromUser.data.map((guild: GuildInfo) => guild.id),
-        });
-        if (guildsFromUser.status === 200)
-          return guilds.data.guilds as GuildInfo[];
-      } catch {
-        return false;
-      }
+      signal: AbortSignal.timeout(15000),
+    })
+
+    if (!discordResponse.ok) return false
+
+    const guildsFromUser = await discordResponse.json()
+    if (!Array.isArray(guildsFromUser) || guildsFromUser.length === 0)
+      return false
+
+    const ponaResponse = await fetch(`${EndpointHTTP}/v1/guilds`, {
+      method: "POST",
+      headers: {
+        Authorization: `Pona! ${EndpointKey}`,
+        "Content-Type": "application/json",
+        "User-Agent": COMMON_USER_AGENT,
+      },
+      body: JSON.stringify(guildsFromUser.map((guild: GuildInfo) => guild.id)),
+      signal: AbortSignal.timeout(15000),
+    })
+
+    if (ponaResponse.ok) {
+      const data = await ponaResponse.json()
+      return data.guilds as GuildInfo[]
     }
-  } catch {
-    return false;
+
+    return false
+  } catch (error) {
+    console.error(
+      "[FetchGuildsV1] Error:",
+      error instanceof Error ? error.message : "Unknown"
+    )
+    return false
   }
-  return false;
 }
 
 export async function fetchGuilds(
@@ -59,19 +72,29 @@ export async function fetchGuilds(
   keyType: string
 ): Promise<false | GuildInfo[]> {
   try {
-    const guilds = await axios.get(EndpointHTTP + '/v2/guilds', {
+    const response = await fetch(`${EndpointHTTP}/v2/guilds`, {
+      method: "GET",
       headers: {
         Authorization: `Pona! ${EndpointKey}`,
-        'Content-Type': 'application/json',
-        'User-Agent': 'Pona! Application (OpenPonlponl123.com/v1)',
+        "Content-Type": "application/json",
+        "User-Agent": COMMON_USER_AGENT,
         Cookie: `type=${keyType}; key=${key};`,
       },
-    });
-    if (guilds.status === 200) return guilds.data.guilds as GuildInfo[];
-  } catch {
-    return false;
+      signal: AbortSignal.timeout(10000),
+    })
+
+    if (response.ok) {
+      const data = await response.json()
+      return data.guilds as GuildInfo[]
+    }
+    return false
+  } catch (error) {
+    console.error(
+      "[FetchGuilds] Error:",
+      error instanceof Error ? error.message : "Unknown"
+    )
+    return false
   }
-  return false;
 }
 
 export async function fetchGuild(
@@ -80,21 +103,32 @@ export async function fetchGuild(
   guildId: string
 ): Promise<false | GuildInfo> {
   try {
-    const user = await fetchByAccessToken(key, keyType);
-    if (!user) return false;
-    const guild = await axios.get(EndpointHTTP + '/v1/guild/' + guildId, {
+    const user = await fetchByAccessToken(key, keyType)
+    if (!user) return false
+
+    const response = await fetch(`${EndpointHTTP}/v1/guild/${guildId}`, {
+      method: "GET",
       headers: {
         Authorization: `Pona! ${EndpointKey}`,
-        'Content-Type': 'application/json',
-        'User-Agent': 'Pona! Application (OpenPonlponl123.com/v1)',
-        'User-Id': user.id,
+        "Content-Type": "application/json",
+        "User-Agent": COMMON_USER_AGENT,
+        "User-Id": user.id,
       },
-    });
-    if (guild.status === 200) return guild.data.guild;
-  } catch {
-    return false;
+      signal: AbortSignal.timeout(10000),
+    })
+
+    if (response.ok) {
+      const data = await response.json()
+      return data.guild
+    }
+    return false
+  } catch (error) {
+    console.error(
+      "[FetchGuild] Error:",
+      error instanceof Error ? error.message : "Unknown"
+    )
+    return false
   }
-  return false;
 }
 
 export async function fetchBasicGuildInfo(
@@ -103,32 +137,25 @@ export async function fetchBasicGuildInfo(
   guildId: string
 ): Promise<false | BasicGuildInfo> {
   try {
-    const user = await fetchByAccessToken(key, keyType);
-    if (!user) return false;
-    const guild = await axios.get(EndpointHTTP + '/v1/guild/' + guildId, {
-      headers: {
-        Authorization: `Pona! ${EndpointKey}`,
-        'Content-Type': 'application/json',
-        'User-Agent': 'Pona! Application (OpenPonlponl123.com/v1)',
-        'User-Id': user.id,
-      },
-    });
-    if (guild.status === 200) {
-      const guildInfo = guild.data.guild as GuildInfo;
-      return {
-        name: guildInfo.name,
-        id: guildInfo.id,
-        icon: guildInfo.icon,
-        banner: guildInfo.banner,
-        memberCount: guildInfo.memberCount,
-        ownerId: guildInfo.ownerId,
-        iconURL: guildInfo.iconURL,
-        nameAcronym: guildInfo.nameAcronym,
-        bannerURL: guildInfo.bannerURL,
-      } as BasicGuildInfo;
-    }
-  } catch {
-    return false;
+    const guildInfo = await fetchGuild(key, keyType, guildId)
+    if (!guildInfo) return false
+
+    return {
+      name: guildInfo.name,
+      id: guildInfo.id,
+      icon: guildInfo.icon,
+      banner: guildInfo.banner,
+      memberCount: guildInfo.memberCount,
+      ownerId: guildInfo.ownerId,
+      iconURL: guildInfo.iconURL,
+      nameAcronym: guildInfo.nameAcronym,
+      bannerURL: guildInfo.bannerURL,
+    } as BasicGuildInfo
+  } catch (error) {
+    console.error(
+      "[FetchBasicGuildInfo] Error:",
+      error instanceof Error ? error.message : "Unknown"
+    )
+    return false
   }
-  return false;
 }

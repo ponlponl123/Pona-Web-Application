@@ -1,135 +1,92 @@
-'use server';
-import axios from 'axios';
-import { EndpointHTTP, EndpointKey } from '../endpoint';
-import { fetchGuild } from '../discord/fetchGuild';
+"use server"
 
-type chennelid = {
-  [key: string]: number;
-};
+import { EndpointHTTP, EndpointKey } from "../endpoint"
+import { fetchGuild } from "../discord/fetchGuild"
 
 interface Period {
-  start_time: string;
-  end_time: string;
+  start_time: string
+  end_time: string
 }
+
 interface Interval {
-  date: string;
-  played: number;
+  date: string
+  played: number
 }
 
 interface DatasetItem {
-  from: string;
-  to: string;
+  from: string
+  to: string
   channels: {
-    id: string | null;
-    name: string | null;
-    members: string[] | null;
-  }[];
+    id: string | null
+    name: string | null
+    members: string[] | null
+  }[]
 }
 
 interface ChartItem {
-  date: string;
-  channels: chennelid;
+  date: string
+  channels: Record<string, number>
 }
 
 function calculateActiveIntervals(rawData: Period[]): Interval[] {
-  const data = [
-    {
-      date: '00:00 - 02:59',
-      played: 0,
-    },
-    {
-      date: '03:00 - 05:59',
-      played: 0,
-    },
-    {
-      date: '06:00 - 08:59',
-      played: 0,
-    },
-    {
-      date: '09:00 - 11:59',
-      played: 0,
-    },
-    {
-      date: '12:00 - 14:59',
-      played: 0,
-    },
-    {
-      date: '15:00 - 17:59',
-      played: 0,
-    },
-    {
-      date: '18:00 - 20:59',
-      played: 0,
-    },
-    {
-      date: '21:00 - 23:59',
-      played: 0,
-    },
-  ] as Interval[];
-  rawData.forEach((period: Period) => {
-    const start = new Date(period.start_time);
-    const end = new Date(period.end_time);
+  const intervals: Interval[] = [
+    { date: "00:00 - 02:59", played: 0 },
+    { date: "03:00 - 05:59", played: 0 },
+    { date: "06:00 - 08:59", played: 0 },
+    { date: "09:00 - 11:59", played: 0 },
+    { date: "12:00 - 14:59", played: 0 },
+    { date: "15:00 - 17:59", played: 0 },
+    { date: "18:00 - 20:59", played: 0 },
+    { date: "21:00 - 23:59", played: 0 },
+  ]
 
-    data.forEach((interval: Interval) => {
-      const intervalHour = parseInt(interval.date.split(':')[0]);
-      const intervalStart = new Date(start);
-      intervalStart.setUTCHours(intervalHour, 0, 0, 0);
-      const intervalEnd = new Date(
-        intervalStart.getTime() + 3 * 60 * 60 * 1000
-      );
+  for (const period of rawData) {
+    const start = new Date(period.start_time).getTime()
+    const end = new Date(period.end_time).getTime()
 
-      const activeStart = start > intervalStart ? start : intervalStart;
-      const activeEnd = end < intervalEnd ? end : intervalEnd;
+    for (const interval of intervals) {
+      const [startTimeStr] = interval.date.split(" - ")
+      const [hours] = startTimeStr.split(":").map(Number)
+
+      const intervalStart = new Date(start)
+      intervalStart.setUTCHours(hours, 0, 0, 0)
+      const intervalStartTime = intervalStart.getTime()
+      const intervalEndTime = intervalStartTime + 3 * 60 * 60 * 1000
+
+      const activeStart = Math.max(start, intervalStartTime)
+      const activeEnd = Math.min(end, intervalEndTime)
 
       if (activeStart < activeEnd) {
-        const activeTime =
-          (activeEnd.getTime() - activeStart.getTime()) / (60 * 1000); // Convert to minutes
-        interval.played += Math.round(activeTime);
+        interval.played += Math.round((activeEnd - activeStart) / 60000)
       }
-    });
-  });
-
-  return data;
-}
-
-function generateAllTimestamps(): string[] {
-  const timestamps: string[] = [];
-  for (let hour = 0; hour < 24; hour += 3) {
-    const from = `${hour.toString().padStart(2, '0')}:00`;
-    const toHour = (hour + 2) % 24;
-    const toMinute = 59;
-    const to = `${toHour.toString().padStart(2, '0')}:${toMinute.toString().padStart(2, '0')}`;
-    timestamps.push(`${from} - ${to}`);
+    }
   }
-  return timestamps;
+  return intervals
 }
 
 function convertToChartFormat(dataset: DatasetItem[]): ChartItem[] {
-  const allTimestamps = generateAllTimestamps();
+  const chartItems: ChartItem[] = Array.from({ length: 8 }, (_, i) => {
+    const startHour = i * 3
+    const endHour = startHour + 2
+    const date = `${startHour.toString().padStart(2, "0")}:00 - ${endHour.toString().padStart(2, "0")}:59`
+    return { date, channels: {} }
+  })
 
-  const chartItems: ChartItem[] = allTimestamps.map(timestamp => ({
-    date: timestamp,
-    channels: {},
-  }));
+  for (const item of dataset) {
+    const startHour = item.from.split(":")[0].padStart(2, "0")
+    const endHour = (parseInt(startHour) + 2).toString().padStart(2, "0")
+    const targetRange = `${startHour}:00 - ${endHour}:59`
 
-  // Populate channels data
-  dataset.forEach(item => {
-    const fromHour = parseInt(item.from.split(':')[0]);
-    const toHour = (fromHour + 2) % 24;
-    const toMinute = 59;
-    const timestamp = `${item.from} - ${toHour.toString().padStart(2, '0')}:${toMinute.toString().padStart(2, '0')}`;
-    const chartItem = chartItems.find(ci => ci.date === timestamp);
-
+    const chartItem = chartItems.find((ci) => ci.date === targetRange)
     if (chartItem) {
-      item.channels.forEach(channel => {
+      for (const channel of item.channels) {
         if (channel.name) {
-          chartItem.channels[channel.name] = channel.members?.length || 0;
+          chartItem.channels[channel.name] = channel.members?.length || 0
         }
-      });
+      }
     }
-  });
-
-  return chartItems;
+  }
+  return chartItems
 }
 
 export default async function guild_stats(
@@ -137,37 +94,42 @@ export default async function guild_stats(
   guildid: string
 ): Promise<string | null> {
   try {
-    const guild = await fetchGuild(token, type, guildid);
-    if (!guild) return null;
-    const Req = await axios.get(`${EndpointHTTP}/v1/guild/${guild.id}/stats`, {
+    const guild = await fetchGuild(token, type, guildid)
+    if (!guild) return null
+
+    const response = await fetch(`${EndpointHTTP}/v1/guild/${guild.id}/stats`, {
+      method: "GET",
       headers: {
         Authorization: `Pona! ${EndpointKey}`,
-        'Content-Type': 'application/json',
-        'User-Agent': 'Pona! Application (OpenPonlponl123.com/v1)',
+        "Content-Type": "application/json",
+        "User-Agent": "Pona! Application (OpenPonlponl123.com/v1)",
       },
-    });
-    if (Req.status === 200 && Req.data.active) {
-      const averageUsage = calculateActiveIntervals(Req.data.active);
+    })
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+
+    const data = await response.json()
+
+    if (data.active) {
+      const averageUsage = calculateActiveIntervals(data.active)
       const membersInChannel = convertToChartFormat(
-        Req.data.history as DatasetItem[]
-      );
+        data.history as DatasetItem[]
+      )
+
       return JSON.stringify({
         active: averageUsage,
         members: membersInChannel,
-      });
+      })
     }
-    return null;
+
+    return null
   } catch (err) {
-    if (axios.isAxiosError(err)) {
-      console.error('Axios error occurred:', {
-        message: err.message,
-        code: err.code,
-        status: err.response?.status,
-        data: err.response?.data,
-      });
-    } else {
-      console.error('Failed to get Guild Active Usage Stats:', err);
-    }
-    return null;
+    console.error(
+      "Failed to get Guild Active Usage Stats:",
+      err instanceof Error ? err.message : err
+    )
+    return null
   }
 }

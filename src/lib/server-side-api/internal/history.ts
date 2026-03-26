@@ -1,18 +1,17 @@
-'use server';
-import { Track } from '@/interfaces/ponaPlayer';
-import axios from 'axios';
-import { EndpointHTTP } from '../endpoint';
+"use server"
+import { Track } from "@/types/ponaPlayer"
+import { EndpointHTTP } from "../endpoint"
 
 export interface History {
-  id: number;
-  requestby: string;
-  track: Track;
-  uniqueid: string;
+  id: number
+  requestby: string
+  track: Track
+  uniqueid: string
 }
 
 export interface Tracks {
-  message: string;
-  tracks: History[];
+  message: string
+  tracks: History[]
 }
 
 export default async function fetchHistory(
@@ -21,18 +20,27 @@ export default async function fetchHistory(
   limit?: number
 ): Promise<false | Tracks> {
   try {
-    const endpoint = new URL(`${EndpointHTTP}/v1/music/history`);
-    endpoint.searchParams.append('l', String(limit || 14));
-    const handshakeRequest = await axios.get(endpoint.toString(), {
+    const endpoint = new URL(`${EndpointHTTP}/v1/music/history`)
+    endpoint.searchParams.append("l", String(limit || 14))
+
+    const response = await fetch(endpoint.toString(), {
+      method: "GET",
       headers: {
         Authorization: `${tokenType} ${tokenKey}`,
       },
-    });
-    if (handshakeRequest.status === 200) return handshakeRequest.data as Tracks;
-    else return false;
-  } catch {
-    // console.error('Failed to handshake with Pona! API:', err);
-    return false;
+      signal: AbortSignal.timeout(10000),
+    })
+
+    if (response.ok) {
+      return (await response.json()) as Tracks
+    }
+    return false
+  } catch (error) {
+    console.error(
+      "[FetchHistory] Error:",
+      error instanceof Error ? error.message : "Unknown error"
+    )
+    return false
   }
 }
 
@@ -41,16 +49,26 @@ export async function fetchSearchHistory(
   tokenKey: string
 ): Promise<false | string[]> {
   try {
-    const endpoint = new URL(`${EndpointHTTP}/v1/music/history/search`);
-    const handshakeRequest = await axios.get(endpoint.toString(), {
+    const endpoint = new URL(`${EndpointHTTP}/v1/music/history/search`)
+
+    const response = await fetch(endpoint.toString(), {
+      method: "GET",
       headers: {
         Authorization: `${tokenType} ${tokenKey}`,
       },
-    });
-    if (handshakeRequest.status === 200)
-      return handshakeRequest.data.results as string[];
-    else return false;
-  } catch {
-    return false;
+      signal: AbortSignal.timeout(10000),
+    })
+
+    if (response.ok) {
+      const data = await response.json()
+      return data.results as string[]
+    }
+    return false
+  } catch (error) {
+    console.error(
+      "[FetchSearchHistory] Error:",
+      error instanceof Error ? error.message : "Unknown error"
+    )
+    return false
   }
 }

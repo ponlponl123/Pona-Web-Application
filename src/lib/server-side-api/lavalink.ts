@@ -1,17 +1,11 @@
-'use server';
-import axios from 'axios';
-import { EndpointHTTP } from './endpoint';
+"use server"
+import { EndpointHTTP } from "./endpoint"
 
 export default async function handshake(): Promise<boolean> {
   try {
-    const handshakeRequest = await axios.get(`${EndpointHTTP}/v1/lavalink`);
-    if (handshakeRequest.status === 200) return true;
-    else {
-      // console.error('Failed to handshake with Pona! Web Socket:', handshakeRequest.status);
-      return false;
-    }
+    const response = await fetch(`${EndpointHTTP}/v1/lavalink`)
+    return response.ok
   } catch {
-    // console.error('Failed to handshake with Pona! Web Socket:', err);
-    return false;
+    return false
   }
 }

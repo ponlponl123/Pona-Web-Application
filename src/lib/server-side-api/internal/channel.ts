@@ -1,20 +1,19 @@
-'use server';
-import axios from 'axios';
-import { EndpointHTTP } from '../endpoint';
-import { ArtistFull as ArtistFullv1 } from '@/interfaces/ytmusic';
-import { ArtistFull, ProfileFull } from '@/interfaces/ytmusic-api';
+"use server"
+import { EndpointHTTP } from "../endpoint"
+import { ArtistFull as ArtistFullv1 } from "@/types/ytmusic"
+import { ArtistFull, ProfileFull } from "@/types/ytmusic-api"
 
 export interface SubscribeResult {
-  message: string;
-  state: number;
+  message: string
+  state: number
 }
 export interface SubscribedChannelsResult {
-  artistId: string;
+  artistId: string
   info: {
-    v1: ArtistFullv1 | undefined;
-    v2: ArtistFull | undefined;
-    user: ProfileFull | undefined;
-  };
+    v1: ArtistFullv1 | undefined
+    v2: ArtistFull | undefined
+    user: ProfileFull | undefined
+  }
 }
 
 export async function IsSubscribed(
@@ -23,18 +22,19 @@ export async function IsSubscribed(
   channelId: string
 ): Promise<false | SubscribeResult> {
   try {
-    const endpoint = new URL(`${EndpointHTTP}/v1/channel/subscribe`);
-    endpoint.searchParams.append('c', channelId);
-    const handshakeRequest = await axios.get(endpoint.toString(), {
-      headers: {
-        Authorization: `${tokenType} ${tokenKey}`,
-      },
-    });
-    if (handshakeRequest.status === 200)
-      return handshakeRequest.data as SubscribeResult;
-    else return false;
+    const endpoint = new URL(`${EndpointHTTP}/v1/channel/subscribe`)
+    endpoint.searchParams.append("c", channelId)
+
+    const response = await fetch(endpoint.toString(), {
+      method: "GET",
+      headers: { Authorization: `${tokenType} ${tokenKey}` },
+      signal: AbortSignal.timeout(10000),
+    })
+
+    if (response.ok) return (await response.json()) as SubscribeResult
+    return false
   } catch {
-    return false;
+    return false
   }
 }
 
@@ -44,17 +44,18 @@ export default async function subscribe(
   channelId: string
 ): Promise<boolean> {
   try {
-    const endpoint = new URL(`${EndpointHTTP}/v1/channel/subscribe`);
-    endpoint.searchParams.append('c', channelId);
-    const handshakeRequest = await axios.post(endpoint.toString(), null, {
-      headers: {
-        Authorization: `${tokenType} ${tokenKey}`,
-      },
-    });
-    if (handshakeRequest.status === 200) return true;
-    else return false;
+    const endpoint = new URL(`${EndpointHTTP}/v1/channel/subscribe`)
+    endpoint.searchParams.append("c", channelId)
+
+    const response = await fetch(endpoint.toString(), {
+      method: "POST",
+      headers: { Authorization: `${tokenType} ${tokenKey}` },
+      signal: AbortSignal.timeout(10000),
+    })
+
+    return response.ok
   } catch {
-    return false;
+    return false
   }
 }
 
@@ -64,18 +65,22 @@ export async function fetchSubscribedChannels(
   lim?: number
 ): Promise<false | SubscribedChannelsResult[]> {
   try {
-    const endpoint = new URL(`${EndpointHTTP}/v1/channel/subscribe/s`);
-    if (lim) endpoint.searchParams.append('limit', String(lim));
-    const handshakeRequest = await axios.get(endpoint.toString(), {
-      headers: {
-        Authorization: `${tokenType} ${tokenKey}`,
-      },
-    });
-    if (handshakeRequest.status === 200)
-      return handshakeRequest.data.result as SubscribedChannelsResult[];
-    else return false;
+    const endpoint = new URL(`${EndpointHTTP}/v1/channel/subscribe/s`)
+    if (lim) endpoint.searchParams.append("limit", String(lim))
+
+    const response = await fetch(endpoint.toString(), {
+      method: "GET",
+      headers: { Authorization: `${tokenType} ${tokenKey}` },
+      signal: AbortSignal.timeout(10000),
+    })
+
+    if (response.ok) {
+      const data = await response.json()
+      return data.result as SubscribedChannelsResult[]
+    }
+    return false
   } catch {
-    return false;
+    return false
   }
 }
 
@@ -85,16 +90,17 @@ export async function unsubscribe(
   channelId: string
 ): Promise<boolean> {
   try {
-    const endpoint = new URL(`${EndpointHTTP}/v1/channel/subscribe`);
-    endpoint.searchParams.append('c', channelId);
-    const handshakeRequest = await axios.delete(endpoint.toString(), {
-      headers: {
-        Authorization: `${tokenType} ${tokenKey}`,
-      },
-    });
-    if (handshakeRequest.status === 200) return true;
-    else return false;
+    const endpoint = new URL(`${EndpointHTTP}/v1/channel/subscribe`)
+    endpoint.searchParams.append("c", channelId)
+
+    const response = await fetch(endpoint.toString(), {
+      method: "DELETE",
+      headers: { Authorization: `${tokenType} ${tokenKey}` },
+      signal: AbortSignal.timeout(10000),
+    })
+
+    return response.ok
   } catch {
-    return false;
+    return false
   }
 }

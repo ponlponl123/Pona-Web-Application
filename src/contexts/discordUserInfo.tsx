@@ -5,19 +5,26 @@ import {
   revokeUserAccessToken as removeAccessToken,
 } from "@/lib/server-side-api/discord/fetchUser"
 import { deleteCookie, getCookie, setCookie } from "cookies-next"
-import { createContext, useContext, useEffect, useState } from "react"
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+  useMemo,
+} from "react"
+import { useRouter } from "next/navigation"
 
-const discordUserInfo = createContext<{
+interface UserContextType {
   userInfo: UserInfoType | null
-  setUserAccessToken: (key: string, type: string) => void
-  revokeUserAccessToken: (key: string) => void
+  setUserAccessToken: (key: string, type: string) => Promise<void>
+  revokeUserAccessToken: () => Promise<void>
   loading: boolean
-}>({
-  userInfo: null,
-  setUserAccessToken: () => {},
-  revokeUserAccessToken: () => {},
-  loading: true,
-})
+}
+
+const DiscordUserInfoContext = createContext<UserContextType | undefined>(
+  undefined
+)
 
 export const DiscordUserInfoProvider = ({
   children,
@@ -26,51 +33,70 @@ export const DiscordUserInfoProvider = ({
 }) => {
   const [userInfo, setUserInfo] = useState<UserInfoType | null>(null)
   const [loading, setLoading] = useState(true)
+  const router = useRouter()
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
-    const fetchCookies = async () => {
-      const currentAccessToken = await getCookie("LOGIN_")
-      const currentAccessTokenType = await getCookie("LOGIN_TYPE_")
-      if (
-        currentAccessToken &&
-        currentAccessTokenType &&
-        currentAccessToken !== "false"
-      )
-        setUserAccInfo(currentAccessToken, currentAccessTokenType)
-      else setLoading(false)
+  const setUserAccInfo = useCallback(async (key: string, keyType: string) => {
+    try {
+      const fetchUser = await fetchByAccessToken(key, keyType)
+      if (fetchUser) setUserInfo(fetchUser)
+    } finally {
+      setLoading(false)
     }
-    fetchCookies()
   }, [])
 
-  const setUserAccessToken = async (key: string, type: string) => {
-    setCookie("LOGIN_", key)
-    setCookie("LOGIN_TYPE_", type)
-    setUserAccInfo(key, type)
-  }
+  useEffect(() => {
+    const init = async () => {
+      const token = getCookie("LOGIN_")
+      const type = getCookie("LOGIN_TYPE_")
+      if (token && type && token !== "false") {
+        await setUserAccInfo(String(token), String(type))
+      } else {
+        setLoading(false)
+      }
+    }
+    init()
+  }, [setUserAccInfo])
 
-  const setUserAccInfo = async (key: string, keyType: string) => {
-    const fetchUser = await fetchByAccessToken(key, keyType)
-    if (fetchUser) setUserInfo(fetchUser)
-    setLoading(false)
-  }
+  const setUserAccessToken = useCallback(
+    async (key: string, type: string) => {
+      setCookie("LOGIN_", key, { maxAge: 60 * 60 * 24 })
+      setCookie("LOGIN_TYPE_", type, { maxAge: 60 * 60 * 24 })
+      await setUserAccInfo(key, type)
+    },
+    [setUserAccInfo]
+  )
 
-  const revokeUserAccessToken = async (key: string) => {
-    await removeAccessToken(key)
+  const revokeUserAccessToken = useCallback(async () => {
+    const currentAccessToken = getCookie("LOGIN_")
+    if (currentAccessToken) {
+      await removeAccessToken(String(currentAccessToken))
+    }
     deleteCookie("LOGIN_")
     deleteCookie("LOGIN_TYPE_")
-    window.location.replace("/")
-  }
+    setUserInfo(null)
+    router.replace("/")
+  }, [router])
+
+  const value = useMemo(
+    () => ({
+      userInfo,
+      setUserAccessToken,
+      revokeUserAccessToken,
+      loading,
+    }),
+    [userInfo, loading, setUserAccessToken, revokeUserAccessToken]
+  )
 
   return (
-    <discordUserInfo.Provider
-      value={{ userInfo, setUserAccessToken, revokeUserAccessToken, loading }}
-    >
+    <DiscordUserInfoContext.Provider value={value}>
       {children}
-    </discordUserInfo.Provider>
+    </DiscordUserInfoContext.Provider>
   )
 }
 
-export const useDiscordUserInfo = () => useContext(discordUserInfo)
-
-export default discordUserInfo
+export const useDiscordUserInfo = () => {
+  const context = useContext(DiscordUserInfoContext)
+  if (!context)
+    throw new Error("useDiscordUserInfo must be used within Provider")
+  return context
+}

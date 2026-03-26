@@ -4,7 +4,10 @@ import { Geist, JetBrains_Mono } from "next/font/google"
 import "@/styles/globals.css"
 import NextTopLoader from "nextjs-toploader"
 import { ThemeProvider } from "@/components/theme-provider"
-import { cn } from "@/lib/utils"
+import { cn, isMobile } from "@/lib/utils"
+import { Metadata } from "next"
+import { headers } from "next/headers"
+import { Providers } from "./providers"
 
 const fontSans = Geist({
   subsets: ["latin"],
@@ -26,11 +29,19 @@ const jetbrainsMono = JetBrains_Mono({
   variable: "--font-mono",
 })
 
-export default function RootLayout({
+export const metadata: Metadata = {
+  title: "Pona! - Ponlponl123",
+  description: "Pona! is a useful discord application and free to use.",
+}
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const headersList = await headers()
+  const userAgent = headersList.get("user-agent") || ""
+  const mobileCheck = isMobile(userAgent)
   return (
     <html
       lang="en"
@@ -56,7 +67,13 @@ export default function RootLayout({
           speed={200}
           shadow="0 0 24px #ff80c6,0 0 12px #ff80c6"
         />
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          <Providers isMobile={mobileCheck}>
+            {/* <Header /> */}
+            <main id="app">{children}</main>
+            {/* <Footer /> */}
+          </Providers>
+        </ThemeProvider>
       </body>
     </html>
   )

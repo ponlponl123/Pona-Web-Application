@@ -1,16 +1,10 @@
-'use server';
-import axios from 'axios';
+"use server"
 
 export default async function handshake(): Promise<boolean> {
   try {
-    const handshakeRequest = await axios.get('https://api.ponlponl123.com/');
-    if (handshakeRequest.status === 200) return true;
-    else {
-      // console.error('Failed to handshake with Pona! API:', handshakeRequest.status);
-      return false;
-    }
+    const response = await fetch("https://api.ponlponl123.com/")
+    return response.ok
   } catch {
-    // console.error('Failed to handshake with Pona! API:', err);
-    return false;
+    return false
   }
 }

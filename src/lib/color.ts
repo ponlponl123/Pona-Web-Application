@@ -2,6 +2,8 @@ import chroma from "chroma-js"
 import { fileURLToPath } from "bun"
 import { dominantColors } from "imgkit"
 
+export type ColorPalette = Record<number, chroma.ColorFormats["oklch"]>
+
 /**
  * Generate Tailwind-like color palette from single Hex string
  * @param hex - Hex string (e.g. '#3b82f6' or '3b82f6')
@@ -20,7 +22,7 @@ export function generatePalette(hex: string) {
     .mode("lch")
     .domain([0, 0.5, 1])
 
-  const palette: Record<number, chroma.ColorFormats["oklch"]> = {}
+  const palette: ColorPalette = {}
 
   keys.forEach((key, index) => {
     palette[key] = colorScale(positions[index]).oklch()
