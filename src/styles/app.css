@@ -1,0 +1,93 @@
+main#app {
+  width: 100%;
+  min-height: 100vh;
+}
+
+main.scrollbar > a,
+main.scrollbar > button,
+main.scrollbar > a > button {
+  @apply w-full;
+}
+
+main.scrollbar > div,
+main.scrollbar > div > main {
+  @apply flex w-full flex-col gap-2;
+}
+
+main.scrollbar > button,
+main.scrollbar > a > button,
+main.scrollbar > div > button,
+main.scrollbar > div > main > button {
+  @apply justify-start text-start;
+}
+
+main#app-workspace {
+  @apply mx-auto w-full max-lg:px-6 max-lg:pt-24 lg:max-w-7xl lg:px-12 lg:pt-16;
+}
+
+.main-bg {
+  background:
+    linear-gradient(
+      0deg,
+      var(--background),
+      color-mix(in oklab, var(--background) 48%, transparent)
+    ),
+    url(/static/backdrop.png) center no-repeat;
+  background-size: cover;
+}
+
+.main-bg-2 {
+  background:
+    linear-gradient(
+      0deg,
+      var(--background),
+      color-mix(in oklab, var(--background) 48%, transparent)
+    ),
+    url(/static/backdrop2025.png) center no-repeat;
+  background-size: cover;
+}
+
+.welcome-banner {
+  background:
+    linear-gradient(
+      0deg,
+      var(--background),
+      color-mix(in oklab, var(--background) 24%, transparent)
+    ),
+    url(/static/welcome_banner.png) center no-repeat;
+  background-size: cover;
+}
+
+.apphome-banner.evening,
+.apphome-banner.morning {
+  background:
+    linear-gradient(
+      0deg,
+      var(--background),
+      color-mix(in oklab, var(--background) 24%, transparent)
+    ),
+    url(/static/app/PonaWebViewMorning.png) center no-repeat;
+  background-size: cover;
+}
+
+.apphome-banner.afternoon {
+  background:
+    linear-gradient(
+      0deg,
+      var(--background),
+      color-mix(in oklab, var(--background) 24%, transparent)
+    ),
+    url(/static/app/PonaWebViewAfternoon.png) center no-repeat;
+  background-size: cover;
+}
+
+.apphome-banner.night {
+  background:
+    linear-gradient(
+      0deg,
+      var(--background),
+      color-mix(in oklab, var(--background) 24%, transparent)
+    ),
+    url(/static/app/PonaWebViewNight.png) center no-repeat;
+  background-size: cover;
+}

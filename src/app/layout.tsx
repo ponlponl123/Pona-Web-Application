@@ -8,6 +8,8 @@ import { cn, isMobile } from "@/lib/utils"
 import { Metadata } from "next"
 import { headers } from "next/headers"
 import { Providers } from "./providers"
+import Header from "@/components/root/header"
+import Footer from "@/components/root/footer"
 
 const fontSans = Geist({
   subsets: ["latin"],
@@ -69,9 +71,9 @@ export default async function RootLayout({
         />
         <ThemeProvider>
           <Providers isMobile={mobileCheck}>
-            {/* <Header /> */}
+            <Header />
             <main id="app">{children}</main>
-            {/* <Footer /> */}
+            <Footer />
           </Providers>
         </ThemeProvider>
       </body>

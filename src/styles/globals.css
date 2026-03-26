@@ -8,14 +8,23 @@
   @import "./themes/default.css";
   @import "./themes/chocolate.css";
 
+  @import "./app.css";
+  @import "./animation.css";
+
   * {
     @apply border-border outline-ring/50;
+    transition: 0.26s cubic-bezier(0.165, 0.84, 0.44, 1);
   }
   body {
     @apply bg-background text-foreground;
+    font-family:
+      var(--font-ponlponl123-article), var(--font-sn-sanafon-maru-j30),
+      sans-serif;
   }
   html {
     @apply font-mono;
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--primary)) hsl(var(--background));
   }
 }
 
@@ -23,4 +32,6 @@
   @import "./components/button.css";
   @import "./components/embla-carousel.css";
   @import "./components/markdown.css";
+  @import "./components/header.css";
+  @import "./components/footer.css";
 }
