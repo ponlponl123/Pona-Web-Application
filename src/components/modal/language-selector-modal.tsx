@@ -7,6 +7,8 @@ import { Button } from "../ui/button"
 import { langs } from "@/lib/i18n"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 import { cn } from "@/lib/utils"
+import { Badge } from "../ui/badge"
+import { HandWavingIcon } from "@phosphor-icons/react/dist/ssr"
 
 function LanguageSelectorModal() {
   const { language, setLanguage } = useLanguageContext()
@@ -22,7 +24,7 @@ function LanguageSelectorModal() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={closeModal}
-          className="fixed inset-0 z-1000 flex items-center justify-center bg-black/40 backdrop-blur-md"
+          className="fixed inset-0 z-1000 flex items-center justify-center bg-black/40 p-2 backdrop-blur-md"
         >
           <motion.div
             layoutId="language-selector-modal"
@@ -36,7 +38,7 @@ function LanguageSelectorModal() {
               <p className="text-sm text-foreground">
                 {language.data.modal["language-selector"].description}
               </p>
-              <div className="mt-6 grid grid-cols-2 gap-2">
+              <div className="mt-6 grid grid-cols-2 gap-2 max-sm:grid-cols-1">
                 {langs.map((lang, i) => (
                   <Button
                     key={"lang-select-" + i}
@@ -59,6 +61,18 @@ function LanguageSelectorModal() {
                       <AvatarFallback>{lang.key.toUpperCase()}</AvatarFallback>
                     </Avatar>
                     {lang.label}
+                    {lang.looking_for_translator && (
+                      <Badge
+                        variant={"secondary"}
+                        className="rounded-full bg-amber-400/20 text-amber-400"
+                      >
+                        <HandWavingIcon size={32} weight="fill" />
+                        {
+                          language.data.modal["language-selector"]
+                            .looking_for_translator
+                        }
+                      </Badge>
+                    )}
                   </Button>
                 ))}
               </div>

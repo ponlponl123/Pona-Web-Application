@@ -4,6 +4,7 @@
   "country": "jp",
   "state": "dev",
   "translators": ["Ponlponl123"],
+  "looking_for_translator": true,
   "extensions": {
     "new": "新着",
     "beta": "ベータ版",
@@ -39,7 +40,8 @@
   "modal": {
     "language-selector": {
       "title": "コミュニケーションに使用する言語を選択してください",
-      "description": "一番使いやすい言語を選んでください。この設定は後でいつでも変更できます。"
+      "description": "一番使いやすい言語を選んでください。この設定は後でいつでも変更できます。",
+      "looking_for_translator": "翻訳者を募集中です！"
     }
   },
   "home": {

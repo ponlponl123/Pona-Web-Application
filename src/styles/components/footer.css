@@ -3,11 +3,11 @@ footer.pona-footer {
 }
 
 footer.pona-footer a {
-  @apply flex items-center gap-2 hover:underline hover:underline-offset-4;
+  @apply flex items-center gap-2;
 }
 
 footer.pona-footer > div:not(:nth-child(2)) {
-  @apply row-start-3 flex w-full flex-wrap items-center justify-center gap-6;
+  @apply row-start-3 flex w-full flex-wrap items-center justify-center gap-2;
 }
 
 footer.pona-footer .div {

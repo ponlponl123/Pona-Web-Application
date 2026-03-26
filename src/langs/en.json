@@ -4,6 +4,7 @@
   "country": "us",
   "state": "ready",
   "translators": ["Ponlponl123"],
+  "looking_for_translator": false,
   "extensions": {
     "new": "New",
     "beta": "Beta",
@@ -39,7 +40,8 @@
   "modal": {
     "language-selector": {
       "title": "What language do you use to communicate?",
-      "description": "Pick the language you're most comfortable with! You can change this later in your settings."
+      "description": "Pick the language you're most comfortable with! You can change this later in your settings.",
+      "looking_for_translator": "Looking for a translator!"
     }
   },
   "home": {

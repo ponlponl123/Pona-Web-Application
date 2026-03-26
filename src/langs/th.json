@@ -4,6 +4,7 @@
   "country": "th",
   "state": "ready",
   "translators": ["Ponlponl123"],
+  "looking_for_translator": false,
   "extensions": {
     "new": "ใหม่",
     "beta": "เบต้า",
@@ -39,7 +40,8 @@
   "modal": {
     "language-selector": {
       "title": "คุณใช้ภาษาอะไรในการสื่อสาร?",
-      "description": "เลือกภาษาที่คุณถนัดที่สุด! คุณสามารถเปลี่ยนได้ในภายหลังในการตั้งค่าของคุณ"
+      "description": "เลือกภาษาที่คุณถนัดที่สุด! คุณสามารถเปลี่ยนได้ในภายหลังในการตั้งค่าของคุณ",
+      "looking_for_translator": "กำลังมองหานักแปลภาษา!"
     }
   },
   "home": {

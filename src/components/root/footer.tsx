@@ -53,58 +53,54 @@ function Footer() {
       </div>
 
       <div className="flex flex-1 flex-col items-center justify-center gap-2">
-        <div className="flex flex-wrap justify-center gap-6">
-          <Link
-            href="https://github.com/ponlponl123/Pona-Discord-Application"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1 hover:text-primary"
-          >
-            <GithubLogoIcon alt="Github" />
-            {language.data.footer.links.github}
-          </Link>
-          <Link
-            href="https://github.com/ponlponl123/Pona-Discord-Application/tree/main/docs"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1 hover:text-primary"
-          >
-            <AtomIcon alt="Atom" />
-            {language.data.footer.links.apidocs}
-          </Link>
-          <Link
-            href="https://ponlponl123.com/discord"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1 hover:text-primary"
-          >
-            <BirdIcon alt="Bird" />
-            {language.data.footer.links.support}
-          </Link>
-          <Link
-            href="/community"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1 hover:text-primary"
-          >
-            <PottedPlantIcon alt="PottedPlant" />
-            {language.data.community.title}
-          </Link>
-          <Link
-            href="/status"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1 hover:text-primary"
-          >
-            <CubeIcon alt="Cube" />
-            {language.data.footer.links.status}
-          </Link>
-          <Link
-            href="https://law.ponlponl123.com/pona"
-            className="flex items-center gap-1 hover:text-primary"
-            rel="noopener noreferrer"
-          >
-            <GavelIcon alt="Gavel" />
-            {language.data.footer.links.legal}
-          </Link>
+        <div className="flex flex-wrap justify-center gap-2">
+          {[
+            {
+              href: "https://github.com/ponlponl123/Pona-Discord-Application",
+              icon: GithubLogoIcon,
+              label: language.data.footer.links.github,
+            },
+            {
+              href: "https://github.com/ponlponl123/Pona-Discord-Application/tree/main/docs",
+              icon: AtomIcon,
+              label: language.data.footer.links.apidocs,
+            },
+            {
+              href: "https://ponlponl123.com/discord",
+              icon: BirdIcon,
+              label: language.data.footer.links.support,
+            },
+            {
+              href: "/community",
+              icon: PottedPlantIcon,
+              label: language.data.community.title,
+            },
+            {
+              href: "/status",
+              icon: CubeIcon,
+              label: language.data.footer.links.status,
+            },
+            {
+              href: "https://law.ponlponl123.com/pona",
+              icon: GavelIcon,
+              label: language.data.footer.links.legal,
+            },
+          ].map((link, i) => (
+            <Link
+              key={i}
+              href={link.href}
+              target={link.href.startsWith("http") ? "_blank" : "_self"}
+              rel="noopener noreferrer"
+            >
+              <Button
+                className="flex items-center gap-1 rounded-xl hover:text-primary"
+                variant={"ghost"}
+              >
+                <link.icon alt={link.label} />
+                {link.label}
+              </Button>
+            </Link>
+          ))}
         </div>
       </div>
 
