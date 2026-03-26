@@ -92,7 +92,7 @@ export default function RootLayout({
         <ThemeProvider>
           <Suspense
             fallback={
-              <div className="flex min-h-screen items-center justify-center text-muted-foreground">
+              <div className="flex min-h-screen animate-pulse items-center justify-center text-muted-foreground">
                 App is initializing...
               </div>
             }

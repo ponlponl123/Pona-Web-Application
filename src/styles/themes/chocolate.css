@@ -17,7 +17,7 @@
   & .dark,
   &:is(.dark *) {
     --foreground: oklch(73.653% 0.04812 52.896);
-    --background: oklch(37.045% 0.0309 46.537);
+    --background: oklch(18.633% 0.02116 45.355);
     --color-playground-background: oklch(20.514% 0.02298 47.529);
   }
 }
