@@ -18,7 +18,8 @@
     "yes": "はい",
     "no": "いいえ",
     "loading": "読み込み中",
-    "friendly_loading": "データがあなたに届きます... 🏃💨"
+    "friendly_loading": "データを準備しています...",
+    "login_first": "ログインして続ける"
   },
   "cookie": {
     "title": "クッキー！",
@@ -129,6 +130,7 @@
       "follow": "アップデートをフォロー",
       "read": "読む",
       "loading": "アップデートリストを読み込んでいます...",
+      "publish_by": "発行元",
       "subscription": {
         "title": "購読",
         "notify": {
@@ -709,6 +711,7 @@
       "apidocs": "APIドキュメント",
       "support": "サポート",
       "status": "ステータス",
+      "updates": "パッチノート",
       "legal": "法的情報",
       "a_coffee": "コーヒーを贈る"
     },

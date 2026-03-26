@@ -7,10 +7,12 @@ import { DiscordUserInfoProvider } from "@/contexts/discordUserInfo"
 import { DiscordGuildInfoProvider } from "@/contexts/discordGuildInfo"
 import PageAnimatePresence from "@/components/HOC/PageAnimatePresence"
 import { PonaMusicCacheContextProvider } from "@/contexts/ponaMusicCacheContext"
-import { usePathname } from "next/navigation"
+import LanguageSelectorModal from "@/components/modal/language-selector"
+import { AnimatePresence, motion } from "motion/react"
 import { Toaster } from "@/components/ui/sonner"
+import { usePathname } from "next/navigation"
 import { languageKeys } from "@/lib/i18n"
-import LanguageSelectorModal from "@/components/modal/language-selector-modal"
+import { ViewTransition } from "react"
 
 export function Providers({
   children,
@@ -29,14 +31,17 @@ export function Providers({
           <DiscordGuildInfoProvider>
             <PonaMusicCacheContextProvider>
               <GlobalProvider isMobile={isMobile}>
-                {pathname.startsWith("/app") ? (
-                  children
+                {pathname.startsWith("/app") ||
+                pathname.startsWith("/updates") ? (
+                  <AnimatePresence mode={"popLayout"}>
+                    <motion.div className="min-h-screen">
+                      <ViewTransition>{children}</ViewTransition>
+                    </motion.div>
+                  </AnimatePresence>
                 ) : (
-                  <PageAnimatePresence>
-                    {children}
-                    <LanguageSelectorModal />
-                  </PageAnimatePresence>
+                  <PageAnimatePresence>{children}</PageAnimatePresence>
                 )}
+                <LanguageSelectorModal />
                 <Toaster />
               </GlobalProvider>
             </PonaMusicCacheContextProvider>

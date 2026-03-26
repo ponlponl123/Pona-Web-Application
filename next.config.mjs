@@ -10,6 +10,7 @@ const nextConfig = {
     NEXT_PUBLIC_DISCORD_REDIRECT_ENDPOINT:
       process.env["NEXT_PUBLIC_DISCORD_REDIRECT_ENDPOINT"],
   },
+  cacheComponents: true,
   images: {
     remotePatterns: [
       {

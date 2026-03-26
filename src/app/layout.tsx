@@ -1,13 +1,13 @@
 import localFont from "next/font/local"
 import { Geist, JetBrains_Mono } from "next/font/google"
-import { cookies } from "next/headers"
+import { cookies, headers } from "next/headers"
+import { Suspense } from "react"
 
 import "@/styles/globals.css"
 import NextTopLoader from "nextjs-toploader"
 import { ThemeProvider } from "@/components/theme-provider"
 import { cn, isMobile } from "@/lib/utils"
 import { Metadata } from "next"
-import { headers } from "next/headers"
 import { Providers } from "./providers"
 import Header from "@/components/root/header"
 import Footer from "@/components/root/footer"
@@ -38,17 +38,32 @@ export const metadata: Metadata = {
   description: "Pona! is a useful discord application and free to use.",
 }
 
-export default async function RootLayout({
+async function AppContent({ children }: { children: React.ReactNode }) {
+  const headersList = await headers()
+  const cookieStore = await cookies()
+
+  const userAgent = headersList.get("user-agent") || ""
+  const mobileCheck = isMobile(userAgent)
+
+  const rawLang = cookieStore.get("lang")?.value || "en-US"
+  const langCookie = isValidLanguageKey(rawLang) ? rawLang : "en-US"
+
+  return (
+    <Providers isMobile={mobileCheck} initialLang={langCookie}>
+      <Header />
+      <main id="app" className="min-h-screen">
+        {children}
+      </main>
+      <Footer />
+    </Providers>
+  )
+}
+
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const headersList = await headers()
-  const cookieStore = await cookies()
-  const userAgent = headersList.get("user-agent") || ""
-  const mobileCheck = isMobile(userAgent)
-  const rawLang = cookieStore.get("lang")?.value || "en-US"
-  const langCookie = isValidLanguageKey(rawLang) ? rawLang : "en-US"
   return (
     <html
       lang="en"
@@ -75,11 +90,15 @@ export default async function RootLayout({
           shadow="0 0 24px #ff80c6,0 0 12px #ff80c6"
         />
         <ThemeProvider>
-          <Providers isMobile={mobileCheck} initialLang={langCookie}>
-            <Header />
-            <main id="app">{children}</main>
-            <Footer />
-          </Providers>
+          <Suspense
+            fallback={
+              <div className="flex min-h-screen items-center justify-center text-muted-foreground">
+                App is initializing...
+              </div>
+            }
+          >
+            <AppContent>{children}</AppContent>
+          </Suspense>
         </ThemeProvider>
       </body>
     </html>

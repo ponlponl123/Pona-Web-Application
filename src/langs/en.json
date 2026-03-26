@@ -18,7 +18,8 @@
     "yes": "Yes",
     "no": "No",
     "loading": "Loading",
-    "friendly_loading": "Data is running to you... 🏃💨"
+    "friendly_loading": "Please wait, we are preparing the information for you...",
+    "login_first": "Log in to continue"
   },
   "cookie": {
     "title": "Cookie!",
@@ -125,6 +126,7 @@
       "follow": "Follow the updates",
       "read": "Read",
       "loading": "Looking past updates...",
+      "publish_by": "Published by",
       "subscription": {
         "title": "Subscribe",
         "notify": {
@@ -705,6 +707,7 @@
       "apidocs": "API Docs",
       "support": "Support",
       "status": "Pona! Status",
+      "updates": "Patch Notes",
       "legal": "Legal",
       "a_coffee": "A Coffee?"
     },

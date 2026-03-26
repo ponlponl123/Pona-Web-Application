@@ -1,12 +1,11 @@
 "use client"
 import { useLanguageContext } from "@/contexts/languageContext"
-import { langs } from "@/lib/i18n"
 import {
-  AtomIcon,
   BirdIcon,
   CubeIcon,
   GavelIcon,
   GithubLogoIcon,
+  HardHatIcon,
   HeartIcon,
   PottedPlantIcon,
 } from "@phosphor-icons/react/dist/ssr"
@@ -25,7 +24,8 @@ function Footer() {
   const isAppRoute = pathname.startsWith("/app")
 
   return (
-    <footer
+    <motion.footer
+      layout
       className={clsx(
         "pona-footer z-10 max-md:flex-col",
         isAppRoute ? "m-0" : "-mt-24"
@@ -61,11 +61,6 @@ function Footer() {
               label: language.data.footer.links.github,
             },
             {
-              href: "https://github.com/ponlponl123/Pona-Discord-Application/tree/main/docs",
-              icon: AtomIcon,
-              label: language.data.footer.links.apidocs,
-            },
-            {
               href: "https://ponlponl123.com/discord",
               icon: BirdIcon,
               label: language.data.footer.links.support,
@@ -79,6 +74,11 @@ function Footer() {
               href: "/status",
               icon: CubeIcon,
               label: language.data.footer.links.status,
+            },
+            {
+              href: "/updates",
+              icon: HardHatIcon,
+              label: language.data.footer.links.updates,
             },
             {
               href: "https://law.ponlponl123.com/pona",
@@ -125,7 +125,7 @@ function Footer() {
           </Button>
         </motion.div>
       </div>
-    </footer>
+    </motion.footer>
   )
 }
 

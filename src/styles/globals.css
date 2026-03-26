@@ -2,6 +2,8 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
+@plugin "@tailwindcss/typography";
+
 @custom-variant dark (&:is(.dark *));
 
 @layer base {
@@ -30,8 +32,8 @@
 
 @layer components {
   @import "./components/button.css";
-  @import "./components/embla-carousel.css";
   @import "./components/markdown.css";
+  @import "./components/embla-carousel.css";
   @import "./components/header.css";
   @import "./components/footer.css";
   @import "./components/service-status.css";

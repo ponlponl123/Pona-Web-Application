@@ -1,14 +1,13 @@
 "use client"
-import React from "react"
-import { AnimatePresence, motion } from "framer-motion" // แก้ไข import ตามเวอร์ชันที่คุณใช้
+import { AnimatePresence, motion } from "motion/react"
 import { useGlobalContext } from "@/contexts/globalContext"
 import { useLanguageContext } from "@/contexts/languageContext"
-import { Button } from "../ui/button"
-import { langs } from "@/lib/i18n"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
-import { cn } from "@/lib/utils"
-import { Badge } from "../ui/badge"
 import { HandWavingIcon } from "@phosphor-icons/react/dist/ssr"
+import { Button } from "../ui/button"
+import { Badge } from "../ui/badge"
+import { langs } from "@/lib/i18n"
+import { cn } from "@/lib/utils"
 
 function LanguageSelectorModal() {
   const { language, setLanguage } = useLanguageContext()
