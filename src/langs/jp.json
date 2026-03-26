@@ -1,0 +1,729 @@
+{
+  "key": "ja-JP",
+  "label": "日本語",
+  "country": "jp",
+  "state": "dev",
+  "translators": ["Ponlponl123"],
+  "extensions": {
+    "new": "新着",
+    "beta": "ベータ版",
+    "experiment": "実験的",
+    "comingsoon": "近日公開"
+  },
+  "common": {
+    "ok": "OK",
+    "cancel": "キャンセル",
+    "close": "閉じる",
+    "yes": "はい",
+    "no": "いいえ",
+    "loading": "読み込み中",
+    "friendly_loading": "データがあなたに届きます... 🏃💨"
+  },
+  "cookie": {
+    "title": "クッキー！",
+    "description": "このアプリケーションは、一部のサービスの認証にクッキーを使用します"
+  },
+  "header": {
+    "actions": {
+      "login": "Discordでログイン",
+      "invite": "サーバーに招待"
+    },
+    "account": {
+      "signinas": "としてログイン中",
+      "playground": "プレイグラウンド",
+      "setting": "設定",
+      "support": "ヘルプ＆フィードバック",
+      "logout": "ログアウト"
+    }
+  },
+  "home": {
+    "welcome_message": {
+      "morning": "☀️ おはようございます！\n今日はご機嫌いかがですか？ (≧∇≦)ﾉ",
+      "afternoon": "🌤️ もう午後ですね！\n疲れたら、休憩してくださいね o((>ω< ))o",
+      "evening": "🍰 もう夕方です。お腹いっぱい食べてくださいね O(∩_∩)O",
+      "night": "🌙 おやすみなさい\n良い夢を (∪.∪ )...zzz"
+    },
+    "features": {
+      "before": [
+        "こんにちは\u2002",
+        "やあ\u2002",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "❤️を込めて\u2002",
+        "はい\u2002",
+        "こんにちは\u2002"
+      ],
+      "after": [
+        "",
+        "",
+        "アプリケーション",
+        "音楽",
+        "魔法",
+        "チャット",
+        "コミュニティ",
+        "",
+        "",
+        ""
+      ]
+    },
+    "mindselector": {
+      "title": "あなたの気持ちを表現する感情を選んでください！",
+      "label": "私は感じている"
+    },
+    "actions": {
+      "invite": "Ponaを招待",
+      "app": "アプリを試す",
+      "or": "または",
+      "login": "ログイン"
+    }
+  },
+  "status": {
+    "title": "ステータス",
+    "unit": "ミリ秒",
+    "refresh": "更新",
+    "refreshing": "更新中...",
+    "last_refreshed": "最終更新",
+    "overall": "全体的なステータス",
+    "regionsloads": "リージョン負荷",
+    "app_res_ms": "アプリケーションの応答時間",
+    "active_shards": "アクティブなシャード",
+    "active_clusters": "アクティブなクラスター"
+  },
+  "community": {
+    "title": "コミュニティ",
+    "description": "皆さん、ありがとうございます！",
+    "fonts": {
+      "title": "フォント"
+    },
+    "translator": {
+      "title": "翻訳者",
+      "language": {
+        "en": "英語",
+        "th": "タイ語"
+      }
+    },
+    "contributors": {
+      "title": "プロジェクト貢献者"
+    },
+    "library": {
+      "title": "ライブラリ＆フレームワーク"
+    }
+  },
+  "app": {
+    "title": "アプリ",
+    "welcome": {},
+    "updates": {
+      "name": "アップデート",
+      "latest": "最新バージョン",
+      "follow": "アップデートをフォロー",
+      "read": "読む",
+      "loading": "アップデートリストを読み込んでいます...",
+      "subscription": {
+        "title": "購読",
+        "notify": {
+          "email": "メール",
+          "discord": "Discord DM"
+        },
+        "modal": {
+          "title": "更新通知",
+          "checklist": "どこに通知しますか？",
+          "body1": "新しいアップデートが利用可能になったら、受信トレイにメールを送信します！",
+          "body2": "または、Githubで[link]にスターを付けると、コミットやプルリクエストなど、すべての更新情報を受け取ることができます！",
+          "repo": "Pona！リポジトリ",
+          "notnow": "今はしない",
+          "update": "更新",
+          "letnotify": "通知オン",
+          "close": "閉じる"
+        }
+      },
+      "translate": {
+        "pre-release": "プレリリース",
+        "release": "リリース"
+      },
+      "version": "バージョン",
+      "error": {
+        "title": "エラーが発生しました",
+        "description": "パッチノートのリストを取得できません"
+      }
+    },
+    "chat": {
+      "name": "Pona！チャット"
+    },
+    "home": {
+      "name": "ホーム",
+      "title": "おかえりなさい、[user]！",
+      "whatnew": {
+        "title": "Pona! [version] の新機能",
+        "description": "Pona! Appの最新機能と改善点をチェックしましょう。",
+        "button": "新機能を見る"
+      },
+      "weather": {
+        "status": {
+          "wmo-code": {
+            "0": "快晴",
+            "1": "快晴",
+            "2": "晴れ時々曇り",
+            "3": "晴れ時々曇り",
+            "4": "煙霧",
+            "5": "もや",
+            "6": "砂塵",
+            "7": "強風",
+            "8": "強風",
+            "9": "強風",
+            "10": "霧",
+            "11": "浅い霧",
+            "12": "濃い霧",
+            "13": "雷",
+            "14": "遠雷",
+            "15": "遠雷",
+            "16": "近雷",
+            "17": "雷雨",
+            "18": "スコール",
+            "19": "竜巻",
+            "20": "霧雨",
+            "21": "雨",
+            "22": "雪",
+            "23": "みぞれ",
+            "24": "着氷性の雨",
+            "25": "にわか雨",
+            "26": "にわか雪",
+            "27": "にわかひょう",
+            "28": "霧",
+            "29": "雷雨",
+            "30": "砂嵐",
+            "31": "砂嵐",
+            "32": "砂嵐",
+            "33": "激しい砂嵐",
+            "34": "激しい砂嵐",
+            "35": "激しい砂嵐",
+            "36": "地吹雪",
+            "37": "風雪",
+            "38": "地吹雪",
+            "39": "風雪",
+            "40": "遠方の霧",
+            "41": "霧の発生",
+            "42": "霧の消散",
+            "43": "濃い霧",
+            "44": "霧",
+            "45": "濃い霧",
+            "46": "霧の発生",
+            "47": "濃い霧",
+            "48": "着氷性の霧",
+            "49": "着氷性の霧",
+            "50": "弱い霧雨",
+            "51": "霧雨",
+            "52": "やや強い霧雨",
+            "53": "霧雨",
+            "54": "強い霧雨",
+            "55": "霧雨",
+            "56": "着氷性の霧雨",
+            "57": "強い着氷性の霧雨",
+            "58": "霧雨と雨",
+            "59": "強い霧雨と雨",
+            "60": "弱い雨",
+            "61": "雨",
+            "62": "やや強い雨",
+            "63": "雨",
+            "64": "強い雨",
+            "65": "雨",
+            "66": "着氷性の雨",
+            "67": "強い着氷性の雨",
+            "68": "みぞれ",
+            "69": "強いみぞれ",
+            "70": "弱い雪",
+            "71": "雪",
+            "72": "やや強い雪",
+            "73": "雪",
+            "74": "強い雪",
+            "75": "雪",
+            "76": "ダイヤモンドダスト",
+            "77": "雪あられ",
+            "78": "星状の雪",
+            "79": "氷あられ",
+            "80": "弱い雨",
+            "81": "にわか雨",
+            "82": "強い雨",
+            "83": "みぞれ",
+            "84": "強いみぞれ",
+            "85": "弱い雪",
+            "86": "にわか雪",
+            "87": "あられ",
+            "88": "ひょう",
+            "89": "にわかひょう",
+            "90": "強いひょう",
+            "91": "雷を伴う弱い雨",
+            "92": "雷を伴う強い雨",
+            "93": "雷を伴う弱い雪",
+            "94": "雷を伴う強い雪",
+            "95": "雷雨",
+            "96": "ひょうを伴う雷雨",
+            "97": "激しい雷雨",
+            "98": "雷を伴う砂嵐",
+            "99": "ひょうを伴う激しい雷雨"
+          }
+        },
+        "today_temp": "今日の気温",
+        "temp_status": {
+          "little_higher_than_yesterday": "昨日は少し気温が高いので、サングラスをお忘れなく！",
+          "higher_than_yesterday": "昨日は気温が高いです！涼しくして水分補給を忘れずに行ってください。",
+          "like_yesterday": "今日は昨日と同じような感じです！安定していますね。",
+          "little_lower_than_yesterday": "昨日は少し気温が低いです。涼しさをお楽しみください！",
+          "lower_than_yesterday": "昨日は涼しいです。暖かいセーターを着て、天気をお楽しみください！"
+        },
+        "dontmisssunset": "夕日をお見逃しなく",
+        "sunsetwillbeat": "日没は"
+      },
+      "pona_ai": {
+        "hello": "こんにちは！何かお手伝いできることはありますか？",
+        "suggests": {
+          "surprise_me": "驚かせて",
+          "howareutoday": "今日の調子はどう？"
+        },
+        "connecting": "Pona！AIサービスに接続しています..."
+      }
+    },
+    "overview": {
+      "name": "概要"
+    },
+    "guilds": {
+      "name": "ギルド",
+      "title": "あなたとポナが一緒に参加しているサーバーです。",
+      "loading": "ギルドを探しています...",
+      "not_found": {
+        "title": "サーバーが見つかりません",
+        "description": "まだパーティーが始まっていないようです。さあ、パーティーを始めましょう！"
+      },
+      "stats": {
+        "title": "統計",
+        "in": "（過去[day]日間）",
+        "announcement": "ラボテストのシミュレートされた統計をいくつかご紹介します！",
+        "queue": "キュー",
+        "members": "ボイスチャンネルのメンバー",
+        "usage": "使用状況",
+        "genre": "音楽ジャンル",
+        "top_artist": "最も多いアーティスト",
+        "analysis": "平均使用量"
+      },
+      "player": {
+        "name": "Pona！ミュージック",
+        "dev": "コーヒーを片手に、素敵な音楽を楽しみませんか？プレーヤーは現在開発中です。🎵🍵",
+        "request_by": "リクエスト:",
+        "full_screen_mode": {
+          "enter": "フルスクリーンモード",
+          "exit": "フルスクリーンモードを終了"
+        },
+        "picinpic_mode": {
+          "enter": "ピクチャーインピクチャーモード",
+          "exit": "ピクチャーインピクチャーモードを終了"
+        },
+        "socket": {
+          "connected": {},
+          "connecting": {
+            "title": "ソケットサービスに接続しようとしています..",
+            "chip": "接続中...",
+            "sec": "秒"
+          },
+          "failed": {
+            "title": "接続がタイムアウトしました。",
+            "description": "後でもう一度お試しください"
+          }
+        },
+        "ponaIsNotInVC": {
+          "select": {
+            "title": "ボイスチャンネルを選択",
+            "description": "Pona！が表示でき、現在使用しているボイスチャンネルのみが表示されます。",
+            "notfound": {
+              "title": "ボイスチャンネルが見つかりません",
+              "description": "音楽を再生するには、ボイスチャンネルに参加する必要があります。"
+            }
+          }
+        },
+        "music_card": {
+          "action": {
+            "add_to_queue": {
+              "title": "キューに追加しますか？",
+              "close": "閉じる",
+              "add": "追加"
+            },
+            "add_duplicated_track_to_queue": {
+              "title": "重複した曲をキューに追加しますか？",
+              "close": "いいえ",
+              "add": "強制追加"
+            }
+          }
+        },
+        "context_menu": {
+          "add_to_queue": "キューに追加",
+          "add_to_favorite": "お気に入りに追加",
+          "rm_from_favorite": "お気に入りから削除",
+          "add_to_my_playlist": "プレイリストに追加",
+          "goto_artist": "アーティストに移動",
+          "goto_album": "アルバムに移動",
+          "rm_from_queue": "キューから削除"
+        },
+        "tabs": {
+          "next": "次へ",
+          "lyrics": "歌詞",
+          "related": "関連",
+          "open_queue": "もっと見る"
+        },
+        "related": {
+          "videoId_not_provided": "バスは全然来ない…",
+          "you_might_also_like": "あなたも気に入るかもしれない",
+          "recommended_playlists": "おすすめのプレイリスト",
+          "similar_artists": "類似アーティスト",
+          "about_the_artist": "アーティストについて",
+          "play_continuously": "連続再生"
+        },
+        "notSameVC": {
+          "title": "パーティーが開催中です！",
+          "description": "今すぐ[guildName]のパーティーに参加しましょう！"
+        },
+        "repeat": {
+          "title": "リピートモード",
+          "off": "オフ",
+          "on": "オン",
+          "track": "トラック",
+          "queue": "キュー"
+        },
+        "equalizer": {
+          "title": "イコライザー"
+        },
+        "home": {
+          "title": "ホーム",
+          "listen_again": "もう一度聴く",
+          "subscribed_channels": "購読しているアーティスト",
+          "no_history": {
+            "title": "履歴がありません",
+            "description": "まだPona！ミュージックを試したことがありませんか？それなら、ここで最初の好きな曲を聴いてみましょう！",
+            "get_started": "好きな曲を検索してみましょう！"
+          }
+        },
+        "browse": {
+          "title": "ブラウズ"
+        },
+        "playlist": {
+          "title": "プレイリスト",
+          "by": "作成者",
+          "created": "作成日",
+          "track_count": "[count] 曲",
+          "actions": {
+            "favorite": "プレイリストをお気に入りに追加 (近日公開)",
+            "add_to_queue": "すべてキューに追加",
+            "share": "プレイリストを共有 (近日公開)"
+          }
+        },
+        "artist": {
+          "subscribe": "購読する",
+          "subscriber": "加入者",
+          "subscribed": "購読済み",
+          "unsubscribe": "購読解除",
+          "unsubscribe_confirmation": "[artist_name]の登録を解除しますか?",
+          "showmore": "もっと見る",
+          "people": "人",
+          "category": {
+            "topSongs": "トップソング",
+            "topAlbums": "トップアルバム",
+            "topSingles": "トップシングル",
+            "topVideos": "トップビデオ",
+            "featuredOn": "特集",
+            "similarArtists": "類似アーティスト"
+          }
+        },
+        "favorite": {
+          "title": "お気に入り"
+        },
+        "history": {
+          "title": "履歴"
+        },
+        "search": {
+          "title": "検索",
+          "search_box": "曲、アルバム、アーティスト、ポッドキャストを検索",
+          "result": "の検索結果",
+          "notfound": "結果が見つかりませんでした",
+          "category": {
+            "All": "全て",
+            "Top result": "トップ結果",
+            "More from YouTube": "ポナからさらに！",
+            "Community playlists": "コミュニティプレイリスト",
+            "Podcasts": "ポッドキャスト",
+            "Episodes": "エピソード",
+            "Profiles": "プロフィール",
+            "Artists": "アーティスト",
+            "Albums": "アルバム",
+            "Videos": "ビデオ",
+            "Songs": "曲"
+          }
+        },
+        "toast": {
+          "add_track": {
+            "loading": "[artist]の[track_name]をキューに追加しています",
+            "success": "了解しました、[artist]の[track_name]をキューに追加しました！",
+            "error": "あれ...何かがうまくいかなかったようです :("
+          },
+          "rm_track": {
+            "loading": "[artist] の [track_name] をキューから削除しています",
+            "success": "了解しました。[artist] の [track_name] をキューから削除しました!",
+            "error": "あー、何か問題が発生しました :("
+          },
+          "repeat": {
+            "loading": "リピートモードを[repeat_mode]に変更しています",
+            "success": "リピートモードが[repeat_mode]に変更されました！",
+            "error": "あれ...何かがうまくいかなかったようです :("
+          },
+          "pause": {
+            "loading": "一時停止しています...",
+            "success": "一時停止しました！",
+            "error": "あれ...何かがうまくいかなかったようです :("
+          },
+          "play": {
+            "loading": "再生を再開しています...",
+            "success": "再生中！",
+            "error": "あれ...何かがうまくいかなかったようです :("
+          },
+          "next": {
+            "loading": "スキップしています...",
+            "success": "次のトラックにスキップしました！",
+            "error": "あれ...何かがうまくいかなかったようです :("
+          },
+          "previous": {
+            "loading": "戻しています...",
+            "success": "前のトラックに戻りました！",
+            "error": "あれ...何かがうまくいかなかったようです :("
+          }
+        }
+      },
+      "live_notify": {
+        "name": "ライブ通知",
+        "dev": "ライブ通知は現在利用できません。ご心配なく、鋭意開発中です！💪✨"
+      },
+      "setting": {
+        "name": "サーバー設定",
+        "dev": "サーバー設定は現在利用できません。ご心配なく、鋭意開発中です！💪✨"
+      }
+    },
+    "playlist": {
+      "name": "マイプレイリスト",
+      "create": "プレイリストを作成",
+      "no_playlist": "プレイリストがありません"
+    },
+    "setting": {
+      "name": "設定",
+      "back": "アプリに戻る",
+      "account": {
+        "title": "アカウント",
+        "announcement": "Discordに接続しました！",
+        "display_name": "表示名",
+        "username": "ユーザー名"
+      },
+      "layout": {
+        "title": "レイアウト",
+        "theme": {
+          "title": "テーマ",
+          "day": "昼テーマ",
+          "night": "夜テーマ"
+        },
+        "theme_sync": {
+          "title": "システムと同期",
+          "description": "システムのタイムゾーンに基づいてテーマを自動的に更新します"
+        },
+        "amoled_black": {
+          "title": "AMOLEDブラック",
+          "description": "有効にすると、ダークテーマは真っ黒な背景を使用し、AMOLED画面で最大60％節約できます！ 🌙💡"
+        },
+        "player": {
+          "title": "プレイヤーレイアウト",
+          "preview": {
+            "title": "プレビュー",
+            "description": "プレイヤーのレイアウトは以下のように表示されます。",
+            "component": {
+              "artist": "アーティスト名",
+              "title": "トラック名"
+            }
+          },
+          "compact": {
+            "title": "コンパクト",
+            "description": "コンパクトなレイアウトです。より狭いスペースに多くの情報を表示します。"
+          },
+          "comfortable": {
+            "title": "コンフォータブル",
+            "description": "余裕のあるレイアウトです。余白を広くとり、操作ボタンを大きく表示します。"
+          }
+        },
+        "transparency": {
+          "title": "透明効果",
+          "enabled": {
+            "title": "有効",
+            "description": "アプリをより美しく見せる透明効果を有効にしますが、リソースをより多く消費する可能性があります。"
+          },
+          "disabled": {
+            "title": "無効",
+            "description": "透明効果を無効にすると、バッテリーを最大50％節約できます。"
+          }
+        },
+        "time_format": {
+          "title": "時間形式",
+          "auto": {
+            "title": "自動",
+            "description": "システムが自動的に時間形式を変更します。"
+          },
+          "12": {
+            "title": "12時間",
+            "description": "12時間形式（例：午後2時00分）"
+          },
+          "24": {
+            "title": "24時間",
+            "description": "24時間形式（例：14時00分）"
+          }
+        },
+        "thermometer": {
+          "title": "温度計",
+          "celsius": "摂氏C°",
+          "fahrenheit": "華氏F°"
+        },
+        "animation": {
+          "title": "アニメーション",
+          "smooth": {
+            "title": "スムーズ〜",
+            "description": "レガシーモーション/アニメーション"
+          },
+          "30 fps": {
+            "title": "30 FPS",
+            "description": "1秒あたり30フレームでレンダリングすると、デバイスリソースの使用量が減り、バッテリーを少し節約できますが、スムーズな動きは維持されます。"
+          },
+          "none": {
+            "title": "なし",
+            "description": "モーション/アニメーションを無効にすると、デバイスリソースの使用量が減り、バッテリーを節約できますが、動きの滑らかさはなくなります。"
+          }
+        }
+      },
+      "privacy": {
+        "title": "セキュリティとプライバシー",
+        "description": "プライバシー設定を管理し、アプリの権限を調整することで、より快適な利用体験が可能です。お客様のプライバシー情報はデバイス上に保存され、必要時以外にサーバーへ送信されることはありません。[read_privacypolicy]",
+        "read_privacypolicy": "プライバシーポリシーの詳細はこちら",
+        "cookie": {
+          "title": "クッキーの使用について",
+          "description": "各種設定や認証情報をデバイスに保存するためにクッキーを使用します。",
+          "ifidenied": "クッキーを拒否してデータを削除",
+          "deletion": {
+            "description": "Pona! Webアプリの利用を停止し、すべてのデータを削除する場合、最終確認メールを送信した後にデータを消去します。",
+            "cancel": "キャンセル",
+            "confirm": "データを削除",
+            "deleting": {
+              "title": "ご利用ありがとうございました 👋",
+              "placeholder": "デバイスとブラウザからPona!の全データを削除しています。"
+            }
+          }
+        },
+        "location": {
+          "title": "位置情報",
+          "description": "現在地の天気、イベント、季節、紫外線、湿度、風速などの情報を表示するために位置情報を使用します。",
+          "auto": {
+            "title": "自動",
+            "description": "IPアドレスやブラウザの位置情報許可から現在地を推測しますが、精度が低い場合があります。"
+          },
+          "custom": {
+            "title": "カスタム",
+            "description": "国、都市、特定の場所など、お好きな場所を定義できます。"
+          },
+          "surprise": {
+            "title": "おまかせ",
+            "description": "その日の気分に合った、静かで集中できる場所をアプリが提案します。"
+          }
+        }
+      },
+      "keybinds": {
+        "title": "キーバインド",
+        "announcement": "キーバインド機能はまだ利用できませんが、ラボで開発中です！ご期待ください！",
+        "move": "移動"
+      },
+      "dev_mode": {
+        "title": "開発者ゾーン"
+      }
+    }
+  },
+  "redirect": {
+    "title": "リダイレクト中..",
+    "description": "リダイレクトされない場合は、[clickme]をクリックしてください。",
+    "clickme": "こちらをクリック"
+  },
+  "callback": {
+    "success": {
+      "title": "素晴らしい！ ( ͡• ͜ʖ ͡• )",
+      "description": "すべてうまくいきました、パーティーはすぐに始まります... 🎉"
+    },
+    "processing": {
+      "title": "魔法を詠唱中... ✨",
+      "description": "キーの互換性を確認しています。処理が完了次第、アプリにリダイレクトします。"
+    },
+    "failed": {
+      "title": "問題が発生しました ⊙﹏⊙∥",
+      "description": "Discord連携に失敗しました",
+      "actions": {
+        "tryagain": "再試行"
+      }
+    },
+    "unknown": {
+      "title": "あれ？.. (´。＿。｀)",
+      "description": "不明なエラー"
+    }
+  },
+  "not_found": {
+    "title": "ページが見つかりません :(",
+    "description": "お探しのページは移動または削除された可能性があります ^0^",
+    "actions": {
+      "app": "アプリを開く",
+      "home": "ホームに戻る"
+    }
+  },
+  "app_notok": {
+    "title": "アプリに接続できません :(",
+    "description": "アプリが別の惑星に旅立ったようです。🪐 まだ戻ってきていません。面白いお土産話を持って帰ってくるまで、もうしばらくお待ちください！ ( •̀ ω •́ )✧",
+    "actions": {
+      "refresh": "更新",
+      "support": "サポート"
+    }
+  },
+  "app_notready": {
+    "title": "サプライズをお楽しみに！",
+    "description": "特別なサプライズを準備中です。この新機能はきっとあなたを驚かせるでしょう。ご期待ください！ (/≧▽≦)/",
+    "actions": {
+      "support": "サポート",
+      "status": "Pona! のステータスを確認"
+    }
+  },
+  "footer": {
+    "links": {
+      "github": "Github",
+      "apidocs": "APIドキュメント",
+      "support": "サポート",
+      "status": "ステータス",
+      "legal": "法的情報",
+      "a_coffee": "コーヒーを贈る"
+    },
+    "settings": {
+      "lang": {
+        "label": "言語"
+      }
+    }
+  },
+  "mind": {
+    "stressed": "ストレス",
+    "tried": "疲れた",
+    "sad": "悲しい",
+    "fear": "恐れ",
+    "alone": "孤独",
+    "hungry": "空腹",
+    "hot": "暑い",
+    "cold": "寒い",
+    "happy": "楽しい",
+    "sweet": "甘い〜（これは押してはいけません！;_;）",
+    "cool": "クール"
+  },
+  "spacial": {
+    "little_angel": "小さな天使 ໒꒱· ﾟ"
+  }
+}

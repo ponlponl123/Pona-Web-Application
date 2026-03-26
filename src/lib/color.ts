@@ -1,10 +1,11 @@
-import { fileURLToPath } from "bun"
 import chroma from "chroma-js"
+import { fileURLToPath } from "bun"
+import { dominantColors } from "imgkit"
 
 /**
  * Generate Tailwind-like color palette from single Hex string
- * @param hex - Hex (e.g. '#3b82f6')
- * @returns Object with key 50-950
+ * @param hex - Hex string (e.g. '#3b82f6' or '3b82f6')
+ * @returns object oklch with key 50-950
  */
 export function generatePalette(hex: string) {
   if (!chroma.valid(hex)) {
@@ -19,13 +20,43 @@ export function generatePalette(hex: string) {
     .mode("lch")
     .domain([0, 0.5, 1])
 
-  const palette: Record<number, string> = {}
+  const palette: Record<number, chroma.ColorFormats["oklch"]> = {}
 
   keys.forEach((key, index) => {
-    palette[key] = colorScale(positions[index]).hex()
+    palette[key] = colorScale(positions[index]).oklch()
   })
 
   return palette
+}
+
+export async function getAccentHEXColor(
+  input: string | Buffer
+): Promise<string> {
+  const buf = typeof input === "string" ? Buffer.from(input, "base64") : input
+
+  const { primary } = await dominantColors(buf, 1)
+
+  return primary.hex
+}
+
+export async function getAccentHEXColorFromUrl(url: string): Promise<string> {
+  try {
+    const response = await fetch(url)
+
+    if (!response.ok) {
+      throw new Error(
+        `Failed to fetch image. Status: ${response.status} ${response.statusText}`
+      )
+    }
+
+    const arrayBuffer = await response.arrayBuffer()
+    const buffer = Buffer.from(arrayBuffer)
+
+    return await getAccentHEXColor(buffer)
+  } catch (error) {
+    console.error("Error in getAccentHEXColorFromUrl:", error)
+    throw error
+  }
 }
 
 // For generate color palette while dev

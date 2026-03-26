@@ -1,4 +1,4 @@
-[data-theme='chocolate'] {
+[data-theme="chocolate"] {
   --accent: oklch(54.632% 0.03538 51.073);
   --accent-foreground: oklch(100% 0.00011 271.152);
 
@@ -9,11 +9,11 @@
   --secondary-foreground: oklch(100% 0.00011 271.152);
 
   --foreground: oklch(37.045% 0.0309 46.537);
-  --background: oklch(98.662% 0.02257 95.984);
+  --background: oklch(86.653% 0.03314 85.469);
 
   --color-playground-background: oklch(98.662% 0.02257 95.984);
 
-  &.dark, 
+  &.dark,
   & .dark,
   &:is(.dark *) {
     --foreground: oklch(73.653% 0.04812 52.896);

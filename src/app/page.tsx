@@ -4,12 +4,33 @@ export default function Page() {
   return (
     <div className="flex min-h-svh p-6">
       <div className="flex max-w-md min-w-0 flex-col gap-4 text-sm leading-loose">
-        <div data-theme='chocolate'>
+        <div>
           <h1 className="font-medium">Project ready!</h1>
           <p>You may now add components and start building.</p>
           <p>We&apos;ve already added the button component for you.</p>
-          {["link", "default", "outline", "secondary", "ghost", "destructive"].map(variant => (
-            <Button key={variant} variant={variant as "link" | "default" | "outline" | "secondary" | "ghost" | "destructive"} className="mt-2">Button</Button>
+          {[
+            "link",
+            "default",
+            "outline",
+            "secondary",
+            "ghost",
+            "destructive",
+          ].map((variant) => (
+            <Button
+              key={variant}
+              variant={
+                variant as
+                  | "link"
+                  | "default"
+                  | "outline"
+                  | "secondary"
+                  | "ghost"
+                  | "destructive"
+              }
+              className="m-1"
+            >
+              Button
+            </Button>
           ))}
         </div>
         <div className="font-mono text-xs text-muted-foreground">
