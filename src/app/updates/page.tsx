@@ -49,8 +49,8 @@ function Page() {
 
   return (
     <main className="min-h-screen w-full">
-      <div className="mb-20 flex min-h-screen grid-rows-[20px_1fr_20px] flex-col items-center gap-8 p-8 pb-20 sm:p-6 md:p-20">
-        <div className="mt-6" />
+      <div className="mb-20 flex min-h-screen grid-rows-[20px_1fr_20px] flex-col items-center gap-8 p-8 pb-20 max-md:gap-4 sm:p-6 md:p-20">
+        <div className="mt-6 max-md:mt-12" />
         <WrenchIcon size={48} weight="fill" />
         <h1 className="text-2xl">{language.data.app.updates.name}</h1>
         <div className="flex items-center justify-between gap-12 lg:flex-wrap">
@@ -155,7 +155,18 @@ function Page() {
                               onMouseLeave={() => setIsCardHover(false)}
                             >
                               <div className="flex h-full max-h-none w-full flex-col gap-3 p-2">
-                                <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-foreground/10">
+                                <div
+                                  className="relative aspect-video w-full overflow-hidden rounded-2xl bg-foreground/10"
+                                  style={{
+                                    viewTransitionName:
+                                      "banner-" +
+                                      notegroup.tag +
+                                      "-" +
+                                      note.version
+                                        .replace(".md", "")
+                                        .replace(/\./g, "-"),
+                                  }}
+                                >
                                   {note.banner ? (
                                     <></>
                                   ) : (
@@ -167,19 +178,19 @@ function Page() {
                                     </div>
                                   )}
                                 </div>
-                                <div className="flex items-center justify-start gap-2 px-2">
-                                  <h1
-                                    className="text-start text-xs"
-                                    style={{
-                                      viewTransitionName:
-                                        "date-" +
-                                        notegroup.tag +
-                                        "-" +
-                                        note.version
-                                          .replace(".md", "")
-                                          .replace(/\./g, "-"),
-                                    }}
-                                  >
+                                <div
+                                  className="flex items-center justify-start gap-2 px-2"
+                                  style={{
+                                    viewTransitionName:
+                                      "metadata-" +
+                                      notegroup.tag +
+                                      "-" +
+                                      note.version
+                                        .replace(".md", "")
+                                        .replace(/\./g, "-"),
+                                  }}
+                                >
+                                  <h1 className="text-start text-xs">
                                     {/* {language.data.app.updates.version}{" "}
                                     {note.version.replace(".md", "")} */}
                                     {new Date(note.date).toLocaleDateString(
@@ -205,15 +216,6 @@ function Page() {
                                             "release" &&
                                             "bg-blue-500/10 text-blue-500"
                                     )}
-                                    style={{
-                                      viewTransitionName:
-                                        "badge-" +
-                                        notegroup.tag +
-                                        "-" +
-                                        note.version
-                                          .replace(".md", "")
-                                          .replace(/\./g, "-"),
-                                    }}
                                   >
                                     {(
                                       language.data.app.updates
@@ -242,14 +244,8 @@ function Page() {
                                 </h1>
                                 <div className="h-full min-h-0 flex-1" />
                                 <div className="mt-2 flex items-center justify-start gap-2 px-2">
-                                  <span className="text-xs text-foreground/40">
-                                    {language.data.app.updates.publish_by}
-                                  </span>{" "}
-                                  <Badge
-                                    key={`note-tag-chip` + index}
-                                    className={cn(
-                                      "text-foregroun rounded-full bg-foreground/10 py-3 pl-1 text-xs"
-                                    )}
+                                  <span
+                                    className="text-xs text-foreground/40"
                                     style={{
                                       viewTransitionName:
                                         "publisher-" +
@@ -259,6 +255,14 @@ function Page() {
                                           .replace(".md", "")
                                           .replace(/\./g, "-"),
                                     }}
+                                  >
+                                    {language.data.app.updates.publish_by}
+                                  </span>{" "}
+                                  <Badge
+                                    key={`note-tag-chip` + index}
+                                    className={cn(
+                                      "text-foregroun rounded-full bg-foreground/10 py-3 pl-1 text-xs"
+                                    )}
                                   >
                                     <Avatar className="size-4">
                                       <AvatarImage

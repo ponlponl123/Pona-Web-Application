@@ -119,6 +119,7 @@
   },
   "app": {
     "title": "App",
+    "initializing": "App is initializing...",
     "welcome": {},
     "updates": {
       "name": "Updates",
@@ -126,6 +127,7 @@
       "follow": "Follow the updates",
       "read": "Read",
       "loading": "Looking past updates...",
+      "suspense": "Loading patch data...",
       "publish_by": "Published by",
       "subscription": {
         "title": "Subscribe",

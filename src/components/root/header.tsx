@@ -487,7 +487,7 @@ function Header() {
             )}
           <UserAccountAction minimize={true} className="md:hidden" />
           <MyButton
-            className={`btn-icon m-0 mr-0! md:hidden! ${isMusicApp ? "max-miniscreen:hidden" : ""}`}
+            className={`btn-icon m-0 mr-0! h-12 w-12 min-w-0! md:hidden! ${isMusicApp ? "max-miniscreen:hidden" : ""}`}
             style="rounded"
             variant="text"
             onClick={() => {

@@ -1,5 +1,6 @@
 import { Suspense } from "react"
 import { default as PageClient } from "./page-client"
+import SuspenseFallback from "./suspense-fallback"
 
 async function PatchNoteData({
   tag,
@@ -27,13 +28,7 @@ export default async function Page(props: {
     <main className="min-h-screen w-full">
       <div className="mb-20 flex min-h-screen grid-rows-[20px_1fr_20px] flex-col items-center gap-3 p-8 pb-20 sm:p-6 md:p-20">
         <div className="mt-6" />
-        <Suspense
-          fallback={
-            <div className="animate-pulse text-muted-foreground">
-              กำลังโหลดข้อมูลแพตช์...
-            </div>
-          }
-        >
+        <Suspense fallback={<SuspenseFallback />}>
           <PatchNoteData tag={params.tag} version={params.version} />
         </Suspense>
       </div>

@@ -123,6 +123,7 @@
   },
   "app": {
     "title": "アプリ",
+    "initializing": "アプリを初期化しています...",
     "welcome": {},
     "updates": {
       "name": "アップデート",
@@ -130,6 +131,7 @@
       "follow": "アップデートをフォロー",
       "read": "読む",
       "loading": "アップデートリストを読み込んでいます...",
+      "suspense": "パッチデータを読み込んでいます...",
       "publish_by": "発行元",
       "subscription": {
         "title": "購読",
