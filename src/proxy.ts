@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 
 const allowedOrigins = ["https://pona.ponlponl123.com"]
 
-export function middleware(req: NextRequest) {
+export function proxy(req: NextRequest) {
   const res = NextResponse.next()
 
   req.headers.get("origin")
