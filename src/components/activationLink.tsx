@@ -5,82 +5,83 @@ import { usePathname } from "next/navigation"
 import { useRouter } from "nextjs-toploader/app"
 import React, { useCallback, useEffect, useRef, useState } from "react"
 
-function ActivationLink({
-  href,
-  children,
-  icon,
-  iconSize,
-  onClick,
-  className,
-  isActive = false,
-  iconOnly,
-  isDisabled = false,
-}: {
+interface ActivationLinkProps {
   href?: string
-  children: React.ReactNode
+  children?: React.ReactNode
   icon?: IconType
   iconSize?: number
   onClick?: () => void
   className?: string
   isActive?: boolean
-  iconOnly?: boolean | undefined
-  isDisabled?: boolean | undefined
-}) {
+  iconOnly?: boolean
+  isDisabled?: boolean
+}
+
+function ActivationLink({
+  href,
+  children,
+  icon: Icon,
+  iconSize = 16,
+  onClick,
+  className = "",
+  isActive = false,
+  iconOnly = false,
+  isDisabled = false,
+}: ActivationLinkProps) {
   const router = useRouter()
-  const sections = useRef<NodeListOf<HTMLElement> | null>(null)
   const pathname = usePathname() || ""
   const isSection = href?.startsWith("#")
-  const app = useRef<HTMLElement | null>(null)
-  const button = useRef<HTMLButtonElement | null>(null)
+  const sectionId = href?.substring(1)
+
+  const appRef = useRef<HTMLElement | null>(null)
+  const buttonRef = useRef<HTMLButtonElement | null>(null)
+  const sectionsRef = useRef<NodeListOf<HTMLElement> | null>(null)
+
   const [activeSection, setActiveSection] = useState<string | null>(null)
-  const [activeSectionGroup, setActiveSectionGroup] = useState<boolean>(false)
-  const group =
-    button.current?.parentElement?.parentElement?.classList.contains(
-      "group-menu"
-    )
-      ? button.current.parentElement.parentElement
-      : undefined
-  const group_title = button.current?.parentElement?.classList.contains(
-    "group-title"
-  )
-    ? button.current.parentElement
-    : undefined
-  const isHere =
-    (isSection
-      ? activeSectionGroup || activeSection === href?.substring(1)
-      : pathname === href) ||
-    (group?.classList.contains("active") && group_title) ||
-    isActive
-  const Icon = icon
-  const iconContent = Icon ? (
-    <Icon weight={isHere ? "fill" : "bold"} size={iconSize || 16} />
-  ) : null
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const hrefIndex = href ? href.split("/") : []
+
+  let isHere = isActive
+
+  if (isSection && sectionId) {
+    const isExactSection = activeSection === sectionId
+    const isGroupTitleActive =
+      !sectionId.includes("-") && activeSection?.startsWith(`${sectionId}-`)
+
+    isHere = isHere || isExactSection || Boolean(isGroupTitleActive)
+  } else if (!isSection && href) {
+    const isExactRoute = pathname === href
+    const isParentRouteActive = pathname.startsWith(`${href}/`)
+
+    isHere = isHere || isExactRoute || isParentRouteActive
+  }
 
   const clicked = () => {
-    if (isSection) {
-      const sectionElement = document.querySelector(`#${href?.substring(1)}`)
-      if (sectionElement && app.current) {
-        const appTop = app.current.getBoundingClientRect().top
-        const offset = sectionElement.id.match(/(-)/g) ? 156 : 96
+    if (isSection && sectionId) {
+      const sectionElement = document.getElementById(sectionId)
+      if (sectionElement && appRef.current) {
+        const appTop = appRef.current.getBoundingClientRect().top
+        const offset = sectionId.includes("-") ? 156 : 96
         const sectionTop = sectionElement.getBoundingClientRect().top - offset
-        app.current.scrollTo({
-          top: sectionTop - appTop + app.current.scrollTop,
+
+        appRef.current.scrollTo({
+          top: sectionTop - appTop + appRef.current.scrollTop,
           behavior: "smooth",
         })
       }
     }
+
     if (onClick) onClick()
     if (!isSection && href) router.push(href)
   }
 
   const handleScroll = useCallback(() => {
-    if (app.current) {
-      const pageYOffset = app.current.scrollTop
-      let newActiveSection: string | null = null
+    window.requestAnimationFrame(() => {
+      if (!appRef.current || !sectionsRef.current) return
 
-      sections.current?.forEach((section: HTMLElement) => {
+      const pageYOffset = appRef.current.scrollTop
+
+      let newActiveSection: string = ""
+
+      sectionsRef.current.forEach((section: HTMLElement) => {
         const sectionOffsetTop = section.offsetTop - 256
         const sectionHeight = section.offsetHeight
 
@@ -92,75 +93,75 @@ function ActivationLink({
         }
       })
 
-      setActiveSection(() => {
-        if (
-          button.current?.parentElement &&
-          button.current.parentElement?.parentElement &&
-          button.current.parentElement.parentElement.classList.contains(
-            "group-menu"
-          )
-        ) {
-          if (
-            String(newActiveSection).split("-")[0] ===
-            href?.substring(1).split("-")[0]
-          ) {
-            button.current.parentElement.parentElement.classList.add("active")
-            if (!href.match(/(-)/g)) setActiveSectionGroup(true)
-            else setActiveSectionGroup(false)
-          } else {
-            button.current.parentElement.parentElement.classList.remove(
-              "active"
-            )
-            if (!href?.match(/(-)/g)) setActiveSectionGroup(false)
-          }
+      setActiveSection(newActiveSection !== "" ? newActiveSection : null)
+
+      const parentGroup = buttonRef.current?.closest(".group-menu")
+
+      if (parentGroup && href && newActiveSection !== "") {
+        const sectionPrefix = newActiveSection.split("-")[0]
+        const hrefPrefix = href.substring(1).split("-")[0]
+
+        if (sectionPrefix === hrefPrefix) {
+          parentGroup.classList.add("active")
+        } else {
+          parentGroup.classList.remove("active")
         }
-        return newActiveSection
-      })
-    }
-  }, [href])
+      }
+    })
+  }, [href, setActiveSection])
 
   useEffect(() => {
     if (isSection) {
-      app.current = document.querySelector("#app-content")
-      if (app.current) {
-        sections.current = document.querySelectorAll("[data-section]")
-        app.current.addEventListener("scroll", handleScroll)
-
+      appRef.current = document.querySelector("#app-content")
+      if (appRef.current) {
+        sectionsRef.current = document.querySelectorAll("[data-section]")
+        appRef.current.addEventListener("scroll", handleScroll, {
+          passive: true,
+        })
         handleScroll()
 
         return () => {
-          app.current?.removeEventListener("scroll", handleScroll)
+          appRef.current?.removeEventListener("scroll", handleScroll)
         }
       }
-    } else if (
-      href &&
-      button.current?.parentElement &&
-      button.current.parentElement?.parentElement &&
-      button.current.parentElement.parentElement.classList.contains(
-        "group-menu"
-      )
-    ) {
-      const group = button.current.parentElement.parentElement
-      if (!group) return
-      const controlby = group.getAttribute("aria-label")
-      if (controlby && pathname.includes(controlby)) {
-        button.current.parentElement.parentElement.classList.add("active")
-      } else {
-        button.current.parentElement.parentElement.classList.remove("active")
+    } else if (href) {
+      const parentGroup = buttonRef.current?.closest(".group-menu")
+      if (parentGroup) {
+        const controlby = parentGroup.getAttribute("aria-label")
+        if (controlby && pathname.includes(controlby)) {
+          parentGroup.classList.add("active")
+        } else {
+          parentGroup.classList.remove("active")
+        }
       }
     }
-  }, [isSection, handleScroll, href, hrefIndex, pathname, group])
+  }, [isSection, handleScroll, href, pathname])
 
   return (
     <Button
       onClick={clicked}
-      ref={button}
-      className={"justify-start " + className}
+      ref={buttonRef}
+      className={`justify-start ${className}`}
       variant={isHere ? "ghost" : "default"}
       size={iconOnly ? "icon" : "lg"}
       disabled={isDisabled}
     >
-      {iconOnly ? <div className="m-auto">{iconContent}</div> : children}
+      {iconOnly && Icon ? (
+        <div className="m-auto">
+          <Icon weight={isHere ? "fill" : "bold"} size={iconSize} />
+        </div>
+      ) : (
+        <>
+          {Icon && (
+            <Icon
+              weight={isHere ? "fill" : "bold"}
+              size={iconSize}
+              className="mr-2"
+            />
+          )}
+          {children}
+        </>
+      )}
     </Button>
   )
 }

@@ -27,8 +27,11 @@ export default function Home() {
   const [index, setIndex] = React.useState(0)
 
   React.useEffect(() => {
-    const intervalId = setInterval(() => setIndex((index) => index + 1), 3200)
-    return () => clearTimeout(intervalId)
+    const intervalId = setInterval(() => {
+      setIndex((prev) => prev + 1)
+    }, 3200)
+
+    return () => clearInterval(intervalId)
   }, [])
 
   React.useEffect(() => {
@@ -68,7 +71,7 @@ export default function Home() {
         requestAnimationFrame(frame)
       }
     })()
-  })
+  }, [pathname])
 
   return (
     <main className="main-bg-2 mb-24 min-h-screen w-full">

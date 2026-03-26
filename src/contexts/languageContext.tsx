@@ -20,11 +20,14 @@ const LanguageContext = createContext<LanguageContextType | undefined>(
 
 export const LanguageProvider = ({
   children,
+  initialLang,
 }: {
   children: React.ReactNode
+  initialLang?: languageKeys
 }) => {
   const [language, setLanguageState] = useState<Language>(() => {
-    const currentLangKey = (getCookie("lang") as languageKeys) || "en-US"
+    const currentLangKey =
+      initialLang || (getCookie("lang") as languageKeys) || "en-US"
     return lang(currentLangKey)
   })
 

@@ -1,5 +1,6 @@
 import localFont from "next/font/local"
 import { Geist, JetBrains_Mono } from "next/font/google"
+import { cookies } from "next/headers"
 
 import "@/styles/globals.css"
 import NextTopLoader from "nextjs-toploader"
@@ -10,6 +11,7 @@ import { headers } from "next/headers"
 import { Providers } from "./providers"
 import Header from "@/components/root/header"
 import Footer from "@/components/root/footer"
+import { isValidLanguageKey } from "@/lib/i18n"
 
 const fontSans = Geist({
   subsets: ["latin"],
@@ -42,8 +44,11 @@ export default async function RootLayout({
   children: React.ReactNode
 }>) {
   const headersList = await headers()
+  const cookieStore = await cookies()
   const userAgent = headersList.get("user-agent") || ""
   const mobileCheck = isMobile(userAgent)
+  const rawLang = cookieStore.get("lang")?.value || "en-US"
+  const langCookie = isValidLanguageKey(rawLang) ? rawLang : "en-US"
   return (
     <html
       lang="en"
@@ -70,7 +75,7 @@ export default async function RootLayout({
           shadow="0 0 24px #ff80c6,0 0 12px #ff80c6"
         />
         <ThemeProvider>
-          <Providers isMobile={mobileCheck}>
+          <Providers isMobile={mobileCheck} initialLang={langCookie}>
             <Header />
             <main id="app">{children}</main>
             <Footer />

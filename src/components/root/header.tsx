@@ -1,5 +1,5 @@
 "use client"
-import React from "react"
+import React, { useCallback, useEffect, useRef, useState } from "react"
 import PonaIcon from "@/../public/static/flower.png"
 import MyButton from "@/components/ui/custom/button"
 import { useDiscordGuildInfo } from "@/contexts/discordGuildInfo"
@@ -32,6 +32,7 @@ import Sidebar from "./sidebar"
 import Image from "next/image"
 import Link from "next/link"
 import * as z from "zod"
+import clsx from "clsx"
 
 function UserAccountAction({
   className,
@@ -113,7 +114,9 @@ const formSchema = z.object({
 function Header() {
   const router = useRouter()
   const pathname = usePathname() || ""
-  const [navOpened, setNavOpened] = React.useState<boolean>(false)
+  const [navOpened, setNavOpened] = useState<boolean>(false)
+
+  // Contexts
   const { guild } = useDiscordGuildInfo()
   const { language } = useLanguageContext()
   const { userInfo } = useDiscordUserInfo()
@@ -121,49 +124,52 @@ function Header() {
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      search: "",
-    },
+    defaultValues: { search: "" },
   })
 
+  // ตัวแปรเช็คสถานะเส้นทาง
   const isApp = pathname.startsWith("/app")
   const isInGuild =
     isApp &&
     pathname.split("/").includes("g") &&
-    typeof Number(pathname.split("/")[3]) === "number"
+    !isNaN(Number(pathname.split("/")[3]))
   const guildPath = isInGuild ? pathname.split("/")[4] : ""
   const isMusicApp = isApp && pathname.includes("/player")
   const isIndex = pathname === "/"
 
-  const searchSuggestionElement = React.useRef<HTMLDivElement>(null)
-  const searchInputElement = React.useRef<HTMLInputElement>(null)
-  const [searching, setSearching] = React.useState<boolean>(false)
-  const [searchValue, setSearchValue] = React.useState<string>("")
-  const [searchSuggestions, setSearchSuggestions] = React.useState<string[]>([])
-  const [searchHistory, setSearchHistory] = React.useState<string[]>([])
+  // Refs & States สำหรับการค้นหา
+  const searchSuggestionRef = useRef<HTMLDivElement>(null)
+  const searchInputRef = useRef<HTMLInputElement>(null)
+  const [searching, setSearching] = useState<boolean>(false)
+  const [searchValue, setSearchValue] = useState<string>("")
+  const [searchSuggestions, setSearchSuggestions] = useState<string[]>([])
+  const [searchHistory, setSearchHistory] = useState<string[]>([])
   const [fetchedSearchHistory, setFetchedSearchHistory] =
-    React.useState<boolean>(false)
+    useState<boolean>(false)
   const [typingTimeout, setTypingTimeout] =
     React.useState<NodeJS.Timeout | null>(null)
 
   const handleBlur = (event: React.FocusEvent<HTMLInputElement>) => {
     if (
-      searchSuggestionElement.current &&
-      !searchSuggestionElement.current.contains(event.relatedTarget as Node)
+      searchSuggestionRef.current &&
+      !searchSuggestionRef.current.contains(event.relatedTarget as Node)
     )
       setSearching(false)
   }
 
-  const handleClickOutside = (event: MouseEvent) => {
-    if (
-      searchSuggestionElement.current &&
-      !searchSuggestionElement.current.contains(event.target as Node) &&
-      searchInputElement.current &&
-      !searchInputElement.current.contains(event.target as Node)
-    ) {
-      setSearching(false)
-    }
-  }
+  const handleClickOutside = useCallback(
+    (event: MouseEvent) => {
+      if (
+        searchSuggestionRef.current &&
+        !searchSuggestionRef.current.contains(event.target as Node) &&
+        searchInputRef.current &&
+        !searchInputRef.current.contains(event.target as Node)
+      ) {
+        setSearching(false)
+      }
+    },
+    [setSearching]
+  )
 
   const addToSearchHistory = (value: string) => {
     setSearchHistory((prev_value) => {
@@ -174,20 +180,29 @@ function Header() {
     })
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (searching) {
       window.addEventListener("click", handleClickOutside)
-    } else {
-      window.removeEventListener("click", handleClickOutside)
     }
     return () => {
       window.removeEventListener("click", handleClickOutside)
     }
-  }, [searching])
+  }, [searching, handleClickOutside])
 
   return (
     <header
-      className={`nav-opened-${navOpened} ${!isIndex && !isMusicApp ? "max-md:backdrop-blur-md" : !isIndex && isMusicApp ? "max-md:[body.pona-app-music-scrolled_&]:bg-playground-background/40 apply-soft-transition border-b-2 border-foreground/0 bg-transparent duration-1000! max-md:[body.pona-app-music-scrolled_&]:border-foreground/10 max-md:[body.pona-app-music-scrolled_&]:backdrop-blur-md" : ""} ${!isIndex && isMemberInVC && isSameVC ? "max-md:[body.pona-player-focused_&]:pointer-events-none max-md:[body.pona-player-focused_&]:opacity-0" : ""} pona-header absolute flex h-20 w-full items-center justify-center gap-3 p-6 px-8`}
+      className={clsx(
+        `nav-opened-${navOpened}`,
+        "pona-header absolute flex h-20 w-full items-center justify-center gap-3 p-6 px-8",
+        !isIndex && !isMusicApp && "max-md:backdrop-blur-md",
+        !isIndex &&
+          isMusicApp &&
+          "max-md:[body.pona-app-music-scrolled_&]:bg-playground-background/40 apply-soft-transition border-b-2 border-foreground/0 bg-transparent duration-1000! max-md:[body.pona-app-music-scrolled_&]:border-foreground/10 max-md:[body.pona-app-music-scrolled_&]:backdrop-blur-md",
+        !isIndex &&
+          isMemberInVC &&
+          isSameVC &&
+          "max-md:[body.pona-player-focused_&]:pointer-events-none max-md:[body.pona-player-focused_&]:opacity-0"
+      )}
     >
       <div
         className={`w-full ${!isApp && "max-w-5xl"} flex h-full items-center justify-between gap-6`}
@@ -286,7 +301,7 @@ function Header() {
                         control={form.control}
                         render={() => (
                           <Field
-                            ref={searchInputElement}
+                            ref={searchInputRef}
                             aria-placeholder={
                               language.data.app.guilds.player.search.search_box
                             }
@@ -372,7 +387,7 @@ function Header() {
                       >
                         <ScrollArea
                           id="pona-search-suggestions"
-                          ref={searchSuggestionElement}
+                          ref={searchSuggestionRef}
                           className={`max-miniscreen:bg-playground-background miniscreen:backdrop-blur-3xl absolute top-12 z-30 h-max max-h-[calc(96vh-64px)] min-h-6 w-full rounded-2xl border-2 border-foreground/10 bg-background/25 p-1 ${searching && (searchHistory.length > 0 || searchSuggestions.length > 0) ? "" : "pointer-events-none -translate-y-6 opacity-0"}`}
                           style={{
                             scrollbarWidth: "thin",

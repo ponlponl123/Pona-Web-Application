@@ -9,17 +9,20 @@ import PageAnimatePresence from "@/components/HOC/PageAnimatePresence"
 import { PonaMusicCacheContextProvider } from "@/contexts/ponaMusicCacheContext"
 import { usePathname } from "next/navigation"
 import { Toaster } from "@/components/ui/sonner"
+import { languageKeys } from "@/lib/i18n"
 
 export function Providers({
   children,
   isMobile,
+  initialLang,
 }: {
   children: React.ReactNode
   isMobile: boolean
+  initialLang?: languageKeys
 }) {
   const pathname = usePathname() || ""
   return (
-    <LanguageProvider>
+    <LanguageProvider initialLang={initialLang}>
       <UserSettingProvider>
         <DiscordUserInfoProvider>
           <DiscordGuildInfoProvider>

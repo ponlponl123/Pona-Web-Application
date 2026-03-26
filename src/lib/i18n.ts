@@ -1,9 +1,14 @@
-"use client"
 import thTH from "@/langs/th.json"
 import enUS from "@/langs/en.json"
 import jaJP from "@/langs/jp.json"
 
 export type languageKeys = "th-TH" | "en-US" | "ja-JP"
+
+const validKeys: languageKeys[] = ["th-TH", "en-US", "ja-JP"]
+
+export const isValidLanguageKey = (key: string): key is languageKeys => {
+  return validKeys.includes(key as languageKeys)
+}
 
 export interface Language {
   key: languageKeys

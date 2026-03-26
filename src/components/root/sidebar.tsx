@@ -8,46 +8,53 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import {
-  Broadcast,
-  Bug,
-  CaretLeft,
+  BroadcastIcon,
+  BugIcon,
+  CaretLeftIcon,
   CaretLineLeftIcon,
-  ChartPieSlice,
-  ClockCounterClockwise,
-  Compass,
-  Confetti,
-  CubeTransparent,
-  Gear,
+  ChartPieSliceIcon,
+  ClockCounterClockwiseIcon,
+  CompassIcon,
+  ConfettiIcon,
+  CubeTransparentIcon,
+  GearIcon,
   HandHeartIcon,
-  Heart,
-  House,
-  HouseSimple,
-  Keyboard,
-  MapPinArea,
+  HeartIcon,
+  HouseIcon,
+  HouseSimpleIcon,
+  KeyboardIcon,
+  MapPinAreaIcon,
   MonitorPlayIcon,
-  MusicNoteSimple,
-  PaintBrush,
-  Palette,
-  PersonSimpleRun,
-  Planet,
-  Playlist,
-  ShieldCheckered,
-  StarAndCrescent,
-  SunHorizon,
-  Thermometer,
-  Wrench,
+  MusicNoteSimpleIcon,
+  PaintBrushIcon,
+  PaletteIcon,
+  PersonSimpleRunIcon,
+  PlaylistIcon,
+  ShieldCheckeredIcon,
+  StarAndCrescentIcon,
+  SunHorizonIcon,
+  ThermometerIcon,
+  WrenchIcon,
 } from "@phosphor-icons/react/dist/ssr"
 import clsx from "clsx"
 import { AnimatePresence, motion } from "framer-motion"
 import { usePathname, useRouter } from "next/navigation"
 import ActivationLink from "@/components/activationLink"
 import FrozenRoute from "../HOC/FrozenRoute"
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 
 const variants = {
   hidden: { opacity: 0, x: -12, y: 0 },
   enter: { opacity: 1, x: 0, y: 0 },
   exit: { opacity: 0, x: 12, y: 0 },
+}
+
+interface SidebarProps {
+  userInfo: UserInfo
+  nav?: boolean
+  onPushLocation?: () => void
+  canCollapsed?: boolean
+  onCollapsed?: (value: boolean) => void
 }
 
 function Sidebar({
@@ -56,13 +63,7 @@ function Sidebar({
   onPushLocation,
   canCollapsed,
   onCollapsed,
-}: {
-  userInfo: UserInfo
-  nav?: boolean
-  onPushLocation?: () => void
-  canCollapsed?: true | undefined
-  onCollapsed?: (value: boolean) => void
-}) {
+}: SidebarProps) {
   const pathname = usePathname() || ""
   const ownerId = process.env["NEXT_PUBLIC_DISCORD_OWNER_ID"]
   const isOwner = userInfo.id === ownerId
@@ -70,12 +71,16 @@ function Sidebar({
   const { language } = useLanguageContext()
   const { ponaCommonState, isSameVC } = useGlobalContext()
   const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(false)
+  const router = useRouter()
+
   const inGuild = pathname.startsWith("/app/g/")
   const inSetting = pathname.startsWith("/app/setting")
-  const router = useRouter()
+  const isCollapsed = Boolean(canCollapsed && sidebarCollapsed)
+
   const handlePushLocation = () => {
     if (onPushLocation) onPushLocation()
   }
+
   const handleBackNavigation = () => {
     const previousPath = document.referrer
     if (previousPath && previousPath.includes(window.location.origin)) {
@@ -85,19 +90,30 @@ function Sidebar({
     }
   }
 
-  React.useState(() => {
-    if (!(canCollapsed && sidebarCollapsed))
+  useEffect(() => {
+    if (!isCollapsed) {
       document.body.classList.remove("sidebar-collapsed")
-  })
+    } else {
+      document.body.classList.add("sidebar-collapsed")
+    }
+
+    return () => {
+      document.body.classList.remove("sidebar-collapsed")
+    }
+  }, [isCollapsed])
 
   return (
     <main
-      className={`scrollbar disable-default-transition apply-long-soft-transition duration-700! ${!nav ? `${canCollapsed && sidebarCollapsed ? "w-16 max-w-16 min-w-16 p-2" : "w-64 max-w-64 min-w-64 p-4"} relative flex h-screen flex-col gap-2 pt-24 max-md:hidden` : "flex w-full flex-col gap-2 md:hidden"}`}
+      className={`scrollbar disable-default-transition apply-long-soft-transition duration-700! ${
+        !nav
+          ? `${isCollapsed ? "w-16 max-w-16 min-w-16 p-2" : "w-64 max-w-64 min-w-64 p-4"} relative flex h-screen flex-col gap-2 pt-24 max-md:hidden`
+          : "flex w-full flex-col gap-2 md:hidden"
+      }`}
     >
       <AnimatePresence mode="popLayout">
         <motion.div
           className="max-h-[calc(100%-64px)] w-full"
-          key={String(`${inGuild} ${inSetting} ${sidebarCollapsed}`)}
+          key={`${inGuild}-${inSetting}-${sidebarCollapsed}`}
         >
           <ScrollArea
             className="flex max-h-full w-full flex-col"
@@ -124,7 +140,7 @@ function Sidebar({
                       iconOnly={canCollapsed && sidebarCollapsed}
                       onClick={handlePushLocation}
                       href={`#account`}
-                      icon={StarAndCrescent}
+                      icon={StarAndCrescentIcon}
                     >
                       {language.data.app.setting.account.title}
                     </ActivationLink>
@@ -136,7 +152,7 @@ function Sidebar({
                           iconOnly={canCollapsed && sidebarCollapsed}
                           onClick={handlePushLocation}
                           href={`#layout`}
-                          icon={Palette}
+                          icon={PaletteIcon}
                         >
                           {language.data.app.setting.layout.title}
                         </ActivationLink>
@@ -146,7 +162,7 @@ function Sidebar({
                           iconOnly={canCollapsed && sidebarCollapsed}
                           onClick={handlePushLocation}
                           href={`#layout-theme`}
-                          icon={PaintBrush}
+                          icon={PaintBrushIcon}
                         >
                           {language.data.app.setting.layout.theme.title}
                         </ActivationLink>
@@ -162,7 +178,7 @@ function Sidebar({
                           iconOnly={canCollapsed && sidebarCollapsed}
                           onClick={handlePushLocation}
                           href={`#layout-transparency`}
-                          icon={CubeTransparent}
+                          icon={CubeTransparentIcon}
                         >
                           {language.data.app.setting.layout.transparency.title}
                         </ActivationLink>
@@ -170,7 +186,7 @@ function Sidebar({
                           iconOnly={canCollapsed && sidebarCollapsed}
                           onClick={handlePushLocation}
                           href={`#layout-timeformat`}
-                          icon={SunHorizon}
+                          icon={SunHorizonIcon}
                         >
                           {language.data.app.setting.layout.time_format.title}
                         </ActivationLink>
@@ -178,7 +194,7 @@ function Sidebar({
                           iconOnly={canCollapsed && sidebarCollapsed}
                           onClick={handlePushLocation}
                           href={`#layout-thermometer`}
-                          icon={Thermometer}
+                          icon={ThermometerIcon}
                         >
                           {language.data.app.setting.layout.thermometer.title}
                         </ActivationLink>
@@ -186,7 +202,7 @@ function Sidebar({
                           iconOnly={canCollapsed && sidebarCollapsed}
                           onClick={handlePushLocation}
                           href={`#layout-animations`}
-                          icon={PersonSimpleRun}
+                          icon={PersonSimpleRunIcon}
                         >
                           {language.data.app.setting.layout.animation.title}
                         </ActivationLink>
@@ -200,7 +216,7 @@ function Sidebar({
                           iconOnly={canCollapsed && sidebarCollapsed}
                           onClick={handlePushLocation}
                           href={`#privacy`}
-                          icon={ShieldCheckered}
+                          icon={ShieldCheckeredIcon}
                         >
                           {language.data.app.setting.privacy.title}
                         </ActivationLink>
@@ -210,7 +226,7 @@ function Sidebar({
                           iconOnly={canCollapsed && sidebarCollapsed}
                           onClick={handlePushLocation}
                           href={`#privacy-location`}
-                          icon={MapPinArea}
+                          icon={MapPinAreaIcon}
                         >
                           {language.data.app.setting.privacy.location.title}
                         </ActivationLink>
@@ -220,7 +236,7 @@ function Sidebar({
                       iconOnly={canCollapsed && sidebarCollapsed}
                       onClick={handlePushLocation}
                       href={`#keybinds`}
-                      icon={Keyboard}
+                      icon={KeyboardIcon}
                     >
                       {language.data.app.setting.keybinds.title}
                     </ActivationLink>
@@ -228,7 +244,7 @@ function Sidebar({
                       iconOnly={canCollapsed && sidebarCollapsed}
                       onClick={handlePushLocation}
                       href={`#devzone`}
-                      icon={Bug}
+                      icon={BugIcon}
                     >
                       {language.data.app.setting.dev_mode.title}
                     </ActivationLink>
@@ -239,7 +255,7 @@ function Sidebar({
                       iconOnly={canCollapsed && sidebarCollapsed}
                       onClick={handlePushLocation}
                       href="/app"
-                      icon={House}
+                      icon={HouseIcon}
                     >
                       {language.data.app.home.name}
                     </ActivationLink>
@@ -247,7 +263,7 @@ function Sidebar({
                       iconOnly={canCollapsed && sidebarCollapsed}
                       onClick={handlePushLocation}
                       href="/app/guilds"
-                      icon={Confetti}
+                      icon={ConfettiIcon}
                     >
                       {language.data.app.guilds.name}
                     </ActivationLink>
@@ -255,7 +271,7 @@ function Sidebar({
                       iconOnly={canCollapsed && sidebarCollapsed}
                       onClick={handlePushLocation}
                       href="/app/playlists"
-                      icon={Playlist}
+                      icon={PlaylistIcon}
                     >
                       {language.data.app.playlist.name}
                     </ActivationLink>
@@ -263,13 +279,13 @@ function Sidebar({
                       iconOnly={canCollapsed && sidebarCollapsed}
                       onClick={handlePushLocation}
                       href="/app/updates"
-                      icon={Wrench}
+                      icon={WrenchIcon}
                       isActive={pathname.includes("/app/updates")}
                     >
                       {language.data.app.updates.name}{" "}
                       <Badge color="primary" className="bg-primary/20">
                         <span className="font-bold">
-                          v{process.env["NEXT_PUBLIC_APP_VERSION"] || "unknown"}
+                          v{process.env["NEXT_PUBLIC_VERSION"] || "unknown"}
                         </span>
                       </Badge>
                     </ActivationLink>
@@ -289,12 +305,14 @@ function Sidebar({
                         iconOnly={canCollapsed && sidebarCollapsed}
                         onClick={handlePushLocation}
                         href="/app/guilds"
-                        icon={CaretLeft}
+                        icon={CaretLeftIcon}
                         className="h-fit p-2"
                       >
                         <div className="flex items-center gap-2">
                           <Avatar className="h-8 w-8">
-                            <AvatarImage src={guild.iconURL as string} />
+                            <AvatarImage
+                              src={`https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png`}
+                            />
                             <AvatarFallback>
                               {guild.name.charAt(0).toUpperCase()}
                             </AvatarFallback>
@@ -306,7 +324,7 @@ function Sidebar({
                         iconOnly={canCollapsed && sidebarCollapsed}
                         onClick={handlePushLocation}
                         href={`/app/g/${guild.id}`}
-                        icon={ChartPieSlice}
+                        icon={ChartPieSliceIcon}
                       >
                         {language.data.app.overview.name}
                       </ActivationLink>
@@ -319,7 +337,7 @@ function Sidebar({
                           iconOnly={canCollapsed && sidebarCollapsed}
                           onClick={handlePushLocation}
                           href={`/app/g/${guild.id}/player`}
-                          icon={MusicNoteSimple}
+                          icon={MusicNoteSimpleIcon}
                         >
                           {language.data.app.guilds.player.name}
                         </ActivationLink>
@@ -333,7 +351,7 @@ function Sidebar({
                               iconOnly={canCollapsed && sidebarCollapsed}
                               onClick={handlePushLocation}
                               href={`/app/g/${guild.id}/player`}
-                              icon={MusicNoteSimple}
+                              icon={MusicNoteSimpleIcon}
                             >
                               {language.data.app.guilds.player.name}{" "}
                               <Badge>{language.data.extensions.beta}</Badge>
@@ -344,7 +362,7 @@ function Sidebar({
                               iconOnly={canCollapsed && sidebarCollapsed}
                               onClick={handlePushLocation}
                               href={`/app/g/${guild.id}/player`}
-                              icon={HouseSimple}
+                              icon={HouseSimpleIcon}
                             >
                               {language.data.app.guilds.player.home.title}
                             </ActivationLink>
@@ -352,7 +370,7 @@ function Sidebar({
                               iconOnly={canCollapsed && sidebarCollapsed}
                               onClick={handlePushLocation}
                               href={`/app/g/${guild.id}/player/browse`}
-                              icon={Compass}
+                              icon={CompassIcon}
                             >
                               {language.data.app.guilds.player.browse.title}
                             </ActivationLink>
@@ -360,7 +378,7 @@ function Sidebar({
                               iconOnly={canCollapsed && sidebarCollapsed}
                               onClick={handlePushLocation}
                               href={`/app/g/${guild.id}/player/favorite`}
-                              icon={Heart}
+                              icon={HeartIcon}
                             >
                               {language.data.app.guilds.player.favorite.title}
                             </ActivationLink>
@@ -368,7 +386,7 @@ function Sidebar({
                               iconOnly={canCollapsed && sidebarCollapsed}
                               onClick={handlePushLocation}
                               href={`/app/g/${guild.id}/player/history`}
-                              icon={ClockCounterClockwise}
+                              icon={ClockCounterClockwiseIcon}
                             >
                               {language.data.app.guilds.player.history.title}
                             </ActivationLink>
@@ -376,7 +394,7 @@ function Sidebar({
                               iconOnly={canCollapsed && sidebarCollapsed}
                               onClick={handlePushLocation}
                               href={`/app/g/${guild.id}/player/playlists`}
-                              icon={Playlist}
+                              icon={PlaylistIcon}
                             >
                               {language.data.app.playlist.name}
                             </ActivationLink>
@@ -388,7 +406,7 @@ function Sidebar({
                         onClick={handlePushLocation}
                         href={`/app/g/${guild.id}/live-notify`}
                         isDisabled={true}
-                        icon={Broadcast}
+                        icon={BroadcastIcon}
                       >
                         {language.data.app.guilds.live_notify.name}{" "}
                         <Badge>{language.data.extensions.comingsoon}</Badge>
@@ -397,7 +415,7 @@ function Sidebar({
                         iconOnly={canCollapsed && sidebarCollapsed}
                         onClick={handlePushLocation}
                         href={`/app/g/${guild.id}/setting`}
-                        icon={Gear}
+                        icon={GearIcon}
                       >
                         {language.data.app.guilds.setting.name}
                       </ActivationLink>
@@ -410,19 +428,9 @@ function Sidebar({
           </ScrollArea>
         </motion.div>
       </AnimatePresence>
+
       {!nav && <div className="mt-auto"></div>}
-      {false && isOwner && (
-        <>
-          <ActivationLink
-            iconOnly={canCollapsed && sidebarCollapsed}
-            onClick={handlePushLocation}
-            href="/app/stats"
-            icon={Planet}
-          >
-            Stats
-          </ActivationLink>
-        </>
-      )}
+
       <div
         className={clsx(
           "flex gap-1!",
@@ -449,7 +457,7 @@ function Sidebar({
                       className="w-full"
                       iconOnly={canCollapsed && sidebarCollapsed}
                       onClick={handleBackNavigation}
-                      icon={CaretLeft}
+                      icon={CaretLeftIcon}
                     >
                       {language.data.app.setting.back}
                     </ActivationLink>
@@ -461,7 +469,7 @@ function Sidebar({
                       iconOnly={canCollapsed && sidebarCollapsed}
                       onClick={handlePushLocation}
                       href="/app/setting"
-                      icon={Gear}
+                      icon={GearIcon}
                     >
                       {language.data.app.setting.name}
                     </ActivationLink>
@@ -471,26 +479,26 @@ function Sidebar({
             </FrozenRoute>
           </motion.div>
         </AnimatePresence>
+
         {canCollapsed && (
           <Button
-            className={"flex items-center justify-center!"}
-            variant={"ghost"}
+            className="flex items-center justify-center!"
+            variant="ghost"
             size="icon-lg"
             onClick={() => {
-              setSidebarCollapsed((value) => {
-                if (onCollapsed) onCollapsed(!value)
-                if (!value) document.body.classList.add("sidebar-collapsed")
-                else document.body.classList.remove("sidebar-collapsed")
-                return !value
+              setSidebarCollapsed((prev) => {
+                const newState = !prev
+                if (onCollapsed) onCollapsed(newState)
+                return newState
               })
             }}
           >
             <CaretLineLeftIcon
               className={clsx(
                 "block",
-                sidebarCollapsed && "rotate-180",
-                sidebarCollapsed && "text-foreground",
-                !sidebarCollapsed && "text-primary"
+                sidebarCollapsed
+                  ? "rotate-180 text-foreground"
+                  : "rotate-0 text-primary"
               )}
               size={16}
               weight="bold"
