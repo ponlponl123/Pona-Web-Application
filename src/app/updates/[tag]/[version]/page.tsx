@@ -42,7 +42,7 @@ export async function generateMetadata({
   const parsedPatchNote = PatchNoteParser(note, true)
 
   return {
-    title: parsedPatchNote.title,
+    title: parsedPatchNote.title + " - Pona! Patch Notes",
     description: parsedPatchNote.author,
     openGraph: {
       images: [

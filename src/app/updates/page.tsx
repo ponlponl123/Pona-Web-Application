@@ -15,6 +15,7 @@ import { motion } from "motion/react"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 import UpdateSubscribeModal from "@/components/modal/update-subscribe"
+import ImageWithSkeleton from "@/components/ui/custom/image"
 
 export interface Translations {
   [key: string]: string
@@ -170,7 +171,14 @@ function Page() {
                                   }}
                                 >
                                   {note.banner ? (
-                                    <></>
+                                    <ImageWithSkeleton
+                                      src={note.banner}
+                                      alt={note.title}
+                                      classNames={{
+                                        wrapper: "w-full h-full",
+                                        image: "w-full h-full object-cover",
+                                      }}
+                                    />
                                   ) : (
                                     <div className="flex h-full w-full flex-col items-center justify-center bg-linear-150 from-purple-300 to-rose-400">
                                       <WrenchIcon

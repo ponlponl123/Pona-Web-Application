@@ -140,6 +140,12 @@
           "checklist": "Where can we notify you?",
           "body1": "You will be notified when there are new updates available. We will send you an email to your inbox!",
           "body2": "Or you can 🌟 starred[link]on github to get every updates such as commits, pull requests, and more!",
+          "options": {
+            "official_discord": {
+              "title": "Official Discord",
+              "description": "Stay updated in real-time and chat with the development team here."
+            }
+          },
           "repo": "Pona! Repository",
           "notnow": "Not now",
           "update": "Update and close",

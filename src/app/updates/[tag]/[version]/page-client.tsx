@@ -9,6 +9,8 @@ import {
   WrenchIcon,
 } from "@phosphor-icons/react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import UpdateSubscribeModal from "@/components/modal/update-subscribe"
+import ImageWithSkeleton from "@/components/ui/custom/image"
 import { Button } from "@/components/ui/button"
 import { PatchNoteParser } from "@/lib/parser"
 import { Badge } from "@/components/ui/badge"
@@ -16,8 +18,6 @@ import { Translations } from "../../page"
 import { motion } from "motion/react"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
-import UpdateSubscribeModal from "@/components/modal/update-subscribe"
-import Image from "next/image"
 
 function PatchNote({
   tag,
@@ -150,7 +150,14 @@ function PatchNote({
           }}
         >
           {parsedPatchNote.banner ? (
-            <></>
+            <ImageWithSkeleton
+              src={parsedPatchNote.banner}
+              alt={parsedPatchNote.title}
+              classNames={{
+                wrapper: "w-full h-full",
+                image: "w-full h-full object-cover",
+              }}
+            />
           ) : (
             <div className="flex h-full w-full flex-col items-center justify-center bg-linear-150 from-purple-300 to-rose-400">
               <WrenchIcon className="size-6 text-white" weight="fill" />

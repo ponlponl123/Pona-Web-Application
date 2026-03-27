@@ -21,6 +21,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "nextui.org",
       },
+      {
+        protocol: "https",
+        hostname: "static.ponlponl123.com",
+      },
     ],
   },
   async rewrites() {

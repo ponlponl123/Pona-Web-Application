@@ -4,103 +4,96 @@ import { useGlobalContext } from "@/contexts/globalContext"
 import { useLanguageContext } from "@/contexts/languageContext"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 import { HandWavingIcon } from "@phosphor-icons/react/dist/ssr"
+import Modal from "../ui/custom/modal"
 import { Button } from "../ui/button"
 import { Badge } from "../ui/badge"
 import { langs } from "@/lib/i18n"
 import { cn } from "@/lib/utils"
+import React from "react"
 
 function LanguageSelectorModal() {
   const { language, setLanguage } = useLanguageContext()
   const { isLanguageModalOpen, setIsLanguageModalOpen } = useGlobalContext()
+  const [filterLangs, setFilterLangs] = React.useState("")
 
   const closeModal = () => setIsLanguageModalOpen(false)
 
   return (
-    <AnimatePresence>
-      {isLanguageModalOpen && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
+    <Modal
+      isOpen={isLanguageModalOpen}
+      setIsOpen={setIsLanguageModalOpen}
+      layoutId="language-selector-modal"
+      className="min-h-72 max-w-2xl"
+    >
+      <Modal.Header>
+        <Modal.Title>
+          {language.data.modal["language-selector"].title}
+        </Modal.Title>
+        <Modal.Description>
+          {language.data.modal["language-selector"].description}
+        </Modal.Description>
+      </Modal.Header>
+      <Modal.Body>
+        <div className="grid grid-cols-2 gap-2 px-6 max-sm:grid-cols-1">
+          {langs.map((lang, i) => (
+            <Button
+              key={"lang-select-" + i}
+              variant={language.key === lang.key ? "default" : "ghost"}
+              data-smooth-interaction="true"
+              className={cn(
+                "flex justify-start gap-3 rounded-xl border-2 border-transparent px-4 py-6",
+                language.key === lang.key &&
+                  "border-foreground/40 bg-foreground/10 text-foreground"
+              )}
+              onClick={() => {
+                setLanguage(lang.key)
+                closeModal()
+              }}
+            >
+              <Avatar className={"h-6 w-6"}>
+                <AvatarImage
+                  src={"https://flagcdn.com/" + lang.country + ".svg"}
+                  alt={lang.label}
+                />
+                <AvatarFallback>{lang.key.toUpperCase()}</AvatarFallback>
+              </Avatar>
+              {lang.label}
+              {lang.looking_for_translator && (
+                <Badge
+                  variant={"secondary"}
+                  className="rounded-full bg-amber-400/20 text-amber-400"
+                >
+                  <HandWavingIcon size={32} weight="fill" />
+                  {
+                    language.data.modal["language-selector"]
+                      .looking_for_translator
+                  }
+                </Badge>
+              )}
+            </Button>
+          ))}
+        </div>
+      </Modal.Body>
+      <Modal.Footer className="m-0">
+        <Button
+          size={"lg"}
+          variant={"ghost"}
+          className={"rounded-full px-6"}
           onClick={closeModal}
-          className="fixed inset-0 z-1000 flex items-center justify-center bg-black/40 p-2 backdrop-blur-md"
+          data-smooth-interaction="true"
         >
-          <motion.div
-            layoutId="language-selector-modal"
-            onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-2xl rounded-4xl border-2 border-foreground/10 bg-card/90 p-6 shadow-xl"
-            tabIndex={-1}
-          >
-            <div>
-              <h1 className="mb-2 text-3xl font-bold text-foreground">
-                {language.data.modal["language-selector"].title}
-              </h1>
-              <p className="text-sm text-foreground">
-                {language.data.modal["language-selector"].description}
-              </p>
-              <div className="mt-6 grid grid-cols-2 gap-2 max-sm:grid-cols-1">
-                {langs.map((lang, i) => (
-                  <Button
-                    key={"lang-select-" + i}
-                    variant={language.key === lang.key ? "default" : "ghost"}
-                    data-smooth-interaction="true"
-                    className={cn(
-                      "flex justify-start gap-3 rounded-xl border-2 border-transparent px-4 py-6",
-                      language.key === lang.key &&
-                        "border-foreground/40 bg-foreground/10 text-foreground"
-                    )}
-                    onClick={() => {
-                      setLanguage(lang.key)
-                      closeModal()
-                    }}
-                  >
-                    <Avatar className={"h-6 w-6"}>
-                      <AvatarImage
-                        src={"https://flagcdn.com/" + lang.country + ".svg"}
-                        alt={lang.label}
-                      />
-                      <AvatarFallback>{lang.key.toUpperCase()}</AvatarFallback>
-                    </Avatar>
-                    {lang.label}
-                    {lang.looking_for_translator && (
-                      <Badge
-                        variant={"secondary"}
-                        className="rounded-full bg-amber-400/20 text-amber-400"
-                      >
-                        <HandWavingIcon size={32} weight="fill" />
-                        {
-                          language.data.modal["language-selector"]
-                            .looking_for_translator
-                        }
-                      </Badge>
-                    )}
-                  </Button>
-                ))}
-              </div>
-              <div className="mt-6 flex w-full justify-end gap-2">
-                <Button
-                  size={"lg"}
-                  variant={"ghost"}
-                  className={"rounded-full px-6"}
-                  onClick={closeModal}
-                  data-smooth-interaction="true"
-                >
-                  {language.data.common.close}
-                </Button>
-                <Button
-                  size={"lg"}
-                  className={"rounded-full px-6"}
-                  onClick={closeModal}
-                  data-smooth-interaction="true"
-                >
-                  {language.data.common.ok}
-                </Button>
-              </div>
-            </div>
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+          {language.data.common.close}
+        </Button>
+        <Button
+          size={"lg"}
+          className={"rounded-full px-6"}
+          onClick={closeModal}
+          data-smooth-interaction="true"
+        >
+          {language.data.common.ok}
+        </Button>
+      </Modal.Footer>
+    </Modal>
   )
 }
 
