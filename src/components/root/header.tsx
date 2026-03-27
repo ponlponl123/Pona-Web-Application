@@ -14,11 +14,7 @@ import {
   ClockCounterClockwiseIcon,
   ConfettiIcon,
   DiscordLogoIcon,
-  GearIcon,
-  LeafIcon,
-  ListIcon,
   MagnifyingGlassIcon,
-  QuestionIcon,
 } from "@phosphor-icons/react/dist/ssr"
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
@@ -34,115 +30,7 @@ import Image from "next/image"
 import Link from "next/link"
 import * as z from "zod"
 import clsx from "clsx"
-import { cn } from "@/lib/utils"
-
-function UserAccountAction({
-  className,
-  minimize = false,
-}: {
-  className?: string
-  minimize?: boolean
-}) {
-  const [isActive, setIsActive] = React.useState(false)
-  const { userInfo, revokeUserAccessToken } = useDiscordUserInfo()
-  const { language } = useLanguageContext()
-
-  const btnClassname = cn(
-    "m-3 h-max w-max rounded-xl border-2 border-transparent p-3 outline-none hover:border-foreground/5 active:border-foreground/5 active:bg-foreground/5",
-    !minimize &&
-      "flex w-fit items-center justify-center gap-3 backdrop-blur-md",
-    className
-  )
-
-  return (
-    <div className="relative">
-      <div className="pointer-events-none invisible" aria-hidden="true">
-        <div className={cn(btnClassname, userInfo && "rounded-full p-1")}>
-          {userInfo ? (
-            <div className="h-8 w-8" />
-          ) : (
-            <ListIcon weight="bold" className="size-4" />
-          )}
-        </div>
-      </div>
-
-      <AnimatePresence>
-        <motion.div
-          key="button"
-          layoutId="user-action"
-          className="absolute top-0 left-0"
-          transition={{ type: "spring", bounce: 0, duration: 0.3 }}
-        >
-          <Button
-            variant={"ghost"}
-            className={cn(btnClassname, userInfo && "rounded-full p-1")}
-            onClick={() => setIsActive(true)}
-          >
-            {userInfo ? (
-              <motion.div layoutId="user-action-avatar">
-                <Avatar className="h-8 w-8">
-                  <AvatarImage
-                    src={`https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}.png`}
-                  />
-                  <AvatarFallback>
-                    {userInfo.global_name.charAt(0).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-              </motion.div>
-            ) : (
-              <ListIcon weight="bold" className="size-4" />
-            )}
-          </Button>
-        </motion.div>
-
-        {isActive && (
-          <motion.div
-            key="modal"
-            layoutId="user-action"
-            className="absolute top-12 right-0 z-1001 w-screen max-w-48 rounded-xl bg-card p-3"
-            onClick={(e) => e.stopPropagation()}
-            transition={{ type: "spring", bounce: 0, duration: 0.3 }}
-          >
-            {userInfo && (
-              <Button>
-                <motion.div layoutId="user-action-avatar">
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage
-                      src={`https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}.png`}
-                    />
-                    <AvatarFallback>
-                      {userInfo.global_name.charAt(0).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                </motion.div>
-                <div>
-                  <p className="font-bold">
-                    {language.data.header.account.signinas}
-                  </p>
-                  <p className="font-bold">@</p>
-                </div>
-              </Button>
-            )}
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <AnimatePresence>
-        {isActive && (
-          <motion.div
-            key="bg"
-            layoutId="user-action-bg"
-            onClick={() => setIsActive(false)}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-1000 flex items-center justify-center bg-black/10 p-2 backdrop-blur-[2px]"
-          />
-        )}
-      </AnimatePresence>
-    </div>
-  )
-}
+import UserAccountDropdown from "./user-account-dropdown"
 
 const formSchema = z.object({
   search: z
@@ -522,7 +410,7 @@ function Header() {
                 </form>
               </div>
             )}
-          <UserAccountAction minimize={true} className="md:hidden" />
+          <UserAccountDropdown minimize={true} className="-mr-2 md:hidden" />
           <MyButton
             className={`btn-icon m-0 mr-0! h-12 w-12 min-w-0! md:hidden! ${isMusicApp ? "max-miniscreen:hidden" : ""}`}
             style="rounded"
@@ -571,7 +459,7 @@ function Header() {
             )}
             {userInfo && isInGuild && guildPath === "player" ? (
               <>
-                <UserAccountAction minimize={true} />
+                <UserAccountDropdown minimize={true} />
               </>
             ) : (
               <>
@@ -590,7 +478,7 @@ function Header() {
                     </span>
                   </MyButton>
                 </Link>
-                <UserAccountAction className="max-md:hidden" />
+                <UserAccountDropdown className="max-md:hidden" />
               </>
             )}
           </div>

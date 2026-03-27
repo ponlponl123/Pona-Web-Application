@@ -63,8 +63,8 @@ main#app-workspace {
   background:
     linear-gradient(
       0deg,
-      var(--background),
-      color-mix(in oklab, var(--background) 24%, transparent)
+      var(--color-playground-background),
+      color-mix(in oklab, var(--color-playground-background) 24%, transparent)
     ),
     url(/static/app/PonaWebViewMorning.png) center no-repeat;
   background-size: cover;
@@ -74,8 +74,8 @@ main#app-workspace {
   background:
     linear-gradient(
       0deg,
-      var(--background),
-      color-mix(in oklab, var(--background) 24%, transparent)
+      var(--color-playground-background),
+      color-mix(in oklab, var(--color-playground-background) 24%, transparent)
     ),
     url(/static/app/PonaWebViewAfternoon.png) center no-repeat;
   background-size: cover;
@@ -85,9 +85,19 @@ main#app-workspace {
   background:
     linear-gradient(
       0deg,
-      var(--background),
-      color-mix(in oklab, var(--background) 24%, transparent)
+      var(--color-playground-background),
+      color-mix(in oklab, var(--color-playground-background) 24%, transparent)
     ),
     url(/static/app/PonaWebViewNight.png) center no-repeat;
   background-size: cover;
+}
+
+@media not all and (max-width: 767px) {
+  .sidebar-collapsed header.pona-header > div > div h1 > img {
+    @apply h-8 w-8 -translate-x-4;
+  }
+
+  .sidebar-collapsed header.pona-header > div > div h1 > span {
+    @apply hidden;
+  }
 }
