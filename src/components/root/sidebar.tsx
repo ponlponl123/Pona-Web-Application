@@ -6,7 +6,7 @@ import { UserInfo } from "@/lib/server-side-api/discord/fetchUser"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { ScrollArea } from "@/components/ui/scroll-area"
+import { ScrollShadow } from "@heroui/react"
 import {
   BroadcastIcon,
   BugIcon,
@@ -117,7 +117,7 @@ function Sidebar({
           className="max-h-[calc(100%-64px)] w-full"
           key={`${inGuild}-${inSetting}-${sidebarCollapsed}`}
         >
-          <ScrollArea
+          <ScrollShadow
             className="flex max-h-full w-full flex-col"
             style={{ scrollbarWidth: "none" }}
           >
@@ -430,7 +430,7 @@ function Sidebar({
               </motion.main>
             </FrozenRoute>
             <div className="p-2"></div>
-          </ScrollArea>
+          </ScrollShadow>
         </motion.div>
       </AnimatePresence>
 

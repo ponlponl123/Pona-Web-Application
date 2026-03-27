@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils"
 import { ScrollArea } from "@base-ui/react/scroll-area"
+import { ScrollShadow } from "@heroui/react"
 
 export default function CustomScrollArea({
   children,
@@ -18,6 +19,7 @@ export default function CustomScrollArea({
   return (
     <ScrollArea.Root className={cn(className, classNames?.root)}>
       <ScrollArea.Viewport
+        render={<ScrollShadow />}
         className={cn("h-full rounded-md", classNames?.viewport)}
       >
         {children}

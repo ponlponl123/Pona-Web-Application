@@ -94,10 +94,10 @@ main#app-workspace {
 
 @media not all and (max-width: 767px) {
   .sidebar-collapsed header.pona-header > div > div h1 > img {
-    @apply h-8 w-8 -translate-x-4;
+    @apply h-8 w-8 -translate-x-1;
   }
 
   .sidebar-collapsed header.pona-header > div > div h1 > span {
-    @apply hidden;
+    @apply hidden!;
   }
 }

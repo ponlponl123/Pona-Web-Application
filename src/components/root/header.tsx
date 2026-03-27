@@ -31,6 +31,7 @@ import Link from "next/link"
 import * as z from "zod"
 import clsx from "clsx"
 import UserAccountDropdown from "./user-account-dropdown"
+import { cn } from "@/lib/utils"
 
 const formSchema = z.object({
   search: z
@@ -116,9 +117,10 @@ function Header() {
 
   return (
     <header
-      className={clsx(
+      className={cn(
         `nav-opened-${navOpened}`,
         "pona-header flex h-20 w-full items-center justify-center gap-3 p-6 px-8",
+        isApp && "px-2",
         !isIndex && !isMusicApp && "max-md:backdrop-blur-md",
         !isIndex &&
           isMusicApp &&
@@ -145,7 +147,10 @@ function Header() {
                   <Image
                     src={PonaIcon}
                     alt="Pona! Application"
-                    className="disable-default-transition apply-long-soft-transition max-md:h-6 max-md:w-6"
+                    className={cn(
+                      "disable-default-transition apply-long-soft-transition max-md:h-6 max-md:w-6",
+                      isApp && "ml-1"
+                    )}
                     width={32}
                     height={32}
                   />

@@ -41,12 +41,12 @@ function Providers({ children }: { children: React.ReactNode }) {
           <main
             ref={appContent}
             id="app-content"
-            className="scrollbar-hide w-full bg-(--color-playground-background) max-md:h-[calc(100vh+1rem)] max-md:rounded-b-3xl md:h-screen md:rounded-l-3xl"
+            className="scrollbar-hide w-full overflow-hidden bg-(--color-playground-background) max-md:h-[calc(100vh+1rem)] max-md:rounded-b-xl md:h-screen md:rounded-l-xl"
           >
             <ScrollArea
               className="h-full border-0 outline-0"
               classNames={{
-                viewport: "relative pb-6",
+                viewport: "relative rounded-none pb-6",
               }}
             >
               <PageAnimatePresence customKey={pathname} mode="wait">
