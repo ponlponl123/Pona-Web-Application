@@ -13,9 +13,13 @@
   @import "./app.css";
   @import "./animation.css";
 
+  [data-default-transition="true"],
+  *:not([data-default-transition="false"]) {
+    transition: 0.26s cubic-bezier(0.165, 0.84, 0.44, 1);
+  }
+
   * {
     @apply border-border outline-ring/50;
-    transition: 0.26s cubic-bezier(0.165, 0.84, 0.44, 1);
   }
   body {
     @apply bg-background text-foreground;

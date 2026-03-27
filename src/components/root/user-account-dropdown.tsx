@@ -6,17 +6,17 @@ import {
   GearSixIcon,
   LifebuoyIcon,
   ListIcon,
+  LockSimpleIcon,
   SignOutIcon,
 } from "@phosphor-icons/react"
 import { AnimatePresence, LayoutGroup } from "motion/react"
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
+import { useGlobalContext } from "@/contexts/globalContext"
+import { ScrollArea, ScrollBar } from "../ui/scroll-area"
+import React, { useState, useRef } from "react"
 import { motion } from "motion/react"
 import { cn } from "@/lib/utils"
-import { useState, useRef } from "react"
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
-import { ScrollArea } from "../ui/scroll-area"
-import { Button } from "../ui/button"
 import Link from "next/link"
-import { useGlobalContext } from "@/contexts/globalContext"
 
 export default function UserAccountDropdown({
   className,
@@ -82,7 +82,8 @@ export default function UserAccountDropdown({
             layoutId={minimize ? undefined : "user-action"}
             className={cn(
               btnClassname,
-              userInfo && "absolute top-0 left-0 rounded-full p-1"
+              "absolute top-0 left-0",
+              userInfo && "rounded-full p-1"
             )}
             onClick={handleToggle}
             transition={layoutTransition}
@@ -125,58 +126,81 @@ export default function UserAccountDropdown({
               transition={layoutTransition}
               initial={false}
             >
-              <ScrollArea>
-                {userInfo && (
-                  <motion.div
-                    className="mb-0.5 flex w-full items-center justify-start gap-3 rounded-lg px-3 py-1 select-none hover:bg-foreground/5 not-dark:hover:bg-foreground/10"
-                    layout
-                    transition={layoutTransition}
-                  >
-                    <motion.div
-                      layoutId="user-action-avatar"
-                      layout="position"
-                      transition={layoutTransition}
-                    >
-                      <Avatar className="h-8 w-8">
-                        <AvatarImage
-                          src={`https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}.png`}
-                        />
-                        <AvatarFallback>
-                          {userInfo.global_name.charAt(0).toUpperCase()}
-                        </AvatarFallback>
-                      </Avatar>
-                    </motion.div>
+              <div className="overflow-hidden overscroll-y-auto">
+                <motion.div
+                  className={cn(
+                    "mb-0.5 flex w-full items-center justify-start gap-3 rounded-lg px-3 py-1 select-none hover:bg-foreground/5 not-dark:hover:bg-foreground/10",
+                    !userInfo && "bg-transparent! p-0"
+                  )}
+                  layout
+                  transition={layoutTransition}
+                >
+                  {userInfo ? (
+                    <>
+                      <motion.div
+                        layoutId="user-action-avatar"
+                        layout="position"
+                        transition={layoutTransition}
+                      >
+                        <Avatar className="h-8 w-8">
+                          <AvatarImage
+                            src={`https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}.png`}
+                          />
+                          <AvatarFallback>
+                            {userInfo.global_name.charAt(0).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                      </motion.div>
 
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{
-                        delay: 0.1,
-                        duration: 0.25,
-                        ease: "easeOut",
-                      }}
-                      className="flex flex-col items-start py-1"
-                    >
-                      <p className="text-xs leading-4 text-foreground/40">
-                        {language.data.header.account.signinas}
-                      </p>
-                      <motion.strong
-                        initial={{ opacity: 0, filter: "blur(3px)" }}
-                        animate={{ opacity: 1, filter: "blur(0px)" }}
-                        exit={{ opacity: 0, filter: "blur(3px)" }}
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
                         transition={{
-                          delay: 0.15,
+                          delay: 0.1,
                           duration: 0.25,
                           ease: "easeOut",
                         }}
-                        className="leading-4 font-bold"
+                        className="flex flex-col items-start py-1"
                       >
-                        @{userInfo.username}
-                      </motion.strong>
-                    </motion.div>
-                  </motion.div>
-                )}
+                        <p className="text-xs leading-4 text-foreground/40">
+                          {language.data.header.account.signinas}
+                        </p>
+                        <motion.strong
+                          initial={{ opacity: 0, filter: "blur(3px)" }}
+                          animate={{ opacity: 1, filter: "blur(0px)" }}
+                          exit={{ opacity: 0, filter: "blur(3px)" }}
+                          transition={{
+                            delay: 0.15,
+                            duration: 0.25,
+                            ease: "easeOut",
+                          }}
+                          className="leading-4 font-bold"
+                        >
+                          @{userInfo.username}
+                        </motion.strong>
+                      </motion.div>
+                    </>
+                  ) : (
+                    <Link href="/app" className="contents">
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ delay: 0.16 }}
+                        className={cn(
+                          "apply- flex w-full flex-col items-center justify-center gap-2 rounded-lg p-3 select-none",
+                          !userInfo &&
+                            "border-2 border-dashed border-foreground/10 bg-foreground/5 not-dark:bg-foreground/10 hover:bg-foreground/10 not-dark:hover:bg-foreground/5 active:scale-95 active:duration-150"
+                        )}
+                        data-default-transition="true"
+                      >
+                        <LockSimpleIcon weight="bold" />
+                        <span>{language.data.common.login_first}</span>
+                      </motion.div>
+                    </Link>
+                  )}
+                </motion.div>
                 {[
                   {
                     icon: <ConfettiIcon weight="bold" className="size-4" />,
@@ -200,7 +224,7 @@ export default function UserAccountDropdown({
                     onClick: () => setIsSettingModalOpen(true),
                     href: null,
                   },
-                  {
+                  userInfo && {
                     icon: <SignOutIcon weight="bold" className="size-4" />,
                     label: language.data.header.account.logout,
                     className: cn(
@@ -215,6 +239,8 @@ export default function UserAccountDropdown({
                     href: null,
                   },
                 ].map((item, index) => {
+                  if (!item)
+                    return <React.Fragment key={index}></React.Fragment>
                   const DropdownButton = () => (
                     <motion.div
                       initial={{ opacity: 0 }}
@@ -255,7 +281,7 @@ export default function UserAccountDropdown({
                     <DropdownButton key={"account-dropdown-btn-" + index} />
                   )
                 })}
-              </ScrollArea>
+              </div>
             </motion.div>
           )}
         </LayoutGroup>
