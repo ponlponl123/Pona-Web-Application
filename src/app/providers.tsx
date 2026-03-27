@@ -7,7 +7,6 @@ import { DiscordUserInfoProvider } from "@/contexts/discordUserInfo"
 import { DiscordGuildInfoProvider } from "@/contexts/discordGuildInfo"
 import PageAnimatePresence from "@/components/HOC/PageAnimatePresence"
 import { PonaMusicCacheContextProvider } from "@/contexts/ponaMusicCacheContext"
-import LanguageSelectorModal from "@/components/modal/language-selector"
 import { AnimatePresence, motion } from "motion/react"
 import { Toaster } from "@/components/ui/sonner"
 import { usePathname } from "next/navigation"
@@ -41,7 +40,6 @@ export function Providers({
                 ) : (
                   <PageAnimatePresence>{children}</PageAnimatePresence>
                 )}
-                <LanguageSelectorModal />
                 <Toaster />
               </GlobalProvider>
             </PonaMusicCacheContextProvider>

@@ -16,6 +16,7 @@ import {
   DiscordLogoIcon,
   GearIcon,
   LeafIcon,
+  ListIcon,
   MagnifyingGlassIcon,
   QuestionIcon,
 } from "@phosphor-icons/react/dist/ssr"
@@ -33,6 +34,7 @@ import Image from "next/image"
 import Link from "next/link"
 import * as z from "zod"
 import clsx from "clsx"
+import { cn } from "@/lib/utils"
 
 function UserAccountAction({
   className,
@@ -41,66 +43,104 @@ function UserAccountAction({
   className?: string
   minimize?: boolean
 }) {
+  const [isActive, setIsActive] = React.useState(false)
   const { userInfo, revokeUserAccessToken } = useDiscordUserInfo()
   const { language } = useLanguageContext()
+
+  const btnClassname = cn(
+    "m-3 h-max w-max rounded-xl border-2 border-transparent p-3 outline-none hover:border-foreground/5 active:border-foreground/5 active:bg-foreground/5",
+    !minimize &&
+      "flex w-fit items-center justify-center gap-3 backdrop-blur-md",
+    className
+  )
+
   return (
-    userInfo && (
-      <Popover>
-        <PopoverTrigger>
-          <button
-            type="button"
-            className={`${className} outline-none ${!minimize ? "flex w-fit items-center justify-center gap-3 rounded-2xl px-3 py-2 backdrop-blur-md" : ""}`}
-          >
-            <Avatar className="h-8 w-8">
-              <AvatarImage
-                src={`https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}.png`}
-              />
-              <AvatarFallback>
-                {userInfo.global_name.charAt(0).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
-            {!minimize && (
-              <div className="flex flex-col items-start">
-                <h1 className="text-base leading-none font-bold tracking-wider">
-                  {userInfo.global_name}
-                </h1>
-                <span className="text-xs">@{userInfo.username}</span>
-              </div>
-            )}
-          </button>
-        </PopoverTrigger>
-        <PopoverContent align="end" aria-label="User Actions">
-          <div key="profile" className="h-14 gap-2">
-            <p className="font-bold">{language.data.header.account.signinas}</p>
-            <p className="font-bold">@{userInfo.username}</p>
-          </div>
-          <Link key="app" href="/app">
-            🏓
-            {language.data.header.account.playground}
-          </Link>
-          <Link key="configurations" href="/app/setting">
-            <GearIcon weight="fill" />
-            {language.data.header.account.setting}
-          </Link>
-          <Link
-            key="help_and_feedback"
-            href="https://ponlponl123.com/discord"
-            target="_blank"
-          >
-            <QuestionIcon weight="fill" />
-            {language.data.header.account.support}
-          </Link>
+    <div className="relative">
+      <div className="pointer-events-none invisible" aria-hidden="true">
+        <div className={cn(btnClassname, userInfo && "rounded-full p-1")}>
+          {userInfo ? (
+            <div className="h-8 w-8" />
+          ) : (
+            <ListIcon weight="bold" className="size-4" />
+          )}
+        </div>
+      </div>
+
+      <AnimatePresence>
+        <motion.div
+          key="button"
+          layoutId="user-action"
+          className="absolute top-0 left-0"
+          transition={{ type: "spring", bounce: 0, duration: 0.3 }}
+        >
           <Button
-            key="logout"
-            variant="destructive"
-            onClick={revokeUserAccessToken}
+            variant={"ghost"}
+            className={cn(btnClassname, userInfo && "rounded-full p-1")}
+            onClick={() => setIsActive(true)}
           >
-            <LeafIcon weight="fill" />
-            {language.data.header.account.logout}
+            {userInfo ? (
+              <motion.div layoutId="user-action-avatar">
+                <Avatar className="h-8 w-8">
+                  <AvatarImage
+                    src={`https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}.png`}
+                  />
+                  <AvatarFallback>
+                    {userInfo.global_name.charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+              </motion.div>
+            ) : (
+              <ListIcon weight="bold" className="size-4" />
+            )}
           </Button>
-        </PopoverContent>
-      </Popover>
-    )
+        </motion.div>
+
+        {isActive && (
+          <motion.div
+            key="modal"
+            layoutId="user-action"
+            className="absolute top-12 right-0 z-1001 w-screen max-w-48 rounded-xl bg-card p-3"
+            onClick={(e) => e.stopPropagation()}
+            transition={{ type: "spring", bounce: 0, duration: 0.3 }}
+          >
+            {userInfo && (
+              <Button>
+                <motion.div layoutId="user-action-avatar">
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage
+                      src={`https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}.png`}
+                    />
+                    <AvatarFallback>
+                      {userInfo.global_name.charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                </motion.div>
+                <div>
+                  <p className="font-bold">
+                    {language.data.header.account.signinas}
+                  </p>
+                  <p className="font-bold">@</p>
+                </div>
+              </Button>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {isActive && (
+          <motion.div
+            key="bg"
+            layoutId="user-action-bg"
+            onClick={() => setIsActive(false)}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-1000 flex items-center justify-center bg-black/10 p-2 backdrop-blur-[2px]"
+          />
+        )}
+      </AnimatePresence>
+    </div>
   )
 }
 
@@ -116,7 +156,6 @@ function Header() {
   const pathname = usePathname() || ""
   const [navOpened, setNavOpened] = useState<boolean>(false)
 
-  // Contexts
   const { guild } = useDiscordGuildInfo()
   const { language } = useLanguageContext()
   const { userInfo } = useDiscordUserInfo()
@@ -127,7 +166,6 @@ function Header() {
     defaultValues: { search: "" },
   })
 
-  // ตัวแปรเช็คสถานะเส้นทาง
   const isApp = pathname.startsWith("/app")
   const isInGuild =
     isApp &&
@@ -137,7 +175,6 @@ function Header() {
   const isMusicApp = isApp && pathname.includes("/player")
   const isIndex = pathname === "/"
 
-  // Refs & States สำหรับการค้นหา
   const searchSuggestionRef = useRef<HTMLDivElement>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
   const [searching, setSearching] = useState<boolean>(false)
@@ -526,7 +563,9 @@ function Header() {
                   }}
                 >
                   <DiscordLogoIcon weight="fill" />
-                  {language.data.header.actions.login}
+                  <span className="text-sm">
+                    {language.data.header.actions.login}
+                  </span>
                 </MyButton>
               </Link>
             )}
@@ -546,10 +585,12 @@ function Header() {
                     }}
                   >
                     <ConfettiIcon weight="fill" />
-                    {language.data.header.actions.invite}
+                    <span className="text-sm">
+                      {language.data.header.actions.invite}
+                    </span>
                   </MyButton>
                 </Link>
-                {userInfo && <UserAccountAction className="max-md:hidden" />}
+                <UserAccountAction className="max-md:hidden" />
               </>
             )}
           </div>

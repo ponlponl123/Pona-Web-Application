@@ -29,6 +29,7 @@ function LanguageSelectorModal() {
             layoutId="language-selector-modal"
             onClick={(e) => e.stopPropagation()}
             className="w-full max-w-2xl rounded-4xl border-2 border-foreground/10 bg-background/90 p-6 shadow-xl"
+            tabIndex={-1}
           >
             <div>
               <h1 className="mb-2 text-3xl font-bold text-foreground">

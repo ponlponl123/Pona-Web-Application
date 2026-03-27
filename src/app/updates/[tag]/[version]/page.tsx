@@ -1,6 +1,15 @@
+import { Metadata } from "next"
 import { Suspense } from "react"
-import { default as PageClient } from "./page-client"
+import { PatchNoteParser } from "@/lib/parser"
 import SuspenseFallback from "./suspense-fallback"
+import { default as PageClient } from "./page-client"
+
+interface GenerateMetadataProps {
+  params: Promise<{
+    tag: string
+    version: string
+  }>
+}
 
 async function PatchNoteData({
   tag,
@@ -19,9 +28,33 @@ async function PatchNoteData({
   return <PageClient tag={tag} version={version} note={note} />
 }
 
-export default async function Page(props: {
-  params: Promise<{ tag: string; version: string }>
-}) {
+export async function generateMetadata({
+  params,
+}: GenerateMetadataProps): Promise<Metadata> {
+  "use cache"
+
+  const { tag, version } = await params
+
+  const fetchnote = await fetch(
+    `http://localhost:3000/api/patchnote/${tag}/${version}.md`
+  )
+  const note = await fetchnote.text()
+  const parsedPatchNote = PatchNoteParser(note, true)
+
+  return {
+    title: parsedPatchNote.title,
+    description: parsedPatchNote.author,
+    openGraph: {
+      images: [
+        {
+          url: parsedPatchNote.banner || "/static/updates/banner.png",
+        },
+      ],
+    },
+  }
+}
+
+export default async function Page(props: GenerateMetadataProps) {
   const params = await props.params
 
   return (

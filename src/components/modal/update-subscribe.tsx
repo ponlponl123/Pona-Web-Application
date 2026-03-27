@@ -35,7 +35,8 @@ function UpdateSubscribeModal({
           <motion.div
             layoutId="update-subscribe"
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-2xl rounded-4xl border-2 border-foreground/10 bg-background/90 p-6 shadow-xl"
+            className="w-full max-w-md rounded-4xl border-2 border-foreground/10 bg-background/90 p-6 shadow-xl"
+            tabIndex={-1}
           >
             <div>
               <h1 className="mb-2 text-3xl font-bold text-foreground">
@@ -91,7 +92,7 @@ function UpdateSubscribeModal({
                         )}
                       </>
                     ) : (
-                      <div className="flex w-full flex-col items-center justify-center gap-4 rounded-3xl border-2 border-dashed bg-foreground/10 p-12">
+                      <div className="flex w-full flex-col items-center justify-center gap-4 rounded-3xl border-2 border-dashed bg-foreground/5 p-12">
                         <LockSimpleIcon weight="bold" className="size-6" />
                         <h2 className="text-lg">
                           {language.data.common.login_first}

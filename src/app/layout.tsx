@@ -4,14 +4,15 @@ import { cookies, headers } from "next/headers"
 import { Suspense } from "react"
 
 import "@/styles/globals.css"
-import NextTopLoader from "nextjs-toploader"
-import { ThemeProvider } from "@/components/theme-provider"
-import { cn, isMobile } from "@/lib/utils"
 import { Metadata } from "next"
 import { Providers } from "./providers"
+import { cn, isMobile } from "@/lib/utils"
+import NextTopLoader from "nextjs-toploader"
 import Header from "@/components/root/header"
 import Footer from "@/components/root/footer"
 import { isValidLanguageKey } from "@/lib/i18n"
+import { ThemeProvider } from "@/components/theme-provider"
+import LanguageSelectorModal from "@/components/modal/language-selector"
 
 const fontSans = Geist({
   subsets: ["latin"],
@@ -55,6 +56,7 @@ async function AppContent({ children }: { children: React.ReactNode }) {
         {children}
       </main>
       <Footer />
+      <LanguageSelectorModal />
     </Providers>
   )
 }
