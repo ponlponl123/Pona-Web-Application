@@ -7,6 +7,8 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@source "../../node_modules/react-smooth-input/dist/**/*.{js,mjs}";
+
 @layer base {
   @import "./themes/default.css";
   @import "./themes/chocolate.css";

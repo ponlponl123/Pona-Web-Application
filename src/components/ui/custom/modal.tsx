@@ -62,7 +62,7 @@ function ModalHeader({
   className?: string
 }) {
   return (
-    <div className={cn("flex h-max flex-auto flex-col p-6 pb-0", className)}>
+    <div className={cn("flex h-max flex-none flex-col p-6 pb-0", className)}>
       {children}
     </div>
   )
@@ -118,7 +118,7 @@ function ModalFooter({
   return (
     <div
       className={cn(
-        "mt-6 flex h-max w-full flex-auto justify-end gap-2 p-6 pt-0",
+        "mt-6 flex h-max w-full flex-none justify-end gap-2 p-6 pt-0",
         className
       )}
     >

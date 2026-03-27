@@ -16,11 +16,12 @@ import { Button } from "../ui/button"
 import { motion } from "motion/react"
 import Link from "next/link"
 import clsx from "clsx"
+import { cn } from "@/lib/utils"
 
 function Footer() {
   const pathname = usePathname() || ""
   const { language } = useLanguageContext()
-  const { setIsLanguageModalOpen } = useGlobalContext()
+  const { setIsLanguageModalOpen, isLanguageModalOpen } = useGlobalContext()
   const isAppRoute = pathname.startsWith("/app")
 
   return (
@@ -108,7 +109,10 @@ function Footer() {
       <div className="div max-md:-order-1 md:max-w-64">
         <motion.div layoutId="language-selector-modal">
           <Button
-            className="rounded-2xl border-2"
+            className={cn(
+              "rounded-2xl border-2",
+              isLanguageModalOpen && "invisible"
+            )}
             size="lg"
             variant="outline"
             onClick={() => setIsLanguageModalOpen(true)}

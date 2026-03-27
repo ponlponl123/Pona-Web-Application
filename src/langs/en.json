@@ -42,7 +42,9 @@
     "language-selector": {
       "title": "What language do you use to communicate?",
       "description": "Pick the language you're most comfortable with! You can change this later in your settings.",
-      "looking_for_translator": "Looking for a translator!"
+      "looking_for_translator": "Looking for a translator!",
+      "filter": "Search your language",
+      "not_found": "No results were found."
     }
   },
   "home": {

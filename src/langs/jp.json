@@ -42,7 +42,9 @@
     "language-selector": {
       "title": "コミュニケーションに使用する言語を選択してください",
       "description": "一番使いやすい言語を選んでください。この設定は後でいつでも変更できます。",
-      "looking_for_translator": "翻訳者を募集中です！"
+      "looking_for_translator": "翻訳者を募集中です！",
+      "filter": "言語を検索...",
+      "not_found": "結果が見つかりませんでした"
     }
   },
   "home": {

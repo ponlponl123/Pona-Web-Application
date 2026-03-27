@@ -35,7 +35,7 @@ function UpdateSubscribeModal({
         </Modal.Description>
       </Modal.Header>
       <Modal.Body>
-        <div className="flex flex-col gap-3 px-6">
+        <div className="flex h-full flex-col gap-3 px-6">
           <div className="flex w-full flex-col gap-1">
             <FieldGroup className={"w-full"}>
               {userInfo ? (
