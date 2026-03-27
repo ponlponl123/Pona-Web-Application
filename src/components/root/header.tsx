@@ -16,21 +16,19 @@ import {
   DiscordLogoIcon,
   MagnifyingGlassIcon,
 } from "@phosphor-icons/react/dist/ssr"
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
+import ConfettiButtonTrigger from "../ui/custom/confetti-button"
+import UserAccountDropdown from "./user-account-dropdown"
+import { usePathname, useRouter } from "next/navigation"
 import { AnimatePresence, motion } from "framer-motion"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ScrollArea } from "../ui/scroll-area"
-import { usePathname, useRouter } from "next/navigation"
-import { Field } from "../ui/field"
 import { getCookie } from "cookies-next"
 import { Button } from "../ui/button"
+import { Field } from "../ui/field"
 import Sidebar from "./sidebar"
 import Image from "next/image"
 import Link from "next/link"
 import * as z from "zod"
-import clsx from "clsx"
-import UserAccountDropdown from "./user-account-dropdown"
 import { cn } from "@/lib/utils"
 
 const formSchema = z.object({
@@ -120,7 +118,7 @@ function Header() {
       className={cn(
         `nav-opened-${navOpened}`,
         "pona-header flex h-20 w-full items-center justify-center gap-3 p-6 px-8",
-        isApp && "px-2",
+        isApp && "md:px-2",
         !isIndex && !isMusicApp && "max-md:backdrop-blur-md",
         !isIndex &&
           isMusicApp &&
@@ -473,6 +471,7 @@ function Header() {
                     size="small"
                     variant="primary"
                     effect="confetti"
+                    className="max-md:hidden"
                     onClick={() => {
                       setNavOpened(false)
                     }}
@@ -482,6 +481,19 @@ function Header() {
                       {language.data.header.actions.invite}
                     </span>
                   </MyButton>
+                  <div className="md:hidden">
+                    <ConfettiButtonTrigger>
+                      <Button
+                        className="w-full justify-center rounded-lg bg-primary/10 p-5 text-primary"
+                        data-smooth-interaction="true"
+                      >
+                        <ConfettiIcon weight="fill" />
+                        <span className="text-sm">
+                          {language.data.header.actions.invite}
+                        </span>
+                      </Button>
+                    </ConfettiButtonTrigger>
+                  </div>
                 </Link>
                 <UserAccountDropdown className="max-md:hidden" />
               </>
