@@ -35,7 +35,7 @@ function UpdateSubscribeModal({
           <motion.div
             layoutId="update-subscribe"
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-md rounded-4xl border-2 border-foreground/10 bg-background/90 p-6 shadow-xl"
+            className="w-full max-w-md rounded-4xl border-2 border-foreground/10 bg-card/90 p-6 shadow-xl"
             tabIndex={-1}
           >
             <div>
@@ -68,6 +68,7 @@ function UpdateSubscribeModal({
                                 })
                               }
                             }}
+                            disabled={true}
                           />
                         )}
                         {userInfo && userInfo.username && (
@@ -88,6 +89,7 @@ function UpdateSubscribeModal({
                                 })
                               }
                             }}
+                            disabled={true}
                           />
                         )}
                       </>

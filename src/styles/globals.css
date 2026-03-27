@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+@import "@heroui/styles";
 
 @plugin "@tailwindcss/typography";
 
@@ -9,6 +10,7 @@
 @layer base {
   @import "./themes/default.css";
   @import "./themes/chocolate.css";
+  @import "./themes/heroui/theme.css";
 
   @import "./app.css";
   @import "./animation.css";
@@ -41,4 +43,5 @@
   @import "./components/header.css";
   @import "./components/footer.css";
   @import "./components/service-status.css";
+  @import "./components/scroll-area.css";
 }

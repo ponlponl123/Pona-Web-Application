@@ -65,6 +65,10 @@ button {
   color: var(--background);
 }
 
+.handwritting-btn.handwritting-btn-invert:hover > div {
+  color: var(--foreground);
+}
+
 .handwritting-btn.handwritting-btn-text > div,
 .handwritting-btn.handwritting-btn-border > div {
   @apply text-primary;

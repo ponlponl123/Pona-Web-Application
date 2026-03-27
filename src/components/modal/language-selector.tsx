@@ -28,7 +28,7 @@ function LanguageSelectorModal() {
           <motion.div
             layoutId="language-selector-modal"
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-2xl rounded-4xl border-2 border-foreground/10 bg-background/90 p-6 shadow-xl"
+            className="w-full max-w-2xl rounded-4xl border-2 border-foreground/10 bg-card/90 p-6 shadow-xl"
             tabIndex={-1}
           >
             <div>

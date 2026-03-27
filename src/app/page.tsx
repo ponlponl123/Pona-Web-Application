@@ -214,7 +214,8 @@ export default function Home() {
                 <Link
                   href="/app"
                   rel="noopener noreferrer"
-                  className="rounded-lg px-2 py-1 tracking-wider hover:bg-foreground/5 hover:text-foreground/80 active:text-foreground/50"
+                  className="block rounded-lg px-2 py-1 tracking-wider hover:bg-foreground/5 hover:text-foreground/80 active:text-foreground/50"
+                  data-smooth-interaction="true"
                 >
                   {language.data.home.actions.login}
                 </Link>

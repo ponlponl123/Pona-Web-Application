@@ -10,7 +10,7 @@
 
   --foreground: oklch(37.045% 0.0309 46.537);
   --background: oklch(86.653% 0.03314 85.469);
-
+  --card: oklch(93.901% 0.02284 84.569);
   --color-playground-background: oklch(98.662% 0.02257 95.984);
 
   &.dark,
@@ -18,6 +18,7 @@
   &:is(.dark *) {
     --foreground: oklch(73.653% 0.04812 52.896);
     --background: oklch(18.633% 0.02116 45.355);
+    --card: oklch(13.772% 0.01611 51.415);
     --color-playground-background: oklch(20.514% 0.02298 47.529);
   }
 }

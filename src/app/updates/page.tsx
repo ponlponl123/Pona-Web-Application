@@ -150,7 +150,7 @@ function Page() {
                           >
                             <Button
                               key={`note` + nindex}
-                              className="group flex h-full min-h-max w-full items-start overflow-hidden bg-background p-1 text-foreground not-dark:shadow-xl hover:bg-foreground/10 dark:bg-foreground/5"
+                              className="group flex h-full min-h-max w-full items-start overflow-hidden bg-background p-1 text-foreground not-dark:shadow-xl dark:bg-foreground/5 dark:hover:bg-foreground/10"
                               style={{ borderRadius: "32px" }}
                               onMouseEnter={() => setIsCardHover(true)}
                               onMouseLeave={() => setIsCardHover(false)}

@@ -503,6 +503,7 @@ function Sidebar({
                       return newState
                     })
                   }}
+                  data-smooth-interaction="true"
                 />
               }
             >

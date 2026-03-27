@@ -139,35 +139,38 @@ function ActivationLink({
   }, [isSection, handleScroll, href, pathname])
 
   return (
-    <Button
-      onClick={clicked}
-      ref={buttonRef}
-      className={cn(
-        `justify-start rounded-lg`,
-        iconOnly && "size-10",
-        className
-      )}
-      variant={isHere ? "default" : "ghost"}
-      size={iconOnly ? "icon" : "lg"}
-      disabled={isDisabled}
-    >
-      {iconOnly && Icon ? (
-        <div className="m-auto">
-          <Icon weight={isHere ? "fill" : "bold"} size={iconSize} />
-        </div>
-      ) : (
-        <>
-          {Icon && (
-            <Icon
-              weight={isHere ? "fill" : "bold"}
-              size={iconSize}
-              className="mr-2"
-            />
-          )}
-          {children}
-        </>
-      )}
-    </Button>
+    <div className="block w-full overflow-hidden rounded-lg duration-0">
+      <Button
+        onClick={clicked}
+        ref={buttonRef}
+        className={cn(
+          `w-full justify-start rounded-lg`,
+          iconOnly && "size-10",
+          className
+        )}
+        variant={isHere ? "default" : "ghost"}
+        size={iconOnly ? "icon" : "lg"}
+        disabled={isDisabled}
+        data-smooth-interaction="true"
+      >
+        {iconOnly && Icon ? (
+          <div className="m-auto">
+            <Icon weight={isHere ? "fill" : "bold"} size={iconSize} />
+          </div>
+        ) : (
+          <>
+            {Icon && (
+              <Icon
+                weight={isHere ? "fill" : "bold"}
+                size={iconSize}
+                className="mr-2"
+              />
+            )}
+            {children}
+          </>
+        )}
+      </Button>
+    </div>
   )
 }
 
