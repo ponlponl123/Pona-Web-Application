@@ -202,7 +202,7 @@ export default function UserAccountDropdown({
                   )}
                 </motion.div>
                 {[
-                  {
+                  userInfo && {
                     icon: <ConfettiIcon weight="bold" className="size-4" />,
                     label: language.data.header.account.playground,
                     className: cn(),

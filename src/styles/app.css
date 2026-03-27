@@ -94,7 +94,7 @@ main#app-workspace {
 
 @media not all and (max-width: 767px) {
   .sidebar-collapsed header.pona-header > div > div h1 > img {
-    @apply h-8 w-8 -translate-x-1;
+    @apply h-8 w-8 -translate-x-2;
   }
 
   .sidebar-collapsed header.pona-header > div > div h1 > span {

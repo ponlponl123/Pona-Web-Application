@@ -30,7 +30,7 @@
       sans-serif;
   }
   html {
-    @apply font-mono;
+    @apply overflow-x-hidden font-mono;
     scrollbar-width: thin;
     scrollbar-color: hsl(var(--primary)) hsl(var(--background));
   }

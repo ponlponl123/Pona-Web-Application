@@ -57,6 +57,7 @@ interface SidebarProps {
   onPushLocation?: () => void
   canCollapsed?: boolean
   onCollapsed?: (value: boolean) => void
+  setNavActive?: (value: boolean) => void
 }
 
 function Sidebar({
@@ -65,6 +66,7 @@ function Sidebar({
   onPushLocation,
   canCollapsed,
   onCollapsed,
+  setNavActive,
 }: SidebarProps) {
   const pathname = usePathname() || ""
   const ownerId = process.env["NEXT_PUBLIC_DISCORD_OWNER_ID"]
@@ -106,15 +108,21 @@ function Sidebar({
 
   return (
     <main
-      className={`scrollbar disable-default-transition apply-long-soft-transition duration-700! ${
+      className={cn(
+        `scrollbar disable-default-transition apply-long-soft-transition duration-700! max-md:h-full`,
         !nav
-          ? `${isCollapsed ? "w-12 max-w-12 min-w-12 p-1" : "w-48 max-w-48 min-w-48 p-2"} relative flex h-screen flex-col gap-2 pt-24 max-md:hidden`
+          ? cn(
+              isCollapsed
+                ? "w-12 max-w-12 min-w-12 p-1"
+                : "w-48 max-w-48 min-w-48 p-2",
+              `relative flex h-screen flex-col gap-2 pt-20 max-md:hidden`
+            )
           : "flex w-full flex-col gap-2 md:hidden"
-      }`}
+      )}
     >
       <AnimatePresence mode="popLayout">
         <motion.div
-          className="max-h-[calc(100%-64px)] w-full"
+          className="max-h-[calc(100%-64px)] w-full max-md:-mb-1"
           key={`${inGuild}-${inSetting}-${sidebarCollapsed}`}
         >
           <ScrollShadow
@@ -429,7 +437,7 @@ function Sidebar({
                 )}
               </motion.main>
             </FrozenRoute>
-            <div className="p-2"></div>
+            <div className="max-md:hidden md:p-2"></div>
           </ScrollShadow>
         </motion.div>
       </AnimatePresence>
@@ -472,8 +480,9 @@ function Sidebar({
                     <ActivationLink
                       className="w-full"
                       iconOnly={canCollapsed && sidebarCollapsed}
-                      onClick={handlePushLocation}
-                      href="/app/setting"
+                      onClick={() => {
+                        ;(handlePushLocation(), setNavActive?.(false))
+                      }}
                       icon={GearIcon}
                     >
                       {language.data.app.setting.name}

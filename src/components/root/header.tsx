@@ -132,7 +132,7 @@ function Header() {
       <div
         className={`w-full ${!isApp && "max-w-5xl"} flex h-full items-center justify-between gap-6`}
       >
-        <div className="z-20 flex gap-2 active:scale-95">
+        <div className="z-20 flex gap-2 pl-1 active:scale-95">
           <Link
             href={isApp ? "/app" : "/"}
             onClick={() => {
@@ -431,7 +431,7 @@ function Header() {
         </div>
         <nav className={`nav-opened-${navOpened}`}>
           <div className="header mb-6 h-24 w-full border-b border-foreground/10 md:hidden"></div>
-          <div className="flex gap-3">
+          <div className="flex gap-3 max-sm:p-0!">
             {isApp && userInfo && (
               <Sidebar
                 userInfo={userInfo}
@@ -439,6 +439,7 @@ function Header() {
                 onPushLocation={() => {
                   setNavOpened(false)
                 }}
+                setNavActive={setNavOpened}
               />
             )}
           </div>
