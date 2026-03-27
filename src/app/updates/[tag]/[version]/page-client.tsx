@@ -42,6 +42,7 @@ function PatchNote({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 1, delay: 0.1 }}
+          data-smooth-interaction="true"
         >
           <Link href="/updates">
             <Button variant="ghost" size="lg" className="rounded-full">
@@ -87,6 +88,7 @@ function PatchNote({
             size="icon-lg"
             className="rounded-full"
             onClick={() => setUpdateSubscribeOpen(true)}
+            data-smooth-interaction="true"
           >
             <BellSimpleIcon weight="fill" />
           </Button>
@@ -118,6 +120,7 @@ function PatchNote({
             href={"https://github.com/" + parsedPatchNote.author}
             target="_blank"
             className="hover:opacity-80 active:opacity-50"
+            data-smooth-interaction="true"
           >
             <Badge
               className={cn(

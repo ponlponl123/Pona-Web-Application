@@ -2,6 +2,14 @@ button {
   @apply font-semibold tracking-wider;
 }
 
+[data-smooth-interaction="true"] {
+  transition: all 0.64s cubic-bezier(0, 0, 0.065, 1.55) !important;
+}
+[data-smooth-interaction="true"]:active {
+  transition: all 2s cubic-bezier(0.075, 0.82, 0.165, 1) !important;
+  @apply scale-90;
+}
+
 .handwritting-btn {
   @apply relative mx-2 flex min-w-24 items-center justify-center active:opacity-90;
 }

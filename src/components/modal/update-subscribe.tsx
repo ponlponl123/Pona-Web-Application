@@ -128,6 +128,7 @@ function UpdateSubscribeModal({
                   variant={"ghost"}
                   className={"rounded-full px-6"}
                   onClick={closeModal}
+                  data-smooth-interaction="true"
                 >
                   {language.data.app.updates.subscription.modal.notnow}
                 </Button>
@@ -135,6 +136,7 @@ function UpdateSubscribeModal({
                   size={"lg"}
                   className={"rounded-full px-6"}
                   onClick={closeModal}
+                  data-smooth-interaction="true"
                 >
                   {groupSelected.length === 0
                     ? language.data.app.updates.subscription.modal.update

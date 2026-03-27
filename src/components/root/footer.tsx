@@ -95,6 +95,7 @@ function Footer() {
               <Button
                 className="flex items-center gap-1 rounded-xl hover:text-primary"
                 variant={"ghost"}
+                data-smooth-interaction="true"
               >
                 <link.icon alt={link.label} />
                 {link.label}
@@ -111,6 +112,7 @@ function Footer() {
             size="lg"
             variant="outline"
             onClick={() => setIsLanguageModalOpen(true)}
+            data-smooth-interaction="true"
           >
             <Avatar className="h-4 w-4">
               <AvatarImage

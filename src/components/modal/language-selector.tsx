@@ -43,6 +43,7 @@ function LanguageSelectorModal() {
                   <Button
                     key={"lang-select-" + i}
                     variant={language.key === lang.key ? "default" : "ghost"}
+                    data-smooth-interaction="true"
                     className={cn(
                       "flex justify-start gap-3 rounded-xl border-2 border-transparent px-4 py-6",
                       language.key === lang.key &&
@@ -82,6 +83,7 @@ function LanguageSelectorModal() {
                   variant={"ghost"}
                   className={"rounded-full px-6"}
                   onClick={closeModal}
+                  data-smooth-interaction="true"
                 >
                   {language.data.common.close}
                 </Button>
@@ -89,6 +91,7 @@ function LanguageSelectorModal() {
                   size={"lg"}
                   className={"rounded-full px-6"}
                   onClick={closeModal}
+                  data-smooth-interaction="true"
                 >
                   {language.data.common.ok}
                 </Button>

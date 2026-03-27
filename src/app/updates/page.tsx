@@ -64,6 +64,7 @@ function Page() {
             size="lg"
             className="rounded-full max-lg:min-w-max max-lg:p-4"
             onClick={() => setUpdateSubscribeOpen(true)}
+            data-smooth-interaction="true"
           >
             <BellSimpleIcon weight="fill" />
             <span className="text-primary-foreground max-lg:hidden">
@@ -153,6 +154,7 @@ function Page() {
                               style={{ borderRadius: "32px" }}
                               onMouseEnter={() => setIsCardHover(true)}
                               onMouseLeave={() => setIsCardHover(false)}
+                              data-smooth-interaction="true"
                             >
                               <div className="flex h-full max-h-none w-full flex-col gap-3 p-2">
                                 <div

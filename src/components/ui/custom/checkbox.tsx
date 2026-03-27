@@ -25,16 +25,22 @@ function CardCheckbox({
   onCheckedChange?: CheckboxRootProps["onCheckedChange"]
 }) {
   return (
-    <FieldLabel>
-      <Field orientation={orientation}>
+    <FieldLabel
+      className="rounded-lg! border-2! hover:bg-foreground/5"
+      data-smooth-interaction="true"
+    >
+      <Field orientation={orientation} className="items-center! gap-3">
         <Checkbox
           value={value}
           id={name}
           name={name}
           onCheckedChange={onCheckedChange}
+          className={"rounded-md"}
         />
         <FieldContent>
-          <FieldTitle>{title}</FieldTitle>
+          <FieldTitle className="text-base leading-6 tracking-wide">
+            {title}
+          </FieldTitle>
           <FieldDescription>{description}</FieldDescription>
         </FieldContent>
       </Field>

@@ -37,11 +37,13 @@ import {
   WrenchIcon,
 } from "@phosphor-icons/react/dist/ssr"
 import clsx from "clsx"
+import { cn } from "@/lib/utils"
+import FrozenRoute from "../HOC/FrozenRoute"
+import React, { useState, useEffect } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 import { usePathname, useRouter } from "next/navigation"
 import ActivationLink from "@/components/activationLink"
-import FrozenRoute from "../HOC/FrozenRoute"
-import React, { useState, useEffect } from "react"
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip"
 
 const variants = {
   hidden: { opacity: 0, x: -12, y: 0 },
@@ -106,7 +108,7 @@ function Sidebar({
     <main
       className={`scrollbar disable-default-transition apply-long-soft-transition duration-700! ${
         !nav
-          ? `${isCollapsed ? "w-16 max-w-16 min-w-16 p-2" : "w-64 max-w-64 min-w-64 p-4"} relative flex h-screen flex-col gap-2 pt-24 max-md:hidden`
+          ? `${isCollapsed ? "w-12 max-w-12 min-w-12 p-1" : "w-48 max-w-48 min-w-48 p-2"} relative flex h-screen flex-col gap-2 pt-24 max-md:hidden`
           : "flex w-full flex-col gap-2 md:hidden"
       }`}
     >
@@ -278,14 +280,17 @@ function Sidebar({
                     <ActivationLink
                       iconOnly={canCollapsed && sidebarCollapsed}
                       onClick={handlePushLocation}
-                      href="/app/updates"
+                      href="/updates"
                       icon={WrenchIcon}
-                      isActive={pathname.includes("/app/updates")}
+                      isActive={pathname.includes("/updates")}
                     >
                       {language.data.app.updates.name}{" "}
-                      <Badge color="primary" className="bg-primary/20">
+                      <Badge
+                        color="primary"
+                        className="m-1 rounded-full bg-primary/20"
+                      >
                         <span className="font-bold">
-                          v{process.env["NEXT_PUBLIC_VERSION"] || "unknown"}
+                          v{process.env["NEXT_PUBLIC_APP_VERSION"] || "unknown"}
                         </span>
                       </Badge>
                     </ActivationLink>
@@ -433,7 +438,7 @@ function Sidebar({
 
       <div
         className={clsx(
-          "flex gap-1!",
+          "flex gap-0.5!",
           !sidebarCollapsed ? "flex-row!" : "flex-col"
         )}
       >
@@ -481,29 +486,41 @@ function Sidebar({
         </AnimatePresence>
 
         {canCollapsed && (
-          <Button
-            className="flex items-center justify-center!"
-            variant="ghost"
-            size="icon-lg"
-            onClick={() => {
-              setSidebarCollapsed((prev) => {
-                const newState = !prev
-                if (onCollapsed) onCollapsed(newState)
-                return newState
-              })
-            }}
-          >
-            <CaretLineLeftIcon
-              className={clsx(
-                "block",
-                sidebarCollapsed
-                  ? "rotate-180 text-foreground"
-                  : "rotate-0 text-primary"
-              )}
-              size={16}
-              weight="bold"
-            />
-          </Button>
+          <Tooltip>
+            <TooltipTrigger
+              render={
+                <Button
+                  className={cn(
+                    "flex items-center justify-center! rounded-lg",
+                    sidebarCollapsed && "size-10"
+                  )}
+                  variant="ghost"
+                  size="icon-lg"
+                  onClick={() => {
+                    setSidebarCollapsed((prev) => {
+                      const newState = !prev
+                      if (onCollapsed) onCollapsed(newState)
+                      return newState
+                    })
+                  }}
+                />
+              }
+            >
+              <CaretLineLeftIcon
+                className={clsx(
+                  "block",
+                  sidebarCollapsed
+                    ? "rotate-180 text-foreground"
+                    : "rotate-0 text-foreground"
+                )}
+                size={16}
+                weight="bold"
+              />
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Collapse sidebar</p>
+            </TooltipContent>
+          </Tooltip>
         )}
       </div>
     </main>

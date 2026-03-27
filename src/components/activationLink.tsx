@@ -1,5 +1,6 @@
 "use client"
 import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 import type { Icon as IconType } from "@phosphor-icons/react"
 import { usePathname } from "next/navigation"
 import { useRouter } from "nextjs-toploader/app"
@@ -141,8 +142,12 @@ function ActivationLink({
     <Button
       onClick={clicked}
       ref={buttonRef}
-      className={`justify-start ${className}`}
-      variant={isHere ? "ghost" : "default"}
+      className={cn(
+        `justify-start rounded-lg`,
+        iconOnly && "size-10",
+        className
+      )}
+      variant={isHere ? "default" : "ghost"}
       size={iconOnly ? "icon" : "lg"}
       disabled={isDisabled}
     >
