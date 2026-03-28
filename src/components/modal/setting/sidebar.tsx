@@ -13,17 +13,19 @@ import {
   ShieldCheckIcon,
   SignOutIcon,
   SmileyIcon,
+  TranslateIcon,
 } from "@phosphor-icons/react"
-import { Pages } from "."
+import { PageKey, useSettingModalContext } from "."
+import { useGlobalContext } from "@/contexts/globalContext"
 
 export type SubPage = {
   name: string
-  target: React.FC | string
+  target: PageKey | string
 }
 
 export interface Link {
   name: string
-  target: React.FC
+  target: PageKey
   icon: React.ReactNode
   subpages: SubPage[]
 }
@@ -35,7 +37,9 @@ export interface Links {
 
 function SettingModalSidebar() {
   const { language } = useLanguageContext()
+  const { setIsSettingModalOpen } = useGlobalContext()
   const { userInfo, revokeUserAccessToken } = useDiscordUserInfo()
+  const { SelectedPageKey, setSelectedPage } = useSettingModalContext()
 
   const links: Links[] = [
     userInfo && {
@@ -43,13 +47,13 @@ function SettingModalSidebar() {
       links: [
         {
           name: language.data.app.setting.account.title,
-          target: Pages.account,
+          target: "account",
           icon: <SmileyIcon weight="fill" className="size-4" />,
           subpages: [],
         },
         {
           name: language.data.app.setting.privacy.title,
-          target: Pages.account,
+          target: "privacy",
           icon: <ShieldCheckIcon weight="fill" className="size-4" />,
           subpages: [],
         },
@@ -60,14 +64,20 @@ function SettingModalSidebar() {
       links: [
         {
           name: language.data.app.setting.layout.title,
-          target: Pages.account,
+          target: "layout",
           icon: <ShapesIcon weight="fill" className="size-4" />,
           subpages: [],
         },
         {
           name: language.data.app.setting.keybinds.title,
-          target: Pages.account,
+          target: "keybinds",
           icon: <KeyboardIcon weight="fill" className="size-4" />,
+          subpages: [],
+        },
+        {
+          name: language.data.app.setting.language_time.title,
+          target: "language-time",
+          icon: <TranslateIcon weight="bold" className="size-4" />,
           subpages: [],
         },
       ],
@@ -86,7 +96,7 @@ function SettingModalSidebar() {
           ease: "easeOut",
         }}
         className={cn(
-          "mb-0.5 flex w-full items-center justify-start gap-3 rounded-lg px-3 py-1 select-none hover:bg-foreground/5 not-dark:hover:bg-foreground/10",
+          "mb-0.5 flex w-full items-center justify-start gap-3 rounded-xl px-3 py-1 select-none hover:bg-foreground/5 not-dark:hover:bg-foreground/10",
           !userInfo && "bg-transparent! p-0"
         )}
       >
@@ -138,14 +148,17 @@ function SettingModalSidebar() {
               exit={{ opacity: 0 }}
               transition={{ delay: 0.16 }}
               className={cn(
-                "apply- flex w-full flex-col items-center justify-center gap-2 rounded-lg p-3 select-none",
+                "apply- mb-2 flex w-full flex-col items-center justify-center gap-2 rounded-2xl p-3 select-none",
                 !userInfo &&
-                  "border-2 border-dashed border-foreground/10 bg-foreground/5 not-dark:bg-foreground/10 hover:bg-foreground/10 not-dark:hover:bg-foreground/5 active:scale-95 active:duration-150"
+                  "border-2 border-dashed border-foreground/10 bg-foreground/5 not-dark:bg-foreground/10 hover:bg-foreground/10 not-dark:hover:bg-foreground/5"
               )}
-              data-default-transition="true"
+              onClick={() => setIsSettingModalOpen(false)}
+              data-smooth-interaction="true"
             >
               <LockSimpleIcon weight="bold" />
-              <span>{language.data.common.login_first}</span>
+              <span className="text-foreground/40">
+                {language.data.common.login_first}
+              </span>
             </motion.div>
           </Link>
         )}
@@ -180,11 +193,14 @@ function SettingModalSidebar() {
               }}
               data-smooth-interaction="true"
               className={cn(
-                "group flex w-full items-center justify-start gap-2 rounded-md bg-transparent px-3 py-2",
+                "group flex w-full items-center justify-start gap-2 rounded-lg bg-transparent px-3 py-2 text-start",
                 "not-hover:text-foreground/60",
-                "hover:bg-foreground/10 active:bg-foreground/10 dark:hover:bg-foreground/5"
+                "hover:bg-foreground/10 active:bg-foreground/10 dark:hover:bg-foreground/5",
+                SelectedPageKey === link.target &&
+                  "bg-foreground/10 text-foreground dark:text-foreground"
               )}
               key={"setting-modal-sidebar-category-" + index + "-link-" + i}
+              onClick={() => setSelectedPage(link.target)}
             >
               {link.icon}
               <span className="text-sm">{link.name}</span>
@@ -226,7 +242,7 @@ function SettingModalSidebar() {
             }}
             data-smooth-interaction="true"
             className={cn(
-              "group flex w-full items-center justify-start gap-2 rounded-md bg-transparent px-3 py-2 dark:hover:bg-foreground/5",
+              "group flex w-full items-center justify-start gap-2 rounded-lg bg-transparent px-3 py-2 dark:hover:bg-foreground/5",
               "text-rose-400 hover:bg-rose-400/10 active:bg-rose-400/10 hover:dark:bg-rose-400/10"
             )}
             onClick={() => {
@@ -254,7 +270,7 @@ function SettingModalSidebar() {
             duration: 0.25,
             ease: "easeOut",
           }}
-          className="mt-1 flex flex-wrap gap-1 px-2"
+          className="mt-1 flex flex-wrap gap-1 px-2 select-none"
         >
           <span className="text-xs text-foreground/40">
             v{process.env["NEXT_PUBLIC_APP_VERSION"] || "unknown"}

@@ -25,8 +25,19 @@ function Modal({
   const modalRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
+    const scrollbarWidth =
+      window.innerWidth - document.documentElement.clientWidth
+    document.documentElement.style.setProperty(
+      "--scrollbar-width",
+      `${scrollbarWidth}px`
+    )
+
     if (isOpen && modalRef.current) {
       modalRef.current.focus()
+      document.documentElement.setAttribute("data-disabled-scroll", "true")
+    }
+    if (!isOpen) {
+      document.documentElement.setAttribute("data-disabled-scroll", "false")
     }
   }, [isOpen])
 

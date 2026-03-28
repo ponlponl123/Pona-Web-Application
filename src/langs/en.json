@@ -657,6 +657,22 @@
           }
         }
       },
+      "language_time": {
+        "title": "Language & Time",
+        "language": {
+          "title": "Language",
+          "description": "Select your preferred language for the interface."
+        },
+        "time": {
+          "title": "Time Format",
+          "description": "Choose how you want the time to be displayed.",
+          "options": {
+            "auto": "Auto",
+            "12": "12-hour",
+            "24": "24-hour"
+          }
+        }
+      },
       "keybinds": {
         "title": "Keybinds",
         "announcement": "Keybinds feature is not available yet, but it is in development in Lab! Stay tuned!",

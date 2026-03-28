@@ -1,7 +1,7 @@
 import React from "react"
 
 function Layout() {
-  return <div>Privacy</div>
+  return <div>Layout</div>
 }
 
 export default Layout

@@ -35,6 +35,15 @@
     @apply overflow-x-hidden font-mono;
     scrollbar-width: thin;
     scrollbar-color: hsl(var(--primary)) hsl(var(--background));
+    transition: none !important;
+  }
+
+  html[data-disabled-scroll="true"],
+  html[data-disabled-scroll="true"] body {
+    @apply overflow-hidden!;
+  }
+  html[data-disabled-scroll="true"] {
+    padding-right: var(--scrollbar-width);
   }
 }
 

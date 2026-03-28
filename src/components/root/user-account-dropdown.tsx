@@ -93,7 +93,7 @@ export default function UserAccountDropdown({
             layoutId={minimize ? undefined : "user-action"}
             className={cn(
               btnClassname,
-              "absolute top-0 left-0 focus:outline-2 focus:outline-offset-2 focus:outline-focus focus:outline-solid",
+              "absolute top-0 left-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus focus-visible:outline-solid",
               userInfo
                 ? "rounded-full p-1"
                 : "hover:bg-foreground/10 dark:hover:bg-foreground/5"
@@ -202,7 +202,7 @@ export default function UserAccountDropdown({
                     </>
                   ) : (
                     <Link href="/app" className="contents" tabIndex={-1}>
-                      <motion.div
+                      <motion.button
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
@@ -210,13 +210,16 @@ export default function UserAccountDropdown({
                         className={cn(
                           "apply- flex w-full flex-col items-center justify-center gap-2 rounded-lg p-3 select-none",
                           !userInfo &&
-                            "border-2 border-dashed border-foreground/10 bg-foreground/5 not-dark:bg-foreground/10 hover:bg-foreground/10 not-dark:hover:bg-foreground/5 active:scale-95 active:duration-150"
+                            "border-2 border-dashed border-foreground/10 bg-foreground/5 not-dark:bg-foreground/10 hover:bg-foreground/10 not-dark:hover:bg-foreground/5"
                         )}
-                        data-default-transition="true"
+                        onClick={() => setIsActive(false)}
+                        data-smooth-interaction="true"
                       >
                         <LockSimpleIcon weight="bold" />
-                        <span>{language.data.common.login_first}</span>
-                      </motion.div>
+                        <span className="text-foreground/40">
+                          {language.data.common.login_first}
+                        </span>
+                      </motion.button>
                     </Link>
                   )}
                 </motion.div>
@@ -277,9 +280,9 @@ export default function UserAccountDropdown({
                     return <React.Fragment key={index}></React.Fragment>
                   const DropdownButton = () => (
                     <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
+                      initial={{ opacity: 0, filter: "blur(3px)" }}
+                      animate={{ opacity: 1, filter: "blur(0px)" }}
+                      exit={{ opacity: 0, filter: "blur(3px)" }}
                       transition={{
                         delay: 0.4 + index * 0.05,
                         duration: 0.25,

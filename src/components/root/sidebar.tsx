@@ -82,20 +82,10 @@ function Sidebar({
   const router = useRouter()
 
   const inGuild = pathname.startsWith("/app/g/")
-  const inSetting = pathname.startsWith("/app/setting")
   const isCollapsed = Boolean(canCollapsed && sidebarCollapsed)
 
   const handlePushLocation = () => {
     if (onPushLocation) onPushLocation()
-  }
-
-  const handleBackNavigation = () => {
-    const previousPath = document.referrer
-    if (previousPath && previousPath.includes(window.location.origin)) {
-      router.back()
-    } else {
-      router.push("/app")
-    }
   }
 
   useEffect(() => {
@@ -127,7 +117,7 @@ function Sidebar({
       <AnimatePresence mode="popLayout">
         <motion.div
           className="max-h-[calc(100%-64px)] w-full max-md:-mb-1"
-          key={`${inGuild}-${inSetting}-${sidebarCollapsed}`}
+          key={`${inGuild}-${sidebarCollapsed}`}
         >
           <ScrollShadow
             className="flex max-h-full w-full flex-col"
@@ -143,127 +133,7 @@ function Sidebar({
                 className="flex min-h-max flex-col gap-1"
                 key="Menu"
               >
-                {inSetting ? (
-                  <>
-                    <span
-                      className={`px-4 text-lg font-bold ${canCollapsed && sidebarCollapsed ? "hidden" : ""}`}
-                    >
-                      {language.data.app.setting.name}
-                    </span>
-                    <ActivationLink
-                      iconOnly={canCollapsed && sidebarCollapsed}
-                      onClick={handlePushLocation}
-                      href={`#account`}
-                      icon={StarAndCrescentIcon}
-                    >
-                      {language.data.app.setting.account.title}
-                    </ActivationLink>
-                    <div
-                      className={`group-menu ${canCollapsed && sidebarCollapsed ? "collapsed" : ""}`}
-                    >
-                      <div className="group-title">
-                        <ActivationLink
-                          iconOnly={canCollapsed && sidebarCollapsed}
-                          onClick={handlePushLocation}
-                          href={`#layout`}
-                          icon={PaletteIcon}
-                        >
-                          {language.data.app.setting.layout.title}
-                        </ActivationLink>
-                      </div>
-                      <div className="group-content">
-                        <ActivationLink
-                          iconOnly={canCollapsed && sidebarCollapsed}
-                          onClick={handlePushLocation}
-                          href={`#layout-theme`}
-                          icon={PaintBrushIcon}
-                        >
-                          {language.data.app.setting.layout.theme.title}
-                        </ActivationLink>
-                        <ActivationLink
-                          iconOnly={canCollapsed && sidebarCollapsed}
-                          onClick={handlePushLocation}
-                          href={`#layout-player`}
-                          icon={MonitorPlayIcon}
-                        >
-                          {language.data.app.setting.layout.player.title}
-                        </ActivationLink>
-                        <ActivationLink
-                          iconOnly={canCollapsed && sidebarCollapsed}
-                          onClick={handlePushLocation}
-                          href={`#layout-transparency`}
-                          icon={CubeTransparentIcon}
-                        >
-                          {language.data.app.setting.layout.transparency.title}
-                        </ActivationLink>
-                        <ActivationLink
-                          iconOnly={canCollapsed && sidebarCollapsed}
-                          onClick={handlePushLocation}
-                          href={`#layout-timeformat`}
-                          icon={SunHorizonIcon}
-                        >
-                          {language.data.app.setting.layout.time_format.title}
-                        </ActivationLink>
-                        <ActivationLink
-                          iconOnly={canCollapsed && sidebarCollapsed}
-                          onClick={handlePushLocation}
-                          href={`#layout-thermometer`}
-                          icon={ThermometerIcon}
-                        >
-                          {language.data.app.setting.layout.thermometer.title}
-                        </ActivationLink>
-                        <ActivationLink
-                          iconOnly={canCollapsed && sidebarCollapsed}
-                          onClick={handlePushLocation}
-                          href={`#layout-animations`}
-                          icon={PersonSimpleRunIcon}
-                        >
-                          {language.data.app.setting.layout.animation.title}
-                        </ActivationLink>
-                      </div>
-                    </div>
-                    <div
-                      className={`group-menu ${canCollapsed && sidebarCollapsed ? "collapsed" : ""}`}
-                    >
-                      <div className="group-title">
-                        <ActivationLink
-                          iconOnly={canCollapsed && sidebarCollapsed}
-                          onClick={handlePushLocation}
-                          href={`#privacy`}
-                          icon={ShieldCheckeredIcon}
-                        >
-                          {language.data.app.setting.privacy.title}
-                        </ActivationLink>
-                      </div>
-                      <div className="group-content">
-                        <ActivationLink
-                          iconOnly={canCollapsed && sidebarCollapsed}
-                          onClick={handlePushLocation}
-                          href={`#privacy-location`}
-                          icon={MapPinAreaIcon}
-                        >
-                          {language.data.app.setting.privacy.location.title}
-                        </ActivationLink>
-                      </div>
-                    </div>
-                    <ActivationLink
-                      iconOnly={canCollapsed && sidebarCollapsed}
-                      onClick={handlePushLocation}
-                      href={`#keybinds`}
-                      icon={KeyboardIcon}
-                    >
-                      {language.data.app.setting.keybinds.title}
-                    </ActivationLink>
-                    <ActivationLink
-                      iconOnly={canCollapsed && sidebarCollapsed}
-                      onClick={handlePushLocation}
-                      href={`#devzone`}
-                      icon={BugIcon}
-                    >
-                      {language.data.app.setting.dev_mode.title}
-                    </ActivationLink>
-                  </>
-                ) : !inGuild ? (
+                {!inGuild ? (
                   <>
                     <ActivationLink
                       iconOnly={canCollapsed && sidebarCollapsed}
@@ -295,16 +165,21 @@ function Sidebar({
                       href="/updates"
                       icon={WrenchIcon}
                       isActive={pathname.includes("/updates")}
+                      className={cn(!sidebarCollapsed && "h-max")}
                     >
-                      {language.data.app.updates.name}{" "}
-                      <Badge
-                        color="primary"
-                        className="m-1 rounded-full bg-primary/20"
-                      >
-                        <span className="font-bold">
-                          v{process.env["NEXT_PUBLIC_APP_VERSION"] || "unknown"}
-                        </span>
-                      </Badge>
+                      <div className="flex flex-wrap items-center gap-x-1">
+                        {language.data.app.updates.name}
+                        <Badge
+                          color="primary"
+                          className="m-1 rounded-full bg-primary/20"
+                        >
+                          <span className="font-bold">
+                            v
+                            {process.env["NEXT_PUBLIC_APP_VERSION"] ||
+                              "unknown"}
+                          </span>
+                        </Badge>
+                      </div>
                     </ActivationLink>
                   </>
                 ) : (
@@ -449,7 +324,7 @@ function Sidebar({
         <AnimatePresence mode="popLayout">
           <motion.div
             className="min-w-0 flex-1"
-            key={String(`${inSetting} ${sidebarCollapsed}`)}
+            key={String(`${sidebarCollapsed}`)}
           >
             <FrozenRoute>
               <motion.main
@@ -460,34 +335,19 @@ function Sidebar({
                 transition={{ type: "tween", duration: 0.12 }}
                 key="Bottom-Menu"
               >
-                {inSetting ? (
-                  <>
-                    <ActivationLink
-                      className="w-full"
-                      iconOnly={canCollapsed && sidebarCollapsed}
-                      onClick={handleBackNavigation}
-                      icon={CaretLeftIcon}
-                    >
-                      {language.data.app.setting.back}
-                    </ActivationLink>
-                  </>
-                ) : (
-                  <>
-                    <ActivationLink
-                      className="w-full"
-                      iconOnly={canCollapsed && sidebarCollapsed}
-                      onClick={() => {
-                        ;(setSettingLayoutId("setting-modal-by-app-sidebar"),
-                          setIsSettingModalOpen(true),
-                          setNavActive?.(false))
-                      }}
-                      layoutId="setting-modal-by-app-sidebar"
-                      icon={GearIcon}
-                    >
-                      {language.data.app.setting.name}
-                    </ActivationLink>
-                  </>
-                )}
+                <ActivationLink
+                  className="w-full"
+                  iconOnly={canCollapsed && sidebarCollapsed}
+                  onClick={() => {
+                    ;(setSettingLayoutId("setting-modal-by-app-sidebar"),
+                      setIsSettingModalOpen(true),
+                      setNavActive?.(false))
+                  }}
+                  layoutId="setting-modal-by-app-sidebar"
+                  icon={GearIcon}
+                >
+                  {language.data.app.setting.name}
+                </ActivationLink>
               </motion.main>
             </FrozenRoute>
           </motion.div>

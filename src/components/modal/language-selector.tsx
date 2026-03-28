@@ -3,13 +3,14 @@ import { useGlobalContext } from "@/contexts/globalContext"
 import { useLanguageContext } from "@/contexts/languageContext"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 import { SmileySadIcon, HandWavingIcon } from "@phosphor-icons/react"
+import React, { useEffect, useRef } from "react"
 import { Input } from "react-smooth-input"
 import Modal from "../ui/custom/modal"
+import { motion } from "motion/react"
 import { Button } from "../ui/button"
 import { Badge } from "../ui/badge"
 import { langs } from "@/lib/i18n"
 import { cn } from "@/lib/utils"
-import React, { useEffect, useRef } from "react"
 
 function LanguageSelectorModal() {
   const { language, setLanguage } = useLanguageContext()
@@ -80,7 +81,17 @@ function LanguageSelectorModal() {
         </Modal.Description>
       </Modal.Header>
       <Modal.Body>
-        <div className="mb-3 px-6">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{
+            delay: 0.3,
+            duration: 0.25,
+            ease: "easeOut",
+          }}
+          className="mb-3 px-6"
+        >
           <Input
             type="text"
             className="font-sans"
@@ -102,10 +113,10 @@ function LanguageSelectorModal() {
               }
             }}
           />
-        </div>
+        </motion.div>
         <div
           className={cn(
-            "px-6",
+            "px-6 pb-2",
             AvailableLangs.length > 0
               ? "grid grid-cols-2 gap-2 max-sm:grid-cols-1"
               : "w-full"
@@ -113,41 +124,52 @@ function LanguageSelectorModal() {
         >
           {AvailableLangs.length > 0 ? (
             AvailableLangs.map((lang, i) => (
-              <Button
-                key={"lang-select-" + i}
-                variant={language.key === lang.key ? "default" : "ghost"}
-                data-smooth-interaction="true"
-                className={cn(
-                  "flex justify-start gap-3 rounded-xl border-2 border-transparent px-4 py-6",
-                  language.key === lang.key &&
-                    "border-foreground/40 bg-foreground/10 text-foreground"
-                )}
-                onClick={() => {
-                  setLanguage(lang.key)
-                  closeModal()
+              <motion.div
+                initial={{ opacity: 0, y: 6, filter: "blur(3px)" }}
+                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                exit={{ opacity: 0, y: 6, filter: "blur(3px)" }}
+                transition={{
+                  delay: 0.4 + i * 0.05,
+                  duration: 0.25,
+                  ease: "easeOut",
                 }}
+                key={"lang-select-" + i}
               >
-                <Avatar className={"h-6 w-6"}>
-                  <AvatarImage
-                    src={"https://flagcdn.com/" + lang.country + ".svg"}
-                    alt={lang.label}
-                  />
-                  <AvatarFallback>{lang.key.toUpperCase()}</AvatarFallback>
-                </Avatar>
-                {lang.label}
-                {lang.looking_for_translator && (
-                  <Badge
-                    variant={"secondary"}
-                    className="rounded-full bg-amber-400/20 text-amber-400"
-                  >
-                    <HandWavingIcon size={32} weight="fill" />
-                    {
-                      language.data.modal["language-selector"]
-                        .looking_for_translator
-                    }
-                  </Badge>
-                )}
-              </Button>
+                <Button
+                  variant={language.key === lang.key ? "default" : "ghost"}
+                  data-smooth-interaction="true"
+                  className={cn(
+                    "flex w-full justify-start gap-3 rounded-xl border-2 border-transparent px-4 py-6",
+                    language.key === lang.key &&
+                      "border-foreground/40 bg-foreground/10 text-foreground"
+                  )}
+                  onClick={() => {
+                    setLanguage(lang.key)
+                    closeModal()
+                  }}
+                >
+                  <Avatar className={"h-6 w-6"}>
+                    <AvatarImage
+                      src={"https://flagcdn.com/" + lang.country + ".svg"}
+                      alt={lang.label}
+                    />
+                    <AvatarFallback>{lang.key.toUpperCase()}</AvatarFallback>
+                  </Avatar>
+                  {lang.label}
+                  {lang.looking_for_translator && (
+                    <Badge
+                      variant={"secondary"}
+                      className="rounded-full bg-amber-400/20 text-amber-400"
+                    >
+                      <HandWavingIcon size={32} weight="fill" />
+                      {
+                        language.data.modal["language-selector"]
+                          .looking_for_translator
+                      }
+                    </Badge>
+                  )}
+                </Button>
+              </motion.div>
             ))
           ) : (
             <div className="flex w-full flex-col items-center justify-center gap-2 p-6">
