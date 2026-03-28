@@ -675,7 +675,8 @@
       },
       "keybinds": {
         "title": "Keybinds",
-        "announcement": "Keybinds feature is not available yet, but it is in development in Lab! Stay tuned!",
+        "description": "Customize your shortcuts for a faster workflow.",
+        "announcement": "Keybind customization is currently in the Lab! We're fine-tuning the experience—stay tuned for updates.",
         "move": "Move"
       },
       "dev_mode": {

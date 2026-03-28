@@ -100,6 +100,8 @@ function SettingModalSidebar() {
           !userInfo && "bg-transparent! p-0",
           SelectedPageKey === "account" && "opacity-0! blur-sm"
         )}
+        onClick={() => setSelectedPage("account")}
+        data-smooth-interaction="true"
       >
         {userInfo ? (
           <>
