@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
+  BugIcon,
   KeyboardIcon,
   LockSimpleIcon,
   ShapesIcon,
@@ -33,6 +34,12 @@ export interface Link {
 export interface Links {
   category: string
   links: Link[]
+}
+
+type DelayData = {
+  categoryDelay: number
+  linkDelays: number[]
+  hrDelay: number
 }
 
 function SettingModalSidebar() {
@@ -82,7 +89,41 @@ function SettingModalSidebar() {
         },
       ],
     },
+    userInfo && {
+      category: language.data.app.setting.category.developer,
+      links: [
+        {
+          name: language.data.app.setting.dev_mode.title,
+          target: "dev",
+          icon: <BugIcon weight="bold" className="size-4" />,
+          subpages: [],
+        },
+      ],
+    },
   ].filter(Boolean) as Links[]
+
+  // Pre-calculate all animation delays
+  const animationData = links.reduce(
+    (acc, category) => {
+      acc.time += 0.03
+      const categoryDelay = Number(acc.time.toFixed(2))
+
+      const linkDelays = (category.links || []).map(() => {
+        acc.time += 0.06
+        return Number(acc.time.toFixed(2))
+      })
+
+      const hrDelay = Number((acc.time + 0.06).toFixed(2))
+
+      acc.result.push({ categoryDelay, linkDelays, hrDelay })
+
+      return acc
+    },
+    { time: 0.48, result: [] as DelayData[] }
+  )
+
+  const PreCalcCategoryDelays = animationData.result
+  const TOTAL_ANIMATION_DELAY = Number((animationData.time + 0.08).toFixed(2))
 
   return (
     <div>
@@ -176,110 +217,124 @@ function SettingModalSidebar() {
           </Link>
         )}
       </motion.div>
-      {links.map((category, index) => (
-        <div
-          className="mt-2 flex flex-col items-start justify-start gap-1"
-          key={"setting-modal-sidebar-category-" + index}
-        >
-          <motion.span
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{
-              delay: 0.5 + index * 0.05,
-              duration: 0.25,
-              ease: "easeOut",
-            }}
-            className="px-2 text-xs text-foreground/40"
+      {links.map((category, categoryIndex) => {
+        return (
+          <div
+            className="mt-2 flex flex-col items-start justify-start gap-1"
+            key={"setting-modal-sidebar-category-" + categoryIndex}
           >
-            {category.category}
-          </motion.span>
-          {category.links.map((link, i) => (
-            <motion.button
-              initial={{ opacity: 0, filter: "blur(3px)" }}
-              animate={{ opacity: 1, filter: "blur(0px)" }}
-              exit={{ opacity: 0, filter: "blur(3px)" }}
+            <motion.span
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
               transition={{
-                delay: 0.5 + index * 0.08 + i * 0.08,
+                delay: PreCalcCategoryDelays[categoryIndex].categoryDelay,
                 duration: 0.25,
                 ease: "easeOut",
               }}
-              data-smooth-interaction="true"
-              className={cn(
-                "group flex w-full items-center justify-start gap-2 rounded-lg bg-transparent px-3 py-2 text-start",
-                "not-hover:text-foreground/60",
-                "hover:bg-foreground/10 active:bg-foreground/10 dark:hover:bg-foreground/5",
-                SelectedPageKey === link.target &&
-                  "bg-foreground/10 text-foreground dark:text-foreground"
-              )}
-              key={"setting-modal-sidebar-category-" + index + "-link-" + i}
-              onClick={() => setSelectedPage(link.target)}
+              className="px-2 text-xs text-foreground/40"
             >
-              {link.icon}
-              <span className="text-sm">{link.name}</span>
-            </motion.button>
-          ))}
+              {category.category}
+            </motion.span>
+            {category.links.map((link, linkIndex) => {
+              return (
+                <motion.button
+                  initial={{ opacity: 0, filter: "blur(3px)" }}
+                  animate={{ opacity: 1, filter: "blur(0px)" }}
+                  exit={{ opacity: 0, filter: "blur(3px)" }}
+                  transition={{
+                    delay:
+                      PreCalcCategoryDelays[categoryIndex].linkDelays[
+                        linkIndex
+                      ],
+                    duration: 0.25,
+                    ease: "easeOut",
+                  }}
+                  data-smooth-interaction="true"
+                  className={cn(
+                    "group flex w-full items-center justify-start gap-2 rounded-lg bg-transparent px-3 py-2 text-start",
+                    "not-hover:text-foreground/60",
+                    "hover:bg-foreground/10 active:bg-foreground/10 dark:hover:bg-foreground/5",
+                    SelectedPageKey === link.target &&
+                      "bg-foreground/10 text-foreground dark:text-foreground"
+                  )}
+                  key={
+                    "setting-modal-sidebar-category-" +
+                    categoryIndex +
+                    "-link-" +
+                    linkIndex
+                  }
+                  onClick={() => setSelectedPage(link.target)}
+                >
+                  {link.icon}
+                  <span className="text-sm">{link.name}</span>
+                </motion.button>
+              )
+            })}
 
-          <motion.hr
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{
-              delay: 0.5 + index * 0.08,
-              duration: 0.25,
-              ease: "easeOut",
-            }}
-            className="my-2 w-full"
-          />
-        </div>
-      ))}
+            <motion.hr
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{
+                delay: PreCalcCategoryDelays[categoryIndex].hrDelay,
+                duration: 0.25,
+                ease: "easeOut",
+              }}
+              className="my-2 w-full"
+            />
+          </div>
+        )
+      })}
       <motion.div
         initial={{ opacity: 0, filter: "blur(3px)" }}
         animate={{ opacity: 1, filter: "blur(0px)" }}
         exit={{ opacity: 0, filter: "blur(3px)" }}
         transition={{
-          delay: 0.5 + links.length * 0.08,
+          delay: TOTAL_ANIMATION_DELAY + 0.08,
           duration: 0.25,
           ease: "easeOut",
         }}
       >
         {userInfo && (
-          <motion.button
-            initial={{ opacity: 0, filter: "blur(3px)" }}
-            animate={{ opacity: 1, filter: "blur(0px)" }}
-            exit={{ opacity: 0, filter: "blur(3px)" }}
-            transition={{
-              delay: 0.5 + links.length * 0.08 + 0.1,
-              duration: 0.25,
-              ease: "easeOut",
-            }}
-            data-smooth-interaction="true"
-            className={cn(
-              "group flex w-full items-center justify-start gap-2 rounded-lg bg-transparent px-3 py-2 dark:hover:bg-foreground/5",
-              "text-rose-400 hover:bg-rose-400/10 active:bg-rose-400/10 hover:dark:bg-rose-400/10"
-            )}
-            onClick={() => {
-              revokeUserAccessToken().then(() => {
-                if (window.location.pathname.startsWith("/app")) {
-                  window.location.href = "/"
-                } else {
-                  window.location.reload()
-                }
-              })
-            }}
-          >
-            <SignOutIcon weight="bold" className="size-4" />
-            <span className="text-sm">
-              {language.data.header.account.logout}
-            </span>
-          </motion.button>
+          <>
+            <motion.button
+              initial={{ opacity: 0, filter: "blur(3px)" }}
+              animate={{ opacity: 1, filter: "blur(0px)" }}
+              exit={{ opacity: 0, filter: "blur(3px)" }}
+              transition={{
+                delay: TOTAL_ANIMATION_DELAY + 0.18,
+                duration: 0.25,
+                ease: "easeOut",
+              }}
+              data-smooth-interaction="true"
+              className={cn(
+                "group flex w-full items-center justify-start gap-2 rounded-lg bg-transparent px-3 py-2 dark:hover:bg-foreground/5",
+                "text-rose-400 hover:bg-rose-400/10 active:bg-rose-400/10 hover:dark:bg-rose-400/10"
+              )}
+              onClick={() => {
+                revokeUserAccessToken().then(() => {
+                  if (window.location.pathname.startsWith("/app")) {
+                    window.location.href = "/"
+                  } else {
+                    window.location.reload()
+                  }
+                })
+              }}
+            >
+              <SignOutIcon weight="bold" className="size-4" />
+              <span className="text-sm">
+                {language.data.header.account.logout}
+              </span>
+            </motion.button>
+          </>
         )}
         <motion.div
           initial={{ opacity: 0, filter: "blur(3px)" }}
           animate={{ opacity: 1, filter: "blur(0px)" }}
           exit={{ opacity: 0, filter: "blur(3px)" }}
           transition={{
-            delay: 0.5 + links.length * 0.08 + 0.2,
+            delay: TOTAL_ANIMATION_DELAY + 0.28,
             duration: 0.25,
             ease: "easeOut",
           }}
