@@ -1,14 +1,14 @@
 "use client"
 import { useLanguageContext } from "@/contexts/languageContext"
 import { BugIcon, InfoIcon } from "@phosphor-icons/react"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 
 function Developer() {
   const { language } = useLanguageContext()
   return (
     <section
       className="mx-auto flex min-h-full w-full max-w-lg flex-col gap-2 p-6"
-      id="time-format"
+      id="dev-zone"
       data-section
     >
       <div className="flex w-full gap-2 max-md:flex-col-reverse md:items-center md:justify-between">

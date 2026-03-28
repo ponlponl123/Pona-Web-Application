@@ -439,6 +439,7 @@ function Header() {
                 onPushLocation={() => {
                   setNavOpened(false)
                 }}
+                canCollapsed={false}
                 setNavActive={setNavOpened}
               />
             )}

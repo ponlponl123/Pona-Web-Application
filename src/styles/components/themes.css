@@ -1,0 +1,96 @@
+.theme-preview {
+  @apply border-foreground mx-auto mt-6 h-48 w-80 rounded-xl border-3;
+}
+.theme-preview > .tp-header {
+  @apply flex h-8 w-full gap-2 p-3;
+}
+.theme-preview > .tp-body {
+  @apply flex w-full flex-col gap-2 px-6 pt-4;
+  height: calc(100% - 32px - 40px);
+}
+.theme-preview > .tp-footer {
+  @apply flex h-10 w-full flex-col items-center justify-center gap-1 p-3;
+}
+.theme-preview .tp-chip {
+  @apply bg-foreground h-3 w-4 rounded-full;
+}
+.theme-preview .tp-chip.tp-chip-2-10 {
+  @apply h-3 w-8;
+}
+.theme-preview .tp-chip.tp-chip-3-10 {
+  @apply h-3 w-14;
+}
+.theme-preview .tp-chip.tp-chip-4-10 {
+  @apply h-3 w-24;
+}
+.theme-preview .tp-chip.tp-chip-6-10 {
+  @apply h-3 w-32;
+}
+.theme-preview .tp-chip.tp-foreground {
+  @apply bg-foreground;
+}
+.theme-preview .tp-chip.tp-secondary {
+  @apply bg-secondary;
+}
+.theme-preview .tp-chip.tp-warning {
+  @apply bg-warning;
+}
+.theme-preview .tp-chip.tp-sm {
+  @apply h-2;
+}
+.theme-preview .tp-chip.tp-xs {
+  @apply h-1;
+}
+.theme-preview .tp-dot {
+  @apply bg-foreground h-3 w-3 rounded-full;
+}
+.theme-preview .tp-dot.tp-dot-primary {
+  @apply bg-primary;
+}
+.theme-preview .tp-dot.tp-dot-success {
+  @apply bg-success;
+}
+.theme-preview .tp-dot.tp-dot-danger {
+  @apply bg-danger;
+}
+
+button.theme-dot {
+  @apply border-foreground flex h-8 w-8 items-center justify-center rounded-full border-2 bg-transparent;
+  padding: 3px;
+}
+
+button.theme-dot.active {
+  @apply shadow-primary scale-110 border-3 border-primary shadow-lg;
+}
+
+button.theme-dot > div {
+  @apply bg-foreground flex h-full w-full rotate-45 flex-row overflow-hidden rounded-full;
+}
+
+button.theme-dot > div > div {
+  @apply flex h-full w-1/2 flex-col;
+}
+
+button.theme-dot > div > div::before,
+button.theme-dot > div > div::after {
+  content: "";
+  @apply h-1/2 w-full;
+  filter: blur(1px);
+}
+button.theme-dot > div > :nth-child(1)::before {
+  @apply hidden bg-background;
+}
+button.theme-dot > div > :nth-child(1)::after {
+  @apply bg-foreground;
+  filter: blur(10px);
+}
+button.theme-dot > div > :nth-child(2)::before {
+  @apply bg-primary;
+}
+button.theme-dot > div > :nth-child(2)::after {
+  @apply bg-secondary;
+}
+
+button.theme-dot > div > :nth-child(1) {
+  @apply bg-background;
+}

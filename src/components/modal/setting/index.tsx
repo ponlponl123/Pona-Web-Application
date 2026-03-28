@@ -39,22 +39,53 @@ const SettingModalContext = React.createContext<{
   setSelectedPage: (pageKey: PageKey) => void
   bodyRef: React.RefObject<HTMLDivElement | null>
   sidebarRef: React.RefObject<HTMLDivElement | null>
+  lookingAt?: string
+  scrollTo: (id: string) => void
 }>({
   SelectedPageKey: "layout",
   setSelectedPage: () => {},
   bodyRef: React.createRef(),
   sidebarRef: React.createRef(),
+  lookingAt: "",
+  scrollTo: () => {},
 })
 
 const SettingModalProvider = ({ children }: { children: React.ReactNode }) => {
   const { userInfo } = useDiscordUserInfo()
   const [SelectedPageKey, setSelectedPageKey] =
     React.useState<PageKey>("layout")
+  const [lookingAt, setLookingAt] = React.useState("")
   const bodyRef = React.useRef<HTMLDivElement | null>(null)
   const sidebarRef = React.useRef<HTMLDivElement | null>(null)
 
   const setSelectedPage = (pageKey: PageKey) => {
     setSelectedPageKey(pageKey)
+  }
+
+  const handleContentScroll = (e: Event) => {}
+
+  React.useEffect(() => {
+    if (bodyRef.current) {
+      bodyRef.current.addEventListener("scroll", handleContentScroll)
+    }
+    return () => {
+      if (bodyRef.current) {
+        bodyRef.current.removeEventListener("scroll", handleContentScroll)
+      }
+    }
+  }, [bodyRef])
+
+  const scrollTo = (id: string) => {
+    const sectionElement = document.querySelector(`#${id.substring(1)}`)
+    if (sectionElement && bodyRef.current) {
+      const appTop = bodyRef.current.getBoundingClientRect().top
+      const offset = sectionElement.id.match(/(-)/g) ? 156 : 96
+      const sectionTop = sectionElement.getBoundingClientRect().top - offset
+      bodyRef.current.scrollTo({
+        top: sectionTop - appTop + bodyRef.current.scrollTop,
+        behavior: "smooth",
+      })
+    }
   }
 
   React.useEffect(() => {
@@ -70,6 +101,8 @@ const SettingModalProvider = ({ children }: { children: React.ReactNode }) => {
         setSelectedPage,
         bodyRef,
         sidebarRef,
+        lookingAt,
+        scrollTo,
       }}
     >
       {children}
@@ -86,7 +119,7 @@ function SettingModal() {
   const { language } = useLanguageContext()
   const { isSettingModalOpen, setIsSettingModalOpen, settingLayoutId } =
     useGlobalContext()
-  const { SelectedPageKey } = useSettingModalContext()
+  const { SelectedPageKey, sidebarRef, bodyRef } = useSettingModalContext()
 
   const closeModal = () => setIsSettingModalOpen(false)
 
@@ -110,7 +143,10 @@ function SettingModal() {
         <XIcon weight="bold" className="size-4" />
       </Button>
       <div className="flex min-h-0 flex-1 flex-row">
-        <Modal.Body className="mt-0 w-48 flex-none border-r border-foreground/10 text-foreground">
+        <Modal.Body
+          className="mt-0 w-48 flex-none border-r border-foreground/10 text-foreground"
+          ref={sidebarRef}
+        >
           <div className="p-2">
             <SettingModalSidebar />
           </div>
@@ -154,7 +190,10 @@ function SettingModal() {
               key={"setting-modal-body-" + SelectedPageKey}
               className="h-full w-full"
             >
-              <Modal.Body className="mt-0 h-full w-full text-foreground">
+              <Modal.Body
+                className="mt-0 h-full w-full text-foreground"
+                ref={bodyRef}
+              >
                 {Pages[SelectedPageKey]}
               </Modal.Body>
             </motion.div>

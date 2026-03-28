@@ -543,6 +543,8 @@
       },
       "layout": {
         "title": "Layout",
+        "description": "Customize the visual structure and arrangement of the interface.",
+        "appearance": "Appearance",
         "theme": {
           "title": "Theme",
           "day": "Day Theme",
@@ -677,7 +679,20 @@
         "title": "Keybinds",
         "description": "Customize your shortcuts for a faster workflow.",
         "announcement": "Keybind customization is currently in the Lab! We're fine-tuning the experience—stay tuned for updates.",
-        "move": "Move"
+        "move": "Move",
+        "category": {
+          "appearance": "Appearance"
+        },
+        "readonly": "Locked",
+        "readonly_description": "This keybinding is fixed and cannot be changed.",
+        "disabled": "Disabled",
+        "disabled_description": "This shortcut is currently inactive.",
+        "keys": {
+          "dark_light_toggle": {
+            "title": "Toggle Theme",
+            "description": "Switch between dark and light appearance modes."
+          }
+        }
       },
       "dev_mode": {
         "title": "Dev Zone",

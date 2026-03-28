@@ -118,12 +118,15 @@ function ModalDescription({
 function ModalBody({
   children,
   className,
+  ref,
 }: {
   children: React.ReactNode
   className?: string
+  ref?: React.Ref<HTMLDivElement>
 }) {
   return (
     <CustomScrollArea
+      ref={ref}
       className={cn("mt-6 flex min-h-0 flex-1 flex-col", className)}
     >
       {children}

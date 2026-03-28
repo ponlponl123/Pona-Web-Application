@@ -135,7 +135,7 @@ function LanguageAndTime() {
       </section>
       <section
         className="mx-auto flex min-h-full w-full max-w-lg flex-col gap-2 p-6"
-        id="time-format"
+        id="language"
         data-section
       >
         <div className="flex w-full gap-2 max-md:flex-col-reverse md:items-center md:justify-between">
@@ -188,7 +188,7 @@ function LanguageAndTime() {
                   variant={language.key === lang.key ? "default" : "ghost"}
                   data-smooth-interaction="true"
                   className={cn(
-                    "flex w-full justify-start gap-3 rounded-xl border-2 border-transparent px-4 py-6",
+                    "flex w-full justify-start gap-3 rounded-xl border-2 border-transparent px-4 py-6 not-dark:hover:bg-foreground/5",
                     language.key === lang.key &&
                       "border-foreground/40 bg-foreground/10 text-foreground"
                   )}

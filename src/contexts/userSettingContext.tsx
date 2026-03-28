@@ -10,26 +10,28 @@ export type Location = "auto" | "surprise" | LatLngExpression
 export type PonaPlayerStyle = "modern" | "compact"
 export interface UserSetting {
   // Layout Settings
-  transparency?: boolean
-  timeformat?: TimeFormat
-  thermometer?: Thermometer
-  animation?: Animation
+  transparency: boolean
+  timeformat: TimeFormat
+  thermometer: Thermometer
+  animation: Animation
+  isSidebarCollapsed: boolean
   // Privacy Settings
-  location?: Location
-  dev_pona_player_style?: PonaPlayerStyle
+  location: Location
+  dev_pona_player_style: PonaPlayerStyle
 }
 export const defaultUserSetting: UserSetting = {
   transparency: true,
   timeformat: "auto",
   thermometer: "c",
   animation: true,
+  isSidebarCollapsed: false,
   location: "auto",
   dev_pona_player_style: "compact",
 }
 
 const UserSettingContext = createContext<{
   userSetting: UserSetting
-  setUserSetting: (setting: UserSetting) => void
+  setUserSetting: (setting: Partial<UserSetting>) => void
 }>({
   userSetting: defaultUserSetting,
   setUserSetting: () => {},
@@ -40,7 +42,8 @@ export const UserSettingProvider = ({
 }: {
   children: React.ReactNode
 }) => {
-  const [userSetting, setUserSettingState] = useState<UserSetting>({})
+  const [userSetting, setUserSettingState] =
+    useState<UserSetting>(defaultUserSetting)
 
   React.useEffect(() => {
     const userSettingFromCookie = getCookie("USR")
@@ -59,12 +62,13 @@ export const UserSettingProvider = ({
     } else setUserSettingState(defaultUserSetting)
   }, [setUserSettingState])
 
-  const setUserSetting = (setting: UserSetting) => {
-    const encodedSetting = btoa(JSON.stringify(setting))
+  const setUserSetting = (setting: Partial<UserSetting>) => {
+    const buildSetting = { ...userSetting, ...setting }
+    const encodedSetting = btoa(JSON.stringify(buildSetting))
     setCookie("USR", encodedSetting, {
       expires: new Date(new Date().getTime() + 90 * 24 * 60 * 60 * 1000), // expires in 90 days
     })
-    setUserSettingState(setting)
+    setUserSettingState(buildSetting)
   }
 
   return (

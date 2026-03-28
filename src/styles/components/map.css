@@ -1,0 +1,5 @@
+.map-layer,
+.leaflet-tile-container {
+  filter: var(--mapfilter);
+  -webkit-filter: var(--mapfilter);
+}

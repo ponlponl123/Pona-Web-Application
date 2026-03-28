@@ -139,7 +139,7 @@ function LanguageSelectorModal() {
                   variant={language.key === lang.key ? "default" : "ghost"}
                   data-smooth-interaction="true"
                   className={cn(
-                    "flex w-full justify-start gap-3 rounded-xl border-2 border-transparent px-4 py-6",
+                    "flex w-full justify-start gap-3 rounded-xl border-2 border-transparent px-4 py-6 not-dark:hover:bg-foreground/5",
                     language.key === lang.key &&
                       "border-foreground/40 bg-foreground/10 text-foreground"
                   )}

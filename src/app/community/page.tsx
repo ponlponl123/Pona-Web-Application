@@ -4,7 +4,7 @@ import React from "react"
 
 import confetti from "canvas-confetti"
 import { langs } from "@/lib/i18n"
-import { fonts_credits } from "@/data/fonts-author"
+import { fonts_credits } from "@/consts/fonts-author"
 import Image from "next/image"
 import {
   ArticleIcon,

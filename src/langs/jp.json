@@ -547,6 +547,8 @@
       },
       "layout": {
         "title": "レイアウト",
+        "description": "インターフェースの視覚的な構造や配置をカスタマイズします。",
+        "appearance": "外観",
         "theme": {
           "title": "テーマ",
           "day": "昼テーマ",
@@ -681,7 +683,20 @@
         "title": "キーバインド",
         "description": "操作を効率化するためにショートカットをカスタマイズします。",
         "announcement": "キーバインド機能は現在開発中です（Lab内）。最高の体験をお届けするために準備中ですので、続報をお待ちください！",
-        "move": "移動"
+        "move": "移動",
+        "category": {
+          "appearance": "外観"
+        },
+        "readonly": "固定",
+        "readonly_description": "このキーバインドは変更できません。",
+        "disabled": "無効",
+        "disabled_description": "このショートカットは現在利用できません。",
+        "keys": {
+          "dark_light_toggle": {
+            "title": "テーマ切り替え",
+            "description": "ダークモードとライトモードを切り替えます。"
+          }
+        }
       },
       "dev_mode": {
         "title": "デベロッパーゾーン",

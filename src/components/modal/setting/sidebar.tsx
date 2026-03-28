@@ -46,7 +46,8 @@ function SettingModalSidebar() {
   const { language } = useLanguageContext()
   const { setIsSettingModalOpen } = useGlobalContext()
   const { userInfo, revokeUserAccessToken } = useDiscordUserInfo()
-  const { SelectedPageKey, setSelectedPage } = useSettingModalContext()
+  const { SelectedPageKey, setSelectedPage, lookingAt, scrollTo } =
+    useSettingModalContext()
 
   const links: Links[] = [
     userInfo && {
@@ -73,7 +74,28 @@ function SettingModalSidebar() {
           name: language.data.app.setting.layout.title,
           target: "layout",
           icon: <ShapesIcon weight="fill" className="size-4" />,
-          subpages: [],
+          subpages: [
+            {
+              name: language.data.app.setting.layout.theme.title,
+              target: "#theme",
+            },
+            {
+              name: language.data.app.setting.layout.amoled_black.title,
+              target: "#amoled-black",
+            },
+            {
+              name: language.data.app.setting.layout.player.title,
+              target: "#player",
+            },
+            {
+              name: language.data.app.setting.layout.transparency.title,
+              target: "#transparency",
+            },
+            {
+              name: language.data.app.setting.layout.animation.title,
+              target: "#animation",
+            },
+          ],
         },
         {
           name: language.data.app.setting.keybinds.title,
@@ -238,37 +260,129 @@ function SettingModalSidebar() {
             </motion.span>
             {category.links.map((link, linkIndex) => {
               return (
-                <motion.button
-                  initial={{ opacity: 0, filter: "blur(3px)" }}
-                  animate={{ opacity: 1, filter: "blur(0px)" }}
-                  exit={{ opacity: 0, filter: "blur(3px)" }}
-                  transition={{
-                    delay:
-                      PreCalcCategoryDelays[categoryIndex].linkDelays[
-                        linkIndex
-                      ],
-                    duration: 0.25,
-                    ease: "easeOut",
-                  }}
-                  data-smooth-interaction="true"
-                  className={cn(
-                    "group flex w-full items-center justify-start gap-2 rounded-lg bg-transparent px-3 py-2 text-start",
-                    "not-hover:text-foreground/60",
-                    "hover:bg-foreground/10 active:bg-foreground/10 dark:hover:bg-foreground/5",
-                    SelectedPageKey === link.target &&
-                      "bg-foreground/10 text-foreground dark:text-foreground"
-                  )}
+                <React.Fragment
                   key={
                     "setting-modal-sidebar-category-" +
                     categoryIndex +
                     "-link-" +
                     linkIndex
                   }
-                  onClick={() => setSelectedPage(link.target)}
                 >
-                  {link.icon}
-                  <span className="text-sm">{link.name}</span>
-                </motion.button>
+                  <motion.button
+                    initial={{ opacity: 0, filter: "blur(3px)" }}
+                    animate={{ opacity: 1, filter: "blur(0px)" }}
+                    exit={{ opacity: 0, filter: "blur(3px)" }}
+                    transition={{
+                      delay:
+                        PreCalcCategoryDelays[categoryIndex].linkDelays[
+                          linkIndex
+                        ],
+                      duration: 0.25,
+                      ease: "easeOut",
+                    }}
+                    data-smooth-interaction="true"
+                    className={cn(
+                      "group flex w-full items-center justify-start gap-2 rounded-lg bg-transparent px-3 py-2 text-start",
+                      "not-hover:text-foreground/60",
+                      "hover:bg-foreground/10 active:bg-foreground/10 dark:hover:bg-foreground/5",
+                      SelectedPageKey === link.target &&
+                        "bg-foreground/10 text-foreground dark:text-foreground"
+                    )}
+                    onClick={() => setSelectedPage(link.target)}
+                  >
+                    {link.icon}
+                    <span className="text-sm">{link.name}</span>
+                  </motion.button>
+                  <motion.div
+                    initial={{ opacity: 0, filter: "blur(3px)" }}
+                    animate={{ opacity: 1, filter: "blur(0px)" }}
+                    exit={{ opacity: 0, filter: "blur(3px)" }}
+                    transition={{
+                      delay:
+                        PreCalcCategoryDelays[categoryIndex].linkDelays[
+                          linkIndex
+                        ],
+                      duration: 0.25,
+                      ease: "easeOut",
+                    }}
+                    className={cn(
+                      link.subpages.length > 0 &&
+                        SelectedPageKey === link.target
+                        ? "w-full"
+                        : "hidden"
+                    )}
+                  >
+                    {link.subpages.length > 0 &&
+                      SelectedPageKey === link.target && (
+                        <motion.div
+                          initial={{ opacity: 0, y: -3 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -3 }}
+                          transition={{
+                            duration: 0.25,
+                            ease: "easeOut",
+                          }}
+                          className="relative flex w-full flex-col items-start justify-start px-1"
+                        >
+                          <motion.div
+                            className={cn(
+                              "absolute left-2.5 block w-0.5 bg-foreground/10",
+                              "group-first/sub:rounded-t-full group-last/sub:rounded-b-full"
+                            )}
+                            initial={{ height: "0%", originY: 0 }}
+                            animate={{ height: "100%" }}
+                            exit={{ height: "0%", originY: 1 }}
+                            transition={{
+                              duration: link.subpages.length * 0.08,
+                              ease: "linear",
+                            }}
+                          />
+                          {link.subpages.map((tos, tos_index) => (
+                            <motion.div
+                              key={
+                                "setting-modal-sidebar-category-" +
+                                categoryIndex +
+                                "-link-" +
+                                linkIndex +
+                                "-sub-" +
+                                tos_index
+                              }
+                              initial={{ opacity: 0, filter: "blur(3px)" }}
+                              animate={{ opacity: 1, filter: "blur(0px)" }}
+                              exit={{ opacity: 0, filter: "blur(3px)" }}
+                              transition={{
+                                delay: tos_index * 0.08,
+                                duration: 0.25,
+                                ease: "easeOut",
+                              }}
+                              className={cn(
+                                "relative flex w-full items-start justify-start gap-2 pr-1 pl-4",
+                                `group/sub`
+                              )}
+                            >
+                              {lookingAt === tos.target && (
+                                <motion.div
+                                  className={cn(
+                                    "absolute left-1.5 block h-full w-0.5 rounded-full bg-foreground"
+                                  )}
+                                />
+                              )}
+                              <motion.button
+                                className={cn(
+                                  "relative flex w-full items-center justify-start gap-2 rounded-md px-2 py-1 text-start text-foreground/40",
+                                  "hover:text-foreground/80"
+                                )}
+                                data-smooth-interaction="true"
+                                onClick={() => scrollTo(tos.target)}
+                              >
+                                {tos.name}
+                              </motion.button>
+                            </motion.div>
+                          ))}
+                        </motion.div>
+                      )}
+                  </motion.div>
+                </React.Fragment>
               )
             })}
 

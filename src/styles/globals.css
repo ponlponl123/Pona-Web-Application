@@ -55,4 +55,6 @@
   @import "./components/footer.css";
   @import "./components/service-status.css";
   @import "./components/scroll-area.css";
+  @import "./components/themes.css";
+  @import "./components/map.css";
 }

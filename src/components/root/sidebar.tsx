@@ -37,12 +37,13 @@ import {
 } from "@phosphor-icons/react"
 import clsx from "clsx"
 import { cn } from "@/lib/utils"
+import { useState, useEffect, useMemo } from "react"
 import FrozenRoute from "../HOC/FrozenRoute"
-import React, { useState, useEffect } from "react"
+import { usePathname } from "next/navigation"
 import { AnimatePresence, motion } from "motion/react"
-import { usePathname, useRouter } from "next/navigation"
 import ActivationLink from "@/components/activationLink"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip"
+import { useUserSettingContext } from "@/contexts/userSettingContext"
 
 const variants = {
   hidden: { opacity: 0, x: -12, y: 0 },
@@ -54,7 +55,7 @@ interface SidebarProps {
   userInfo: UserInfo
   nav?: boolean
   onPushLocation?: () => void
-  canCollapsed?: boolean
+  canCollapsed: boolean
   onCollapsed?: (value: boolean) => void
   setNavActive?: (value: boolean) => void
 }
@@ -63,7 +64,7 @@ function Sidebar({
   userInfo,
   nav = false,
   onPushLocation,
-  canCollapsed,
+  canCollapsed = true,
   onCollapsed,
   setNavActive,
 }: SidebarProps) {
@@ -79,27 +80,30 @@ function Sidebar({
     setIsSettingModalOpen,
     setSettingLayoutId,
   } = useGlobalContext()
-  const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(false)
-  const router = useRouter()
+  const { userSetting, setUserSetting } = useUserSettingContext()
+  const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(
+    userSetting.isSidebarCollapsed
+  )
 
   const inGuild = pathname.startsWith("/app/g/")
-  const isCollapsed = Boolean(canCollapsed && sidebarCollapsed)
+  const isCollapsed = canCollapsed && sidebarCollapsed
 
   const handlePushLocation = () => {
     if (onPushLocation) onPushLocation()
   }
 
   useEffect(() => {
-    if (!isCollapsed) {
-      document.body.classList.remove("sidebar-collapsed")
-    } else {
-      document.body.classList.add("sidebar-collapsed")
-    }
+    if (!isCollapsed) document.body.classList.remove("sidebar-collapsed")
+    else document.body.classList.add("sidebar-collapsed")
 
     return () => {
       document.body.classList.remove("sidebar-collapsed")
     }
   }, [isCollapsed])
+
+  useEffect(() => {
+    setSidebarCollapsed(userSetting.isSidebarCollapsed)
+  }, [userSetting])
 
   return (
     <main
@@ -370,6 +374,10 @@ function Sidebar({
                       const newState = !prev
                       if (onCollapsed) onCollapsed(newState)
                       return newState
+                    })
+                    setUserSetting({
+                      ...userSetting,
+                      isSidebarCollapsed: !sidebarCollapsed,
                     })
                   }}
                   data-smooth-interaction="true"

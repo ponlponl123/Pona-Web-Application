@@ -66,6 +66,19 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const themeScript = `
+    (function() {
+      try {
+        const storedTheme = localStorage.getItem('app-theme');
+        
+        if (storedTheme) {
+          document.documentElement.setAttribute('data-theme', storedTheme);
+        }
+      } catch (e) {
+        console.error('Theme script failed', e);
+      }
+    })();
+  `
   return (
     <html
       lang="en"
@@ -79,6 +92,9 @@ export default function RootLayout({
         jetbrainsMono.variable
       )}
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body>
         <NextTopLoader
           color="#ff80c6"
