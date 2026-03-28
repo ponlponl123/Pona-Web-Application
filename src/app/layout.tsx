@@ -13,6 +13,7 @@ import Footer from "@/components/root/footer"
 import { isValidLanguageKey } from "@/lib/i18n"
 import { ThemeProvider } from "@/components/theme-provider"
 import LanguageSelectorModal from "@/components/modal/language-selector"
+import { themeScript } from "@/hooks/theme"
 
 const fontSans = Geist({
   subsets: ["latin"],
@@ -66,19 +67,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const themeScript = `
-    (function() {
-      try {
-        const storedTheme = localStorage.getItem('app-theme');
-        
-        if (storedTheme) {
-          document.documentElement.setAttribute('data-theme', storedTheme);
-        }
-      } catch (e) {
-        console.error('Theme script failed', e);
-      }
-    })();
-  `
   return (
     <html
       lang="en"
