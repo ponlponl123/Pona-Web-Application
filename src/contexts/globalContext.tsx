@@ -43,6 +43,11 @@ const GlobalContext = createContext<{
 
   isSettingModalOpen: boolean
   setIsSettingModalOpen: Dispatch<SetStateAction<boolean>>
+  settingLayoutId: string
+  setSettingLayoutId: Dispatch<SetStateAction<string>>
+
+  isFeedbackModalOpen: boolean
+  setIsFeedbackModalOpen: Dispatch<SetStateAction<boolean>>
 }>({
   isMobile: false,
 
@@ -69,6 +74,11 @@ const GlobalContext = createContext<{
 
   isSettingModalOpen: false,
   setIsSettingModalOpen: () => {},
+  settingLayoutId: "setting-modal",
+  setSettingLayoutId: () => {},
+
+  isFeedbackModalOpen: false,
+  setIsFeedbackModalOpen: () => {},
 })
 
 export const GlobalProvider = ({
@@ -93,6 +103,9 @@ export const GlobalProvider = ({
     useState<FullScreenMode>(false)
   const [isLanguageModalOpen, setIsLanguageModalOpen] = useState<boolean>(false)
   const [isSettingModalOpen, setIsSettingModalOpen] = useState<boolean>(false)
+  const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState<boolean>(false)
+  const [settingLayoutId, setSettingLayoutId] =
+    useState<string>("setting-modal")
 
   React.useEffect(() => {
     if (ponaCommonState?.pona.voiceChannel && isMemberInVC?.id)
@@ -119,6 +132,10 @@ export const GlobalProvider = ({
         setIsLanguageModalOpen,
         isSettingModalOpen,
         setIsSettingModalOpen,
+        settingLayoutId,
+        setSettingLayoutId,
+        isFeedbackModalOpen,
+        setIsFeedbackModalOpen,
       }}
     >
       {children}

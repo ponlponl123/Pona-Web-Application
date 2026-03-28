@@ -34,7 +34,8 @@
       "signinas": "Signed in as",
       "playground": "Playground",
       "setting": "Configurations",
-      "support": "Help & Feedback",
+      "support": "Help & Support",
+      "feedback": "Feedback",
       "logout": "Log Out"
     }
   },
@@ -529,8 +530,13 @@
     "setting": {
       "name": "Setting",
       "back": "Back to App",
+      "category": {
+        "user_setting": "User Settings",
+        "app_setting": "App Settings",
+        "developer": "For Developer"
+      },
       "account": {
-        "title": "Account",
+        "title": "My Account",
         "announcement": "Connected with Discord!",
         "display_name": "Display Name",
         "username": "Username"
@@ -617,7 +623,7 @@
         }
       },
       "privacy": {
-        "title": "Security & Privacy Vault",
+        "title": "Data & Privacy",
         "description": "You can manage your privacy yourself or grant some permissions to the app to make the application experience smoother and better. We promise that your security and privacy information will be kept on your device and no data will be sent to the cloud or server unless necessary. [read_privacypolicy]",
         "read_privacypolicy": "Read on to learn more about our privacy policy",
         "cookie": {

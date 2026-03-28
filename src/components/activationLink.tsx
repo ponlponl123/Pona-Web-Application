@@ -1,10 +1,11 @@
 "use client"
-import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
 import type { Icon as IconType } from "@phosphor-icons/react"
-import { usePathname } from "next/navigation"
-import { useRouter } from "nextjs-toploader/app"
 import React, { useCallback, useEffect, useRef, useState } from "react"
+import { useRouter } from "nextjs-toploader/app"
+import { usePathname } from "next/navigation"
+import { motion } from "motion/react"
 
 interface ActivationLinkProps {
   href?: string
@@ -16,6 +17,7 @@ interface ActivationLinkProps {
   isActive?: boolean
   iconOnly?: boolean
   isDisabled?: boolean
+  layoutId?: string
 }
 
 function ActivationLink({
@@ -28,6 +30,7 @@ function ActivationLink({
   isActive = false,
   iconOnly = false,
   isDisabled = false,
+  layoutId,
 }: ActivationLinkProps) {
   const router = useRouter()
   const pathname = usePathname() || ""
@@ -139,19 +142,20 @@ function ActivationLink({
   }, [isSection, handleScroll, href, pathname])
 
   return (
-    <div className="block w-full overflow-hidden rounded-lg duration-0">
-      <Button
+    <motion.div className="block w-full rounded-lg duration-0">
+      <motion.button
         onClick={clicked}
         ref={buttonRef}
         className={cn(
-          `w-full justify-start rounded-lg`,
+          `flex h-9 w-full items-center justify-start gap-2 rounded-lg px-3 py-1.5 text-sm select-none hover:bg-foreground/10 dark:hover:bg-foreground/5`,
+          isHere &&
+            "bg-primary text-primary-foreground hover:bg-primary/80 dark:hover:bg-primary/80",
           iconOnly && "size-10",
           className
         )}
-        variant={isHere ? "default" : "ghost"}
-        size={iconOnly ? "icon" : "lg"}
         disabled={isDisabled}
         data-smooth-interaction="true"
+        layoutId={layoutId}
       >
         {iconOnly && Icon ? (
           <div className="m-auto">
@@ -169,8 +173,8 @@ function ActivationLink({
             {children}
           </>
         )}
-      </Button>
-    </div>
+      </motion.button>
+    </motion.div>
   )
 }
 

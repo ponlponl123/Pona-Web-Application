@@ -1,6 +1,5 @@
 "use client"
-import React from "react"
-import { Button } from "../button"
+import React, { useEffect, useRef } from "react"
 import { AnimatePresence, motion } from "motion/react"
 import CustomScrollArea from "./scroll-area"
 import { cn } from "@/lib/utils"
@@ -23,10 +22,19 @@ function Modal({
   isOpen: boolean
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
 }) {
+  const modalRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (isOpen && modalRef.current) {
+      modalRef.current.focus()
+    }
+  }, [isOpen])
+
   return (
     <AnimatePresence>
       {isOpen && (
         <motion.div
+          ref={modalRef}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -35,6 +43,10 @@ function Modal({
             "fixed inset-0 z-1000 flex overflow-hidden overflow-y-auto bg-black/40 p-2 backdrop-blur-md",
             classNames?.root
           )}
+          onKeyDown={(e) => {
+            if (e.key === "Escape") setIsOpen(false)
+          }}
+          tabIndex={0}
         >
           <motion.div
             layoutId={layoutId}

@@ -147,6 +147,7 @@ function Page() {
                               "/" +
                               note.version.replace(".md", "")
                             }
+                            tabIndex={-1}
                             className="delay-300 duration-700 group-not-data-active/patch-note-list:delay-100 group-data-active/patch-note-list:opacity-40 hover:opacity-100"
                           >
                             <Button

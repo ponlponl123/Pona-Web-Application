@@ -34,7 +34,8 @@
       "signinas": "としてログイン中",
       "playground": "プレイグラウンド",
       "setting": "設定",
-      "support": "ヘルプ＆フィードバック",
+      "support": "サポート",
+      "feedback": "ご意見・ご要望",
       "logout": "ログアウト"
     }
   },
@@ -533,6 +534,11 @@
     "setting": {
       "name": "設定",
       "back": "アプリに戻る",
+      "category": {
+        "user_setting": "ユーザー設定",
+        "app_setting": "アプリ設定",
+        "developer": "開発者向け"
+      },
       "account": {
         "title": "アカウント",
         "announcement": "Discordに接続しました！",
@@ -621,7 +627,7 @@
         }
       },
       "privacy": {
-        "title": "セキュリティとプライバシー",
+        "title": "データとプライバシー",
         "description": "プライバシー設定を管理し、アプリの権限を調整することで、より快適な利用体験が可能です。お客様のプライバシー情報はデバイス上に保存され、必要時以外にサーバーへ送信されることはありません。[read_privacypolicy]",
         "read_privacypolicy": "プライバシーポリシーの詳細はこちら",
         "cookie": {

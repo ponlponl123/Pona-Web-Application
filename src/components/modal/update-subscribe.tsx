@@ -91,9 +91,13 @@ function UpdateSubscribeModal({
                   </h2>
                 </div>
               )}
-              <Link href="https://ponl.link/disgd" target="_blank">
+              <Link
+                href="https://ponl.link/disgd"
+                target="_blank"
+                tabIndex={-1}
+              >
                 <Button
-                  className="w-full justify-start gap-4 rounded-lg border-2 border-foreground/10 bg-transparent px-4 py-8 hover:bg-foreground/5"
+                  className="w-full justify-start gap-4 rounded-lg border-2 border-foreground/10 bg-transparent px-4 py-8 text-foreground hover:bg-foreground/5"
                   data-smooth-interaction="true"
                 >
                   <MegaphoneSimpleIcon weight="bold" className="size-4" />

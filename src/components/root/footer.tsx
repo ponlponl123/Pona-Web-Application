@@ -92,6 +92,7 @@ function Footer() {
               href={link.href}
               target={link.href.startsWith("http") ? "_blank" : "_self"}
               rel="noopener noreferrer"
+              tabIndex={-1}
             >
               <Button
                 className="flex items-center gap-1 rounded-xl hover:text-primary"

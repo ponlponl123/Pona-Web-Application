@@ -445,7 +445,7 @@ function Header() {
           </div>
           <div className="flex items-center gap-3">
             {!userInfo && (
-              <Link href="/app" rel="noopener noreferrer">
+              <Link href="/app" rel="noopener noreferrer" tabIndex={-1}>
                 <MyButton
                   size="small"
                   variant="text"
@@ -467,7 +467,7 @@ function Header() {
               </>
             ) : (
               <>
-                <Link href="/invite" rel="noopener noreferrer">
+                <Link href="/invite" rel="noopener noreferrer" tabIndex={-1}>
                   <MyButton
                     size="small"
                     variant="primary"

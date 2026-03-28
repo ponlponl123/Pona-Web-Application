@@ -4,6 +4,7 @@ import { useLanguageContext } from "@/contexts/languageContext"
 import {
   ConfettiIcon,
   GearSixIcon,
+  HandHeartIcon,
   LifebuoyIcon,
   ListIcon,
   LockSimpleIcon,
@@ -27,7 +28,9 @@ export default function UserAccountDropdown({
 }) {
   const [isActive, setIsActive] = useState(false)
   const { userInfo, revokeUserAccessToken } = useDiscordUserInfo()
-  const { setIsSettingModalOpen } = useGlobalContext()
+  const { setIsSettingModalOpen, setIsFeedbackModalOpen, setSettingLayoutId } =
+    useGlobalContext()
+  const popupRef = useRef<HTMLDivElement>(null)
   const { language } = useLanguageContext()
 
   const cooldownRef = useRef<NodeJS.Timeout | null>(null)
@@ -50,7 +53,7 @@ export default function UserAccountDropdown({
 
   const dropdownBtnClassname = cn(
     "px-3 py-2",
-    "flex w-full items-center justify-start gap-3 rounded-lg hover:bg-foreground/10 active:scale-95 dark:hover:bg-foreground/5"
+    "flex w-full items-center justify-start gap-3 rounded-lg hover:bg-foreground/10 dark:hover:bg-foreground/5"
   )
 
   const handleToggle = () => {
@@ -61,9 +64,17 @@ export default function UserAccountDropdown({
     }, 450)
   }
 
+  React.useEffect(() => {
+    if (isActive && popupRef.current) popupRef.current.focus()
+  }, [isActive])
+
   return (
     <div className="relative">
-      <div className="pointer-events-none invisible" aria-hidden="true">
+      <div
+        className="pointer-events-none invisible"
+        aria-hidden="true"
+        tabIndex={-1}
+      >
         <div className={cn(btnClassname, userInfo && "rounded-full p-1")}>
           {userInfo ? (
             <div className="h-8 w-8" />
@@ -82,8 +93,10 @@ export default function UserAccountDropdown({
             layoutId={minimize ? undefined : "user-action"}
             className={cn(
               btnClassname,
-              "absolute top-0 left-0",
-              userInfo && "rounded-full p-1"
+              "absolute top-0 left-0 focus:outline-2 focus:outline-offset-2 focus:outline-focus focus:outline-solid",
+              userInfo
+                ? "rounded-full p-1"
+                : "hover:bg-foreground/10 dark:hover:bg-foreground/5"
             )}
             onClick={handleToggle}
             transition={layoutTransition}
@@ -94,12 +107,14 @@ export default function UserAccountDropdown({
                 scale: 0.93,
                 transition: { type: "spring", stiffness: 700, damping: 22 },
               }}
+              tabIndex={-1}
             >
               {userInfo ? (
                 <motion.div
                   layoutId="user-action-avatar"
                   layout="position"
                   transition={layoutTransition}
+                  tabIndex={-1}
                 >
                   <Avatar className="h-8 w-8">
                     <AvatarImage
@@ -118,6 +133,7 @@ export default function UserAccountDropdown({
           {isActive && (
             <motion.div
               key="modal"
+              ref={popupRef}
               layout
               layoutId="user-action"
               className="absolute top-16 right-0 z-1001 w-max max-w-64 overflow-hidden rounded-xl bg-card p-1 md:right-4"
@@ -125,6 +141,9 @@ export default function UserAccountDropdown({
               onClick={(e) => e.stopPropagation()}
               transition={layoutTransition}
               initial={false}
+              onKeyDown={(e) => {
+                if (e.key === "Escape") setIsActive(false)
+              }}
             >
               <div className="overflow-hidden overscroll-y-auto">
                 <motion.div
@@ -182,7 +201,7 @@ export default function UserAccountDropdown({
                       </motion.div>
                     </>
                   ) : (
-                    <Link href="/app" className="contents">
+                    <Link href="/app" className="contents" tabIndex={-1}>
                       <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -217,11 +236,22 @@ export default function UserAccountDropdown({
                     href: "https://ponl.link/disgd",
                   },
                   {
+                    icon: <HandHeartIcon weight="bold" className="size-4" />,
+                    label: language.data.header.account.feedback,
+                    className: cn(),
+                    layoutId: "feedback-modal",
+                    onClick: () => setIsFeedbackModalOpen(true),
+                    href: null,
+                  },
+                  {
                     icon: <GearSixIcon weight="bold" className="size-4" />,
                     label: language.data.header.account.setting,
                     className: cn(),
-                    layoutId: "setting-modal",
-                    onClick: () => setIsSettingModalOpen(true),
+                    layoutId: "setting-modal-by-account-dropdown",
+                    onClick: () => {
+                      ;(setSettingLayoutId("setting-modal-by-account-dropdown"),
+                        setIsSettingModalOpen(true))
+                    },
                     href: null,
                   },
                   userInfo && {
@@ -233,7 +263,11 @@ export default function UserAccountDropdown({
                     layoutId: undefined,
                     onClick: async () => {
                       revokeUserAccessToken().then(() => {
-                        window.location.reload()
+                        if (window.location.pathname.startsWith("/app")) {
+                          window.location.href = "/"
+                        } else {
+                          window.location.reload()
+                        }
                       })
                     },
                     href: null,
@@ -261,6 +295,7 @@ export default function UserAccountDropdown({
                           item.onClick && item.onClick()
                           setIsActive(false)
                         }}
+                        data-smooth-interaction="true"
                       >
                         {item.icon}
                         <span className="text-sm">{item.label}</span>
@@ -272,6 +307,7 @@ export default function UserAccountDropdown({
                       <Link
                         key={"account-dropdown-btn-" + index}
                         href={item.href}
+                        tabIndex={-1}
                       >
                         <DropdownButton />
                       </Link>

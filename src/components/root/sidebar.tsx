@@ -18,7 +18,6 @@ import {
   ConfettiIcon,
   CubeTransparentIcon,
   GearIcon,
-  HandHeartIcon,
   HeartIcon,
   HouseIcon,
   HouseSimpleIcon,
@@ -35,7 +34,7 @@ import {
   SunHorizonIcon,
   ThermometerIcon,
   WrenchIcon,
-} from "@phosphor-icons/react/dist/ssr"
+} from "@phosphor-icons/react"
 import clsx from "clsx"
 import { cn } from "@/lib/utils"
 import FrozenRoute from "../HOC/FrozenRoute"
@@ -73,7 +72,12 @@ function Sidebar({
   const isOwner = userInfo.id === ownerId
   const { guild } = useDiscordGuildInfo()
   const { language } = useLanguageContext()
-  const { ponaCommonState, isSameVC } = useGlobalContext()
+  const {
+    ponaCommonState,
+    isSameVC,
+    setIsSettingModalOpen,
+    setSettingLayoutId,
+  } = useGlobalContext()
   const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(false)
   const router = useRouter()
 
@@ -302,14 +306,6 @@ function Sidebar({
                         </span>
                       </Badge>
                     </ActivationLink>
-                    <ActivationLink
-                      iconOnly={canCollapsed && sidebarCollapsed}
-                      onClick={handlePushLocation}
-                      href="/app/feedback"
-                      icon={HandHeartIcon}
-                    >
-                      Feedback
-                    </ActivationLink>
                   </>
                 ) : (
                   guild && (
@@ -481,8 +477,11 @@ function Sidebar({
                       className="w-full"
                       iconOnly={canCollapsed && sidebarCollapsed}
                       onClick={() => {
-                        ;(handlePushLocation(), setNavActive?.(false))
+                        ;(setSettingLayoutId("setting-modal-by-app-sidebar"),
+                          setIsSettingModalOpen(true),
+                          setNavActive?.(false))
                       }}
+                      layoutId="setting-modal-by-app-sidebar"
                       icon={GearIcon}
                     >
                       {language.data.app.setting.name}
