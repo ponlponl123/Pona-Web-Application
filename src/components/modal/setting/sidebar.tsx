@@ -97,47 +97,58 @@ function SettingModalSidebar() {
         }}
         className={cn(
           "mb-0.5 flex w-full items-center justify-start gap-3 rounded-xl px-3 py-1 select-none hover:bg-foreground/5 not-dark:hover:bg-foreground/10",
-          !userInfo && "bg-transparent! p-0"
+          !userInfo && "bg-transparent! p-0",
+          SelectedPageKey === "account" && "opacity-0! blur-sm"
         )}
       >
         {userInfo ? (
           <>
-            <Avatar className="h-8 w-8">
-              <AvatarImage
-                src={`https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}.png`}
-              />
-              <AvatarFallback>
-                {userInfo.global_name.charAt(0).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
+            <motion.div layoutId="setting-modal-user-avatar">
+              <Avatar className="h-8 w-8">
+                <AvatarImage
+                  src={`https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}.png`}
+                />
+                <AvatarFallback>
+                  {userInfo.global_name.charAt(0).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+            </motion.div>
 
             <motion.div className="flex flex-col items-start py-1">
-              <motion.p
-                initial={{ opacity: 0, filter: "blur(3px)" }}
-                animate={{ opacity: 1, filter: "blur(0px)" }}
-                exit={{ opacity: 0, filter: "blur(3px)" }}
-                transition={{
-                  delay: 0.45,
-                  duration: 0.25,
-                  ease: "easeOut",
-                }}
+              <motion.div
                 className="leading-4 font-bold"
+                layoutId="setting-modal-user-global-name"
               >
-                {userInfo.global_name}
-              </motion.p>
-              <motion.strong
-                initial={{ opacity: 0, filter: "blur(3px)" }}
-                animate={{ opacity: 1, filter: "blur(0px)" }}
-                exit={{ opacity: 0, filter: "blur(3px)" }}
-                transition={{
-                  delay: 0.52,
-                  duration: 0.25,
-                  ease: "easeOut",
-                }}
+                <motion.span
+                  initial={{ opacity: 0, filter: "blur(3px)" }}
+                  animate={{ opacity: 1, filter: "blur(0px)" }}
+                  exit={{ opacity: 0, filter: "blur(3px)" }}
+                  transition={{
+                    delay: 0.45,
+                    duration: 0.25,
+                    ease: "easeOut",
+                  }}
+                >
+                  {userInfo.global_name}
+                </motion.span>
+              </motion.div>
+              <motion.div
+                layoutId="setting-modal-user-name"
                 className="text-xs leading-4 text-foreground/40"
               >
-                @{userInfo.username}
-              </motion.strong>
+                <motion.strong
+                  initial={{ opacity: 0, filter: "blur(3px)" }}
+                  animate={{ opacity: 1, filter: "blur(0px)" }}
+                  exit={{ opacity: 0, filter: "blur(3px)" }}
+                  transition={{
+                    delay: 0.52,
+                    duration: 0.25,
+                    ease: "easeOut",
+                  }}
+                >
+                  @{userInfo.username}
+                </motion.strong>
+              </motion.div>
             </motion.div>
           </>
         ) : (

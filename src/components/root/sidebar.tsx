@@ -75,6 +75,7 @@ function Sidebar({
   const {
     ponaCommonState,
     isSameVC,
+    isSettingModalOpen,
     setIsSettingModalOpen,
     setSettingLayoutId,
   } = useGlobalContext()
@@ -336,7 +337,7 @@ function Sidebar({
                 key="Bottom-Menu"
               >
                 <ActivationLink
-                  className="w-full"
+                  className={cn("w-full", isSettingModalOpen && "invisible")}
                   iconOnly={canCollapsed && sidebarCollapsed}
                   onClick={() => {
                     ;(setSettingLayoutId("setting-modal-by-app-sidebar"),

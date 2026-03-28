@@ -66,8 +66,8 @@ function Account() {
         </div>
         <div className="relative z-10 flex gap-6 max-md:-mt-12 md:px-12">
           <div className="flex flex-col items-center max-md:absolute max-md:left-12">
-            <div className="block h-24 w-24 min-w-24 -translate-y-1/2 overflow-hidden rounded-full bg-card outline-3 outline-card max-md:h-24 max-md:w-24 max-md:min-w-24 max-md:outline-4">
-              <motion.div>
+            <div className="block h-24 w-24 min-w-24 -translate-y-1/2 rounded-full bg-card outline-3 outline-card max-md:h-24 max-md:w-24 max-md:min-w-24 max-md:outline-4">
+              <motion.div layoutId="setting-modal-user-avatar">
                 <Avatar className="h-24 w-24 bg-primary object-cover object-center max-md:h-24 max-md:w-24">
                   <AvatarImage
                     alt={`${userInfo && userInfo.global_name} Avatar`}
@@ -120,9 +120,12 @@ function Account() {
                 {language.data.app.setting.account.display_name}
               </label>
               <div className="flex items-center gap-1">
-                <span className="text-xl">
+                <motion.span
+                  layoutId="setting-modal-user-global-name"
+                  className="text-xl"
+                >
                   {userInfo && userInfo.global_name}
-                </span>
+                </motion.span>
               </div>
             </div>
             <div className="flex flex-col rounded-lg max-md:bg-foreground/5 max-md:p-2">
@@ -130,9 +133,12 @@ function Account() {
                 {language.data.app.setting.account.username}
               </label>
               <div className="flex items-center gap-1">
-                <span className="text-xl">
+                <motion.strong
+                  layoutId="setting-modal-user-name"
+                  className="text-xl"
+                >
                   @{userInfo && userInfo.username}
-                </span>
+                </motion.strong>
                 <Tooltip>
                   <TooltipTrigger delay={0}>
                     <SealCheckIcon
