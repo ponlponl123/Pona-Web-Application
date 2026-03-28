@@ -680,7 +680,9 @@
         "move": "Move"
       },
       "dev_mode": {
-        "title": "Dev Zone"
+        "title": "Dev Zone",
+        "description": "Access experimental tools and advanced debugging features.",
+        "no_test_element": "No active test elements found in this environment."
       }
     }
   },

@@ -105,25 +105,25 @@ function SettingModalSidebar() {
   // Pre-calculate all animation delays
   const animationData = links.reduce(
     (acc, category) => {
-      acc.time += 0.03
-      const categoryDelay = Number(acc.time.toFixed(2))
+      acc.time += 0.024
+      const categoryDelay = Number(acc.time.toFixed(3))
 
       const linkDelays = (category.links || []).map(() => {
-        acc.time += 0.06
-        return Number(acc.time.toFixed(2))
+        acc.time += 0.032
+        return Number(acc.time.toFixed(3))
       })
 
-      const hrDelay = Number((acc.time + 0.06).toFixed(2))
+      const hrDelay = Number((acc.time + 0.016).toFixed(3))
 
       acc.result.push({ categoryDelay, linkDelays, hrDelay })
 
       return acc
     },
-    { time: 0.48, result: [] as DelayData[] }
+    { time: 0.3, result: [] as DelayData[] }
   )
 
   const PreCalcCategoryDelays = animationData.result
-  const TOTAL_ANIMATION_DELAY = Number((animationData.time + 0.08).toFixed(2))
+  const TOTAL_ANIMATION_DELAY = Number((animationData.time + 0.08).toFixed(3))
 
   return (
     <div>
@@ -291,7 +291,7 @@ function SettingModalSidebar() {
         animate={{ opacity: 1, filter: "blur(0px)" }}
         exit={{ opacity: 0, filter: "blur(3px)" }}
         transition={{
-          delay: TOTAL_ANIMATION_DELAY + 0.08,
+          delay: TOTAL_ANIMATION_DELAY,
           duration: 0.25,
           ease: "easeOut",
         }}
@@ -303,7 +303,7 @@ function SettingModalSidebar() {
               animate={{ opacity: 1, filter: "blur(0px)" }}
               exit={{ opacity: 0, filter: "blur(3px)" }}
               transition={{
-                delay: TOTAL_ANIMATION_DELAY + 0.18,
+                delay: TOTAL_ANIMATION_DELAY,
                 duration: 0.25,
                 ease: "easeOut",
               }}
@@ -334,7 +334,7 @@ function SettingModalSidebar() {
           animate={{ opacity: 1, filter: "blur(0px)" }}
           exit={{ opacity: 0, filter: "blur(3px)" }}
           transition={{
-            delay: TOTAL_ANIMATION_DELAY + 0.28,
+            delay: TOTAL_ANIMATION_DELAY + 0.032,
             duration: 0.25,
             ease: "easeOut",
           }}

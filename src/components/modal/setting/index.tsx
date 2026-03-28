@@ -137,7 +137,7 @@ function SettingModal() {
             animate={{ opacity: 1, filter: "blur(0px)" }}
             exit={{ opacity: 0, filter: "blur(3px)" }}
             transition={{
-              delay: 1,
+              delay: 0.64,
               duration: 0.25,
               ease: "easeOut",
             }}
