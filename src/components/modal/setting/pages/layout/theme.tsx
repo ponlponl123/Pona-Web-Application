@@ -245,7 +245,7 @@ function Theme() {
             </Field>
           </FieldLabel>
           <FieldLabel
-            htmlFor="amoled-black"
+            htmlFor="amoled-black-switch"
             className="group/label rounded-xl! border-2! pl-1 not-data-active:border-border/40 hover:scale-101 hover:bg-foreground/5 active:scale-96"
             data-smooth-interaction="true"
           >
@@ -293,7 +293,7 @@ function Theme() {
                 </FieldDescription>
               </FieldContent>
               <Switch
-                id="amoled-black"
+                id="amoled-black-switch"
                 data-smooth-interaction="true"
                 className="group-active/label:scale-80"
                 onCheckedChange={setAmoled}
