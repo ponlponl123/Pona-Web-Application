@@ -8,6 +8,8 @@ import Link from "next/link"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   BugIcon,
+  DiscordLogoIcon,
+  HandHeartIcon,
   KeyboardIcon,
   LockSimpleIcon,
   ShapesIcon,
@@ -44,7 +46,7 @@ type DelayData = {
 
 function SettingModalSidebar() {
   const { language } = useLanguageContext()
-  const { setIsSettingModalOpen } = useGlobalContext()
+  const { setIsSettingModalOpen, setIsFeedbackModalOpen } = useGlobalContext()
   const { userInfo, revokeUserAccessToken } = useDiscordUserInfo()
   const { SelectedPageKey, setSelectedPage, lookingAt, scrollTo } =
     useSettingModalContext()
@@ -158,7 +160,7 @@ function SettingModalSidebar() {
   const TOTAL_ANIMATION_DELAY = Number((animationData.time + 0.08).toFixed(3))
 
   return (
-    <div>
+    <div className="flex min-h-0 flex-1 flex-col">
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -460,40 +462,69 @@ function SettingModalSidebar() {
           duration: 0.25,
           ease: "easeOut",
         }}
+        className="flex min-h-0 flex-1 flex-col justify-between"
       >
-        {userInfo && (
-          <>
-            <motion.button
-              initial={{ opacity: 0, filter: "blur(3px)" }}
-              animate={{ opacity: 1, filter: "blur(0px)" }}
-              exit={{ opacity: 0, filter: "blur(3px)" }}
-              transition={{
-                delay: TOTAL_ANIMATION_DELAY,
-                duration: 0.25,
-                ease: "easeOut",
-              }}
-              data-smooth-interaction="true"
-              className={cn(
-                "group flex w-full items-center justify-start gap-2 rounded-lg bg-transparent px-3 py-2 dark:hover:bg-foreground/5",
-                "text-rose-400 hover:bg-rose-400/10 active:bg-rose-400/10 hover:dark:bg-rose-400/10"
-              )}
-              onClick={() => {
-                revokeUserAccessToken().then(() => {
-                  if (window.location.pathname.startsWith("/app")) {
-                    window.location.href = "/"
-                  } else {
-                    window.location.reload()
-                  }
-                })
-              }}
-            >
-              <SignOutIcon weight="bold" className="size-4" />
-              <span className="text-sm">
-                {language.data.header.account.logout}
-              </span>
-            </motion.button>
-          </>
-        )}
+        <div className="flex flex-col gap-1">
+          <motion.button
+            initial={{ opacity: 0, filter: "blur(3px)" }}
+            animate={{ opacity: 1, filter: "blur(0px)" }}
+            exit={{ opacity: 0, filter: "blur(3px)" }}
+            transition={{
+              delay: TOTAL_ANIMATION_DELAY,
+              duration: 0.25,
+              ease: "easeOut",
+            }}
+            layoutId="feedback-modal"
+            data-smooth-interaction="true"
+            className={cn(
+              "group flex w-full items-center justify-start gap-2 rounded-lg bg-transparent px-3 py-2 text-start",
+              "not-hover:text-foreground/60",
+              "hover:bg-foreground/10 active:bg-foreground/10 dark:hover:bg-foreground/5"
+            )}
+            onClick={() => {
+              setIsSettingModalOpen(false)
+              setIsFeedbackModalOpen(true)
+            }}
+          >
+            <HandHeartIcon weight="bold" className="size-4" />
+            <span className="text-sm">
+              {language.data.header.account.feedback}
+            </span>
+          </motion.button>
+          {userInfo && (
+            <>
+              <motion.button
+                initial={{ opacity: 0, filter: "blur(3px)" }}
+                animate={{ opacity: 1, filter: "blur(0px)" }}
+                exit={{ opacity: 0, filter: "blur(3px)" }}
+                transition={{
+                  delay: TOTAL_ANIMATION_DELAY,
+                  duration: 0.25,
+                  ease: "easeOut",
+                }}
+                data-smooth-interaction="true"
+                className={cn(
+                  "group flex w-full items-center justify-start gap-2 rounded-lg bg-transparent px-3 py-2 dark:hover:bg-foreground/5",
+                  "text-rose-400 hover:bg-rose-400/10 active:bg-rose-400/10 hover:dark:bg-rose-400/10"
+                )}
+                onClick={() => {
+                  revokeUserAccessToken().then(() => {
+                    if (window.location.pathname.startsWith("/app")) {
+                      window.location.href = "/"
+                    } else {
+                      window.location.reload()
+                    }
+                  })
+                }}
+              >
+                <SignOutIcon weight="bold" className="size-4" />
+                <span className="text-sm">
+                  {language.data.header.account.logout}
+                </span>
+              </motion.button>
+            </>
+          )}
+        </div>
         <motion.div
           initial={{ opacity: 0, filter: "blur(3px)" }}
           animate={{ opacity: 1, filter: "blur(0px)" }}
@@ -503,11 +534,22 @@ function SettingModalSidebar() {
             duration: 0.25,
             ease: "easeOut",
           }}
-          className="mt-1 flex flex-wrap gap-1 px-2 select-none"
+          className="mt-3 mb-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 px-2 select-none"
         >
           <span className="text-xs text-foreground/40">
-            v{process.env["NEXT_PUBLIC_APP_VERSION"] || "unknown"}
+            Pona! WebApp - v
+            {process.env["NEXT_PUBLIC_APP_VERSION"] || "unknown"}
           </span>
+          <div className="flex w-full flex-wrap items-center gap-2">
+            <Link
+              href="https://ponl.link/disgd"
+              target="_blank"
+              className="text-foreground/40 hover:text-foreground"
+              data-smooth-interaction="true"
+            >
+              <DiscordLogoIcon weight="fill" className="size-4" />
+            </Link>
+          </div>
         </motion.div>
       </motion.div>
     </div>

@@ -120,12 +120,22 @@ const ModalBody = React.forwardRef<
   {
     children: React.ReactNode
     className?: string
+    classNames?:
+      | {
+          root?: string | undefined
+          viewport?: string | undefined
+          scrollbar?: string | undefined
+          thumb?: string | undefined
+          render?: string | undefined
+        }
+      | undefined
   }
->(({ children, className }, forwardedRef) => {
+>(({ children, className, classNames }, forwardedRef) => {
   return (
     <CustomScrollArea
       ref={forwardedRef}
       className={cn("mt-6 flex min-h-0 flex-1 flex-col", className)}
+      classNames={classNames}
     >
       {children}
     </CustomScrollArea>

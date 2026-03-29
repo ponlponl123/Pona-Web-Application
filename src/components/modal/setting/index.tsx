@@ -222,7 +222,7 @@ function SettingModal() {
           )}
           ref={sidebarRef}
         >
-          <div className="p-2">
+          <div className="flex min-h-full flex-col p-2">
             <SettingModalSidebar />
           </div>
         </Modal.Body>

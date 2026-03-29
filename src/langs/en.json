@@ -50,6 +50,17 @@
       "looking_for_translator": "Looking for a translator!",
       "filter": "Search your language",
       "not_found": "No results were found."
+    },
+    "feedback": {
+      "title": "Feedback",
+      "description": "What's on your mind about our latest update? Any suggestions, or...",
+      "can_we_contact_back": "Can we reach out to hear more from you?",
+      "placeholder": "Just a quick thought, a wild idea, or even a little complaint...",
+      "email": "Email address",
+      "options": {
+        "cancel": "Never mind",
+        "submit": "Send"
+      }
     }
   },
   "home": {

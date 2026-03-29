@@ -13,6 +13,7 @@ const CustomScrollArea = forwardRef<
       viewport?: string
       scrollbar?: string
       thumb?: string
+      render?: string
     }
   }
 >(({ children, className, classNames }, forwardedRef) => {
@@ -20,7 +21,7 @@ const CustomScrollArea = forwardRef<
     <ScrollArea.Root className={cn(className, classNames?.root)}>
       <ScrollArea.Viewport
         ref={forwardedRef}
-        render={<ScrollShadow />}
+        render={<ScrollShadow className={classNames?.render} />}
         className={cn("h-full rounded-md", classNames?.viewport)}
       >
         {children}

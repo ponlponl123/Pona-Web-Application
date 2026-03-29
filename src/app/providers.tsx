@@ -7,6 +7,7 @@ import { DiscordUserInfoProvider } from "@/contexts/discordUserInfo"
 import { DiscordGuildInfoProvider } from "@/contexts/discordGuildInfo"
 import PageAnimatePresence from "@/components/HOC/PageAnimatePresence"
 import { PonaMusicCacheContextProvider } from "@/contexts/ponaMusicCacheContext"
+import FeedbackModal from "@/components/modal/feedback"
 import { AnimatePresence, motion } from "motion/react"
 import SettingModal from "@/components/modal/setting"
 import { Toaster } from "@/components/ui/sonner"
@@ -43,6 +44,7 @@ export function Providers({
                 )}
                 <Toaster />
                 <SettingModal />
+                <FeedbackModal />
               </GlobalProvider>
             </PonaMusicCacheContextProvider>
           </DiscordGuildInfoProvider>

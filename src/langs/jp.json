@@ -50,6 +50,17 @@
       "looking_for_translator": "翻訳者を募集中です！",
       "filter": "言語を検索...",
       "not_found": "結果が見つかりませんでした"
+    },
+    "feedback": {
+      "title": "フィードバック",
+      "description": "最新アップデートについてどう思った？リクエスト、または...",
+      "can_we_contact_back": "もう少し詳しく聞くために、連絡してもいい？",
+      "placeholder": "一言だけでも、ただの愚痴でも全然OK...",
+      "email": "連絡先メールアドレス",
+      "options": {
+        "cancel": "やめておく",
+        "submit": "送信"
+      }
     }
   },
   "home": {
