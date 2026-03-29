@@ -97,7 +97,12 @@ function SettingModalSidebar() {
           name: language.data.app.setting.keybinds.title,
           target: "keybinds",
           icon: <KeyboardIcon weight="fill" className="size-4" />,
-          subpages: [],
+          subpages: [
+            {
+              name: language.data.app.setting.keybinds.category.appearance,
+              target: "appearance",
+            },
+          ],
         },
         {
           name: language.data.app.setting.language_time.title,
@@ -173,7 +178,10 @@ function SettingModalSidebar() {
       >
         {userInfo ? (
           <>
-            <motion.div layoutId="setting-modal-user-avatar">
+            <motion.div
+              layoutId="setting-modal-user-avatar"
+              transition={{ duration: 0.25, ease: "easeOut" }}
+            >
               <Avatar className="h-8 w-8">
                 <AvatarImage
                   src={`https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}.png`}
@@ -188,23 +196,21 @@ function SettingModalSidebar() {
               <motion.div
                 className="leading-4 font-bold"
                 layoutId="setting-modal-user-global-name"
+                transition={{ duration: 0.25, ease: "easeOut" }}
               >
                 <motion.span
                   initial={{ opacity: 0, filter: "blur(3px)" }}
                   animate={{ opacity: 1, filter: "blur(0px)" }}
                   exit={{ opacity: 0, filter: "blur(3px)" }}
-                  transition={{
-                    delay: 0.45,
-                    duration: 0.25,
-                    ease: "easeOut",
-                  }}
+                  transition={{ duration: 0.25, ease: "easeOut" }}
                 >
                   {userInfo.global_name}
                 </motion.span>
               </motion.div>
               <motion.div
-                layoutId="setting-modal-user-name"
                 className="text-xs leading-4 text-foreground/40"
+                layoutId="setting-modal-user-name"
+                transition={{ duration: 0.25, ease: "easeOut" }}
               >
                 <motion.strong
                   initial={{ opacity: 0, filter: "blur(3px)" }}
@@ -264,6 +270,22 @@ function SettingModalSidebar() {
               {category.category}
             </motion.span>
             {category.links.map((link, linkIndex) => {
+              const activeIndices = link.subpages
+                .map((s, i) => (lookingAt?.includes(s.target) ? i : -1))
+                .filter((i) => i !== -1)
+
+              const hasActive = activeIndices.length > 0
+              const firstActive = hasActive ? Math.min(...activeIndices) : 0
+              const lastActive = hasActive ? Math.max(...activeIndices) : 0
+              const activeCount = hasActive ? lastActive - firstActive + 1 : 0
+
+              const totalItems = link.subpages.length
+
+              const topPercent =
+                totalItems > 0 ? (firstActive / totalItems) * 100 : 0
+              const heightPercent =
+                totalItems > 0 ? (activeCount / totalItems) * 100 : 0
+
               return (
                 <React.Fragment
                   key={
@@ -342,6 +364,35 @@ function SettingModalSidebar() {
                               ease: "linear",
                             }}
                           />
+
+                          {hasActive && (
+                            <motion.div
+                              initial={{ height: "0%", opacity: 0 }}
+                              animate={{ height: "100%", opacity: 1 }}
+                              exit={{ height: "0%", opacity: 0 }}
+                              transition={{
+                                duration: 0.12,
+                                ease: "easeOut",
+                              }}
+                              className="absolute left-2.5 z-10 block h-full w-0.5 rounded-full"
+                            >
+                              <motion.div
+                                className="absolute z-10 block w-0.5 rounded-full bg-foreground"
+                                initial={false}
+                                animate={{
+                                  top: `${topPercent}%`,
+                                  height: `${heightPercent}%`,
+                                }}
+                                transition={{
+                                  type: "spring",
+                                  stiffness: 300,
+                                  damping: 30,
+                                  mass: 1,
+                                }}
+                              />
+                            </motion.div>
+                          )}
+
                           {link.subpages.map((tos, tos_index) => (
                             <motion.div
                               key={
@@ -365,26 +416,6 @@ function SettingModalSidebar() {
                                 `group/sub`
                               )}
                             >
-                              {lookingAt?.includes(tos.target) && (
-                                <motion.div
-                                  layoutId={
-                                    "setting-modal-sidebar-tos-cursor-" +
-                                    categoryIndex +
-                                    linkIndex +
-                                    tos_index
-                                  }
-                                  initial={{ opacity: 0, filter: "blur(3px)" }}
-                                  animate={{ opacity: 1, filter: "blur(0px)" }}
-                                  exit={{ opacity: 0, filter: "blur(3px)" }}
-                                  transition={{
-                                    duration: 0.25,
-                                    ease: "easeOut",
-                                  }}
-                                  className={cn(
-                                    "absolute left-1.5 block h-full w-0.5 rounded-full bg-foreground"
-                                  )}
-                                />
-                              )}
                               <motion.button
                                 className={cn(
                                   "relative flex w-full items-center justify-start gap-2 rounded-md px-2 py-1 text-start text-foreground/40",

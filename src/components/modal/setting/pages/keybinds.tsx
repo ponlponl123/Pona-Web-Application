@@ -22,6 +22,7 @@ interface Keybind {
 
 interface Keybinds {
   category: string
+  key: string
   keys: Keybind[]
 }
 
@@ -36,6 +37,7 @@ function KeyBinds() {
   const keybinds: Keybinds[] = [
     {
       category: language.data.app.setting.keybinds.category.appearance,
+      key: "appearance",
       keys: [
         {
           key: "dark-light-toggle",
@@ -106,6 +108,8 @@ function KeyBinds() {
               duration: 0.25,
               ease: "easeOut",
             }}
+            id={keybind_category.key}
+            data-section
             className="mt-6"
             key={"keybind-" + i}
           >
@@ -183,7 +187,7 @@ function KeyBinds() {
                             +
                           </span>
                         ) : (
-                          <kbd
+                          <Kbd
                             key={
                               "keybind-" +
                               i +
@@ -195,7 +199,7 @@ function KeyBinds() {
                             className="rounded-sm bg-muted p-1"
                           >
                             {key}
-                          </kbd>
+                          </Kbd>
                         )
                       )}
                   </KbdGroup>

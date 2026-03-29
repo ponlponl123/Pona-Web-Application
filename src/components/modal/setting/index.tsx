@@ -3,12 +3,11 @@ import React from "react"
 import { Button } from "../../ui/button"
 import { useLanguageContext } from "@/contexts/languageContext"
 import { XIcon } from "@phosphor-icons/react"
-import { cn } from "@/lib/utils"
 import Modal from "../../ui/custom/modal"
 import { useGlobalContext } from "@/contexts/globalContext"
 import { useDiscordUserInfo } from "@/contexts/discordUserInfo"
 import SettingModalSidebar from "./sidebar"
-import { motion } from "motion/react"
+import { AnimatePresence, motion } from "motion/react"
 
 // Pages
 import Account from "./pages/account"
@@ -52,6 +51,7 @@ const SettingModalContext = React.createContext<{
 
 const SettingModalProvider = ({ children }: { children: React.ReactNode }) => {
   const { userInfo } = useDiscordUserInfo()
+  const { isSettingModalOpen } = useGlobalContext()
   const [SelectedPageKey, setSelectedPageKey] =
     React.useState<PageKey>("layout")
   const [lookingAt, setLookingAt] = React.useState<string[]>([])
@@ -64,7 +64,7 @@ const SettingModalProvider = ({ children }: { children: React.ReactNode }) => {
 
   React.useEffect(() => {
     setLookingAt([])
-    if (!bodyRef.current) return
+    if (!isSettingModalOpen || !bodyRef.current) return
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -106,13 +106,13 @@ const SettingModalProvider = ({ children }: { children: React.ReactNode }) => {
         )
         sections.forEach((section) => observer.observe(section))
       }
-    }, 100)
+    }, 120)
 
     return () => {
       clearTimeout(timeoutId)
       observer.disconnect()
     }
-  }, [SelectedPageKey])
+  }, [SelectedPageKey, isSettingModalOpen, bodyRef.current])
 
   const scrollTo = (rawId: string) => {
     const targetId = rawId.startsWith("#") ? rawId.substring(1) : rawId
@@ -228,26 +228,35 @@ function SettingModal() {
               duration: 0.25,
               ease: "easeOut",
             }}
-            className="min-h-0 flex-1"
+            className="relative min-h-0 flex-1"
           >
-            <motion.div
-              initial={{ opacity: 0, y: 3, filter: "blur(3px)" }}
-              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              exit={{ opacity: 0, y: -3, filter: "blur(3px)" }}
-              transition={{
-                duration: 0.25,
-                ease: "easeOut",
-              }}
-              key={"setting-modal-body-" + SelectedPageKey}
-              className="h-full w-full"
-            >
-              <Modal.Body
-                className="mt-0 h-full w-full text-foreground"
-                ref={bodyRef}
+            <AnimatePresence mode="wait" propagate={true}>
+              <motion.div
+                initial={{ opacity: 0, y: 3, filter: "blur(3px)" }}
+                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                exit={{
+                  opacity: 0,
+                  y: -3,
+                  filter: "blur(3px)",
+                  position: "absolute",
+                  left: 0,
+                  top: 0,
+                }}
+                transition={{
+                  duration: 0.25,
+                  ease: "easeOut",
+                }}
+                key={"setting-modal-body-" + SelectedPageKey}
+                className="h-full w-full"
               >
-                {Pages[SelectedPageKey]}
-              </Modal.Body>
-            </motion.div>
+                <Modal.Body
+                  className="mt-0 h-full w-full text-foreground"
+                  ref={bodyRef}
+                >
+                  {Pages[SelectedPageKey]}
+                </Modal.Body>
+              </motion.div>
+            </AnimatePresence>
           </motion.div>
         </div>
       </div>

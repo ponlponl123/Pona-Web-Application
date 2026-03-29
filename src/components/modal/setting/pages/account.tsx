@@ -4,15 +4,9 @@ import { useDiscordUserInfo } from "@/contexts/discordUserInfo"
 import { useLanguageContext } from "@/contexts/languageContext"
 import { useUserSettingContext } from "@/contexts/userSettingContext"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import {
-  DiscordLogoIcon,
-  SealCheckIcon,
-  StarAndCrescentIcon,
-} from "@phosphor-icons/react"
+import { SealCheckIcon } from "@phosphor-icons/react"
 import ImageWithSkeleton from "@/components/ui/custom/image"
 import { numberToHexColor } from "@/lib/color-client"
-import { Badge } from "@/components/ui/badge"
-import Link from "next/link"
 import {
   Tooltip,
   TooltipContent,
@@ -67,22 +61,32 @@ function Account() {
         <div className="relative z-10 flex gap-6 max-md:-mt-12 md:px-12">
           <div className="flex flex-col items-center max-md:absolute max-md:left-12">
             <div className="block h-24 w-24 min-w-24 -translate-y-1/2 rounded-full bg-card outline-3 outline-card max-md:h-24 max-md:w-24 max-md:min-w-24 max-md:outline-4">
-              <motion.div layoutId="setting-modal-user-avatar">
-                <Avatar className="h-24 w-24 bg-primary object-cover object-center max-md:h-24 max-md:w-24">
-                  <AvatarImage
-                    alt={`${userInfo && userInfo.global_name} Avatar`}
-                    src={
-                      userInfo
-                        ? `https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}.png?size=128`
-                        : "/static/Ponlponl123 (1459).png"
-                    }
-                  />
-                  <AvatarFallback>
-                    {userInfo
-                      ? userInfo.global_name.charAt(0).toUpperCase()
-                      : "M"}
-                  </AvatarFallback>
-                </Avatar>
+              <motion.div
+                layoutId="setting-modal-user-avatar"
+                transition={{ duration: 0.25, ease: "easeOut" }}
+              >
+                <motion.div
+                  initial={{ opacity: 0, filter: "blur(3px)" }}
+                  animate={{ opacity: 1, filter: "blur(0px)" }}
+                  exit={{ opacity: 0, filter: "blur(3px)" }}
+                  transition={{ duration: 1, ease: "easeOut" }}
+                >
+                  <Avatar className="h-24 w-24 bg-primary object-cover object-center max-md:h-24 max-md:w-24">
+                    <AvatarImage
+                      alt={`${userInfo && userInfo.global_name} Avatar`}
+                      src={
+                        userInfo
+                          ? `https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}.png?size=128`
+                          : "/static/Ponlponl123 (1459).png"
+                      }
+                    />
+                    <AvatarFallback>
+                      {userInfo
+                        ? userInfo.global_name.charAt(0).toUpperCase()
+                        : "M"}
+                    </AvatarFallback>
+                  </Avatar>
+                </motion.div>
               </motion.div>
             </div>
             <motion.div className="z-10 -mt-8 flex gap-4 max-md:hidden">
@@ -120,12 +124,20 @@ function Account() {
                 {language.data.app.setting.account.display_name}
               </label>
               <div className="flex items-center gap-1">
-                <motion.span
+                <motion.div
                   layoutId="setting-modal-user-global-name"
-                  className="text-xl"
+                  transition={{ duration: 0.25, ease: "easeOut" }}
                 >
-                  {userInfo && userInfo.global_name}
-                </motion.span>
+                  <motion.span
+                    initial={{ opacity: 0, filter: "blur(3px)" }}
+                    animate={{ opacity: 1, filter: "blur(0px)" }}
+                    exit={{ opacity: 0, filter: "blur(3px)" }}
+                    transition={{ duration: 0.46, ease: "easeOut" }}
+                    className="text-xl"
+                  >
+                    {userInfo && userInfo.global_name}
+                  </motion.span>
+                </motion.div>
               </div>
             </div>
             <div className="flex flex-col rounded-lg max-md:bg-foreground/5 max-md:p-2">
@@ -133,12 +145,20 @@ function Account() {
                 {language.data.app.setting.account.username}
               </label>
               <div className="flex items-center gap-1">
-                <motion.strong
+                <motion.div
                   layoutId="setting-modal-user-name"
-                  className="text-xl"
+                  transition={{ duration: 0.25, ease: "easeOut" }}
                 >
-                  @{userInfo && userInfo.username}
-                </motion.strong>
+                  <motion.strong
+                    initial={{ opacity: 0, filter: "blur(3px)" }}
+                    animate={{ opacity: 1, filter: "blur(0px)" }}
+                    exit={{ opacity: 0, filter: "blur(3px)" }}
+                    transition={{ duration: 0.46, ease: "easeOut" }}
+                    className="text-xl"
+                  >
+                    @{userInfo && userInfo.username}
+                  </motion.strong>
+                </motion.div>
                 <Tooltip>
                   <TooltipTrigger delay={0}>
                     <SealCheckIcon
