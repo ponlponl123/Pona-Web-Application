@@ -114,7 +114,9 @@ function Account() {
                     <></>
                   )}
                 </TooltipTrigger>
-                <TooltipContent>Your accent color!</TooltipContent>
+                <TooltipContent>
+                  {language.data.app.setting.account.accent_color_tooltip}
+                </TooltipContent>
               </Tooltip>
             </motion.div>
           </div>

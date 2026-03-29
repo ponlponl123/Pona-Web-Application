@@ -558,7 +558,8 @@
         "title": "アカウント",
         "announcement": "Discordに接続しました！",
         "display_name": "表示名",
-        "username": "ユーザー名"
+        "username": "ユーザー名",
+        "accent_color_tooltip": "あなたのアクセントカラー！"
       },
       "layout": {
         "title": "レイアウト",

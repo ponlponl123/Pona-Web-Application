@@ -465,32 +465,36 @@ function SettingModalSidebar() {
         className="flex min-h-0 flex-1 flex-col justify-between"
       >
         <div className="flex flex-col gap-1">
-          <motion.button
+          <motion.div
             initial={{ opacity: 0, filter: "blur(3px)" }}
             animate={{ opacity: 1, filter: "blur(0px)" }}
             exit={{ opacity: 0, filter: "blur(3px)" }}
             transition={{
               delay: TOTAL_ANIMATION_DELAY,
-              duration: 0.25,
+              duration: 0.48,
               ease: "easeOut",
             }}
-            layoutId="feedback-modal"
-            data-smooth-interaction="true"
-            className={cn(
-              "group flex w-full items-center justify-start gap-2 rounded-lg bg-transparent px-3 py-2 text-start",
-              "not-hover:text-foreground/60",
-              "hover:bg-foreground/10 active:bg-foreground/10 dark:hover:bg-foreground/5"
-            )}
-            onClick={() => {
-              setIsSettingModalOpen(false)
-              setIsFeedbackModalOpen(true)
-            }}
+            className="relative"
           >
-            <HandHeartIcon weight="bold" className="size-4" />
-            <span className="text-sm">
-              {language.data.header.account.feedback}
-            </span>
-          </motion.button>
+            <motion.button
+              layoutId="feedback-modal"
+              data-smooth-interaction="true"
+              className={cn(
+                "group flex w-full items-center justify-start gap-2 rounded-lg bg-transparent px-3 py-2 text-start",
+                "not-hover:text-foreground/60",
+                "hover:bg-foreground/10 active:bg-foreground/10 dark:hover:bg-foreground/5"
+              )}
+              onClick={() => {
+                setIsSettingModalOpen(false)
+                setIsFeedbackModalOpen(true)
+              }}
+            >
+              <HandHeartIcon weight="bold" className="size-4" />
+              <span className="text-sm">
+                {language.data.header.account.feedback}
+              </span>
+            </motion.button>
+          </motion.div>
           {userInfo && (
             <>
               <motion.button
@@ -498,8 +502,8 @@ function SettingModalSidebar() {
                 animate={{ opacity: 1, filter: "blur(0px)" }}
                 exit={{ opacity: 0, filter: "blur(3px)" }}
                 transition={{
-                  delay: TOTAL_ANIMATION_DELAY,
-                  duration: 0.25,
+                  delay: TOTAL_ANIMATION_DELAY + 0.032,
+                  duration: 0.48,
                   ease: "easeOut",
                 }}
                 data-smooth-interaction="true"
@@ -530,8 +534,8 @@ function SettingModalSidebar() {
           animate={{ opacity: 1, filter: "blur(0px)" }}
           exit={{ opacity: 0, filter: "blur(3px)" }}
           transition={{
-            delay: TOTAL_ANIMATION_DELAY + 0.032,
-            duration: 0.25,
+            delay: TOTAL_ANIMATION_DELAY + 0.064,
+            duration: 1,
             ease: "easeOut",
           }}
           className="mt-3 mb-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 px-2 select-none"

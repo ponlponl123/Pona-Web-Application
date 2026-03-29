@@ -554,7 +554,8 @@
         "title": "My Account",
         "announcement": "Connected with Discord!",
         "display_name": "Display Name",
-        "username": "Username"
+        "username": "Username",
+        "accent_color_tooltip": "Your accent color!"
       },
       "layout": {
         "title": "Layout",

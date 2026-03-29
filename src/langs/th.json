@@ -558,7 +558,8 @@
         "title": "บัญชีของฉัน",
         "announcement": "เชื่อมต่อด้วย Discord!",
         "display_name": "ชื่อที่แสดง",
-        "username": "ชื่อบัญชี"
+        "username": "ชื่อบัญชี",
+        "accent_color_tooltip": "สีของคุณ!"
       },
       "layout": {
         "title": "รูปร่าง",
