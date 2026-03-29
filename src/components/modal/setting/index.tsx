@@ -2,7 +2,7 @@
 import React from "react"
 import { Button } from "../../ui/button"
 import { useLanguageContext } from "@/contexts/languageContext"
-import { XIcon } from "@phosphor-icons/react"
+import { CaretLeftIcon, XIcon } from "@phosphor-icons/react"
 import Modal from "../../ui/custom/modal"
 import { useGlobalContext } from "@/contexts/globalContext"
 import { useDiscordUserInfo } from "@/contexts/discordUserInfo"
@@ -16,6 +16,7 @@ import Layout from "./pages/layout"
 import Keybinds from "./pages/keybinds"
 import LanguageAndTime from "./pages/language_time"
 import Developer from "./pages/dev"
+import { cn } from "@/lib/utils"
 
 export type PageKey =
   | "account"
@@ -40,6 +41,8 @@ const SettingModalContext = React.createContext<{
   sidebarRef: React.RefObject<HTMLDivElement | null>
   lookingAt?: string[]
   scrollTo: (id: string) => void
+  isNavExtended: boolean
+  setIsNavExtended: React.Dispatch<React.SetStateAction<boolean>>
 }>({
   SelectedPageKey: "layout",
   setSelectedPage: () => {},
@@ -47,6 +50,8 @@ const SettingModalContext = React.createContext<{
   sidebarRef: React.createRef(),
   lookingAt: [],
   scrollTo: () => {},
+  isNavExtended: false,
+  setIsNavExtended: () => {},
 })
 
 const SettingModalProvider = ({ children }: { children: React.ReactNode }) => {
@@ -57,6 +62,7 @@ const SettingModalProvider = ({ children }: { children: React.ReactNode }) => {
   const [lookingAt, setLookingAt] = React.useState<string[]>([])
   const bodyRef = React.useRef<HTMLDivElement | null>(null)
   const sidebarRef = React.useRef<HTMLDivElement | null>(null)
+  const [isNavExtended, setIsNavExtended] = React.useState(false)
 
   const setSelectedPage = (pageKey: PageKey) => {
     setSelectedPageKey(pageKey)
@@ -140,6 +146,10 @@ const SettingModalProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   React.useEffect(() => {
+    setIsNavExtended(false)
+  }, [SelectedPageKey])
+
+  React.useEffect(() => {
     if (userInfo) {
       setSelectedPage("account")
     }
@@ -154,6 +164,8 @@ const SettingModalProvider = ({ children }: { children: React.ReactNode }) => {
         sidebarRef,
         lookingAt,
         scrollTo,
+        isNavExtended,
+        setIsNavExtended,
       }}
     >
       {children}
@@ -170,7 +182,13 @@ function SettingModal() {
   const { language } = useLanguageContext()
   const { isSettingModalOpen, setIsSettingModalOpen, settingLayoutId } =
     useGlobalContext()
-  const { SelectedPageKey, sidebarRef, bodyRef } = useSettingModalContext()
+  const {
+    SelectedPageKey,
+    sidebarRef,
+    bodyRef,
+    isNavExtended,
+    setIsNavExtended,
+  } = useSettingModalContext()
 
   const closeModal = () => setIsSettingModalOpen(false)
 
@@ -187,7 +205,9 @@ function SettingModal() {
       <Button
         size={"icon-lg"}
         variant={"ghost"}
-        className={"absolute top-2 right-2 z-50 rounded-full"}
+        className={
+          "absolute top-2 right-2 z-50 rounded-full max-md:top-1.5 max-sm:top-3"
+        }
         onClick={closeModal}
         data-smooth-interaction="true"
       >
@@ -195,14 +215,23 @@ function SettingModal() {
       </Button>
       <div className="flex min-h-0 flex-1 flex-row">
         <Modal.Body
-          className="mt-0 w-48 flex-none border-r border-foreground/10 text-foreground"
+          className={cn(
+            "z-50 mt-0 w-48 flex-none border-r border-foreground/10 text-foreground",
+            "max-sm:absolute! max-sm:h-full max-sm:bg-card/95 max-sm:backdrop-blur-lg max-sm:transition-all max-sm:duration-300",
+            !isNavExtended && "max-sm:-translate-x-full"
+          )}
           ref={sidebarRef}
         >
           <div className="p-2">
             <SettingModalSidebar />
           </div>
         </Modal.Body>
-        <div className="flex h-full min-w-0 flex-1 flex-col">
+        <div
+          className={cn(
+            "flex h-full min-w-0 flex-1 flex-col max-sm:transition-all max-sm:duration-300",
+            isNavExtended && "max-sm:translate-x-48"
+          )}
+        >
           <motion.div
             initial={{ opacity: 0, filter: "blur(3px)" }}
             animate={{ opacity: 1, filter: "blur(0px)" }}
@@ -216,6 +245,22 @@ function SettingModal() {
             <Modal.Header className="m-0 w-full border-b border-foreground/10 p-3">
               <Modal.Title className="m-0 text-base leading-6.5 text-foreground/60">
                 {language.data.app.setting.name}
+                <Button
+                  onClick={() => setIsNavExtended((value) => !value)}
+                  className={cn(
+                    "ml-3 rounded-lg bg-foreground/5 hover:bg-foreground/10 sm:hidden!"
+                  )}
+                  size={"icon-lg"}
+                  data-smooth-interaction="true"
+                >
+                  <CaretLeftIcon
+                    weight="bold"
+                    className={cn(
+                      !isNavExtended && "rotate-180",
+                      "transition-all duration-300"
+                    )}
+                  />
+                </Button>
               </Modal.Title>
             </Modal.Header>
           </motion.div>
