@@ -39,14 +39,14 @@ const SettingModalContext = React.createContext<{
   setSelectedPage: (pageKey: PageKey) => void
   bodyRef: React.RefObject<HTMLDivElement | null>
   sidebarRef: React.RefObject<HTMLDivElement | null>
-  lookingAt?: string
+  lookingAt?: string[]
   scrollTo: (id: string) => void
 }>({
   SelectedPageKey: "layout",
   setSelectedPage: () => {},
   bodyRef: React.createRef(),
   sidebarRef: React.createRef(),
-  lookingAt: "",
+  lookingAt: [],
   scrollTo: () => {},
 })
 
@@ -54,7 +54,7 @@ const SettingModalProvider = ({ children }: { children: React.ReactNode }) => {
   const { userInfo } = useDiscordUserInfo()
   const [SelectedPageKey, setSelectedPageKey] =
     React.useState<PageKey>("layout")
-  const [lookingAt, setLookingAt] = React.useState("")
+  const [lookingAt, setLookingAt] = React.useState<string[]>([])
   const bodyRef = React.useRef<HTMLDivElement | null>(null)
   const sidebarRef = React.useRef<HTMLDivElement | null>(null)
 
@@ -62,30 +62,81 @@ const SettingModalProvider = ({ children }: { children: React.ReactNode }) => {
     setSelectedPageKey(pageKey)
   }
 
-  const handleContentScroll = (e: Event) => {}
-
   React.useEffect(() => {
-    if (bodyRef.current) {
-      bodyRef.current.addEventListener("scroll", handleContentScroll)
-    }
-    return () => {
-      if (bodyRef.current) {
-        bodyRef.current.removeEventListener("scroll", handleContentScroll)
-      }
-    }
-  }, [bodyRef])
+    setLookingAt([])
+    if (!bodyRef.current) return
 
-  const scrollTo = (id: string) => {
-    const sectionElement = document.querySelector(`#${id.substring(1)}`)
-    if (sectionElement && bodyRef.current) {
-      const appTop = bodyRef.current.getBoundingClientRect().top
-      const offset = sectionElement.id.match(/(-)/g) ? 156 : 96
-      const sectionTop = sectionElement.getBoundingClientRect().top - offset
-      bodyRef.current.scrollTo({
-        top: sectionTop - appTop + bodyRef.current.scrollTop,
-        behavior: "smooth",
-      })
+    const observer = new IntersectionObserver(
+      (entries) => {
+        setLookingAt((prev) => {
+          const updated = new Set(prev)
+          let hasChanges = false
+
+          entries.forEach((entry) => {
+            const id = entry.target.id
+            if (!id) return
+
+            if (entry.isIntersecting) {
+              if (!updated.has(id)) {
+                updated.add(id)
+                hasChanges = true
+              }
+            } else {
+              if (updated.has(id)) {
+                updated.delete(id)
+                hasChanges = true
+              }
+            }
+          })
+
+          return hasChanges ? Array.from(updated) : prev
+        })
+      },
+      {
+        root: bodyRef.current,
+        rootMargin: "0px",
+        threshold: 0.1,
+      }
+    )
+
+    const timeoutId = setTimeout(() => {
+      if (bodyRef.current) {
+        const sections = bodyRef.current.querySelectorAll(
+          '[data-section="true"]'
+        )
+        sections.forEach((section) => observer.observe(section))
+      }
+    }, 100)
+
+    return () => {
+      clearTimeout(timeoutId)
+      observer.disconnect()
     }
+  }, [SelectedPageKey])
+
+  const scrollTo = (rawId: string) => {
+    const targetId = rawId.startsWith("#") ? rawId.substring(1) : rawId
+
+    setTimeout(() => {
+      if (!bodyRef.current) return
+      const sectionElement = document.getElementById(targetId)
+
+      if (sectionElement) {
+        const container = bodyRef.current
+        const containerRect = container.getBoundingClientRect()
+        const sectionRect = sectionElement.getBoundingClientRect()
+        const offset = targetId.includes("-") ? 156 : 96
+        const targetScrollTop =
+          sectionRect.top - containerRect.top + container.scrollTop - offset
+
+        container.scrollTo({
+          top: targetScrollTop,
+          behavior: "smooth",
+        })
+      } else {
+        console.warn(`[ScrollTo] Could not find element with id: ${targetId}`)
+      }
+    }, 50)
   }
 
   React.useEffect(() => {

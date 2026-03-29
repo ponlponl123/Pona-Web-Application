@@ -18,7 +18,7 @@ function Transparency() {
   return (
     <section
       className="mx-auto flex w-full max-w-lg flex-col gap-2 p-6"
-      id="layout-player"
+      id="layout-transparency"
       data-section
     >
       <div className="mx-auto flex w-full max-w-lg gap-2 max-md:flex-col-reverse md:items-center md:justify-between">

@@ -1,28 +1,25 @@
 import { cn } from "@/lib/utils"
 import { ScrollArea } from "@base-ui/react/scroll-area"
 import { ScrollShadow } from "@heroui/react"
-import { Ref } from "react"
+import { Ref, forwardRef } from "react"
 
-export default function CustomScrollArea({
-  children,
-  className,
-  classNames,
-  ref,
-}: {
-  children: React.ReactNode
-  className?: string
-  classNames?: {
-    root?: string
-    viewport?: string
-    scrollbar?: string
-    thumb?: string
+const CustomScrollArea = forwardRef<
+  HTMLDivElement,
+  {
+    children: React.ReactNode
+    className?: string
+    classNames?: {
+      root?: string
+      viewport?: string
+      scrollbar?: string
+      thumb?: string
+    }
   }
-  ref?: Ref<HTMLDivElement>
-}) {
+>(({ children, className, classNames }, forwardedRef) => {
   return (
     <ScrollArea.Root className={cn(className, classNames?.root)}>
       <ScrollArea.Viewport
-        ref={ref}
+        ref={forwardedRef}
         render={<ScrollShadow />}
         className={cn("h-full rounded-md", classNames?.viewport)}
       >
@@ -43,4 +40,8 @@ export default function CustomScrollArea({
       </ScrollArea.Scrollbar>
     </ScrollArea.Root>
   )
-}
+})
+
+CustomScrollArea.displayName = "CustomScrollArea"
+
+export default CustomScrollArea

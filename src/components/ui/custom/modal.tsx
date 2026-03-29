@@ -115,24 +115,22 @@ function ModalDescription({
   return <p className={cn("text-sm text-foreground", className)}>{children}</p>
 }
 
-function ModalBody({
-  children,
-  className,
-  ref,
-}: {
-  children: React.ReactNode
-  className?: string
-  ref?: React.Ref<HTMLDivElement>
-}) {
+const ModalBody = React.forwardRef<
+  HTMLDivElement,
+  {
+    children: React.ReactNode
+    className?: string
+  }
+>(({ children, className }, forwardedRef) => {
   return (
     <CustomScrollArea
-      ref={ref}
+      ref={forwardedRef}
       className={cn("mt-6 flex min-h-0 flex-1 flex-col", className)}
     >
       {children}
     </CustomScrollArea>
   )
-}
+})
 
 function ModalFooter({
   children,

@@ -77,19 +77,19 @@ function SettingModalSidebar() {
           subpages: [
             {
               name: language.data.app.setting.layout.theme.title,
-              target: "#theme",
+              target: "layout-theme",
             },
             {
               name: language.data.app.setting.layout.amoled_black.title,
-              target: "#amoled-black",
+              target: "amoled-black",
             },
             {
               name: language.data.app.setting.layout.player.title,
-              target: "#player",
+              target: "layout-player",
             },
             {
               name: language.data.app.setting.layout.transparency.title,
-              target: "#transparency",
+              target: "layout-transparency",
             },
           ],
         },
@@ -106,11 +106,11 @@ function SettingModalSidebar() {
           subpages: [
             {
               name: language.data.app.setting.language_time.time.title,
-              target: "#time-format",
+              target: "time-format",
             },
             {
               name: language.data.app.setting.language_time.language.title,
-              target: "#language",
+              target: "language",
             },
           ],
         },
@@ -365,8 +365,21 @@ function SettingModalSidebar() {
                                 `group/sub`
                               )}
                             >
-                              {lookingAt === tos.target && (
+                              {lookingAt?.includes(tos.target) && (
                                 <motion.div
+                                  layoutId={
+                                    "setting-modal-sidebar-tos-cursor-" +
+                                    categoryIndex +
+                                    linkIndex +
+                                    tos_index
+                                  }
+                                  initial={{ opacity: 0, filter: "blur(3px)" }}
+                                  animate={{ opacity: 1, filter: "blur(0px)" }}
+                                  exit={{ opacity: 0, filter: "blur(3px)" }}
+                                  transition={{
+                                    duration: 0.25,
+                                    ease: "easeOut",
+                                  }}
                                   className={cn(
                                     "absolute left-1.5 block h-full w-0.5 rounded-full bg-foreground"
                                   )}
@@ -375,7 +388,9 @@ function SettingModalSidebar() {
                               <motion.button
                                 className={cn(
                                   "relative flex w-full items-center justify-start gap-2 rounded-md px-2 py-1 text-start text-foreground/40",
-                                  "hover:text-foreground/80"
+                                  "hover:text-foreground/80",
+                                  lookingAt?.includes(tos.target) &&
+                                    "text-foreground"
                                 )}
                                 data-smooth-interaction="true"
                                 onClick={() => scrollTo(tos.target)}

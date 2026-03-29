@@ -79,7 +79,7 @@ function KeyBinds() {
       data-section
     >
       <div className="flex w-full gap-2 max-md:flex-col-reverse md:items-center md:justify-between">
-        <div className="flex flex-col gap-2">
+        <div className="flex min-w-0 flex-1 flex-col gap-2">
           <h1 className="m-0 text-2xl">
             {language.data.app.setting.keybinds.title}
           </h1>
