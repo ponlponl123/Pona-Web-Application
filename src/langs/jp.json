@@ -19,7 +19,11 @@
     "no": "いいえ",
     "loading": "読み込み中",
     "friendly_loading": "データを準備しています...",
-    "login_first": "ログインして続ける"
+    "login_first": "ログインして続ける",
+    "enabled": "有効",
+    "enabled_description": "この機能は現在有効です。",
+    "disabled": "無効",
+    "disabled_description": "この機能は現在無効になっています。"
   },
   "cookie": {
     "title": "クッキー！",
@@ -560,7 +564,8 @@
         },
         "amoled_black": {
           "title": "AMOLEDブラック",
-          "description": "有効にすると、ダークテーマは真っ黒な背景を使用し、AMOLED画面で最大60％節約できます！ 🌙💡"
+          "description": "ダークテーマを真の黒（ピッチブラック）に変更し、AMOLED画面のバッテリー消費を抑えます。",
+          "warning": "この機能はダークテーマが有効な場合のみ使用できます。"
         },
         "player": {
           "title": "プレイヤーレイアウト",

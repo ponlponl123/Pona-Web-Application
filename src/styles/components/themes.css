@@ -1,5 +1,5 @@
 .theme-preview {
-  @apply border-foreground mx-auto mt-6 h-48 w-80 rounded-xl border-3;
+  @apply mx-auto mt-6 h-48 w-80 rounded-xl border-3 border-foreground;
 }
 .theme-preview > .tp-header {
   @apply flex h-8 w-full gap-2 p-3;
@@ -12,7 +12,7 @@
   @apply flex h-10 w-full flex-col items-center justify-center gap-1 p-3;
 }
 .theme-preview .tp-chip {
-  @apply bg-foreground h-3 w-4 rounded-full;
+  @apply h-3 w-4 rounded-full bg-foreground;
 }
 .theme-preview .tp-chip.tp-chip-2-10 {
   @apply h-3 w-8;
@@ -42,7 +42,7 @@
   @apply h-1;
 }
 .theme-preview .tp-dot {
-  @apply bg-foreground h-3 w-3 rounded-full;
+  @apply h-3 w-3 rounded-full bg-foreground;
 }
 .theme-preview .tp-dot.tp-dot-primary {
   @apply bg-primary;
@@ -55,16 +55,16 @@
 }
 
 button.theme-dot {
-  @apply border-foreground flex h-8 w-8 items-center justify-center rounded-full border-2 bg-transparent;
+  @apply flex h-8 w-8 items-center justify-center rounded-full border-1 border-black/10 bg-transparent dark:border-white/10;
   padding: 3px;
 }
 
 button.theme-dot.active {
-  @apply shadow-primary scale-110 border-3 border-primary shadow-lg;
+  @apply scale-110 border-2 border-primary shadow-md shadow-primary;
 }
 
 button.theme-dot > div {
-  @apply bg-foreground flex h-full w-full rotate-45 flex-row overflow-hidden rounded-full;
+  @apply flex h-full w-full rotate-45 flex-row overflow-hidden rounded-full bg-foreground;
 }
 
 button.theme-dot > div > div {

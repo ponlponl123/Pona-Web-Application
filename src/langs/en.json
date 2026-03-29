@@ -19,7 +19,11 @@
     "no": "No",
     "loading": "Loading",
     "friendly_loading": "Please wait, we are preparing the information for you...",
-    "login_first": "Log in to continue"
+    "login_first": "Log in to continue",
+    "enabled": "Enabled",
+    "enabled_description": "This feature is currently active.",
+    "disabled": "Disabled",
+    "disabled_description": "This feature is currently turned off."
   },
   "cookie": {
     "title": "Cookie!",
@@ -555,8 +559,9 @@
           "description": "Automatically updates the theme based on your system time zone"
         },
         "amoled_black": {
-          "title": "Amoled Black",
-          "description": "When enabled, Dark theme uses a pitch-black background, which saves up to 60% on AMOLED screens! 🌙💡"
+          "title": "AMOLED Black",
+          "description": "Switch from dark gray to true black to save battery and enhance contrast on AMOLED displays.",
+          "warning": "This feature requires Dark Theme to be active."
         },
         "player": {
           "title": "Player Layout",

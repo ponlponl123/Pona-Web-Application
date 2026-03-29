@@ -11,9 +11,9 @@ import NextTopLoader from "nextjs-toploader"
 import Header from "@/components/root/header"
 import Footer from "@/components/root/footer"
 import { isValidLanguageKey } from "@/lib/i18n"
-import { ThemeProvider } from "@/components/theme-provider"
+import { NextThemeProvider } from "@/components/theme-provider"
 import LanguageSelectorModal from "@/components/modal/language-selector"
-import { themeScript } from "@/hooks/theme"
+import { isAmoledScript, themeScript } from "@/hooks/theme"
 
 const fontSans = Geist({
   subsets: ["latin"],
@@ -82,6 +82,7 @@ export default function RootLayout({
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <script dangerouslySetInnerHTML={{ __html: isAmoledScript }} />
       </head>
       <body>
         <NextTopLoader
@@ -95,7 +96,7 @@ export default function RootLayout({
           speed={200}
           shadow="0 0 24px #ff80c6,0 0 12px #ff80c6"
         />
-        <ThemeProvider>
+        <NextThemeProvider>
           <Suspense
             fallback={
               <div className="flex min-h-screen animate-pulse items-center justify-center text-muted-foreground">
@@ -105,7 +106,7 @@ export default function RootLayout({
           >
             <AppContent>{children}</AppContent>
           </Suspense>
-        </ThemeProvider>
+        </NextThemeProvider>
       </body>
     </html>
   )

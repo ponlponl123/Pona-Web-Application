@@ -4,15 +4,20 @@ export interface Theme {
   dark?: string
 }
 
+export interface CollectedTheme {
+  name: string
+  value: string
+}
+
 export type Themes = Record<string, string>
 
 export type AppThemes = Theme
 
-export type ThemeType = "light" | "dark" | "system"
+export type ResolvedThemeType = "light" | "dark" | "system" | "custom"
 
 export interface ThemeSetting {
   name: string
-  type: ThemeType
+  type: ResolvedThemeType
 }
 
 export interface DynamicTheme {

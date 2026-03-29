@@ -1,4 +1,4 @@
-import { DynamicTheme, Theme, Themes } from "@/types/theme"
+import { CollectedTheme, Theme } from "@/types/theme"
 
 export const DefaultTheme: Theme = {
   name: "default",
@@ -12,27 +12,26 @@ export const ChocolateTheme: Theme = {
   dark: "dark-chocolate",
 }
 
-const themes: Theme[] = [DefaultTheme, ChocolateTheme]
+export const themes: Theme[] = [DefaultTheme, ChocolateTheme]
 
-const themeNames = themes.map((theme) => theme.name)
-const lightThemes = themes.map((theme) => theme.light!)
-const darkThemes = themes.map((theme) => theme.dark!)
+export const validThemes = themes.filter((theme) => theme.light && theme.dark)
 
-const defaultDynamicTheme: DynamicTheme = {
-  sync: true,
-  isAmoled: false,
-  single: {
-    name: "default",
-    type: "system",
+export const themeCollections = validThemes.reduce(
+  (acc, theme) => {
+    acc.names.push(theme.name)
+    acc.lights.push(theme.light!)
+    acc.darks.push(theme.dark!)
+    return acc
   },
-  day: {
-    name: "default",
-    type: "light",
-  },
-  night: {
-    name: "default",
-    type: "dark",
-  },
-}
+  { names: [] as string[], lights: [] as string[], darks: [] as string[] }
+)
 
-export { themes, themeNames, lightThemes, darkThemes, defaultDynamicTheme }
+export const lightThemes: CollectedTheme[] = validThemes.map((theme) => ({
+  name: theme.name,
+  value: theme.light!,
+}))
+
+export const darkThemes: CollectedTheme[] = validThemes.map((theme) => ({
+  name: theme.name,
+  value: theme.dark!,
+}))

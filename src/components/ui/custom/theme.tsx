@@ -1,42 +1,58 @@
-import { Themes } from "@/types/theme"
+import { CollectedTheme, Themes } from "@/types/theme"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../tooltip"
 import { MouseEventHandler } from "react"
+import { cn } from "@/lib/utils"
 
 export function ThemeDot({
   theme,
+  isDark,
   active,
   onClick,
   className,
 }: {
-  theme: string
+  theme: CollectedTheme
+  isDark: boolean
   active?: boolean
   onClick?: MouseEventHandler<HTMLButtonElement>
   className?: string
 }) {
   return (
-    <Tooltip data-theme={theme}>
-      <TooltipTrigger>
-        <button
-          onClick={onClick}
-          data-theme={theme}
-          className={`theme-dot interactive ${theme} ${active ? "active" : ""}`}
-        >
-          <div>
-            <div></div>
-            <div></div>
-          </div>
-        </button>
+    <Tooltip data-theme={theme.name}>
+      <TooltipTrigger
+        onClick={onClick}
+        data-theme={theme.name}
+        className={cn(
+          `theme-dot interactive hover:scale-105 active:scale-90`,
+          isDark ? "dark" : "light",
+          active ? "active" : "scale-90"
+        )}
+        delay={0}
+        data-smooth-interaction="true"
+      >
+        <div>
+          <div></div>
+          <div></div>
+        </div>
       </TooltipTrigger>
       <TooltipContent side="bottom" className={`z-10 capitalize ${className}`}>
-        {theme.replaceAll(/[-_]/g, " ")}
+        {theme.value.replaceAll(/[-_]/g, " ")}
       </TooltipContent>
     </Tooltip>
   )
 }
 
-export function ThemePreview({ theme }: { theme: string }) {
+export function ThemePreview({
+  theme,
+  className,
+}: {
+  theme: string
+  className?: string
+}) {
   return (
-    <div className={`theme-preview bg-background ${theme}`} data-theme={theme}>
+    <div
+      className={cn(`theme-preview bg-background`, theme, className)}
+      data-theme={theme}
+    >
       <div className="tp-header">
         <div className="tp-chip tp-chip-2-10"></div>
         <div className="tp-chip tp-chip-2-10"></div>

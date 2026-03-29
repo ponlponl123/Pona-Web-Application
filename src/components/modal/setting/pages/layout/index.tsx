@@ -1,13 +1,14 @@
 "use client"
 import { useLanguageContext } from "@/contexts/languageContext"
 import { ShapesIcon } from "@phosphor-icons/react"
+import Theme from "./theme"
 
 function Developer() {
   const { language } = useLanguageContext()
   return (
     <>
       <section
-        className="mx-auto flex min-h-full w-full max-w-lg flex-col gap-2 p-6"
+        className="mx-auto flex w-full max-w-lg flex-col gap-2 p-6"
         id="layout"
         data-section
       >
@@ -23,6 +24,7 @@ function Developer() {
           <ShapesIcon weight="fill" className="size-12 translate-y-1.5" />
         </div>
       </section>
+      <Theme />
     </>
   )
 }

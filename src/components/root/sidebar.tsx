@@ -326,37 +326,28 @@ function Sidebar({
           !sidebarCollapsed ? "flex-row!" : "flex-col"
         )}
       >
-        <AnimatePresence mode="popLayout">
-          <motion.div
-            className="min-w-0 flex-1"
-            key={String(`${sidebarCollapsed}`)}
+        <motion.main
+          variants={variants}
+          initial="hidden"
+          exit="exit"
+          animate="enter"
+          transition={{ type: "tween", duration: 0.12 }}
+          key="Bottom-Menu"
+        >
+          <ActivationLink
+            className={cn("w-full", isSettingModalOpen && "invisible")}
+            iconOnly={canCollapsed && sidebarCollapsed}
+            onClick={() => {
+              ;(setSettingLayoutId("setting-modal-by-app-sidebar"),
+                setIsSettingModalOpen(true),
+                setNavActive?.(false))
+            }}
+            layoutId="setting-modal-by-app-sidebar"
+            icon={GearIcon}
           >
-            <FrozenRoute>
-              <motion.main
-                variants={variants}
-                initial="hidden"
-                exit="exit"
-                animate="enter"
-                transition={{ type: "tween", duration: 0.12 }}
-                key="Bottom-Menu"
-              >
-                <ActivationLink
-                  className={cn("w-full", isSettingModalOpen && "invisible")}
-                  iconOnly={canCollapsed && sidebarCollapsed}
-                  onClick={() => {
-                    ;(setSettingLayoutId("setting-modal-by-app-sidebar"),
-                      setIsSettingModalOpen(true),
-                      setNavActive?.(false))
-                  }}
-                  layoutId="setting-modal-by-app-sidebar"
-                  icon={GearIcon}
-                >
-                  {language.data.app.setting.name}
-                </ActivationLink>
-              </motion.main>
-            </FrozenRoute>
-          </motion.div>
-        </AnimatePresence>
+            {language.data.app.setting.name}
+          </ActivationLink>
+        </motion.main>
 
         {canCollapsed && (
           <Tooltip>
@@ -364,10 +355,9 @@ function Sidebar({
               render={
                 <Button
                   className={cn(
-                    "flex items-center justify-center! rounded-lg",
+                    "flex items-center justify-center! rounded-lg bg-transparent hover:bg-foreground/10 dark:hover:bg-foreground/5",
                     sidebarCollapsed && "size-10"
                   )}
-                  variant="ghost"
                   size="icon-lg"
                   onClick={() => {
                     setSidebarCollapsed((prev) => {

@@ -333,7 +333,7 @@ function SettingModalSidebar() {
                             animate={{ height: "100%" }}
                             exit={{ height: "0%", originY: 1 }}
                             transition={{
-                              duration: link.subpages.length * 0.08,
+                              duration: link.subpages.length * 0.056,
                               ease: "linear",
                             }}
                           />
@@ -386,7 +386,7 @@ function SettingModalSidebar() {
               )
             })}
 
-            <motion.hr
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -395,7 +395,7 @@ function SettingModalSidebar() {
                 duration: 0.25,
                 ease: "easeOut",
               }}
-              className="my-2 w-full"
+              className="my-2 h-px w-full bg-foreground/10"
             />
           </div>
         )
