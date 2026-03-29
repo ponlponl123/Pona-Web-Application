@@ -3,9 +3,8 @@ import { Badge } from "@/components/ui/badge"
 import { useThemeContext } from "@/components/theme-provider"
 import { ThemeDot, ThemePreview } from "@/components/ui/custom/theme"
 import { useLanguageContext } from "@/contexts/languageContext"
-import { darkThemes, lightThemes } from "@/consts/theme"
+import { darkThemes, lightThemes, themes } from "@/consts/theme"
 import { PaintBrushIcon, WarningIcon } from "@phosphor-icons/react"
-import React from "react"
 import { useTheme } from "next-themes"
 import {
   Field,
@@ -21,6 +20,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { cn } from "@/lib/utils"
 
 function Theme() {
   const { theme, setTheme } = useTheme()
@@ -37,58 +37,203 @@ function Theme() {
 
   return (
     <section
-      className="mx-auto flex min-h-full w-full max-w-lg flex-col gap-2"
+      className="mx-auto flex w-full max-w-lg flex-col gap-2 px-6"
       id="layout-theme"
       data-section
     >
-      <div className="flex w-full gap-2 max-md:flex-col-reverse md:items-center md:justify-between">
-        <div className="flex flex-col gap-2">
-          <h1 className="m-0 px-6 text-foreground/40">
+      <div className="mx-auto mb-2 flex w-full max-w-lg gap-2 max-md:flex-col-reverse md:items-center md:justify-between">
+        <div className="flex flex-col">
+          <h1 className="m-0 text-lg text-foreground/60">
             {language.data.app.setting.layout.theme.title}
           </h1>
+          <p className="text-foreground/40">
+            {language.data.app.setting.layout.theme.description}
+          </p>
         </div>
       </div>
-      {theme !== "custom" && theme !== "system" ? (
-        <div className="rounded-2xl border-2 border-primary p-1">
-          <Badge className="ml-0.5 rounded-full bg-primary/10 text-primary">
+      {theme !== "custom" && theme === "system" ? (
+        <div className="mx-auto w-full max-w-lg rounded-4xl border-2 border-primary p-1">
+          <Badge className="mt-1 ml-1.5 rounded-full bg-primary/10 text-primary">
             <PaintBrushIcon className="mr-1" weight="fill" />
             {language.data.app.setting.layout.theme.title}
           </Badge>
           <ThemePreview theme={appTheme} className="mt-2" />
-          <div className="mt-2 flex flex-wrap gap-2 rounded-xl bg-foreground/10 p-1">
-            {lightThemes.map((collectedTheme, index) => (
-              <ThemeDot
-                key={index}
-                theme={collectedTheme}
-                isDark={false}
-                active={appTheme === collectedTheme.name && theme === "light"}
-                onClick={() => {
-                  setAppTheme(collectedTheme.name)
-                  setTheme("light")
-                }}
-              />
-            ))}
-            {darkThemes.map((collectedTheme, index) => (
-              <ThemeDot
-                key={index}
-                theme={collectedTheme}
-                isDark={true}
-                active={appTheme === collectedTheme.name && theme === "dark"}
-                onClick={() => {
-                  setAppTheme(collectedTheme.name)
-                  setTheme("dark")
-                }}
-              />
-            ))}
+          <div className="mt-2 flex gap-1">
+            <div className="flex flex-wrap items-center gap-2 rounded-3xl bg-foreground/5 p-1">
+              {themes.map((collectedTheme, index) => (
+                <Tooltip data-theme={collectedTheme.name} key={index}>
+                  <TooltipTrigger
+                    data-theme={collectedTheme.name}
+                    className={cn(
+                      `theme-dot interactive hover:opacity-100 active:scale-90`,
+                      isCurrentlyDark ? "dark" : "light",
+                      appTheme === collectedTheme.name
+                        ? "active"
+                        : "scale-90 opacity-60 hover:scale-95 active:scale-80"
+                    )}
+                    delay={0}
+                    data-smooth-interaction="true"
+                    onClick={() => {
+                      setAppTheme(collectedTheme.name)
+                      setTheme("system")
+                    }}
+                  >
+                    <div>
+                      <div></div>
+                      <div></div>
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom" className={`z-10 capitalize`}>
+                    {[collectedTheme.light, collectedTheme.dark]
+                      .join(" / ")
+                      .replaceAll(/[-_]/g, " ")}
+                  </TooltipContent>
+                </Tooltip>
+              ))}
+            </div>
+          </div>
+        </div>
+      ) : theme !== "custom" && theme !== "system" ? (
+        <div className="mx-auto w-full max-w-lg rounded-4xl border-2 border-primary p-1">
+          <Badge className="mt-1 ml-1.5 rounded-full bg-primary/10 text-primary">
+            <PaintBrushIcon className="mr-1" weight="fill" />
+            {language.data.app.setting.layout.theme.title}
+          </Badge>
+          <ThemePreview theme={appTheme} className="mt-2" />
+          <div className="mt-2 flex gap-1">
+            <div className="flex flex-wrap items-center gap-2 rounded-3xl bg-foreground/5 p-1">
+              <span className="ml-2 text-xs text-foreground/40">
+                {language.data.app.setting.layout.theme.light}
+              </span>
+              {lightThemes.map((collectedTheme, index) => (
+                <ThemeDot
+                  key={index}
+                  theme={collectedTheme}
+                  isDark={false}
+                  active={appTheme === collectedTheme.name && theme === "light"}
+                  onClick={() => {
+                    setAppTheme(collectedTheme.name)
+                    setTheme("light")
+                  }}
+                />
+              ))}
+            </div>
+            <div className="flex flex-wrap items-center gap-2 rounded-3xl bg-foreground/5 p-1">
+              <span className="ml-2 text-xs text-foreground/40">
+                {language.data.app.setting.layout.theme.dark}
+              </span>
+              {darkThemes.map((collectedTheme, index) => (
+                <ThemeDot
+                  key={index}
+                  theme={collectedTheme}
+                  isDark={true}
+                  active={appTheme === collectedTheme.name && theme === "dark"}
+                  onClick={() => {
+                    setAppTheme(collectedTheme.name)
+                    setTheme("dark")
+                  }}
+                />
+              ))}
+            </div>
           </div>
         </div>
       ) : (
-        <></>
+        <div className="mx-auto w-full max-w-lg rounded-4xl border-2 border-primary p-1">
+          <Badge className="mt-1 ml-1.5 rounded-full bg-primary/10 text-primary">
+            <PaintBrushIcon className="mr-1" weight="fill" />
+            {language.data.app.setting.layout.theme.title}
+          </Badge>
+          <ThemePreview theme={appTheme} className="mt-2" />
+          <div className="mt-2 flex gap-1">
+            <div className="flex flex-wrap items-center gap-2 rounded-3xl bg-foreground/5 p-1">
+              <span className="ml-2 text-xs text-foreground/40">
+                {language.data.app.setting.layout.theme.light}
+              </span>
+              {lightThemes.map((collectedTheme, index) => (
+                <ThemeDot
+                  key={index}
+                  theme={collectedTheme}
+                  isDark={false}
+                  active={appTheme === collectedTheme.name && !isCurrentlyDark}
+                  onClick={() => {
+                    setAppTheme(collectedTheme.name)
+                    setTheme("light")
+                  }}
+                />
+              ))}
+            </div>
+            <div className="flex flex-wrap items-center gap-2 rounded-3xl bg-foreground/5 p-1">
+              <span className="ml-2 text-xs text-foreground/40">
+                {language.data.app.setting.layout.theme.dark}
+              </span>
+              {darkThemes.map((collectedTheme, index) => (
+                <ThemeDot
+                  key={index}
+                  theme={collectedTheme}
+                  isDark={true}
+                  active={appTheme === collectedTheme.name && isCurrentlyDark}
+                  onClick={() => {
+                    setAppTheme(collectedTheme.name)
+                    setTheme("dark")
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
       )}
-      <FieldGroup className="w-full">
+      <div className="mx-auto mt-2 flex w-full max-w-lg gap-2 max-md:flex-col-reverse md:items-center md:justify-between">
+        <div className="flex flex-col">
+          <p className="text-foreground/40">
+            {language.data.app.setting.layout.theme.option}
+          </p>
+        </div>
+      </div>
+      <FieldGroup className="mx-auto w-full max-w-lg gap-2">
         <FieldLabel
-          htmlFor="switch-share"
-          className="group/label rounded-lg! border-2! not-data-active:border-border/10 hover:scale-101 hover:bg-foreground/5 active:scale-96"
+          htmlFor="theme-sync"
+          className="group/label rounded-xl! border-2! pl-1 not-data-active:border-border/40 hover:scale-101 hover:bg-foreground/5 active:scale-96"
+          data-smooth-interaction="true"
+        >
+          <Field orientation="horizontal">
+            <FieldContent>
+              <FieldTitle className="text-base">
+                <div className="flex flex-wrap items-center gap-x-2">
+                  <h1>{language.data.app.setting.layout.theme_sync.title}</h1>
+                  <Tooltip>
+                    <TooltipTrigger delay={0}>
+                      <Badge className="rounded-full bg-foreground/10 text-foreground">
+                        {theme === "system"
+                          ? language.data.common.enabled
+                          : language.data.common.disabled}
+                      </Badge>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      {theme === "system"
+                        ? language.data.common.enabled_description
+                        : language.data.common.disabled_description}
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
+              </FieldTitle>
+              <FieldDescription className="pt-1">
+                {language.data.app.setting.layout.theme_sync.description}
+              </FieldDescription>
+            </FieldContent>
+            <Switch
+              id="theme-sync"
+              data-smooth-interaction="true"
+              className="group-active/label:scale-80"
+              onCheckedChange={(e) =>
+                setTheme(e ? "system" : isCurrentlyDark ? "dark" : "light")
+              }
+              checked={theme === "system"}
+            />
+          </Field>
+        </FieldLabel>
+        <FieldLabel
+          htmlFor="amoled-black"
+          className="group/label rounded-xl! border-2! pl-1 not-data-active:border-border/40 hover:scale-101 hover:bg-foreground/5 active:scale-96"
           data-smooth-interaction="true"
         >
           <Field orientation="horizontal">
@@ -130,7 +275,7 @@ function Theme() {
               </FieldDescription>
             </FieldContent>
             <Switch
-              id="switch-share"
+              id="amoled-black"
               data-smooth-interaction="true"
               className="group-active/label:scale-80"
               onCheckedChange={setAmoled}

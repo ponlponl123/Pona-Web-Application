@@ -60,7 +60,7 @@ button.theme-dot {
 }
 
 button.theme-dot.active {
-  @apply scale-110 border-2 border-primary shadow-md shadow-primary;
+  @apply scale-105 border-2 border-primary;
 }
 
 button.theme-dot > div {

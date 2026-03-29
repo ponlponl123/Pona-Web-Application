@@ -551,12 +551,14 @@
         "appearance": "Appearance",
         "theme": {
           "title": "Theme",
-          "day": "Day Theme",
-          "night": "Night Theme"
+          "description": "Choose your preferred appearance mode for the application.",
+          "light": "Light Mode",
+          "dark": "Dark Mode",
+          "option": "Theme Settings"
         },
         "theme_sync": {
           "title": "Sync with system",
-          "description": "Automatically updates the theme based on your system time zone"
+          "description": "Automatically switch between light and dark themes based on your system settings."
         },
         "amoled_black": {
           "title": "AMOLED Black",

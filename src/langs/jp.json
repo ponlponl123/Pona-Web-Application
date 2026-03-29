@@ -555,12 +555,14 @@
         "appearance": "外観",
         "theme": {
           "title": "テーマ",
-          "day": "昼テーマ",
-          "night": "夜テーマ"
+          "description": "アプリケーションの表示モードを選択します。",
+          "light": "ライトモード",
+          "dark": "ダークモード",
+          "option": "テーマ設定"
         },
         "theme_sync": {
-          "title": "システムと同期",
-          "description": "システムのタイムゾーンに基づいてテーマを自動的に更新します"
+          "title": "システム設定に同期",
+          "description": "システムのテーマ設定に合わせて、ライトモードとダークモードを自動で切り替えます。"
         },
         "amoled_black": {
           "title": "AMOLEDブラック",

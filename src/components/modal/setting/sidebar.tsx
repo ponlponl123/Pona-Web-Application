@@ -91,10 +91,6 @@ function SettingModalSidebar() {
               name: language.data.app.setting.layout.transparency.title,
               target: "#transparency",
             },
-            {
-              name: language.data.app.setting.layout.animation.title,
-              target: "#animation",
-            },
           ],
         },
         {
@@ -107,7 +103,16 @@ function SettingModalSidebar() {
           name: language.data.app.setting.language_time.title,
           target: "language-time",
           icon: <TranslateIcon weight="bold" className="size-4" />,
-          subpages: [],
+          subpages: [
+            {
+              name: language.data.app.setting.language_time.time.title,
+              target: "#time-format",
+            },
+            {
+              name: language.data.app.setting.language_time.language.title,
+              target: "#language",
+            },
+          ],
         },
       ],
     },

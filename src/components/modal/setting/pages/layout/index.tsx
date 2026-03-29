@@ -2,6 +2,9 @@
 import { useLanguageContext } from "@/contexts/languageContext"
 import { ShapesIcon } from "@phosphor-icons/react"
 import Theme from "./theme"
+import Player from "./player"
+import Transparency from "./transparency"
+import Animation from "./animation"
 
 function Developer() {
   const { language } = useLanguageContext()
@@ -25,6 +28,9 @@ function Developer() {
         </div>
       </section>
       <Theme />
+      <Player />
+      <Transparency />
+      <div className="my-12" />
     </>
   )
 }
