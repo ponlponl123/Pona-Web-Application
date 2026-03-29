@@ -18,6 +18,7 @@ import React, { useState, useRef } from "react"
 import { motion } from "motion/react"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
+import { useMediaQuery } from "@heroui/react"
 
 export default function UserAccountDropdown({
   className,
@@ -30,6 +31,7 @@ export default function UserAccountDropdown({
   const { userInfo, revokeUserAccessToken } = useDiscordUserInfo()
   const { setIsSettingModalOpen, setIsFeedbackModalOpen, setSettingLayoutId } =
     useGlobalContext()
+  const isMobile = useMediaQuery("(max-width: 760px)")
   const popupRef = useRef<HTMLDivElement>(null)
   const { language } = useLanguageContext()
 
@@ -57,6 +59,10 @@ export default function UserAccountDropdown({
   )
 
   const handleToggle = () => {
+    if (isMobile) {
+      setIsSettingModalOpen(true)
+      return
+    }
     if (cooldownRef.current) return
     setIsActive((prev) => !prev)
     cooldownRef.current = setTimeout(() => {

@@ -147,7 +147,7 @@ function ActivationLink({
         onClick={clicked}
         ref={buttonRef}
         className={cn(
-          `flex h-9 w-full items-center justify-start gap-2 rounded-lg px-3 py-1.5 text-sm select-none hover:bg-foreground/10 dark:hover:bg-foreground/5`,
+          `flex h-9 w-full items-center justify-start gap-2 rounded-lg px-3 py-1.5 text-sm select-none hover:bg-foreground/10 max-md:my-1 max-md:h-12 max-md:px-6 dark:hover:bg-foreground/5`,
           isHere &&
             "bg-primary text-primary-foreground hover:bg-primary/80 dark:hover:bg-primary/80",
           iconOnly && "size-10",
