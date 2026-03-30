@@ -44,7 +44,7 @@ function Theme() {
       >
         <div className="mx-auto mb-2 flex w-full max-w-lg gap-2 max-md:flex-col-reverse md:items-center md:justify-between">
           <div className="flex flex-col">
-            <h1 className="m-0 text-lg text-foreground/60">
+            <h1 className="m-0 text-2xl">
               {language.data.app.setting.layout.theme.title}
             </h1>
             <p className="text-foreground/40">

@@ -32,6 +32,9 @@ function Player() {
           <h1 className="m-0 text-2xl">
             {language.data.app.setting.layout.player.title}
           </h1>
+          <p className="text-foreground/40">
+            {language.data.app.setting.layout.player.description}
+          </p>
         </div>
         <MusicNoteIcon weight="fill" className="size-6 translate-y-1.5" />
       </div>
@@ -68,7 +71,7 @@ function Player() {
                               .component.title
                           }
                         </span>
-                        <span className="text-xs opacity-40 max-md:text-[10px]">
+                        <span className="text-[8px] opacity-40">
                           {
                             language.data.app.setting.layout.player.preview
                               .component.artist
@@ -129,16 +132,16 @@ function Player() {
                 <div className="flex w-full flex-col items-center justify-center rounded-2xl bg-foreground/10 p-3 text-foreground/50">
                   <div className="flex w-full items-center justify-between">
                     <div className="flex w-full items-center justify-between">
-                      <div className="mr-4 flex min-w-0 flex-1 max-md:mr-2">
-                        <div className="mr-4 size-10 rounded-lg bg-primary/80 max-md:mr-2 max-md:size-8" />
-                        <div className="mr-4 flex min-w-0 flex-1 flex-col max-md:mr-2">
+                      <div className="mr-2 flex min-w-0 flex-1">
+                        <div className="mr-2 size-8 rounded-lg bg-primary/80" />
+                        <div className="flex min-w-0 flex-1 flex-col">
                           <span className="text-sm max-md:text-xs">
                             {
                               language.data.app.setting.layout.player.preview
                                 .component.title
                             }
                           </span>
-                          <span className="text-xs opacity-40 max-md:text-[10px]">
+                          <span className="text-[8px] opacity-40">
                             {
                               language.data.app.setting.layout.player.preview
                                 .component.artist

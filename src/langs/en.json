@@ -580,6 +580,7 @@
         },
         "player": {
           "title": "Player Layout",
+          "description": "Visual layout of the player.",
           "preview": {
             "title": "Preview",
             "description": "This is how the player layout looks like.",

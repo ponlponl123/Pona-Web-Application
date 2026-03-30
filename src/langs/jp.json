@@ -586,10 +586,10 @@
           "title": "プレイヤーレイアウト",
           "preview": {
             "title": "プレビュー",
-            "description": "プレイヤーのレイアウトは以下のように表示されます。",
+            "description": "プレイヤーの表示例。",
             "component": {
               "artist": "アーティスト名",
-              "title": "トラック名"
+              "title": "曲名"
             }
           },
           "compact": {

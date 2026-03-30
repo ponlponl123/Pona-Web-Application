@@ -26,6 +26,7 @@ function Developer() {
           </div>
           <ShapesIcon weight="fill" className="size-12 translate-y-1.5" />
         </div>
+        <div className="mx-auto mt-6 h-px w-full max-w-lg bg-foreground/10" />
       </section>
       <Theme />
       <Player />
