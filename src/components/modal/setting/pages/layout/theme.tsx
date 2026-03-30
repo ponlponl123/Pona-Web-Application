@@ -102,7 +102,7 @@ function Theme() {
             </Badge>
             <ThemePreview theme={appTheme} className="mt-2" />
             <div className="mt-2 flex gap-1">
-              <div className="flex flex-wrap items-center gap-2 rounded-3xl bg-foreground/5 p-1">
+              <div className="flex flex-wrap content-start items-center gap-x-2 rounded-3xl bg-foreground/5 p-1">
                 <span className="ml-2 text-xs text-foreground/40">
                   {language.data.app.setting.layout.theme.light}
                 </span>
@@ -121,7 +121,7 @@ function Theme() {
                   />
                 ))}
               </div>
-              <div className="flex flex-wrap items-center gap-2 rounded-3xl bg-foreground/5 p-1">
+              <div className="flex flex-wrap content-start items-center gap-x-2 rounded-3xl bg-foreground/5 p-1">
                 <span className="ml-2 text-xs text-foreground/40">
                   {language.data.app.setting.layout.theme.dark}
                 </span>

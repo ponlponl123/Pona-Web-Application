@@ -5,12 +5,14 @@ import React, { createContext, useContext, useState } from "react"
 
 export type TimeFormat = "auto" | 12 | 24
 export type Thermometer = "c" | "f"
+export type BlurEffect = false | "acrylics" | "blur"
 export type Animation = boolean | "30 fps"
 export type Location = "auto" | "surprise" | LatLngExpression
 export type PonaPlayerStyle = "modern" | "compact"
 export interface UserSetting {
   // Layout Settings
   transparency: boolean
+  blurEffect: BlurEffect
   timeformat: TimeFormat
   thermometer: Thermometer
   animation: Animation
@@ -21,6 +23,7 @@ export interface UserSetting {
 }
 export const defaultUserSetting: UserSetting = {
   transparency: true,
+  blurEffect: "acrylics",
   timeformat: "auto",
   thermometer: "c",
   animation: true,
@@ -53,7 +56,7 @@ export const UserSettingProvider = ({
       const decodedSetting = atob(cookieValue)
       if (decodedSetting) {
         const parsedUserSetting = JSON.parse(decodedSetting) as UserSetting
-        setUserSettingState(parsedUserSetting)
+        setUserSettingState({ ...defaultUserSetting, ...parsedUserSetting })
         if (parsedUserSetting.animation === "30 fps")
           document.documentElement.classList.add("animation-30fps")
         else if (parsedUserSetting.animation === false)

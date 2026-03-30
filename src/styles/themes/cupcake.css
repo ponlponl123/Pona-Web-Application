@@ -1,0 +1,31 @@
+[data-theme="cupcake"] {
+  --primary: oklab(79.177% 0.03676 0.02886);
+  --secondary: oklab(68.477% 0.04466 0.04028);
+  --success: oklab(85.476% 0.02365 -0.03795);
+  --warning: oklab(76.659% 0.04231 0.06297);
+  --danger: oklab(60.196% 0.08444 0.04079);
+  --focus: oklab(79.377% 0.03441 0.03206);
+  --foreground: oklab(34.295% 0.02235 -0.01082);
+  --background: oklab(95.839% 0.02771 -0.01366);
+  --color-playground-background: oklab(95.839% 0.02771 -0.01366);
+  --card: oklab(99% 0.015 -0.008);
+  --card-foreground: oklab(34.295% 0.02235 -0.01082);
+  --muted: oklab(89% 0.015 -0.008);
+  --border: oklab(81% 0.015 -0.008);
+  --input: oklab(81% 0.015 -0.008);
+}
+
+[data-theme="cupcake"]:not(.light) {
+  &[data-theme].dark:not(.light),
+  & .dark:not(.light),
+  &:is(.dark:not(.light) *) {
+    --foreground: oklab(80.039% 0.0685 -0.00464);
+    --background: oklab(20.705% 0.02404 -0.00603);
+    --card: oklab(25% 0.015 -0.004);
+    --card-foreground: oklab(80.039% 0.0685 -0.00464);
+    --muted: oklab(33% 0.01 -0.002);
+    --border: oklab(41% 0.01 -0.002);
+    --input: oklab(41% 0.01 -0.002);
+    --color-playground-background: oklab(26.111% 0.02157 -0.00833);
+  }
+}

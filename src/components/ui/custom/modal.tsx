@@ -63,7 +63,7 @@ function Modal({
             layoutId={layoutId}
             onClick={(e) => e.stopPropagation()}
             className={cn(
-              "m-auto flex max-h-[calc(100vh-2rem)] min-h-96 w-full max-w-md flex-col overflow-hidden rounded-4xl border-2 border-foreground/10 bg-card/90 shadow-xl",
+              "m-auto flex max-h-[calc(100vh-2rem)] min-h-96 w-full max-w-md flex-col overflow-hidden rounded-4xl border-2 border-foreground/10 bg-card/90 shadow-xl backdrop-saturate-200",
               classNames?.base,
               className
             )}

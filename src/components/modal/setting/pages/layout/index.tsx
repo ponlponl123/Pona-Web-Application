@@ -4,7 +4,7 @@ import { ShapesIcon } from "@phosphor-icons/react"
 import Theme from "./theme"
 import Player from "./player"
 import Transparency from "./transparency"
-import Animation from "./animation"
+import BlurEffect from "./blur-effect"
 
 function Developer() {
   const { language } = useLanguageContext()
@@ -30,6 +30,7 @@ function Developer() {
       <Theme />
       <Player />
       <Transparency />
+      <BlurEffect />
       <div className="my-12" />
     </>
   )

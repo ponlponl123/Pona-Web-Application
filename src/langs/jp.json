@@ -565,11 +565,12 @@
         "title": "レイアウト",
         "description": "インターフェースの視覚的な構造や配置をカスタマイズします。",
         "appearance": "外観",
+        "locked": "現在準備中です",
         "theme": {
           "title": "テーマ",
           "description": "アプリケーションの表示モードを選択します。",
-          "light": "ライトモード",
-          "dark": "ダークモード",
+          "light": "ライト",
+          "dark": "ダーク",
           "option": "テーマ設定"
         },
         "theme_sync": {
@@ -609,6 +610,21 @@
           "disabled": {
             "title": "無効",
             "description": "透明効果を無効にすると、バッテリーを最大50％節約できます。"
+          }
+        },
+        "blur": {
+          "title": "アクリル効果",
+          "acrylics": {
+            "title": "アクリル",
+            "description": "半透明の質感を有効にし、UIをより美しくします。リソースの消費が増える場合があります。"
+          },
+          "blur": {
+            "title": "ブラー",
+            "description": "背景をぼかし、コンテンツを見やすくします。"
+          },
+          "disabled": {
+            "title": "無効",
+            "description": "透過効果をオフにして、パフォーマンスとバッテリー持ちを最優先します。"
           }
         },
         "time_format": {

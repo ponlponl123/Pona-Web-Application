@@ -93,6 +93,10 @@ function SettingModalSidebar() {
               name: language.data.app.setting.layout.transparency.title,
               target: "layout-transparency",
             },
+            {
+              name: language.data.app.setting.layout.blur.title,
+              target: "blur-effect",
+            },
           ],
         },
         {
@@ -420,7 +424,7 @@ function SettingModalSidebar() {
                             >
                               <motion.button
                                 className={cn(
-                                  "relative flex w-full items-center justify-start gap-2 rounded-md px-2 py-1 text-start text-foreground/40",
+                                  "relative flex w-full items-center justify-start gap-2 rounded-md px-2 py-1 text-start text-sm text-foreground/40",
                                   "hover:text-foreground/80",
                                   lookingAt?.includes(tos.target) &&
                                     "text-foreground"

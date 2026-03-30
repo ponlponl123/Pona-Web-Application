@@ -92,7 +92,7 @@ function Player() {
                   </div>
                 </div>
               </div>
-              <FieldTitle>
+              <FieldTitle className="text-base">
                 {language.data.app.setting.layout.player.compact.title}
                 {userSetting.dev_pona_player_style === "compact" && (
                   <Tooltip>
@@ -163,7 +163,7 @@ function Player() {
                   </div>
                 </div>
               </div>
-              <FieldTitle>
+              <FieldTitle className="text-base">
                 {language.data.app.setting.layout.player.comfortable.title}
                 {userSetting.dev_pona_player_style === "modern" && (
                   <Tooltip>

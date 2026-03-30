@@ -12,6 +12,13 @@
 @layer base {
   @import "./themes/default.css";
   @import "./themes/chocolate.css";
+  @import "./themes/matcha.css";
+  @import "./themes/hopeful.css";
+  @import "./themes/nextui.css";
+  @import "./themes/red_rose.css";
+  @import "./themes/violet.css";
+  @import "./themes/winter.css";
+  @import "./themes/cupcake.css";
   @import "./themes/heroui/theme.css";
 
   @import "./app.css";
@@ -26,7 +33,7 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background tracking-wide text-foreground;
     font-family:
       var(--font-ponlponl123-article), var(--font-sn-sanafon-maru-j30),
       sans-serif;

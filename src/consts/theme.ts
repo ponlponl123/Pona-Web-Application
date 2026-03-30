@@ -12,7 +12,59 @@ export const ChocolateTheme: Theme = {
   dark: "dark-chocolate",
 }
 
-export const themes: Theme[] = [DefaultTheme, ChocolateTheme]
+export const MatchaTheme: Theme = {
+  name: "matcha",
+  light: "Matcha Latte",
+  dark: "Roasted Matcha",
+}
+
+export const HopefulTheme: Theme = {
+  name: "hopeful",
+  light: "Daybreak",
+  dark: "Nightfall",
+}
+
+export const NextUITheme: Theme = {
+  name: "nextui",
+  light: "Modern Light",
+  dark: "Modern Dark",
+}
+
+export const RedRoseTheme: Theme = {
+  name: "red_rose",
+  light: "Rose Petal",
+  dark: "Crimson Velvet",
+}
+
+export const VioletTheme: Theme = {
+  name: "violet",
+  light: "Soft Lavender",
+  dark: "Deep Plum",
+}
+
+export const WinterTheme: Theme = {
+  name: "winter",
+  light: "Fresh Snow",
+  dark: "Polar Night",
+}
+
+export const CupcakeTheme: Theme = {
+  name: "cupcake",
+  light: "Vanilla Frosting",
+  dark: "Devil's Food",
+}
+
+export const themes: Theme[] = [
+  DefaultTheme,
+  ChocolateTheme,
+  MatchaTheme,
+  HopefulTheme,
+  NextUITheme,
+  RedRoseTheme,
+  VioletTheme,
+  WinterTheme,
+  CupcakeTheme,
+]
 
 export const validThemes = themes.filter((theme) => theme.light && theme.dark)
 

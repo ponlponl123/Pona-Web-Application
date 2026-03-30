@@ -561,11 +561,12 @@
         "title": "Layout",
         "description": "Customize the visual structure and arrangement of the interface.",
         "appearance": "Appearance",
+        "locked": "Coming soon to the Lab",
         "theme": {
           "title": "Theme",
           "description": "Choose your preferred appearance mode for the application.",
-          "light": "Light Mode",
-          "dark": "Dark Mode",
+          "light": "Light",
+          "dark": "Dark",
           "option": "Theme Settings"
         },
         "theme_sync": {
@@ -605,6 +606,21 @@
           "disabled": {
             "title": "Disabled",
             "description": "Disables transparency effects, may save up to 50% on battery."
+          }
+        },
+        "blur": {
+          "title": "Acrylic Effects",
+          "acrylics": {
+            "title": "Acrylic",
+            "description": "Enable translucent textures for a premium look. Requires more system resources."
+          },
+          "blur": {
+            "title": "Blur",
+            "description": "Apply a simple blur effect to background elements for better focus."
+          },
+          "disabled": {
+            "title": "Disabled",
+            "description": "Turn off all transparency effects to maximize performance and battery life."
           }
         },
         "time_format": {
