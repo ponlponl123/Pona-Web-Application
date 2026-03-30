@@ -67,6 +67,7 @@ function PatchNote({
           exit={{ opacity: 0 }}
           transition={{ duration: 1, delay: 0.1 }}
           data-smooth-interaction="true"
+          className="z-10"
         >
           <Link href="/updates" tabIndex={-1}>
             <Button variant="ghost" size="lg" className="rounded-full">

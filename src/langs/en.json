@@ -57,6 +57,14 @@
       "can_we_contact_back": "Can we reach out to hear more from you?",
       "placeholder": "Just a quick thought, a wild idea, or even a little complaint...",
       "email": "Email address",
+      "sending": "Folding into a paper plane and tossing it our way...",
+      "empty_textarea": "Oops, the paper plane is empty! Jot down a little something first.",
+      "invalid_email": "Hmm, that email looks a bit off. Mind double-checking the spelling?",
+      "server_error": "Whoops, a sudden gust of wind blew your paper plane off course! Totally our fault. Mind trying again in a bit?",
+      "completed": {
+        "title": "Yay! It landed. 🛬",
+        "description": "Thanks for dropping a note! We really appreciate you sharing your thoughts."
+      },
       "options": {
         "cancel": "Never mind",
         "submit": "Send"
