@@ -159,14 +159,6 @@ function Sidebar({
                     <ActivationLink
                       iconOnly={canCollapsed && sidebarCollapsed}
                       onClick={handlePushLocation}
-                      href="/app/playlists"
-                      icon={PlaylistIcon}
-                    >
-                      {language.data.app.playlist.name}
-                    </ActivationLink>
-                    <ActivationLink
-                      iconOnly={canCollapsed && sidebarCollapsed}
-                      onClick={handlePushLocation}
                       href="/updates"
                       icon={WrenchIcon}
                       isActive={pathname.includes("/updates")}

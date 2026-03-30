@@ -14,6 +14,7 @@ import { Toaster } from "@/components/ui/sonner"
 import { usePathname } from "next/navigation"
 import { languageKeys } from "@/lib/i18n"
 import { ViewTransition } from "react"
+import ClickSpark from "@/components/ClickSpark"
 
 export function Providers({
   children,
@@ -32,19 +33,27 @@ export function Providers({
           <DiscordGuildInfoProvider>
             <PonaMusicCacheContextProvider>
               <GlobalProvider isMobile={isMobile}>
-                {pathname.startsWith("/app") ||
-                pathname.startsWith("/updates") ? (
-                  <AnimatePresence mode={"popLayout"}>
-                    <motion.div className="min-h-screen">
-                      <ViewTransition>{children}</ViewTransition>
-                    </motion.div>
-                  </AnimatePresence>
-                ) : (
-                  <PageAnimatePresence>{children}</PageAnimatePresence>
-                )}
-                <Toaster />
-                <SettingModal />
-                <FeedbackModal />
+                <ClickSpark
+                  sparkColor="#fff"
+                  sparkSize={10}
+                  sparkRadius={15}
+                  sparkCount={8}
+                  duration={400}
+                >
+                  {pathname.startsWith("/app") ||
+                  pathname.startsWith("/updates") ? (
+                    <AnimatePresence mode={"popLayout"}>
+                      <motion.div className="min-h-screen">
+                        <ViewTransition>{children}</ViewTransition>
+                      </motion.div>
+                    </AnimatePresence>
+                  ) : (
+                    <PageAnimatePresence>{children}</PageAnimatePresence>
+                  )}
+                  <Toaster />
+                  <SettingModal />
+                  <FeedbackModal />
+                </ClickSpark>
               </GlobalProvider>
             </PonaMusicCacheContextProvider>
           </DiscordGuildInfoProvider>

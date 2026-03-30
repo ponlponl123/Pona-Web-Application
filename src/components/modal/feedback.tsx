@@ -46,6 +46,7 @@ function FeedbackModal() {
     }
     if (isError) return
     setIsSending(true)
+    setIsFormDisabled(true)
     try {
       const formData = new FormData()
       formData.set("message", textAreaValue)
@@ -275,7 +276,7 @@ function FeedbackModal() {
             </Button>
             <motion.button
               className={
-                "flex items-center justify-center gap-2 rounded-full border-0 bg-primary px-6 hover:scale-105 hover:bg-primary/20 hover:text-primary active:scale-75"
+                "flex items-center justify-center gap-2 rounded-full border-0 bg-primary px-6 text-primary-foreground hover:scale-105 hover:bg-primary/20 hover:text-primary active:scale-75"
               }
               onClick={sendIt}
               data-smooth-interaction="true"

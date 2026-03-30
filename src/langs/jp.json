@@ -748,6 +748,16 @@
       }
     }
   },
+  "terms_asking": {
+    "title": "準備はいいですか？",
+    "description": "すべての機能のロックを解除する前に、{terms}のご確認をお願いします！",
+    "terms_label": "利用規約およびプライバシーポリシー",
+    "actions": {
+      "cancel": "あとにする",
+      "accept": "同意してはじめる！"
+    },
+    "cancel_tooltip": "ごめんなさい！システム上、どうしても先に同意いただく必要があるんです。"
+  },
   "redirect": {
     "title": "リダイレクト中..",
     "description": "リダイレクトされない場合は、[clickme]をクリックしてください。",

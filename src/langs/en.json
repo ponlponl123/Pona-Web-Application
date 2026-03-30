@@ -745,6 +745,16 @@
       }
     }
   },
+  "terms_asking": {
+    "title": "Ready to dive in?",
+    "description": "Just a quick look at our {terms} before you unlock the full experience!",
+    "terms_label": "Terms of Service & Privacy Policy",
+    "actions": {
+      "cancel": "Maybe later",
+      "accept": "Agree & Let's go!"
+    },
+    "cancel_tooltip": "Sorry! We wish we could skip this too, but it's required before we can let you in."
+  },
   "redirect": {
     "title": "Redirecting..",
     "description": "if redirecting not working, u can [clickme]!",

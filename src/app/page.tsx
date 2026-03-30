@@ -74,13 +74,34 @@ export default function Home() {
   }, [pathname])
 
   return (
-    <main className="main-bg-2 mb-24 min-h-screen w-full">
+    <main className="relative mb-24 min-h-screen w-full">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{
+          delay: 1,
+          duration: 5,
+          ease: "easeOut",
+        }}
+        className="pointer-events-none absolute top-0 left-0 h-full w-full overflow-hidden"
+      >
+        <motion.div
+          initial={{ scale: 1.4 }}
+          animate={{ scale: 1 }}
+          transition={{
+            duration: 5,
+            ease: "easeOut",
+          }}
+          className="main-bg-2 pointer-events-none absolute top-0 left-0 h-full w-full"
+        />
+      </motion.div>
       <div className="relative flex min-h-screen items-center justify-center p-12 sm:p-20">
         <main className="relative row-start-2 flex h-[calc(100vh-6rem)] w-full flex-col items-center gap-8 sm:h-[calc(100vh-10rem)]">
           <motion.span
             initial={{ opacity: 0, y: -24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 2 }}
+            transition={{ delay: 5 }}
             className="z-10 mt-6 flex items-center gap-2 rounded-xl border-2 border-white/30 bg-white/20 px-3 py-1 text-sm tracking-wider backdrop-blur backdrop-saturate-200"
           >
             <CookieIcon weight="fill" /> {language.data.cookie.description}
@@ -88,15 +109,15 @@ export default function Home() {
           <motion.div
             initial={{ scale: 1.12 }}
             animate={{ scale: 1 }}
-            transition={{ delay: 1.86, duration: 0.36, type: "spring" }}
+            transition={{ delay: 2.86, duration: 3, type: "spring" }}
             className="m-auto flex flex-col"
           >
             <h3 className="-mt-12"></h3>
             <motion.div
               initial={{ opacity: 0, scale: 1.2 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.32 }}
-              className="max-miniscreen:text-2xl m-0 flex flex-row justify-center text-center text-8xl leading-relaxed max-lg:text-6xl max-sm:text-4xl max-sm:leading-10"
+              transition={{ delay: 1.32, duration: 2 }}
+              className="max-miniscreen:text-2xl m-0 flex flex-row justify-center text-center text-7xl leading-relaxed max-lg:text-6xl max-sm:text-4xl max-sm:leading-10"
             >
               <AnimatePresence presenceAffectsLayout mode="popLayout">
                 {TEXTS.map(
@@ -112,6 +133,7 @@ export default function Home() {
                       >
                         <WavyText
                           text={TEXTS[index % TEXTS.length]}
+                          duration={0.12}
                           replay={true}
                         />
                       </motion.div>
@@ -129,7 +151,8 @@ export default function Home() {
                     text={
                       TEXTS[index % TEXTS.length] !== "" ? "Pona!" : "Pona! "
                     }
-                    delay={0.32}
+                    delay={1.32}
+                    duration={0.12}
                     replay={true}
                   />
                 </motion.div>
@@ -146,6 +169,7 @@ export default function Home() {
                       >
                         <WavyText
                           text={TEXTS1[index % TEXTS1.length]}
+                          duration={0.12}
                           replay={true}
                         />
                       </motion.div>
@@ -156,13 +180,13 @@ export default function Home() {
             <motion.div
               initial={{ opacity: 0, x: -6, marginTop: -82 }}
               animate={{ opacity: 1, x: 0, marginTop: 0 }}
-              transition={{ delay: 0.86 }}
-              className="text-primary-700 dark:text-primary-200 max-miniscreen:text-2xl -mb-2 w-full items-center justify-center text-center text-2xl leading-relaxed max-lg:mt-3 max-lg:text-lg max-sm:text-sm max-sm:leading-10"
+              transition={{ delay: 4.86 }}
+              className="text-primary-700 dark:text-primary-200 max-miniscreen:text-xl -mb-2 w-full items-center justify-center text-center text-xl leading-relaxed max-lg:mt-3 max-lg:text-lg max-sm:text-sm max-sm:leading-10"
             >
               <WavyText
                 className="flex flex-wrap justify-center text-center"
-                duration={0.01}
-                delay={0.64}
+                duration={0.04}
+                delay={4.64}
                 text={
                   hours > 4 && hours < 10
                     ? language.data.home.welcome_message.morning
@@ -179,7 +203,7 @@ export default function Home() {
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 2 }}
+            transition={{ delay: 5 }}
             className="flex flex-row items-center gap-4 max-sm:flex-col"
           >
             <Link
@@ -202,14 +226,14 @@ export default function Home() {
               <motion.span
                 initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 2.06 }}
+                transition={{ delay: 5.06 }}
               >
                 {language.data.home.actions.or}
               </motion.span>
               <motion.div
                 initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 2.12 }}
+                transition={{ delay: 5.12 }}
               >
                 <Link
                   href="/app"

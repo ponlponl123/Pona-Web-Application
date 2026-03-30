@@ -1,6 +1,10 @@
 "use client"
 import { useLanguageContext } from "@/contexts/languageContext"
-import { CubeTransparentIcon, WarningIcon } from "@phosphor-icons/react"
+import {
+  CubeTransparentIcon,
+  ShapesIcon,
+  WarningIcon,
+} from "@phosphor-icons/react"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import {
   Field,
@@ -60,6 +64,7 @@ function Transparency() {
           <Field orientation="horizontal">
             <FieldContent>
               <FieldTitle className="text-base">
+                <ShapesIcon className="size-4 translate-y-0.5" />
                 {language.data.app.setting.layout.transparency.enabled.title}
               </FieldTitle>
               <FieldDescription>
@@ -86,6 +91,7 @@ function Transparency() {
           <Field orientation="horizontal">
             <FieldContent>
               <FieldTitle className="text-base">
+                <ShapesIcon weight="fill" className="size-4 translate-y-0.5" />
                 {language.data.app.setting.layout.transparency.disabled.title}
               </FieldTitle>
               <FieldDescription>

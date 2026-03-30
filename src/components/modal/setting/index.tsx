@@ -244,11 +244,10 @@ function SettingModal() {
           >
             <Modal.Header className="m-0 w-full border-b border-foreground/10 p-3">
               <Modal.Title className="m-0 text-base leading-6.5 text-foreground/60">
-                {language.data.app.setting.name}
                 <Button
                   onClick={() => setIsNavExtended((value) => !value)}
                   className={cn(
-                    "ml-3 rounded-lg bg-foreground/5 hover:bg-foreground/10 sm:hidden!"
+                    "mr-3 rounded-lg bg-foreground/5 hover:bg-foreground/10 sm:hidden!"
                   )}
                   size={"icon-lg"}
                   data-smooth-interaction="true"
@@ -261,6 +260,7 @@ function SettingModal() {
                     )}
                   />
                 </Button>
+                {language.data.app.setting.name}
               </Modal.Title>
             </Modal.Header>
           </motion.div>

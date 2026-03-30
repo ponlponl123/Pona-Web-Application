@@ -114,7 +114,7 @@ function Header() {
   }, [searching, handleClickOutside])
 
   return (
-    <header
+    <motion.header
       className={cn(
         `nav-opened-${navOpened}`,
         "pona-header flex h-20 w-screen items-center justify-center gap-3 p-6 px-8",
@@ -128,6 +128,9 @@ function Header() {
           isSameVC &&
           "max-md:[body.pona-player-focused_&]:pointer-events-none max-md:[body.pona-player-focused_&]:opacity-0"
       )}
+      initial={isIndex && { y: "-100%", opacity: 0 }}
+      animate={isIndex && { y: 0, opacity: 1 }}
+      transition={{ duration: 0.16, delay: 5 }}
     >
       <div
         className={`w-full ${!isApp && "max-w-5xl"} flex h-full items-center justify-between gap-6`}
@@ -503,7 +506,7 @@ function Header() {
           </div>
         </nav>
       </div>
-    </header>
+    </motion.header>
   )
 }
 
