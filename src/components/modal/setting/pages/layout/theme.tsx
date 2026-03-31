@@ -4,7 +4,18 @@ import { useThemeContext } from "@/components/theme-provider"
 import { ThemeDot, ThemePreview } from "@/components/ui/custom/theme"
 import { useLanguageContext } from "@/contexts/languageContext"
 import { darkThemes, lightThemes, themes } from "@/consts/theme"
-import { PaintBrushIcon, WarningIcon } from "@phosphor-icons/react"
+import { UAParser } from "ua-parser-js"
+import {
+  AndroidLogoIcon,
+  AppleLogoIcon,
+  GoogleChromeLogoIcon,
+  HouseLineIcon,
+  LightbulbIcon,
+  LinuxLogoIcon,
+  PaintBrushIcon,
+  WarningIcon,
+  WindowsLogoIcon,
+} from "@phosphor-icons/react"
 import { useTheme } from "next-themes"
 import {
   Field,
@@ -21,19 +32,23 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
+import React from "react"
 
 function Theme() {
   const { theme, setTheme } = useTheme()
-  const {
-    appTheme,
-    appDayTheme,
-    appNightTheme,
-    isAmoled,
-    isCurrentlyDark,
-    setAppTheme,
-    setAmoled,
-  } = useThemeContext()
+  const { appTheme, isAmoled, isCurrentlyDark, setAppTheme, setAmoled } =
+    useThemeContext()
   const { language } = useLanguageContext()
+  const [osType, setOsType] = React.useState<UAParser.IOS | undefined>(
+    undefined
+  )
+
+  React.useEffect(() => {
+    const parser = new UAParser()
+    const os = parser.getOS()
+
+    setOsType(os)
+  }, [])
 
   return (
     <>
@@ -51,10 +66,11 @@ function Theme() {
               {language.data.app.setting.layout.theme.description}
             </p>
           </div>
+          <HouseLineIcon weight="fill" className="size-6 translate-y-1.5" />
         </div>
         {theme !== "custom" && theme === "system" ? (
           <div className="mx-auto w-full max-w-lg rounded-4xl border-2 border-primary p-1">
-            <Badge className="mt-1 ml-1.5 rounded-full bg-primary/10 text-primary">
+            <Badge className="m-1 rounded-full bg-primary/10 text-primary">
               <PaintBrushIcon className="mr-1" weight="fill" />
               {language.data.app.setting.layout.theme.title}
             </Badge>
@@ -96,7 +112,7 @@ function Theme() {
           </div>
         ) : theme !== "custom" && theme !== "system" ? (
           <div className="mx-auto w-full max-w-lg rounded-4xl border-2 border-primary p-1">
-            <Badge className="mt-1 ml-1.5 rounded-full bg-primary/10 text-primary">
+            <Badge className="m-1 rounded-full bg-primary/10 text-primary">
               <PaintBrushIcon className="mr-1" weight="fill" />
               {language.data.app.setting.layout.theme.title}
             </Badge>
@@ -144,7 +160,7 @@ function Theme() {
           </div>
         ) : (
           <div className="mx-auto w-full max-w-lg rounded-4xl border-2 border-primary p-1">
-            <Badge className="mt-1 ml-1.5 rounded-full bg-primary/10 text-primary">
+            <Badge className="m-1 rounded-full bg-primary/10 text-primary">
               <PaintBrushIcon className="mr-1" weight="fill" />
               {language.data.app.setting.layout.theme.title}
             </Badge>
@@ -212,6 +228,36 @@ function Theme() {
               <FieldContent>
                 <FieldTitle className="text-base">
                   <div className="flex flex-wrap items-center gap-x-2">
+                    {osType?.name?.includes("Windows") ? (
+                      <WindowsLogoIcon
+                        weight="fill"
+                        className="-mr-0.5 size-4 translate-y-0.5"
+                      />
+                    ) : osType?.name?.includes("macOS") ||
+                      osType?.name?.includes("iOS") ||
+                      osType?.name?.includes("iOS") ? (
+                      <AppleLogoIcon
+                        weight="fill"
+                        className="-mr-0.5 size-4 translate-y-0.5"
+                      />
+                    ) : osType?.name?.includes("Android") ? (
+                      <AndroidLogoIcon
+                        weight="fill"
+                        className="-mr-0.5 size-4 translate-y-0.5"
+                      />
+                    ) : osType?.name?.includes("Chrome") ? (
+                      <GoogleChromeLogoIcon
+                        weight="fill"
+                        className="-mr-0.5 size-4 translate-y-0.5"
+                      />
+                    ) : osType?.is("Linux") ? (
+                      <LinuxLogoIcon
+                        weight="fill"
+                        className="-mr-0.5 size-4 translate-y-0.5"
+                      />
+                    ) : (
+                      <></>
+                    )}
                     <h1>{language.data.app.setting.layout.theme_sync.title}</h1>
                     <Tooltip>
                       <TooltipTrigger delay={0}>
@@ -253,6 +299,10 @@ function Theme() {
               <FieldContent>
                 <FieldTitle className="text-base">
                   <div className="flex flex-wrap items-center gap-x-2">
+                    <LightbulbIcon
+                      weight={isAmoled ? "bold" : "fill"}
+                      className="-mr-0.5 size-4 translate-y-0.5"
+                    />
                     <h1>
                       {language.data.app.setting.layout.amoled_black.title}
                     </h1>
