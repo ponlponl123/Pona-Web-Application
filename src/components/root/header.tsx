@@ -130,7 +130,7 @@ function Header() {
       )}
       initial={isIndex && { y: "-100%", opacity: 0 }}
       animate={isIndex && { y: 0, opacity: 1 }}
-      transition={{ duration: 0.16, delay: 5 }}
+      transition={{ duration: 0.16, delay: 6 }}
     >
       <div
         className={`w-full ${!isApp && "max-w-5xl"} flex h-full items-center justify-between gap-6`}

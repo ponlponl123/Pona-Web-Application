@@ -148,12 +148,11 @@ function Page() {
                               note.version.replace(".md", "")
                             }
                             tabIndex={-1}
-                            className="delay-300 duration-700 group-not-data-active/patch-note-list:delay-100 group-data-active/patch-note-list:opacity-40 hover:opacity-100"
+                            className="delay-300 duration-700 group-not-data-active/patch-note-list:delay-100 group-data-active/patch-note-list:opacity-40 group-data-active/patch-note-list:saturate-25 hover:opacity-100 hover:saturate-100"
                           >
                             <Button
                               key={`note` + nindex}
-                              className="group flex h-full min-h-max w-full items-start overflow-hidden bg-background p-1 text-foreground not-dark:shadow-xl dark:bg-foreground/5 dark:hover:bg-foreground/10"
-                              style={{ borderRadius: "32px" }}
+                              className="group flex h-full min-h-max w-full items-start overflow-hidden rounded-4xl bg-background p-1 text-foreground not-dark:shadow-xl dark:bg-foreground/5 dark:hover:bg-foreground/10"
                               onMouseEnter={() => setIsCardHover(true)}
                               onMouseLeave={() => setIsCardHover(false)}
                               data-smooth-interaction="true"

@@ -31,19 +31,21 @@ const WavyText: FC<Props> = ({
     visible: {
       opacity: 1,
       y: 0,
+      filter: "blur(0px)",
       transition: {
         type: "spring",
-        damping: 12,
-        stiffness: 200,
+        damping: 8,
+        stiffness: 120,
       },
     },
     hidden: {
       opacity: 0,
-      y: 20,
+      y: 12,
+      filter: "blur(4px)",
       transition: {
         type: "spring",
-        damping: 12,
-        stiffness: 200,
+        damping: 8,
+        stiffness: 120,
       },
     },
   }

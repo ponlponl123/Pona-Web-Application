@@ -29,7 +29,7 @@ export default function Home() {
   React.useEffect(() => {
     const intervalId = setInterval(() => {
       setIndex((prev) => prev + 1)
-    }, 3200)
+    }, 4800)
 
     return () => clearInterval(intervalId)
   }, [])
@@ -101,7 +101,7 @@ export default function Home() {
           <motion.span
             initial={{ opacity: 0, y: -24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 5 }}
+            transition={{ delay: 6 }}
             className="z-10 mt-6 flex items-center gap-2 rounded-xl border-2 border-white/30 bg-white/20 px-3 py-1 text-sm tracking-wider backdrop-blur backdrop-saturate-200"
           >
             <CookieIcon weight="fill" /> {language.data.cookie.description}
@@ -116,7 +116,7 @@ export default function Home() {
             <motion.div
               initial={{ opacity: 0, scale: 1.2 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 1.32, duration: 2 }}
+              transition={{ delay: 2, duration: 2 }}
               className="max-miniscreen:text-2xl m-0 flex flex-row justify-center text-center text-7xl leading-relaxed max-lg:text-6xl max-sm:text-4xl max-sm:leading-10"
             >
               <AnimatePresence presenceAffectsLayout mode="popLayout">
@@ -130,11 +130,13 @@ export default function Home() {
                         animate="visible"
                         exit="hidden"
                         variants={TextVariants}
+                        data-default-transition="false"
                       >
                         <WavyText
                           text={TEXTS[index % TEXTS.length]}
-                          duration={0.12}
+                          duration={0.06}
                           replay={true}
+                          data-default-transition="false"
                         />
                       </motion.div>
                     )
@@ -146,13 +148,15 @@ export default function Home() {
                   animate="visible"
                   exit="hidden"
                   variants={TextVariants}
+                  data-default-transition="false"
                 >
                   <WavyText
                     text={
                       TEXTS[index % TEXTS.length] !== "" ? "Pona!" : "Pona! "
                     }
-                    delay={1.32}
-                    duration={0.12}
+                    delay={2}
+                    duration={0.06}
+                    data-default-transition="false"
                     replay={true}
                   />
                 </motion.div>
@@ -166,11 +170,13 @@ export default function Home() {
                         animate="visible"
                         exit="hidden"
                         variants={TextVariants}
+                        data-default-transition="false"
                       >
                         <WavyText
                           text={TEXTS1[index % TEXTS1.length]}
-                          duration={0.12}
+                          duration={0.06}
                           replay={true}
+                          data-default-transition="false"
                         />
                       </motion.div>
                     )
@@ -180,12 +186,12 @@ export default function Home() {
             <motion.div
               initial={{ opacity: 0, x: -6, marginTop: -82 }}
               animate={{ opacity: 1, x: 0, marginTop: 0 }}
-              transition={{ delay: 4.86 }}
+              transition={{ delay: 4.32 }}
               className="text-primary-700 dark:text-primary-200 max-miniscreen:text-xl -mb-2 w-full items-center justify-center text-center text-xl leading-relaxed max-lg:mt-3 max-lg:text-lg max-sm:text-sm max-sm:leading-10"
             >
               <WavyText
                 className="flex flex-wrap justify-center text-center"
-                duration={0.04}
+                duration={0.01}
                 delay={4.64}
                 text={
                   hours > 4 && hours < 10
@@ -203,7 +209,7 @@ export default function Home() {
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 5 }}
+            transition={{ delay: 6 }}
             className="flex flex-row items-center gap-4 max-sm:flex-col"
           >
             <Link
@@ -226,14 +232,14 @@ export default function Home() {
               <motion.span
                 initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 5.06 }}
+                transition={{ delay: 6.06 }}
               >
                 {language.data.home.actions.or}
               </motion.span>
               <motion.div
                 initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 5.12 }}
+                transition={{ delay: 6.12 }}
               >
                 <Link
                   href="/app"
