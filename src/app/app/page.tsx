@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button"
 import MyButton from "@/components/ui/custom/button"
 import { useDiscordUserInfo } from "@/contexts/discordUserInfo"
 import { useLanguageContext } from "@/contexts/languageContext"
+import { cn } from "@/lib/utils"
 import {
   HeartIcon,
   NutIcon,
@@ -26,12 +27,17 @@ function Page() {
           : "night"
 
   return (
-    <main id="app-panel">
+    <main id="app-panel" className="relative">
+      <div className="pointer-events-none absolute top-0 left-0 h-full w-full bg-[radial-gradient(var(--foreground)_1px,transparent_1px)] bg-size-[16px_16px] opacity-10 dark:opacity-5" />
       <div className="absolute h-screen max-h-96 min-h-36 w-full">
         <div
-          className={`apphome-banner absolute top-0 left-0 h-screen min-h-36 w-full ${isNow}`}
+          className={cn(
+            `apphome-banner absolute top-0 left-0 h-screen min-h-36 w-full`,
+            isNow,
+            "mask-linear-to-black"
+          )}
           style={{ maxHeight: "512px" }}
-        ></div>
+        />
       </div>
       <main id="app-workspace" className="relative z-10">
         <motion.h1

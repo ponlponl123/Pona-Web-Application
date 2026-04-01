@@ -51,8 +51,8 @@ main#app-workspace {
   background:
     linear-gradient(
       0deg,
-      var(--background),
-      color-mix(in oklab, var(--background) 24%, transparent)
+      var(--color-playground-background),
+      color-mix(in oklab, var(--color-playground-background) 24%, transparent)
     ),
     url(/static/welcome_banner.png) center no-repeat;
   background-size: cover;
