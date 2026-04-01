@@ -44,6 +44,11 @@ import { AnimatePresence, motion } from "motion/react"
 import ActivationLink from "@/components/activationLink"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip"
 import { useUserSettingContext } from "@/contexts/userSettingContext"
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "../ui/collapsible"
 
 const variants = {
   hidden: { opacity: 0, x: -12, y: 0 },
@@ -119,11 +124,8 @@ function Sidebar({
           : "flex w-full flex-col gap-2 md:hidden"
       )}
     >
-      <AnimatePresence mode="popLayout">
-        <motion.div
-          className="max-h-[calc(100%-64px)] w-full max-md:-mb-1"
-          key={`${inGuild}-${sidebarCollapsed}`}
-        >
+      <div className="max-h-[calc(100%-64px)] w-full max-md:-mb-1">
+        <AnimatePresence mode="popLayout">
           <ScrollShadow
             className="flex max-h-full w-full flex-col"
             style={{ scrollbarWidth: "none" }}
@@ -136,7 +138,7 @@ function Sidebar({
                 animate="enter"
                 transition={{ type: "tween", duration: 0.12 }}
                 className="flex min-h-max flex-col gap-1"
-                key="Menu"
+                key={`menu-${inGuild}-${sidebarCollapsed}`}
               >
                 {!inGuild ? (
                   <>
@@ -187,10 +189,10 @@ function Sidebar({
                         onClick={handlePushLocation}
                         href="/app/guilds"
                         icon={CaretLeftIcon}
-                        className="h-fit p-2"
+                        className="h-fit gap-0 p-2"
                       >
-                        <div className="flex items-center gap-2">
-                          <Avatar className="h-8 w-8">
+                        <div className="flex min-w-0 flex-1 items-center gap-2">
+                          <Avatar className="h-6 w-6">
                             <AvatarImage
                               src={`https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png`}
                             />
@@ -198,7 +200,17 @@ function Sidebar({
                               {guild.name.charAt(0).toUpperCase()}
                             </AvatarFallback>
                           </Avatar>
-                          <h1 className="text-base">{guild.name}</h1>
+                          <Tooltip>
+                            <TooltipTrigger
+                              delay={300}
+                              render={
+                                <h1 className="min-w-0 flex-1 overflow-hidden text-sm overflow-ellipsis whitespace-nowrap" />
+                              }
+                            >
+                              {guild.name}
+                            </TooltipTrigger>
+                            <TooltipContent>{guild.name}</TooltipContent>
+                          </Tooltip>
                         </div>
                       </ActivationLink>
                       <ActivationLink
@@ -282,16 +294,22 @@ function Sidebar({
                           </div>
                         </div>
                       )}
-                      <ActivationLink
-                        iconOnly={canCollapsed && sidebarCollapsed}
-                        onClick={handlePushLocation}
-                        href={`/app/g/${guild.id}/live-notify`}
-                        isDisabled={true}
-                        icon={BroadcastIcon}
-                      >
-                        {language.data.app.guilds.live_notify.name}{" "}
-                        <Badge>{language.data.extensions.comingsoon}</Badge>
-                      </ActivationLink>
+                      <Collapsible defaultOpen={true}>
+                        <CollapsibleTrigger>
+                          Is it accessible?
+                        </CollapsibleTrigger>
+                        <CollapsibleContent>
+                          <ActivationLink
+                            iconOnly={canCollapsed && sidebarCollapsed}
+                            onClick={handlePushLocation}
+                            href={`/app/g/${guild.id}/live-notify`}
+                            isDisabled={true}
+                            icon={BroadcastIcon}
+                          >
+                            {language.data.app.guilds.live_notify.name}
+                          </ActivationLink>
+                        </CollapsibleContent>
+                      </Collapsible>
                       <ActivationLink
                         iconOnly={canCollapsed && sidebarCollapsed}
                         onClick={handlePushLocation}
@@ -307,8 +325,8 @@ function Sidebar({
             </FrozenRoute>
             <div className="max-md:hidden md:p-2"></div>
           </ScrollShadow>
-        </motion.div>
-      </AnimatePresence>
+        </AnimatePresence>
+      </div>
 
       {!nav && <div className="mt-auto"></div>}
 

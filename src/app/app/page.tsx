@@ -27,8 +27,7 @@ function Page() {
           : "night"
 
   return (
-    <main id="app-panel" className="relative">
-      <div className="pointer-events-none absolute top-0 left-0 h-full w-full bg-[radial-gradient(var(--foreground)_1px,transparent_1px)] bg-size-[16px_16px] opacity-10 dark:opacity-5" />
+    <main id="app-panel">
       <div className="absolute h-screen max-h-96 min-h-36 w-full">
         <div
           className={cn(

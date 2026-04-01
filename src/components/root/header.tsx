@@ -117,7 +117,7 @@ function Header() {
     <motion.header
       className={cn(
         `nav-opened-${navOpened}`,
-        "pona-header flex h-20 w-screen items-center justify-center gap-3 p-6 px-8",
+        "pona-header flex h-20 w-full items-center justify-center gap-3 p-6 px-8",
         isApp && "md:px-2",
         !isIndex && !isMusicApp && "max-md:backdrop-blur-md",
         !isIndex &&

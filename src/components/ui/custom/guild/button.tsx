@@ -26,12 +26,16 @@ export function GuildButton({
     <Link href={uri}>
       <Button
         onClick={onClick}
-        className="group w-full rounded-3xl bg-foreground/10 py-12"
+        className="group w-full rounded-[calc(var(--radius)*4.8)] bg-foreground/10 py-12 text-foreground backdrop-blur-xs max-lg:py-10"
         data-smooth-interaction="true"
       >
         <div className="flex max-h-none w-full items-center justify-center gap-3 p-2">
-          <div className="relative flex h-16 w-16 flex-col items-center justify-center">
-            <Avatar className={cn(loading ? "size-12" : "size-16")}>
+          <div className="relative flex size-16 flex-col items-center justify-center max-lg:size-12">
+            <Avatar
+              className={cn(
+                loading ? "size-12 max-lg:size-8" : "size-16 max-lg:size-12"
+              )}
+            >
               <AvatarImage src={guild.iconURL as string} />
               <AvatarFallback>
                 {guild.name.charAt(0).toUpperCase()}
@@ -39,9 +43,11 @@ export function GuildButton({
             </Avatar>
             <Spinner className={cn("absolute size-14", !loading && "hidden")} />
           </div>
-          <div className="flex flex-col gap-1">
-            <h1 className="text-2xl leading-8">{guild.name}</h1>
-            <span className="text-start text-base">{guild.id}</span>
+          <div className="flex flex-col">
+            <h1 className="text-2xl max-lg:text-xl">{guild.name}</h1>
+            <span className="text-start text-base opacity-40 max-lg:text-sm">
+              {guild.id}
+            </span>
           </div>
           <div className="m-auto mr-4">
             <CaretRightIcon

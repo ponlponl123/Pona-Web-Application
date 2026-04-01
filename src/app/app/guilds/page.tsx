@@ -37,11 +37,11 @@ function Page() {
     <main id="app-panel">
       <main id="app-workspace" className="flex max-w-4xl flex-col">
         <h1 className="mb-4 text-2xl">{language.data.app.guilds.name}</h1>
-        <h1 className="flex items-center gap-4 text-5xl">
+        <h1 className="flex items-center gap-4 text-5xl max-lg:text-3xl max-md:text-2xl max-sm:text-xl">
           <ConfettiIcon weight="fill" />
           {language.data.app.guilds.title}
         </h1>
-        <section className="mt-12 flex min-h-full w-full flex-col gap-4">
+        <section className="mt-12 flex min-h-full w-full flex-col gap-4 max-lg:mt-6">
           {guilds === null ? (
             <div className="m-auto my-24 flex h-full w-full flex-col items-center justify-center gap-3">
               <ClimbingBoxLoader
@@ -73,7 +73,7 @@ function Page() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.48 }}
-              className="flex flex-col gap-4"
+              className="flex flex-col gap-4 max-lg:gap-2"
             >
               {(guilds as GuildInfo[]).map((guild, index) => {
                 const uri = `/app/g/${guild.id}`
