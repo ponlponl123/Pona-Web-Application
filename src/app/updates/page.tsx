@@ -50,6 +50,7 @@ function Page() {
 
   return (
     <main className="min-h-screen w-full">
+      <div className="pointer-events-none absolute top-0 left-0 z-0 h-full w-full bg-[radial-gradient(var(--foreground)_1px,transparent_1px)] bg-size-[16px_16px] opacity-6 dark:opacity-5" />
       <div className="mb-20 flex min-h-screen grid-rows-[20px_1fr_20px] flex-col items-center gap-8 p-8 pb-20 max-md:gap-4 sm:p-6 md:p-20">
         <div className="mt-6 max-md:mt-12" />
         <WrenchIcon size={48} weight="fill" />
@@ -148,7 +149,7 @@ function Page() {
                               note.version.replace(".md", "")
                             }
                             tabIndex={-1}
-                            className="delay-300 duration-700 group-not-data-active/patch-note-list:delay-100 group-data-active/patch-note-list:opacity-40 group-data-active/patch-note-list:saturate-25 hover:opacity-100 hover:saturate-100"
+                            className="backdrop-blur-sm delay-300 duration-700 group-not-data-active/patch-note-list:delay-100 group-data-active/patch-note-list:opacity-40 group-data-active/patch-note-list:saturate-25 hover:opacity-100 hover:saturate-100"
                           >
                             <Button
                               key={`note` + nindex}

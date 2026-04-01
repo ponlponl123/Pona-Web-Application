@@ -112,18 +112,19 @@ function Status() {
   }, [])
 
   return (
-    <main className="min-h-screen w-full">
-      <div className="flex min-h-screen grid-rows-[20px_1fr_20px] flex-col items-center gap-8 p-8 pb-20 sm:p-20">
+    <main className="-mb-8 min-h-screen w-full">
+      <div className="pointer-events-none absolute top-0 left-0 z-0 h-full w-full bg-[radial-gradient(var(--foreground)_1px,transparent_1px)] bg-size-[16px_16px] opacity-6 dark:opacity-5" />
+      <div className="flex min-h-screen grid-rows-[20px_1fr_20px] flex-col items-center gap-8 p-8 pb-28 sm:p-20 sm:pb-32">
         <div className="mt-16"></div>
         <main className="flex w-full max-w-5xl flex-col justify-start gap-10">
           <div className="flex flex-row items-center justify-between">
             <div className="flex flex-col gap-4">
-              <h1 className="flex items-center gap-4 text-5xl">
-                <CubeIcon size={48} />
+              <h1 className="flex items-center gap-4 text-5xl max-lg:text-4xl max-md:text-3xl max-sm:text-2xl">
+                <CubeIcon size={48} className="max-md:size-8" />
                 {language.data.status.title}
                 <div className={`service-status-badge ${overallStatus}`}></div>
               </h1>
-              <p className="text-lg">
+              <p className="text-lg max-lg:text-base max-md:text-sm max-sm:text-xs">
                 {language.data.status.last_refreshed}:{" "}
                 {!fetching && lastRefresh
                   ? lastRefresh.toLocaleString()
@@ -132,7 +133,7 @@ function Status() {
             </div>
             <div className="flex flex-row items-center gap-4">
               <a onClick={refresh}>
-                <MyButton>
+                <MyButton className="max-md:scale-95 max-sm:scale-90">
                   {fetching ? <Spinner /> : language.data.status.refresh}
                 </MyButton>
               </a>
