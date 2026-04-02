@@ -23,7 +23,23 @@
     "enabled": "เปิดใช้งาน",
     "enabled_description": "ฟีเจอร์นี้กำลังเปิดใช้งานอยู่",
     "disabled": "ปิดใช้งาน",
-    "disabled_description": "ฟีเจอร์นี้ถูกปิดการใช้งานอยู่ในขณะนี้"
+    "disabled_description": "ฟีเจอร์นี้ถูกปิดการใช้งานอยู่ในขณะนี้",
+    "time": {
+      "today": "วันนี้",
+      "yesterday": "เมื่อวาน",
+      "tomorrow": "พรุ่งนี้",
+      "weekend": "สุดสัปดาห์",
+      "day": {
+        "title": "วัน",
+        "monday": "วันจันทร์",
+        "tuesday": "วันอังคาร",
+        "wednesday": "วันพุธ",
+        "thursday": "วันพฤหัสบดี",
+        "friday": "วันศุกร์",
+        "saturday": "วันเสาร์",
+        "sunday": "วันอาทิตย์"
+      }
+    }
   },
   "cookie": {
     "title": "คุกกี้!",
@@ -349,7 +365,19 @@
         "usage": "การใช้งาน",
         "genre": "แนวเพลง",
         "top_artist": "ศิลปินส่วนใหญ่",
-        "analysis": "เฉลี่ยการใช้งาน"
+        "analysis": "เฉลี่ยการใช้งาน",
+        "average_usage": {
+          "title": "กิจกรรมโดยเฉลี่ย",
+          "trending_up": "เพิ่มขึ้น [percentage]% ในสัปดาห์นี้",
+          "trending_down": "พักหายใจนิดนึง ลดลง [percentage]%",
+          "note": "สรุปความเคลื่อนไหวทั้งหมดในช่วง 7 วันที่ผ่านมา"
+        },
+        "members_in_voice_channel": {
+          "title": "เพื่อนๆ ในห้องเสียง",
+          "trending_up": "คึกคักขึ้นเลย! เพิ่มมา [percentage]%",
+          "trending_down": "ช่วงนี้แอบเหงานิดๆ ลดลง [percentage]%",
+          "note": "นับรวมคนที่แวะเข้ามาฟังในช่วงสัปดาห์ที่ผ่านมา"
+        }
       },
       "player": {
         "name": "Pona! เพลง",

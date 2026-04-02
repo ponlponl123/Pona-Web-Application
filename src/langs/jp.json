@@ -23,7 +23,23 @@
     "enabled": "有効",
     "enabled_description": "この機能は現在有効です。",
     "disabled": "無効",
-    "disabled_description": "この機能は現在無効になっています。"
+    "disabled_description": "この機能は現在無効になっています。",
+    "time": {
+      "today": "今日",
+      "yesterday": "昨日",
+      "tomorrow": "明日",
+      "weekend": "週末",
+      "day": {
+        "title": "曜日",
+        "monday": "月曜日",
+        "tuesday": "火曜日",
+        "wednesday": "水曜日",
+        "thursday": "木曜日",
+        "friday": "金曜日",
+        "saturday": "土曜日",
+        "sunday": "日曜日"
+      }
+    }
   },
   "cookie": {
     "title": "クッキー！",
@@ -349,7 +365,19 @@
         "usage": "使用状況",
         "genre": "音楽ジャンル",
         "top_artist": "最も多いアーティスト",
-        "analysis": "平均使用量"
+        "analysis": "平均使用量",
+        "average_usage": {
+          "title": "平均アクティビティ",
+          "trending_up": "今週は [percentage]% アップ！",
+          "trending_down": "今週は [percentage]% 落ち着いています",
+          "note": "過去7日間の利用状況のまとめです。"
+        },
+        "members_in_voice_channel": {
+          "title": "VCの参加メンバー",
+          "trending_up": "VCが盛り上がってます！ [percentage]% 増加",
+          "trending_down": "少し静かですね。[percentage]% 減少",
+          "note": "過去1週間にVCへ参加した総人数です。"
+        }
       },
       "player": {
         "name": "Pona！ミュージック",

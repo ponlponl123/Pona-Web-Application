@@ -9,30 +9,19 @@ import { Badge } from "@/components/ui/badge"
 import { ScrollShadow } from "@heroui/react"
 import {
   BroadcastIcon,
-  BugIcon,
+  CaretDownIcon,
   CaretLeftIcon,
   CaretLineLeftIcon,
   ChartPieSliceIcon,
   ClockCounterClockwiseIcon,
   CompassIcon,
   ConfettiIcon,
-  CubeTransparentIcon,
   GearIcon,
   HeartIcon,
   HouseIcon,
   HouseSimpleIcon,
-  KeyboardIcon,
-  MapPinAreaIcon,
-  MonitorPlayIcon,
   MusicNoteSimpleIcon,
-  PaintBrushIcon,
-  PaletteIcon,
-  PersonSimpleRunIcon,
   PlaylistIcon,
-  ShieldCheckeredIcon,
-  StarAndCrescentIcon,
-  SunHorizonIcon,
-  ThermometerIcon,
   WrenchIcon,
 } from "@phosphor-icons/react"
 import clsx from "clsx"
@@ -294,20 +283,39 @@ function Sidebar({
                           </div>
                         </div>
                       )}
-                      <Collapsible defaultOpen={true}>
-                        <CollapsibleTrigger>
-                          Is it accessible?
+                      <Collapsible
+                        defaultOpen={true}
+                        className={"group/collapsible"}
+                      >
+                        <CollapsibleTrigger
+                          className={
+                            "mb-1 flex w-full items-center justify-between rounded-lg px-2 py-1 text-xs group-data-open/collapsible:bg-foreground/10 hover:bg-foreground/10 dark:hover:bg-foreground/5"
+                          }
+                          data-smooth-interaction="true"
+                        >
+                          Permissions
+                          <CaretDownIcon
+                            weight="bold"
+                            className="size-3 group-data-open/collapsible:rotate-180"
+                          />
                         </CollapsibleTrigger>
                         <CollapsibleContent>
-                          <ActivationLink
-                            iconOnly={canCollapsed && sidebarCollapsed}
-                            onClick={handlePushLocation}
-                            href={`/app/g/${guild.id}/live-notify`}
-                            isDisabled={true}
-                            icon={BroadcastIcon}
-                          >
-                            {language.data.app.guilds.live_notify.name}
-                          </ActivationLink>
+                          <div className="flex">
+                            <div className="flex min-h-0 w-3 flex-col items-center justify-center">
+                              <div className="min-h-0 w-0.5 flex-1 bg-foreground/10" />
+                            </div>
+                            <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+                              <ActivationLink
+                                iconOnly={canCollapsed && sidebarCollapsed}
+                                onClick={handlePushLocation}
+                                href={`/app/g/${guild.id}/live-notify`}
+                                isDisabled={true}
+                                icon={BroadcastIcon}
+                              >
+                                {language.data.app.guilds.live_notify.name}
+                              </ActivationLink>
+                            </div>
+                          </div>
                         </CollapsibleContent>
                       </Collapsible>
                       <ActivationLink

@@ -23,7 +23,23 @@
     "enabled": "Enabled",
     "enabled_description": "This feature is currently active.",
     "disabled": "Disabled",
-    "disabled_description": "This feature is currently turned off."
+    "disabled_description": "This feature is currently turned off.",
+    "time": {
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "tomorrow": "Tomorrow",
+      "weekend": "Weekend",
+      "day": {
+        "title": "Day",
+        "monday": "Monday",
+        "tuesday": "Tuesday",
+        "wednesday": "Wednesday",
+        "thursday": "Thursday",
+        "friday": "Friday",
+        "saturday": "Saturday",
+        "sunday": "Sunday"
+      }
+    }
   },
   "cookie": {
     "title": "Cookie!",
@@ -345,7 +361,19 @@
         "usage": "Usage",
         "genre": "Music genre",
         "top_artist": "Most artist",
-        "analysis": "Average usage"
+        "analysis": "Average usage",
+        "average_usage": {
+          "title": "Average Activity",
+          "trending_up": "Up by [percentage]% this week",
+          "trending_down": "Taking a breather, down by [percentage]%",
+          "note": "A quick look at activity over the past 7 days."
+        },
+        "members_in_voice_channel": {
+          "title": "Voice Channel Hangouts",
+          "trending_up": "Chats are buzzing! Up by [percentage]%",
+          "trending_down": "A bit quieter lately, down by [percentage]%",
+          "note": "Total listeners who tuned in over the last week."
+        }
       },
       "player": {
         "name": "Pona! Music",
