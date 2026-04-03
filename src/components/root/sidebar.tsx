@@ -344,28 +344,38 @@ function Sidebar({
           !sidebarCollapsed ? "flex-row!" : "flex-col"
         )}
       >
-        <motion.main
-          variants={variants}
-          initial="hidden"
-          exit="exit"
-          animate="enter"
-          transition={{ type: "tween", duration: 0.12 }}
-          key="Bottom-Menu"
-        >
-          <ActivationLink
-            className={cn("w-full", isSettingModalOpen && "invisible")}
-            iconOnly={canCollapsed && sidebarCollapsed}
-            onClick={() => {
-              ;(setSettingLayoutId("setting-modal-by-app-sidebar"),
-                setIsSettingModalOpen(true),
-                setNavActive?.(false))
-            }}
-            layoutId="setting-modal-by-app-sidebar"
-            icon={GearIcon}
+        <AnimatePresence mode="wait">
+          <motion.main
+            variants={variants}
+            initial="hidden"
+            exit="exit"
+            animate="enter"
+            transition={{ type: "tween", duration: 0.12 }}
+            key={"Bottom-Menu" + sidebarCollapsed}
           >
-            {language.data.app.setting.name}
-          </ActivationLink>
-        </motion.main>
+            <motion.div
+              layoutId={
+                "setting-modal-by-app-sidebar-iscollapsed-" + sidebarCollapsed
+              }
+            >
+              <ActivationLink
+                className={cn("w-full", isSettingModalOpen && "invisible")}
+                iconOnly={canCollapsed && sidebarCollapsed}
+                onClick={() => {
+                  ;(setSettingLayoutId(
+                    "setting-modal-by-app-sidebar-iscollapsed-" +
+                      sidebarCollapsed
+                  ),
+                    setIsSettingModalOpen(true),
+                    setNavActive?.(false))
+                }}
+                icon={GearIcon}
+              >
+                {language.data.app.setting.name}
+              </ActivationLink>
+            </motion.div>
+          </motion.main>
+        </AnimatePresence>
 
         {canCollapsed && (
           <Tooltip>

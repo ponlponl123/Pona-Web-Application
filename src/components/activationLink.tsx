@@ -1,10 +1,10 @@
 "use client"
 import { cn } from "@/lib/utils"
 import type { Icon as IconType } from "@phosphor-icons/react"
-import React, { useCallback, useEffect, useRef, useState } from "react"
 import { usePathname } from "next/navigation"
 import { motion } from "motion/react"
 import Link from "next/link"
+import React from "react"
 
 interface ActivationLinkProps {
   href?: string
@@ -32,14 +32,12 @@ function ActivationLink({
   layoutId,
 }: ActivationLinkProps) {
   const pathname = usePathname() || ""
-  const buttonRef = useRef<HTMLButtonElement | null>(null)
 
   let isHere = href && pathname === href
 
   const Button = () => (
     <motion.button
       onClick={onClick}
-      ref={buttonRef}
       className={cn(
         `flex h-9 w-full items-center justify-start gap-2 rounded-lg px-3 py-1.5 text-sm opacity-100 select-none hover:bg-foreground/10 max-md:my-1 max-md:h-12 max-md:px-6 dark:hover:bg-foreground/5`,
         isHere &&

@@ -42,6 +42,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart"
 import { TrendUpIcon } from "@phosphor-icons/react"
+import { motion } from "motion/react"
 
 interface ActiveUsageChart {
   date: string
@@ -174,7 +175,12 @@ function Page() {
 
   return (
     <main id="app-panel">
-      <div className="pointer-events-none absolute top-0 left-0 z-1 h-max max-h-[48vh] min-h-48 w-full scale-[2] mask-[linear-gradient(to_bottom,black,transparent)] opacity-40 select-none [-webkit-mask-image:linear-gradient(to_bottom,black,transparent)]">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 0.4 }}
+        transition={{ duration: 1, delay: 0.48 }}
+        className="pointer-events-none absolute top-0 left-0 z-1 h-max max-h-[48vh] min-h-48 w-full scale-[2] mask-[linear-gradient(to_bottom,black,transparent)] opacity-40 select-none [-webkit-mask-image:linear-gradient(to_bottom,black,transparent)]"
+      >
         {userSetting.transparency ? (
           <ImageWithSkeleton
             src={`/api/proxy/image?r=${encodeURIComponent(backdropBg)}&s=512&blur=16&saturation=96&contrast=12`}
@@ -190,7 +196,7 @@ function Page() {
           <div className="h-96 w-full bg-linear-to-t from-transparent to-[hsl(var(--pona-app-music-accent-color-500))]" />
         )}
         <div className="to-playground-background absolute top-[unset] bottom-0 left-0 z-10 h-2/4 w-full bg-linear-to-b from-transparent" />
-      </div>
+      </motion.div>
 
       <main id="app-workspace" className="relative z-10">
         {guild ? (

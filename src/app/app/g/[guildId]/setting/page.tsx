@@ -1,17 +1,24 @@
 "use client"
 import React from "react"
-import { Alert, Chip, Spinner } from "@heroui/react"
 import { useLanguageContext } from "@/contexts/languageContext"
 import { useDiscordGuildInfo } from "@/contexts/discordGuildInfo"
-import { Gear } from "@phosphor-icons/react/dist/ssr"
+import { GearIcon } from "@phosphor-icons/react"
+import { Alert } from "@/components/ui/alert"
+import { Badge } from "@/components/ui/badge"
+import { Spinner } from "@/components/ui/spinner"
+
+interface GuildSettings {}
 
 function Page() {
   const { guild } = useDiscordGuildInfo()
   const { language } = useLanguageContext()
-  const [loading] = React.useState<boolean>(true)
-  const [guildSettings, setGuildSettings] = React.useState({})
+  const [loading, setLoading] = React.useState<boolean>(true)
+  const [guildSettings, setGuildSettings] =
+    React.useState<GuildSettings | null>(null)
 
-  React.useEffect(() => {}, [setGuildSettings])
+  React.useEffect(() => {
+    setLoading(false)
+  }, [])
 
   return (
     <main id="app-panel">
@@ -20,15 +27,19 @@ function Page() {
           <>
             <h1 className="text-base">{guild.name}</h1>
             <h1 className="mt-4 flex items-center gap-4 text-5xl">
-              <Gear weight="fill" size={48} />{" "}
+              <GearIcon weight="fill" size={48} />{" "}
               {language.data.app.guilds.setting.name}{" "}
-              <Chip size="sm">{language.data.extensions.beta}</Chip>
+              <Badge className="mt-2 -ml-1 rounded-md bg-primary/20 text-primary">
+                {language.data.extensions.beta}
+              </Badge>
             </h1>
             {!loading ? (
               guildSettings ? (
                 <></>
               ) : (
-                <Alert color="danger">Cannot fetch guild setting :(</Alert>
+                <Alert className="mt-6 rounded-md border-rose-400 bg-rose-400/10 text-rose-400">
+                  Cannot fetch guild setting :(
+                </Alert>
               )
             ) : (
               <div
