@@ -380,7 +380,7 @@
         }
       },
       "player": {
-        "name": "Pona！ミュージック",
+        "name": "Pona！歌",
         "dev": "コーヒーを片手に、素敵な音楽を楽しみませんか？プレーヤーは現在開発中です。🎵🍵",
         "request_by": "リクエスト:",
         "full_screen_mode": {
@@ -568,9 +568,30 @@
           }
         }
       },
-      "live_notify": {
-        "name": "ライブ通知",
-        "dev": "ライブ通知は現在利用できません。ご心配なく、鋭意開発中です！💪✨"
+      "security": {
+        "title": "セキュリティ",
+        "multi_factor_auth": {
+          "title": "2FAメンバー"
+        },
+        "message": {
+          "title": "メッセージ"
+        }
+      },
+      "permissions": {
+        "title": "権限",
+        "music": {
+          "title": "Pona！歌"
+        },
+        "commands": {
+          "title": "コマンド"
+        }
+      },
+      "utilities": {
+        "title": "ツール",
+        "live_notify": {
+          "name": "ライブ通知",
+          "dev": "ライブ通知はまだ準備中ですが、ご安心ください！現在、舞台裏で一生懸命開発しています 💪✨"
+        }
       },
       "setting": {
         "name": "サーバー設定",

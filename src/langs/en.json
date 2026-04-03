@@ -564,9 +564,30 @@
           }
         }
       },
-      "live_notify": {
-        "name": "Live Notify",
-        "dev": "Live Notify is currently not available, but don't worry! We're working on it 💪✨"
+      "security": {
+        "title": "Security",
+        "multi_factor_auth": {
+          "title": "2FA Members"
+        },
+        "message": {
+          "title": "Messages"
+        }
+      },
+      "permissions": {
+        "title": "Permissions",
+        "music": {
+          "title": "Pona! Music"
+        },
+        "commands": {
+          "title": "Commands"
+        }
+      },
+      "utilities": {
+        "title": "Utilities",
+        "live_notify": {
+          "name": "Live Notify",
+          "dev": "Live Notify isn't quite ready yet, but don't worry! We're working hard on it behind the scenes 💪"
+        }
       },
       "setting": {
         "name": "Guild Settings",

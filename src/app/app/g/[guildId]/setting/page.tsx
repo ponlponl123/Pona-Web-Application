@@ -37,7 +37,7 @@ function Page() {
               guildSettings ? (
                 <></>
               ) : (
-                <Alert className="mt-6 rounded-md border-rose-400 bg-rose-400/10 text-rose-400">
+                <Alert className="mt-6 rounded-md border-rose-400 bg-rose-400/10 text-rose-400 backdrop-blur-xs">
                   Cannot fetch guild setting :(
                 </Alert>
               )

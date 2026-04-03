@@ -64,7 +64,7 @@ function Transparency() {
           <Field orientation="horizontal">
             <FieldContent>
               <FieldTitle className="text-base">
-                <ShapesIcon className="size-4 translate-y-0.5" />
+                <ShapesIcon weight="bold" className="size-4 translate-y-0.5" />
                 {language.data.app.setting.layout.transparency.enabled.title}
               </FieldTitle>
               <FieldDescription>

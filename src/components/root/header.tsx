@@ -433,8 +433,8 @@ function Header() {
           </MyButton>
         </div>
         <nav className={`nav-opened-${navOpened}`}>
-          <div className="header mb-6 h-24 w-full border-b border-foreground/10 md:hidden"></div>
-          <div className="flex gap-3 max-sm:p-0!">
+          <div className="header mb-6 h-20 w-full border-b border-foreground/10 md:hidden"></div>
+          <div className="flex min-h-0 flex-1 gap-3 max-sm:p-0!">
             {isApp && userInfo && (
               <Sidebar
                 userInfo={userInfo}
@@ -447,7 +447,7 @@ function Header() {
               />
             )}
           </div>
-          <div className="flex items-center gap-3">
+          <div className="mt-3 flex items-center gap-3">
             {!userInfo && (
               <Link href="/app" rel="noopener noreferrer" tabIndex={-1}>
                 <MyButton

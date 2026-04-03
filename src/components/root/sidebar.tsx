@@ -13,15 +13,21 @@ import {
   CaretLeftIcon,
   CaretLineLeftIcon,
   ChartPieSliceIcon,
+  ChatCircleIcon,
   ClockCounterClockwiseIcon,
   CompassIcon,
   ConfettiIcon,
+  DiscoBallIcon,
+  FingerprintSimpleIcon,
   GearIcon,
   HeartIcon,
   HouseIcon,
   HouseSimpleIcon,
+  IdentificationBadgeIcon,
   MusicNoteSimpleIcon,
   PlaylistIcon,
+  ShieldCheckIcon,
+  TerminalIcon,
   WrenchIcon,
 } from "@phosphor-icons/react"
 import clsx from "clsx"
@@ -113,7 +119,7 @@ function Sidebar({
           : "flex w-full flex-col gap-2 md:hidden"
       )}
     >
-      <div className="max-h-[calc(100%-64px)] w-full max-md:-mb-1">
+      <div className="w-full max-md:-mb-1 max-md:min-h-0 max-md:flex-1 md:max-h-[calc(100%-64px)]">
         <AnimatePresence mode="popLayout">
           <ScrollShadow
             className="flex max-h-full w-full flex-col"
@@ -193,7 +199,7 @@ function Sidebar({
                             <TooltipTrigger
                               delay={300}
                               render={
-                                <h1 className="min-w-0 flex-1 overflow-hidden text-sm overflow-ellipsis whitespace-nowrap" />
+                                <h1 className="min-w-0 flex-1 overflow-hidden text-start text-sm overflow-ellipsis whitespace-nowrap max-md:pl-1" />
                               }
                             >
                               {guild.name}
@@ -283,46 +289,159 @@ function Sidebar({
                           </div>
                         </div>
                       )}
-                      <Collapsible
-                        defaultOpen={true}
-                        className={"group/collapsible"}
-                      >
-                        <CollapsibleTrigger
-                          className={
-                            "mb-1 flex w-full items-center justify-between rounded-lg px-2 py-1 text-xs group-data-open/collapsible:bg-foreground/10 hover:bg-foreground/10 dark:hover:bg-foreground/5"
-                          }
-                          data-smooth-interaction="true"
+                      {[
+                        {
+                          title: language.data.app.guilds.security.title,
+                          icon: ShieldCheckIcon,
+                          items: [
+                            {
+                              href: `/app/g/${guild.id}/security/multi-factor-auth`,
+                              name: language.data.app.guilds.security
+                                .multi_factor_auth.title,
+                              icon: FingerprintSimpleIcon,
+                              isDisabled: false,
+                            },
+                            {
+                              href: `/app/g/${guild.id}/security/message`,
+                              name: language.data.app.guilds.security.message
+                                .title,
+                              icon: ChatCircleIcon,
+                              isDisabled: false,
+                            },
+                          ],
+                        },
+                        {
+                          title: language.data.app.guilds.permissions.title,
+                          icon: IdentificationBadgeIcon,
+                          items: [
+                            {
+                              href: `/app/g/${guild.id}/permissions/music`,
+                              name: language.data.app.guilds.permissions.music
+                                .title,
+                              icon: MusicNoteSimpleIcon,
+                              isDisabled: false,
+                            },
+                            {
+                              href: `/app/g/${guild.id}/permissions/commands`,
+                              name: language.data.app.guilds.permissions
+                                .commands.title,
+                              icon: TerminalIcon,
+                              isDisabled: false,
+                            },
+                          ],
+                        },
+                        {
+                          title: language.data.app.guilds.utilities.title,
+                          icon: DiscoBallIcon,
+                          items: [
+                            {
+                              href: `/app/g/${guild.id}/utilities/live-notify`,
+                              name: language.data.app.guilds.utilities
+                                .live_notify.name,
+                              icon: BroadcastIcon,
+                              isDisabled: false,
+                            },
+                          ],
+                        },
+                      ].map((item, index) => (
+                        <Collapsible
+                          className={"group/collapsible"}
+                          key={index}
                         >
-                          Permissions
-                          <CaretDownIcon
-                            weight="bold"
-                            className="size-3 group-data-open/collapsible:rotate-180"
-                          />
-                        </CollapsibleTrigger>
-                        <CollapsibleContent>
-                          <div className="flex">
-                            <div className="flex min-h-0 w-3 flex-col items-center justify-center">
-                              <div className="min-h-0 w-0.5 flex-1 bg-foreground/10" />
+                          <CollapsibleTrigger
+                            render={<ActivationLink />}
+                            className={cn(
+                              "group-data-open/collapsible:bg-foreground/5"
+                            )}
+                          >
+                            <item.icon
+                              weight="bold"
+                              className={cn(!sidebarCollapsed && "mr-2")}
+                              size={16}
+                            />
+                            <div
+                              className={cn(
+                                "ml-2 flex min-w-0 flex-1 items-center justify-between text-start",
+                                sidebarCollapsed && "hidden"
+                              )}
+                            >
+                              {item.title}
+                              <CaretDownIcon
+                                weight="bold"
+                                className="size-3 group-data-open/collapsible:rotate-180"
+                              />
                             </div>
-                            <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-                              <ActivationLink
-                                iconOnly={canCollapsed && sidebarCollapsed}
-                                onClick={handlePushLocation}
-                                href={`/app/g/${guild.id}/live-notify`}
-                                isDisabled={true}
-                                icon={BroadcastIcon}
-                              >
-                                {language.data.app.guilds.live_notify.name}
-                              </ActivationLink>
+                          </CollapsibleTrigger>
+                          <CollapsibleContent>
+                            <div className="flex-col overflow-hidden pt-1">
+                              {item.items.map((item, index) => (
+                                <motion.div
+                                  className="group flex min-w-0 flex-1 gap-1"
+                                  initial={{
+                                    opacity: 0,
+                                    y: -6,
+                                    filter: "blur(6px)",
+                                  }}
+                                  animate={{
+                                    opacity: 1,
+                                    y: 0,
+                                    filter: "blur(0px)",
+                                  }}
+                                  exit={{
+                                    opacity: 0,
+                                    y: -6,
+                                    filter: "blur(6px)",
+                                  }}
+                                  transition={{
+                                    duration: 0.12,
+                                    delay: 0.06 * index,
+                                  }}
+                                  key={"item-" + index}
+                                >
+                                  <motion.div
+                                    className={cn(
+                                      "relative flex w-8 flex-col items-end justify-center",
+                                      sidebarCollapsed && "hidden"
+                                    )}
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    transition={{
+                                      duration: 0.32,
+                                      delay: 0.12 * index,
+                                    }}
+                                  >
+                                    <div
+                                      className={cn(
+                                        "absolute w-3 border-l-2 border-border",
+                                        "h-full -translate-y-2/3",
+                                        "max-md:h-12.75 max-md:-translate-y-8.75",
+                                        "max-md:group-first:h-5.5 max-md:group-first:-translate-y-5.25"
+                                      )}
+                                    />
+                                    <div className="size-3 -translate-y-1/3 rounded-bl-md border-b-2 border-l-2 border-border" />
+                                  </motion.div>
+                                  <ActivationLink
+                                    iconOnly={canCollapsed && sidebarCollapsed}
+                                    onClick={handlePushLocation}
+                                    href={item.href}
+                                    icon={item.icon}
+                                    isDisabled={item.isDisabled}
+                                    className="h-max flex-1 text-start"
+                                  >
+                                    {item.name}
+                                  </ActivationLink>
+                                </motion.div>
+                              ))}
                             </div>
-                          </div>
-                        </CollapsibleContent>
-                      </Collapsible>
+                          </CollapsibleContent>
+                        </Collapsible>
+                      ))}
                       <ActivationLink
                         iconOnly={canCollapsed && sidebarCollapsed}
                         onClick={handlePushLocation}
                         href={`/app/g/${guild.id}/setting`}
-                        icon={GearIcon}
+                        icon={WrenchIcon}
                       >
                         {language.data.app.guilds.setting.name}
                       </ActivationLink>
