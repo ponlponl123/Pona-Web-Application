@@ -1,6 +1,5 @@
 "use client"
 import React from "react"
-import { useLanguageContext } from "@/contexts/languageContext"
 import { useDiscordUserInfo } from "@/contexts/discordUserInfo"
 import { useDiscordGuildInfo } from "@/contexts/discordGuildInfo"
 import {
@@ -18,16 +17,15 @@ import ImageWithSkeleton from "@/components/ui/custom/image"
 import { Input } from "react-smooth-input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
-import { useUserSettingContext } from "@/contexts/userSettingContext"
 import { parseHour } from "@/lib/parser"
-
-interface GuildSettings {}
+import { useAppStore } from "@/store/coreStore"
 
 function Page() {
   const { userInfo } = useDiscordUserInfo()
   const { guild } = useDiscordGuildInfo()
-  const { language } = useLanguageContext()
-  const { userSetting } = useUserSettingContext()
+
+  const language = useAppStore((state) => state.language)
+  const userSetting = useAppStore((state) => state.userSetting)
   const [message, setMessage] = React.useState("")
 
   React.useEffect(() => {

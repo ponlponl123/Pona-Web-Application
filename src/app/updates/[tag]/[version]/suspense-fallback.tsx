@@ -1,9 +1,9 @@
 "use client"
 
-import { useLanguageContext } from "@/contexts/languageContext"
+import { useAppStore } from "@/store/coreStore"
 
 export default function SuspenseFallback() {
-  const { language } = useLanguageContext()
+  const language = useAppStore((state) => state.language)
 
   return (
     <div className="animate-pulse text-muted-foreground">

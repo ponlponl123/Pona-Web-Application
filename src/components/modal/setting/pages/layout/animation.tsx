@@ -1,5 +1,4 @@
 "use client"
-import { useLanguageContext } from "@/contexts/languageContext"
 import { BirdIcon } from "@phosphor-icons/react"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import {
@@ -9,11 +8,12 @@ import {
   FieldLabel,
   FieldTitle,
 } from "@/components/ui/field"
-import { useUserSettingContext } from "@/contexts/userSettingContext"
+import { useAppStore } from "@/store/coreStore"
 
 function Animation() {
-  const { language } = useLanguageContext()
-  const { userSetting, setUserSetting } = useUserSettingContext()
+  const language = useAppStore((state) => state.language)
+  const userSetting = useAppStore((state) => state.userSetting)
+  const setUserSetting = useAppStore((state) => state.setUserSetting)
 
   return (
     <section

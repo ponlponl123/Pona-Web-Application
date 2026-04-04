@@ -2,7 +2,6 @@
 import MyButton from "@/components/ui/custom/button"
 import { GuildButton } from "@/components/ui/custom/guild/button"
 import { useDiscordGuildInfo } from "@/contexts/discordGuildInfo"
-import { useLanguageContext } from "@/contexts/languageContext"
 import {
   fetchGuilds,
   GuildInfo,
@@ -13,10 +12,11 @@ import { getCookie } from "cookies-next"
 import { motion } from "framer-motion"
 import Link from "next/link"
 import React from "react"
+import { useAppStore } from "@/store/coreStore"
 
 function Page() {
   const { setCurrentGuild } = useDiscordGuildInfo()
-  const { language } = useLanguageContext()
+  const language = useAppStore((state) => state.language)
   const [guilds, setGuilds] = React.useState<GuildInfo[] | false | null>(null)
   const token = getCookie("LOGIN_")
   const tokenType = getCookie("LOGIN_TYPE_")

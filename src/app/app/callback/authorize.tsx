@@ -2,19 +2,19 @@
 import React from "react"
 import { authorizeUserAccessToken } from "@/lib/server-side-api/discord/fetchUser"
 import { MagicWandIcon, ConfettiIcon } from "@phosphor-icons/react/dist/ssr"
-import { useLanguageContext } from "@/contexts/languageContext"
 import MyButton from "@/components/ui/custom/button"
 import { useSearchParams } from "next/navigation"
 import { Spinner } from "@/components/ui/spinner"
 import { setCookie } from "cookies-next"
 import confetti from "canvas-confetti"
 import Link from "next/link"
+import { useAppStore } from "@/store/coreStore"
 
 function Authorize() {
   const params = useSearchParams()
   const code = params && params.get("code")
   const redirectFrom = params && params.get("from")
-  const { language } = useLanguageContext()
+  const language = useAppStore((state) => state.language)
   const initialized = React.useRef<boolean>(false)
   const confetti_colors = React.useRef<string[]>([
     "#ff69b4",

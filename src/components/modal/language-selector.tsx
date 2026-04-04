@@ -1,6 +1,4 @@
 "use client"
-import { useGlobalContext } from "@/contexts/globalContext"
-import { useLanguageContext } from "@/contexts/languageContext"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 import { SmileySadIcon, HandWavingIcon } from "@phosphor-icons/react"
 import React, { useEffect, useRef } from "react"
@@ -11,10 +9,16 @@ import { Button } from "../ui/button"
 import { Badge } from "../ui/badge"
 import { langs } from "@/lib/i18n"
 import { cn } from "@/lib/utils"
+import { useAtom } from "jotai"
+import { useAppStore } from "@/store/coreStore"
+import { isLanguageModalOpenAtom } from "@/store/uiAtoms"
 
 function LanguageSelectorModal() {
-  const { language, setLanguage } = useLanguageContext()
-  const { isLanguageModalOpen, setIsLanguageModalOpen } = useGlobalContext()
+  const language = useAppStore((state) => state.language)
+  const setLanguage = useAppStore((state) => state.setLanguage)
+  const [isLanguageModalOpen, setIsLanguageModalOpen] = useAtom(
+    isLanguageModalOpenAtom
+  )
   const [isInputFocus, setIsInputFocus] = React.useState(false)
   const [filterLangs, setFilterLangs] = React.useState("")
   const debounceRef = useRef<NodeJS.Timeout | null>(null)

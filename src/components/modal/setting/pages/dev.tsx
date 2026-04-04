@@ -1,10 +1,10 @@
 "use client"
-import { useLanguageContext } from "@/contexts/languageContext"
 import { BugIcon, InfoIcon } from "@phosphor-icons/react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { useAppStore } from "@/store/coreStore"
 
 function Developer() {
-  const { language } = useLanguageContext()
+  const language = useAppStore((state) => state.language)
   return (
     <section
       className="mx-auto flex min-h-full w-full max-w-lg flex-col gap-2 p-6"

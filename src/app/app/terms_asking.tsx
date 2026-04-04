@@ -6,14 +6,14 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { useLanguageContext } from "@/contexts/languageContext"
+import { useAppStore } from "@/store/coreStore"
 import { PersonSimpleHikeIcon } from "@phosphor-icons/react"
 import { setCookie } from "cookies-next/client"
 import { motion } from "motion/react"
 import Link from "next/link"
 
 function TermsAsking() {
-  const { language } = useLanguageContext()
+  const language = useAppStore((state) => state.language)
 
   return (
     <div className="relative flex min-h-screen w-full flex-col items-start justify-center gap-3 py-24 text-center">

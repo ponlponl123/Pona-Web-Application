@@ -1,13 +1,13 @@
 "use client"
-import { useLanguageContext } from "@/contexts/languageContext"
 import { ShapesIcon } from "@phosphor-icons/react"
 import Theme from "./theme"
 import Player from "./player"
 import Transparency from "./transparency"
 import BlurEffect from "./blur-effect"
+import { useAppStore } from "@/store/coreStore"
 
 function Developer() {
-  const { language } = useLanguageContext()
+  const language = useAppStore((state) => state.language)
   return (
     <>
       <section

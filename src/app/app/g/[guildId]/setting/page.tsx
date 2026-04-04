@@ -1,17 +1,17 @@
 "use client"
 import React from "react"
-import { useLanguageContext } from "@/contexts/languageContext"
 import { useDiscordGuildInfo } from "@/contexts/discordGuildInfo"
 import { GearIcon } from "@phosphor-icons/react"
 import { Alert } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
 import { Spinner } from "@/components/ui/spinner"
+import { useAppStore } from "@/store/coreStore"
 
 interface GuildSettings {}
 
 function Page() {
   const { guild } = useDiscordGuildInfo()
-  const { language } = useLanguageContext()
+  const language = useAppStore((state) => state.language)
   const [loading, setLoading] = React.useState<boolean>(true)
   const [guildSettings, setGuildSettings] =
     React.useState<GuildSettings | null>(null)

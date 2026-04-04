@@ -1,6 +1,6 @@
 "use client"
 import MyButton from "@/components/ui/custom/button"
-import { useLanguageContext } from "@/contexts/languageContext"
+import { useAppStore } from "@/store/coreStore"
 import {
   BirdIcon,
   CubeIcon,
@@ -9,7 +9,7 @@ import {
 import Link from "next/link"
 
 function App_notReady() {
-  const { language } = useLanguageContext()
+  const language = useAppStore((state) => state.language)
   return (
     <main className="min-h-screen w-full">
       <div className="grid min-h-screen grid-rows-[20px_1fr_20px] items-center justify-items-center gap-16 p-8 pb-20 sm:p-20">

@@ -1,6 +1,5 @@
 "use client"
 import { useDiscordUserInfo } from "@/contexts/discordUserInfo"
-import { useLanguageContext } from "@/contexts/languageContext"
 import {
   ConfettiIcon,
   GearSixIcon,
@@ -12,13 +11,19 @@ import {
 } from "@phosphor-icons/react"
 import { AnimatePresence, LayoutGroup } from "motion/react"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
-import { useGlobalContext } from "@/contexts/globalContext"
 import { ScrollArea, ScrollBar } from "../ui/scroll-area"
 import React, { useState, useRef } from "react"
 import { motion } from "motion/react"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { useMediaQuery } from "@heroui/react"
+import { useAtomValue, useSetAtom } from "jotai"
+import {
+  isFeedbackModalOpenAtom,
+  isSettingModalOpenAtom,
+  settingLayoutIdAtom,
+} from "@/store/uiAtoms"
+import { useAppStore } from "@/store/coreStore"
 
 export default function UserAccountDropdown({
   className,
@@ -29,11 +34,12 @@ export default function UserAccountDropdown({
 }) {
   const [isActive, setIsActive] = useState(false)
   const { userInfo, revokeUserAccessToken } = useDiscordUserInfo()
-  const { setIsSettingModalOpen, setIsFeedbackModalOpen, setSettingLayoutId } =
-    useGlobalContext()
+  const setSettingLayoutId = useSetAtom(settingLayoutIdAtom)
+  const setIsSettingModalOpen = useSetAtom(isSettingModalOpenAtom)
+  const setIsFeedbackModalOpen = useSetAtom(isFeedbackModalOpenAtom)
+  const language = useAppStore((state) => state.language)
   const isMobile = useMediaQuery("(max-width: 760px)")
   const popupRef = useRef<HTMLDivElement>(null)
-  const { language } = useLanguageContext()
 
   const cooldownRef = useRef<NodeJS.Timeout | null>(null)
 

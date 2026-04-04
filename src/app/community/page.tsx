@@ -1,7 +1,5 @@
 "use client"
-import { useLanguageContext } from "@/contexts/languageContext"
 import React from "react"
-
 import confetti from "canvas-confetti"
 import { langs } from "@/lib/i18n"
 import { fonts_credits } from "@/consts/fonts-author"
@@ -15,9 +13,10 @@ import {
 } from "@phosphor-icons/react/dist/ssr"
 import Link from "next/link"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { useAppStore } from "@/store/coreStore"
 
 function Page() {
-  const { language } = useLanguageContext()
+  const language = useAppStore((state) => state.language)
   const heartFalled = React.useRef(false)
 
   React.useEffect(() => {

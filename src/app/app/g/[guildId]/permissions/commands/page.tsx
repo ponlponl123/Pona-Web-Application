@@ -1,6 +1,5 @@
 "use client"
 import React from "react"
-import { useLanguageContext } from "@/contexts/languageContext"
 import { useDiscordGuildInfo } from "@/contexts/discordGuildInfo"
 import {
   CaretRightIcon,
@@ -14,10 +13,11 @@ import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import CustomScrollArea from "@/components/ui/custom/scroll-area"
 import commands from "@/consts/commands"
+import { useAppStore } from "@/store/coreStore"
 
 function Page() {
   const { guild } = useDiscordGuildInfo()
-  const { language } = useLanguageContext()
+  const language = useAppStore((state) => state.language)
   const [selectedCommand, setSelectedCommand] = React.useState<string>(
     commands[0]
   )

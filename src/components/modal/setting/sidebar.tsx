@@ -1,6 +1,5 @@
 "use client"
 import React from "react"
-import { useLanguageContext } from "@/contexts/languageContext"
 import { useDiscordUserInfo } from "@/contexts/discordUserInfo"
 import { motion } from "motion/react"
 import { cn } from "@/lib/utils"
@@ -19,7 +18,12 @@ import {
   TranslateIcon,
 } from "@phosphor-icons/react"
 import { PageKey, useSettingModalContext } from "."
-import { useGlobalContext } from "@/contexts/globalContext"
+import { useAppStore } from "@/store/coreStore"
+import { useSetAtom } from "jotai"
+import {
+  isFeedbackModalOpenAtom,
+  isSettingModalOpenAtom,
+} from "@/store/uiAtoms"
 
 export type SubPage = {
   name: string
@@ -45,8 +49,9 @@ type DelayData = {
 }
 
 function SettingModalSidebar() {
-  const { language } = useLanguageContext()
-  const { setIsSettingModalOpen, setIsFeedbackModalOpen } = useGlobalContext()
+  const language = useAppStore((state) => state.language)
+  const setIsSettingModalOpen = useSetAtom(isSettingModalOpenAtom)
+  const setIsFeedbackModalOpen = useSetAtom(isFeedbackModalOpenAtom)
   const { userInfo, revokeUserAccessToken } = useDiscordUserInfo()
   const { SelectedPageKey, setSelectedPage, lookingAt, scrollTo } =
     useSettingModalContext()

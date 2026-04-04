@@ -1,7 +1,7 @@
 "use server"
 import { EndpointHTTP } from "../endpoint"
-import { ArtistFull as ArtistFullv1 } from "@/types/ytmusic"
-import { ArtistFull, ProfileFull } from "@/types/ytmusic-api"
+import { ArtistFull as ArtistFullv1 } from "@/types/youtube/ytmusic"
+import { ArtistFull, ProfileFull } from "@/types/youtube/ytmusic-api"
 
 export interface SubscribeResult {
   message: string

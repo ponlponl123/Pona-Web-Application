@@ -5,12 +5,7 @@ import {
   FieldDescription,
   FieldLabel,
 } from "@/components/ui/field"
-import { useLanguageContext } from "@/contexts/languageContext"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import {
-  TimeFormat,
-  useUserSettingContext,
-} from "@/contexts/userSettingContext"
 import {
   ClockUserIcon,
   GlobeStandIcon,
@@ -25,10 +20,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { motion } from "motion/react"
 import { langs } from "@/lib/i18n"
+import { useAppStore } from "@/store/coreStore"
+import { TimeFormat } from "@/types/settings"
 
 function LanguageAndTime() {
-  const { language, setLanguage } = useLanguageContext()
-  const { userSetting, setUserSetting } = useUserSettingContext()
+  const language = useAppStore((state) => state.language)
+  const setLanguage = useAppStore((state) => state.setLanguage)
+  const userSetting = useAppStore((state) => state.userSetting)
+  const setUserSetting = useAppStore((state) => state.setUserSetting)
   const [filterLangs, setFilterLangs] = React.useState("")
   const debounceRef = React.useRef<NodeJS.Timeout | null>(null)
 

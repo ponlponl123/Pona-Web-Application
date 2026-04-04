@@ -1,13 +1,11 @@
 "use client"
 import React from "react"
 import { Button } from "../../ui/button"
-import { useLanguageContext } from "@/contexts/languageContext"
 import { CaretLeftIcon, XIcon } from "@phosphor-icons/react"
-import Modal from "../../ui/custom/modal"
-import { useGlobalContext } from "@/contexts/globalContext"
 import { useDiscordUserInfo } from "@/contexts/discordUserInfo"
-import SettingModalSidebar from "./sidebar"
 import { AnimatePresence, motion } from "motion/react"
+import SettingModalSidebar from "./sidebar"
+import Modal from "../../ui/custom/modal"
 
 // Pages
 import Account from "./pages/account"
@@ -17,6 +15,9 @@ import Keybinds from "./pages/keybinds"
 import LanguageAndTime from "./pages/language_time"
 import Developer from "./pages/dev"
 import { cn } from "@/lib/utils"
+import { useAtom, useAtomValue } from "jotai"
+import { isSettingModalOpenAtom, settingLayoutIdAtom } from "@/store/uiAtoms"
+import { useAppStore } from "@/store/coreStore"
 
 export type PageKey =
   | "account"
@@ -56,7 +57,7 @@ const SettingModalContext = React.createContext<{
 
 const SettingModalProvider = ({ children }: { children: React.ReactNode }) => {
   const { userInfo } = useDiscordUserInfo()
-  const { isSettingModalOpen } = useGlobalContext()
+  const isSettingModalOpen = useAtomValue(isSettingModalOpenAtom)
   const [SelectedPageKey, setSelectedPageKey] =
     React.useState<PageKey>("layout")
   const [lookingAt, setLookingAt] = React.useState<string[]>([])
@@ -179,9 +180,11 @@ export const useSettingModalContext = () =>
 export { SettingModalContext, SettingModalProvider }
 
 function SettingModal() {
-  const { language } = useLanguageContext()
-  const { isSettingModalOpen, setIsSettingModalOpen, settingLayoutId } =
-    useGlobalContext()
+  const language = useAppStore((state) => state.language)
+  const [isSettingModalOpen, setIsSettingModalOpen] = useAtom(
+    isSettingModalOpenAtom
+  )
+  const settingLayoutId = useAtomValue(settingLayoutIdAtom)
   const {
     SelectedPageKey,
     sidebarRef,

@@ -1,12 +1,9 @@
 "use client"
 import { useDiscordGuildInfo } from "@/contexts/discordGuildInfo"
-import { useGlobalContext } from "@/contexts/globalContext"
-import { useLanguageContext } from "@/contexts/languageContext"
 import { UserInfo } from "@/lib/server-side-api/discord/fetchUser"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { ScrollShadow } from "@heroui/react"
 import {
   BroadcastIcon,
   CaretDownIcon,
@@ -38,13 +35,20 @@ import { usePathname } from "next/navigation"
 import { AnimatePresence, motion } from "motion/react"
 import ActivationLink from "@/components/activationLink"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip"
-import { useUserSettingContext } from "@/contexts/userSettingContext"
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "../ui/collapsible"
 import CustomScrollArea from "../ui/custom/scroll-area"
+import { useAppStore } from "@/store/coreStore"
+import { useAtom, useAtomValue, useSetAtom } from "jotai"
+import {
+  isSameVCAtom,
+  isSettingModalOpenAtom,
+  settingLayoutIdAtom,
+} from "@/store/uiAtoms"
+import { ponaCommonStateAtom } from "@/store/musicAtoms"
 
 const variants = {
   hidden: { opacity: 0, x: -12, y: 0 },
@@ -70,18 +74,15 @@ function Sidebar({
   setNavActive,
 }: SidebarProps) {
   const pathname = usePathname() || ""
-  const ownerId = process.env["NEXT_PUBLIC_DISCORD_OWNER_ID"]
-  const isOwner = userInfo.id === ownerId
   const { guild } = useDiscordGuildInfo()
-  const { language } = useLanguageContext()
-  const {
-    ponaCommonState,
-    isSameVC,
-    isSettingModalOpen,
-    setIsSettingModalOpen,
-    setSettingLayoutId,
-  } = useGlobalContext()
-  const { userSetting, setUserSetting } = useUserSettingContext()
+  const language = useAppStore((state) => state.language)
+  const userSetting = useAppStore((state) => state.userSetting)
+  const setUserSetting = useAppStore((state) => state.setUserSetting)
+  const ponaCommonState = useAtomValue(ponaCommonStateAtom)
+  const isSameVC = useAtomValue(isSameVCAtom)
+  const isSettingModalOpen = useAtomValue(isSettingModalOpenAtom)
+  const setIsSettingModalOpen = useSetAtom(isSettingModalOpenAtom)
+  const setSettingLayoutId = useSetAtom(settingLayoutIdAtom)
   const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(
     userSetting.isSidebarCollapsed
   )

@@ -1,5 +1,4 @@
 "use client"
-import { useLanguageContext } from "@/contexts/languageContext"
 import {
   CubeTransparentIcon,
   ShapesIcon,
@@ -13,16 +12,17 @@ import {
   FieldLabel,
   FieldTitle,
 } from "@/components/ui/field"
-import { useUserSettingContext } from "@/contexts/userSettingContext"
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { useAppStore } from "@/store/coreStore"
 
 function Transparency() {
-  const { language } = useLanguageContext()
-  const { userSetting, setUserSetting } = useUserSettingContext()
+  const language = useAppStore((state) => state.language)
+  const userSetting = useAppStore((state) => state.userSetting)
+  const setUserSetting = useAppStore((state) => state.setUserSetting)
 
   return (
     <section

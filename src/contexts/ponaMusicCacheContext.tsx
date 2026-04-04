@@ -1,5 +1,5 @@
 "use client"
-import { SongRelated, WatchPlaylist } from "@/types/ytmusic-api"
+import { SongRelated, WatchPlaylist } from "@/types/youtube/ytmusic-api"
 import { IsSubscribed } from "@/lib/server-side-api/internal/channel"
 import { getCookie } from "cookies-next"
 import React, {

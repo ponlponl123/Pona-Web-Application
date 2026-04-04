@@ -1,8 +1,6 @@
 "use client"
 import React from "react"
 import { Button } from "../ui/button"
-import { useLanguageContext } from "@/contexts/languageContext"
-import { useGlobalContext } from "@/contexts/globalContext"
 import { Input } from "react-smooth-input"
 import { Textarea } from "../ui/textarea"
 import { Checkbox } from "../ui/checkbox"
@@ -14,14 +12,19 @@ import {
   PaperPlaneTiltIcon,
   SmileyWinkIcon,
 } from "@phosphor-icons/react"
-import { AnimatePresence, motion } from "motion/react"
+import { cn } from "@/lib/utils"
 import { PuffLoader } from "react-spinners"
 import { emailRegex } from "@/consts/regex"
-import { cn } from "@/lib/utils"
+import { useAppStore } from "@/store/coreStore"
+import { AnimatePresence, motion } from "motion/react"
+import { isFeedbackModalOpenAtom } from "@/store/uiAtoms"
+import { useAtom } from "jotai"
 
 function FeedbackModal() {
-  const { language } = useLanguageContext()
-  const { isFeedbackModalOpen, setIsFeedbackModalOpen } = useGlobalContext()
+  const language = useAppStore((state) => state.language)
+  const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useAtom(
+    isFeedbackModalOpenAtom
+  )
   const [isCanWeContactBack, setIsCanWeContactBack] = React.useState(false)
   const [textAreaValue, setTextAreaValue] = React.useState("")
   const [textAreaError, setTextAreaError] = React.useState("")

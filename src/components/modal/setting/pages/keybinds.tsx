@@ -1,5 +1,4 @@
 "use client"
-import { useLanguageContext } from "@/contexts/languageContext"
 import { InfoIcon, KeyboardIcon } from "@phosphor-icons/react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Kbd, KbdGroup } from "@/components/ui/kbd"
@@ -10,6 +9,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { useAppStore } from "@/store/coreStore"
 
 interface Keybind {
   key: string
@@ -32,7 +32,7 @@ type DelayData = {
 }
 
 function KeyBinds() {
-  const { language } = useLanguageContext()
+  const language = useAppStore((state) => state.language)
 
   const keybinds: Keybinds[] = [
     {

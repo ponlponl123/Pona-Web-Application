@@ -2,7 +2,6 @@
 import { Badge } from "@/components/ui/badge"
 import { useThemeContext } from "@/components/theme-provider"
 import { ThemeDot, ThemePreview } from "@/components/ui/custom/theme"
-import { useLanguageContext } from "@/contexts/languageContext"
 import { darkThemes, lightThemes, themes } from "@/consts/theme"
 import { UAParser } from "ua-parser-js"
 import {
@@ -33,12 +32,13 @@ import {
 } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
 import React from "react"
+import { useAppStore } from "@/store/coreStore"
 
 function Theme() {
   const { theme, setTheme } = useTheme()
   const { appTheme, isAmoled, isCurrentlyDark, setAppTheme, setAmoled } =
     useThemeContext()
-  const { language } = useLanguageContext()
+  const language = useAppStore((state) => state.language)
   const [osType, setOsType] = React.useState<UAParser.IOS | undefined>(
     undefined
   )

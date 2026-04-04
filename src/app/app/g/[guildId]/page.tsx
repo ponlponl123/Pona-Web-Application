@@ -1,6 +1,5 @@
 "use client"
 import { useDiscordGuildInfo } from "@/contexts/discordGuildInfo"
-import { useLanguageContext } from "@/contexts/languageContext"
 import { data, data01, data02, default_data } from "@/consts/guild/stats"
 import React, { useMemo } from "react"
 import {
@@ -26,7 +25,6 @@ import {
 
 import { getRandomColor } from "@/components/data/charts/service-status"
 import { useDiscordUserInfo } from "@/contexts/discordUserInfo"
-import { useUserSettingContext } from "@/contexts/userSettingContext"
 import guild_stats from "@/lib/server-side-api/guild/stats"
 import ImageWithSkeleton from "@/components/ui/custom/image"
 import { getCookie } from "cookies-next"
@@ -43,6 +41,7 @@ import {
 } from "@/components/ui/chart"
 import { TrendUpIcon } from "@phosphor-icons/react"
 import { motion } from "motion/react"
+import { useAppStore } from "@/store/coreStore"
 
 interface ActiveUsageChart {
   date: string
@@ -59,9 +58,9 @@ interface MemberInChannel {
 }
 
 function Page() {
-  const { language } = useLanguageContext()
+  const language = useAppStore((state) => state.language)
+  const userSetting = useAppStore((state) => state.userSetting)
   const { guild } = useDiscordGuildInfo()
-  const { userSetting } = useUserSettingContext()
   const { userInfo } = useDiscordUserInfo()
 
   const [activeStats, setActiveStats] = React.useState<

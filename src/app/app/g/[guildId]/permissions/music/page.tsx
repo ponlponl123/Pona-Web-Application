@@ -1,14 +1,14 @@
 "use client"
 import React from "react"
-import { useLanguageContext } from "@/contexts/languageContext"
 import { useDiscordGuildInfo } from "@/contexts/discordGuildInfo"
 import { CaretRightIcon, GearIcon } from "@phosphor-icons/react"
 import { Badge } from "@/components/ui/badge"
 import { Spinner } from "@/components/ui/spinner"
+import { useAppStore } from "@/store/coreStore"
 
 function Page() {
   const { guild } = useDiscordGuildInfo()
-  const { language } = useLanguageContext()
+  const language = useAppStore((state) => state.language)
 
   return (
     <main id="app-panel">

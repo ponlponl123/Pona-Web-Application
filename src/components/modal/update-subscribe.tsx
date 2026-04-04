@@ -3,11 +3,11 @@ import React from "react"
 import Link from "next/link"
 import { Button } from "../ui/button"
 import { AnimatePresence, motion } from "motion/react"
-import { useLanguageContext } from "@/contexts/languageContext"
 import { useDiscordUserInfo } from "@/contexts/discordUserInfo"
 import { LockSimpleIcon, MegaphoneSimpleIcon } from "@phosphor-icons/react"
 import CustomScrollArea from "../ui/custom/scroll-area"
 import CardCheckbox from "../ui/custom/checkbox"
+import { useAppStore } from "@/store/coreStore"
 import { FieldGroup } from "../ui/field"
 import Modal from "../ui/custom/modal"
 
@@ -18,7 +18,7 @@ function UpdateSubscribeModal({
   isOpen: boolean
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
 }) {
-  const { language } = useLanguageContext()
+  const language = useAppStore((state) => state.language)
   const { userInfo } = useDiscordUserInfo()
   const [groupSelected, setGroupSelected] = React.useState<string[]>([])
 

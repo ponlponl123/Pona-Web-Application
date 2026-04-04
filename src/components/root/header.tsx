@@ -4,8 +4,6 @@ import PonaIcon from "@/../public/static/flower.png"
 import MyButton from "@/components/ui/custom/button"
 import { useDiscordGuildInfo } from "@/contexts/discordGuildInfo"
 import { useDiscordUserInfo } from "@/contexts/discordUserInfo"
-import { useGlobalContext } from "@/contexts/globalContext"
-import { useLanguageContext } from "@/contexts/languageContext"
 import { fetchSearchHistory } from "@/lib/server-side-api/internal/history"
 import { fetchSearchSuggestionResult } from "@/lib/server-side-api/internal/search"
 import { Controller, useForm } from "react-hook-form"
@@ -30,6 +28,10 @@ import Image from "next/image"
 import Link from "next/link"
 import * as z from "zod"
 import { cn } from "@/lib/utils"
+import { useAppStore } from "@/store/coreStore"
+import { useAtomValue } from "jotai"
+import { ponaCommonStateAtom } from "@/store/musicAtoms"
+import { isMemberInVCAtom, isSameVCAtom } from "@/store/uiAtoms"
 
 const formSchema = z.object({
   search: z
@@ -44,9 +46,11 @@ function Header() {
   const [navOpened, setNavOpened] = useState<boolean>(false)
 
   const { guild } = useDiscordGuildInfo()
-  const { language } = useLanguageContext()
   const { userInfo } = useDiscordUserInfo()
-  const { ponaCommonState, isSameVC, isMemberInVC } = useGlobalContext()
+  const language = useAppStore((state) => state.language)
+    const ponaCommonState = useAtomValue(ponaCommonStateAtom)
+    const isSameVC = useAtomValue(isSameVCAtom)
+    const isMemberInVC = useAtomValue(isMemberInVCAtom)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),

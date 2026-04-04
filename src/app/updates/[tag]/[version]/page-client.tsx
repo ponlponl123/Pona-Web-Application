@@ -2,7 +2,6 @@
 
 import React from "react"
 import Markdown from "marked-react"
-import { useLanguageContext } from "@/contexts/languageContext"
 import {
   BellSimpleIcon,
   CaretLeftIcon,
@@ -18,6 +17,7 @@ import { Translations } from "../../page"
 import { motion } from "motion/react"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
+import { useAppStore } from "@/store/coreStore"
 
 function PatchNote({
   tag,
@@ -28,7 +28,7 @@ function PatchNote({
   version: string
   note: string
 }) {
-  const { language } = useLanguageContext()
+  const language = useAppStore((state) => state.language)
   const safeTag = tag?.toLowerCase() || ""
   const normalizedVersion = version.replace(".md", "").replace(/\./g, "-")
   const parsedPatchNote = PatchNoteParser(note, true)

@@ -3,7 +3,7 @@ import { EndpointHTTP } from "../endpoint"
 import {
   ArtistFull as ArtistFullv1,
   PlaylistFull as PlaylistFullv1,
-} from "@/types/ytmusic"
+} from "@/types/youtube/ytmusic"
 import {
   AlbumFull,
   ArtistFull,
@@ -17,7 +17,7 @@ import {
   VideoDetailed,
   VideoFull,
   WatchPlaylist,
-} from "@/types/ytmusic-api"
+} from "@/types/youtube/ytmusic-api"
 
 export type YTMusicSearchResultType =
   | "SONG"

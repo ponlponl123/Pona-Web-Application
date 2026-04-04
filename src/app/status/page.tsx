@@ -1,19 +1,18 @@
 "use client"
-import MyButton from "@/components/ui/custom/button"
-import ManagerChart from "@/components/data/charts/service-status"
-import { CubeIcon } from "@phosphor-icons/react/dist/ssr"
+import clsx from "clsx"
 import React from "react"
-
-import { useLanguageContext } from "@/contexts/languageContext"
+import MyButton from "@/components/ui/custom/button"
+import { CubeIcon } from "@phosphor-icons/react/dist/ssr"
+import ManagerChart from "@/components/data/charts/service-status"
 import clusterInfo, { ClusterInfo } from "@/lib/server-side-api/clusterInfo"
 import ponlponl123apiHandshake from "@/lib/server-side-api/ponlponl123api"
 import handshake from "@/lib/server-side-api/handshake"
 import socketio from "@/lib/server-side-api/socketio"
 import lavalink from "@/lib/server-side-api/lavalink"
 import redis from "@/lib/server-side-api/redis"
-import clsx from "clsx"
 import { Spinner } from "@/components/ui/spinner"
 import { Button } from "@/components/ui/button"
+import { useAppStore } from "@/store/coreStore"
 
 export type viewType =
   | "24h"
@@ -29,7 +28,7 @@ export type viewType =
 const filterOptions: viewType[] = ["24h", "12h", "9h", "6h", "3h", "1h"]
 
 function Status() {
-  const { language } = useLanguageContext()
+  const language = useAppStore((state) => state.language)
   const [fetching, setFetching] = React.useState<boolean>(false)
   const [lastRefresh, setLastRefresh] = React.useState<Date | null>(null)
   const [overallStatus, setOverallStatus] = React.useState<

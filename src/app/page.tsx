@@ -1,5 +1,4 @@
 "use client"
-import { useLanguageContext } from "@/contexts/languageContext"
 import MyButton from "@/components/ui/custom/button"
 import { ConfettiIcon, CookieIcon } from "@phosphor-icons/react/dist/ssr"
 import { AnimatePresence, motion } from "framer-motion"
@@ -9,6 +8,7 @@ import React from "react"
 import WavyText from "@/components/motion/wavytext"
 import confetti from "canvas-confetti"
 import { usePathname } from "next/navigation"
+import { useAppStore } from "@/store/coreStore"
 
 const TextVariants = {
   before: { y: 24, opacity: 0 },
@@ -17,7 +17,7 @@ const TextVariants = {
 }
 
 export default function Home() {
-  const { language } = useLanguageContext()
+  const language = useAppStore((state) => state.language)
   const pathname = usePathname() || ""
   const date = new Date()
   const hours = date.getHours()

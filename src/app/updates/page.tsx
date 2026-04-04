@@ -1,6 +1,5 @@
 "use client"
 import React from "react"
-import { useLanguageContext } from "@/contexts/languageContext"
 import { PatchNoteGroup, PatchNoteVersion } from "../api/patchnote/s/route"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
@@ -16,13 +15,14 @@ import { cn } from "@/lib/utils"
 import Link from "next/link"
 import UpdateSubscribeModal from "@/components/modal/update-subscribe"
 import ImageWithSkeleton from "@/components/ui/custom/image"
+import { useAppStore } from "@/store/coreStore"
 
 export interface Translations {
   [key: string]: string
 }
 
 function Page() {
-  const { language } = useLanguageContext()
+  const language = useAppStore((state) => state.language)
   const [data, setData] = React.useState<PatchNoteGroup[]>([])
   const [isLoading, setIsLoading] = React.useState(true)
   const [error, setError] = React.useState(false)

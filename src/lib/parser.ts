@@ -1,4 +1,4 @@
-import { TimeFormat } from "@/contexts/userSettingContext"
+import { TimeFormat } from "@/types/settings"
 
 export function PatchNoteParser(content: string, needContent = false) {
   const lines = content.split("\n").map((l) => l.trim())

@@ -1,22 +1,22 @@
 "use client"
 import { motion } from "motion/react"
 import { useDiscordUserInfo } from "@/contexts/discordUserInfo"
-import { useLanguageContext } from "@/contexts/languageContext"
-import { useUserSettingContext } from "@/contexts/userSettingContext"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { SealCheckIcon } from "@phosphor-icons/react"
 import ImageWithSkeleton from "@/components/ui/custom/image"
+import { SealCheckIcon } from "@phosphor-icons/react"
 import { numberToHexColor } from "@/lib/color-client"
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { useAppStore } from "@/store/coreStore"
 
 function Account() {
-  const { language } = useLanguageContext()
   const { userInfo } = useDiscordUserInfo()
-  const { userSetting } = useUserSettingContext()
+
+  const language = useAppStore((state) => state.language)
+  const userSetting = useAppStore((state) => state.userSetting)
 
   return (
     <section

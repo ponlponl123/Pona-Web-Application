@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button"
 import MyButton from "@/components/ui/custom/button"
 import { useDiscordUserInfo } from "@/contexts/discordUserInfo"
-import { useLanguageContext } from "@/contexts/languageContext"
+import { useAppStore } from "@/store/coreStore"
 import { cn } from "@/lib/utils"
 import {
   HeartIcon,
@@ -13,7 +13,7 @@ import { motion } from "framer-motion"
 import Link from "next/link"
 
 function Page() {
-  const { language } = useLanguageContext()
+  const language = useAppStore((state) => state.language)
   const { userInfo } = useDiscordUserInfo()
   const date = new Date()
   const hours = date.getHours()

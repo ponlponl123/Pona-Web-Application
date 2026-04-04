@@ -1,11 +1,11 @@
 "use client"
-import { useLanguageContext } from "@/contexts/languageContext"
+import { useAppStore } from "@/store/coreStore"
 import { ShieldCheckIcon } from "@phosphor-icons/react"
 import Link from "next/link"
 import React from "react"
 
 function Privacy() {
-  const { language } = useLanguageContext()
+  const language = useAppStore((state) => state.language)
   return (
     <section
       className="mx-auto flex min-h-full w-full max-w-lg flex-col gap-2 p-6"

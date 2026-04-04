@@ -1,5 +1,4 @@
 "use client"
-import { useLanguageContext } from "@/contexts/languageContext"
 import {
   BirdIcon,
   CubeIcon,
@@ -10,18 +9,25 @@ import {
   PottedPlantIcon,
 } from "@phosphor-icons/react/dist/ssr"
 import { usePathname } from "next/navigation"
-import { useGlobalContext } from "@/contexts/globalContext"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 import { Button } from "../ui/button"
 import { motion } from "motion/react"
 import Link from "next/link"
 import clsx from "clsx"
 import { cn } from "@/lib/utils"
+import { useAppStore } from "@/store/coreStore"
+import {
+  isLanguageModalOpenAtom,
+  isSettingModalOpenAtom,
+} from "@/store/uiAtoms"
+import { useAtom } from "jotai"
 
 function Footer() {
   const pathname = usePathname() || ""
-  const { language } = useLanguageContext()
-  const { setIsLanguageModalOpen, isLanguageModalOpen } = useGlobalContext()
+  const language = useAppStore((state) => state.language)
+  const [isLanguageModalOpen, setIsLanguageModalOpen] = useAtom(
+    isLanguageModalOpenAtom
+  )
   const isAppRoute = pathname.startsWith("/app")
 
   return (

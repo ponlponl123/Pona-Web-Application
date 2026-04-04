@@ -1,11 +1,11 @@
 "use client"
 import React from "react"
 import Link from "next/link"
-import { useLanguageContext } from "@/contexts/languageContext"
 import { CompassIcon } from "@phosphor-icons/react/dist/ssr"
+import { useAppStore } from "@/store/coreStore"
 
 function RedirectOauth() {
-  const { language } = useLanguageContext()
+  const language = useAppStore((state) => state.language)
   const clientId = process.env["NEXT_PUBLIC_DISCORD_CLIENT_ID"]
   const redirect_uri =
     process.env["NEXT_PUBLIC_DISCORD_REDIRECT_ENDPOINT"] ||
