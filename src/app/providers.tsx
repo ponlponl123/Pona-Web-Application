@@ -2,7 +2,6 @@
 
 import { DiscordUserInfoProvider } from "@/contexts/discordUserInfo"
 import { DiscordGuildInfoProvider } from "@/contexts/discordGuildInfo"
-import { PonaMusicCacheContextProvider } from "@/contexts/ponaMusicCacheContext"
 import PageAnimatePresence from "@/components/HOC/PageAnimatePresence"
 import FeedbackModal from "@/components/modal/feedback"
 import { AnimatePresence, motion } from "motion/react"
@@ -38,29 +37,26 @@ export function Providers({
       <ClientInit />
       <DiscordUserInfoProvider>
         <DiscordGuildInfoProvider>
-          <PonaMusicCacheContextProvider>
-            <ClickSpark
-              sparkColor="#fff"
-              sparkSize={10}
-              sparkRadius={15}
-              sparkCount={8}
-              duration={400}
-            >
-              {pathname.startsWith("/app") ||
-              pathname.startsWith("/updates") ? (
-                <AnimatePresence mode={"popLayout"}>
-                  <motion.div className="min-h-screen">
-                    <ViewTransition>{children}</ViewTransition>
-                  </motion.div>
-                </AnimatePresence>
-              ) : (
-                <PageAnimatePresence>{children}</PageAnimatePresence>
-              )}
-              <Toaster />
-              <SettingModal />
-              <FeedbackModal />
-            </ClickSpark>
-          </PonaMusicCacheContextProvider>
+          <ClickSpark
+            sparkColor="#fff"
+            sparkSize={10}
+            sparkRadius={15}
+            sparkCount={8}
+            duration={400}
+          >
+            {pathname.startsWith("/app") || pathname.startsWith("/updates") ? (
+              <AnimatePresence mode={"popLayout"}>
+                <motion.div className="min-h-screen">
+                  <ViewTransition>{children}</ViewTransition>
+                </motion.div>
+              </AnimatePresence>
+            ) : (
+              <PageAnimatePresence>{children}</PageAnimatePresence>
+            )}
+            <Toaster />
+            <SettingModal />
+            <FeedbackModal />
+          </ClickSpark>
         </DiscordGuildInfoProvider>
       </DiscordUserInfoProvider>
     </AppStoreProvider>
