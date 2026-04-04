@@ -18,22 +18,21 @@ export function GuildButton({
   setCurrentGuild: (guild: GuildInfo) => void
 }) {
   const [loading, setLoading] = React.useState<boolean>(false)
-  const onClick = () => {
-    setLoading(true)
-    setCurrentGuild(guild)
-  }
   return (
     <Link href={uri}>
       <Button
-        onClick={onClick}
-        className="group w-full rounded-[calc(var(--radius)*4.8)] bg-foreground/10 py-12 text-foreground backdrop-blur-xs max-lg:py-10"
+        onClick={() => {
+          setLoading(true)
+          setCurrentGuild(guild)
+        }}
+        className="group w-full rounded-[calc(var(--radius)*4.8)] bg-foreground/5 py-12 text-foreground backdrop-blur-xs hover:bg-foreground/10 max-lg:py-10"
         data-smooth-interaction="true"
       >
         <div className="flex max-h-none w-full items-center justify-center gap-3 p-2">
           <div className="relative flex size-16 flex-col items-center justify-center max-lg:size-12">
             <Avatar
               className={cn(
-                loading ? "size-12 max-lg:size-8" : "size-16 max-lg:size-12"
+                loading ? "size-10 max-lg:size-8" : "size-16 max-lg:size-12"
               )}
             >
               <AvatarImage src={guild.iconURL as string} />
@@ -41,7 +40,13 @@ export function GuildButton({
                 {guild.name.charAt(0).toUpperCase()}
               </AvatarFallback>
             </Avatar>
-            <Spinner className={cn("absolute size-14", !loading && "hidden")} />
+            <Spinner
+              weight={"light"}
+              className={cn(
+                "absolute size-16 max-lg:size-14",
+                !loading && "hidden"
+              )}
+            />
           </div>
           <div className="flex flex-col">
             <h1 className="text-2xl max-lg:text-xl">{guild.name}</h1>
@@ -51,6 +56,7 @@ export function GuildButton({
           </div>
           <div className="m-auto mr-4">
             <CaretRightIcon
+              weight="bold"
               className="group-hover:translate-x-1 group-active:-translate-x-1"
               size={18}
             />

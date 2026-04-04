@@ -44,6 +44,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "../ui/collapsible"
+import CustomScrollArea from "../ui/custom/scroll-area"
 
 const variants = {
   hidden: { opacity: 0, x: -12, y: 0 },
@@ -121,9 +122,12 @@ function Sidebar({
     >
       <div className="w-full max-md:-mb-1 max-md:min-h-0 max-md:flex-1 md:max-h-[calc(100%-64px)]">
         <AnimatePresence mode="popLayout">
-          <ScrollShadow
-            className="flex max-h-full w-full flex-col"
-            style={{ scrollbarWidth: "none" }}
+          <CustomScrollArea
+            className="max-h-full"
+            classNames={{
+              viewport: "flex max-h-full w-full flex-col",
+              scrollbar: "translate-x-4",
+            }}
           >
             <FrozenRoute>
               <motion.main
@@ -451,7 +455,7 @@ function Sidebar({
               </motion.main>
             </FrozenRoute>
             <div className="max-md:hidden md:p-2"></div>
-          </ScrollShadow>
+          </CustomScrollArea>
         </AnimatePresence>
       </div>
 

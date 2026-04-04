@@ -1,3 +1,5 @@
+import { TimeFormat } from "@/contexts/userSettingContext"
+
 export function PatchNoteParser(content: string, needContent = false) {
   const lines = content.split("\n").map((l) => l.trim())
 
@@ -57,4 +59,8 @@ export function PatchNoteParser(content: string, needContent = false) {
     banner,
     ...(needContent && { content: cleanContent.join("\n").trim() }),
   }
+}
+
+export function parseHour(a: TimeFormat): undefined | boolean {
+  return a === "auto" ? undefined : a === 12
 }

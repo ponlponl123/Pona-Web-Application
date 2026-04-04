@@ -201,7 +201,7 @@ function Page() {
       <main id="app-workspace" className="relative z-10">
         {guild ? (
           <>
-            <h1 className="text-base">{guild.id}</h1>
+            <h1 className="text-base text-foreground/40">{guild.id}</h1>
             <h1 className="mb-4 text-3xl">{guild.name}</h1>
             <div className="guild-profile flex flex-col">
               <div className="bg-foreground-50 pointer-events-none h-48 w-full rounded-3xl select-none max-md:h-32 max-md:overflow-hidden">

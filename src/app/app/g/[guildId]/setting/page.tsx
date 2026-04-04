@@ -25,9 +25,9 @@ function Page() {
       <main id="app-workspace">
         {guild ? (
           <>
-            <h1 className="text-base">{guild.name}</h1>
-            <h1 className="mt-4 flex items-center gap-4 text-5xl">
-              <GearIcon weight="fill" size={48} />{" "}
+            <h1 className="text-base text-foreground/40">{guild.name}</h1>
+            <h1 className="mt-4 flex items-center gap-4 text-5xl max-md:gap-2 max-md:text-3xl">
+              <GearIcon weight="fill" className="size-12 max-md:size-6" />{" "}
               {language.data.app.guilds.setting.name}{" "}
               <Badge className="mt-2 -ml-1 rounded-md bg-primary/20 text-primary">
                 {language.data.extensions.beta}
@@ -37,7 +37,7 @@ function Page() {
               guildSettings ? (
                 <></>
               ) : (
-                <Alert className="mt-6 rounded-md border-rose-400 bg-rose-400/10 text-rose-400 backdrop-blur-xs">
+                <Alert className="mt-6 rounded-xl border-2 border-rose-400 bg-rose-400/10 text-rose-400 backdrop-blur-xs">
                   Cannot fetch guild setting :(
                 </Alert>
               )

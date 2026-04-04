@@ -24,6 +24,16 @@
     "enabled_description": "この機能は現在有効です。",
     "disabled": "無効",
     "disabled_description": "この機能は現在無効になっています。",
+    "everyone": "全員",
+    "someone": "特定の誰か",
+    "everytime": "常時",
+    "sometime": "一時的",
+    "role": {
+      "owner": "オーナー",
+      "administrator": "管理者",
+      "moderator": "モデレーター",
+      "bot": "ボット"
+    },
     "time": {
       "today": "今日",
       "yesterday": "昨日",
@@ -583,14 +593,37 @@
           "title": "Pona！歌"
         },
         "commands": {
-          "title": "コマンド"
+          "title": "コマンド",
+          "builder": {
+            "who_can_use": "このコマンドを利用できる権限は？"
+          }
         }
       },
       "utilities": {
         "title": "ツール",
         "live_notify": {
           "name": "ライブ通知",
-          "dev": "ライブ通知はまだ準備中ですが、ご安心ください！現在、舞台裏で一生懸命開発しています 💪✨"
+          "dev": "ライブ通知はまだ準備中ですが、ご安心ください！現在、舞台裏で一生懸命開発しています 💪✨",
+          "presets": {
+            "title": "プリセット",
+            "description": "配信開始時に、指定したDiscordチャンネルへ自動で通知を送るためのシンプル設定ガイドです。"
+          },
+          "builder": {
+            "title": "メッセージビルダー",
+            "custom_webhook": "Ponaの代わりにカスタムWebhookを使用する",
+            "message": {
+              "title": "メッセージ内容",
+              "default": "@everyone 通知：{username} が配信を開始しました！"
+            },
+            "component": {
+              "title": "コンポーネント",
+              "add_embed": "埋め込みを追加",
+              "add_button": "ボタンを追加"
+            }
+          },
+          "preview": {
+            "title": "プレビュー"
+          }
         }
       },
       "setting": {

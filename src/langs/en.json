@@ -24,6 +24,16 @@
     "enabled_description": "This feature is currently active.",
     "disabled": "Disabled",
     "disabled_description": "This feature is currently turned off.",
+    "everyone": "Everyone",
+    "someone": "Someone",
+    "everytime": "Always",
+    "sometime": "Occasionally",
+    "role": {
+      "owner": "Owner",
+      "administrator": "Administrator",
+      "moderator": "Moderator",
+      "bot": "Bot"
+    },
     "time": {
       "today": "Today",
       "yesterday": "Yesterday",
@@ -579,14 +589,37 @@
           "title": "Pona! Music"
         },
         "commands": {
-          "title": "Commands"
+          "title": "Commands",
+          "builder": {
+            "who_can_use": "Who is authorized to use this command?"
+          }
         }
       },
       "utilities": {
         "title": "Utilities",
         "live_notify": {
           "name": "Live Notify",
-          "dev": "Live Notify isn't quite ready yet, but don't worry! We're working hard on it behind the scenes 💪"
+          "dev": "Live Notify isn't quite ready yet, but don't worry! We're working hard on it behind the scenes 💪",
+          "presets": {
+            "title": "Presets",
+            "description": "These presets provide automatic and simple setup for send a message on target text channel on your discord server when you're live!"
+          },
+          "builder": {
+            "title": "Message Builder",
+            "custom_webhook": "Custom Webhook instead of send by Pona!",
+            "message": {
+              "title": "Message",
+              "default": "Hey @everyone!, {username} is live right now!"
+            },
+            "component": {
+              "title": "Components",
+              "add_embed": "Add Embed",
+              "add_button": "Add Button"
+            }
+          },
+          "preview": {
+            "title": "Preview"
+          }
         }
       },
       "setting": {
