@@ -26,8 +26,14 @@
     "disabled_description": "この機能は現在無効になっています。",
     "everyone": "全員",
     "someone": "特定の誰か",
+    "noone": "なし",
+    "none": "なし",
+    "unknown": "未詳",
     "everytime": "常時",
     "sometime": "一時的",
+    "default": "デフォルト",
+    "apply": "適用",
+    "restore": "復元",
     "role": {
       "owner": "オーナー",
       "administrator": "管理者",
@@ -590,7 +596,62 @@
       "permissions": {
         "title": "権限",
         "music": {
-          "title": "Pona！歌"
+          "title": "Pona! ミュージック",
+          "selector": {
+            "who_can_manage_queue": {
+              "title": "キューの全般管理権限",
+              "description": "指定されたメンバーやロールは、トラックの [add]、[remove]、[move] を自由に行うことができます。"
+            },
+            "who_authorized_that_can_be_manage_queue_without_vote": {
+              "title": "投票の免除権限",
+              "description": "ここに設定されたユーザーは、多数決を必要とせず即座にキューを操作できます。"
+            },
+            "who_can_add_track": "トラックを追加できる権限",
+            "who_can_remove_track": "キューからトラックを削除できる権限",
+            "who_can_move_track": "キューのトラックを並び替えできる権限"
+          },
+          "everyone": {
+            "title": "全員の基本権限",
+            "description": "すべてのユーザーに適用されるキュー操作の基本設定です。"
+          },
+          "switch": {
+            "can_everyone_remove_own_track": {
+              "title": "自分のトラックの削除を全ユーザーに許可",
+              "description": "有効にすると、全ユーザーが自分が追加した曲を自由に削除できるようになります。"
+            },
+            "vote_to_skip": {
+              "title": "スキップ投票",
+              "description": "トラックをスキップする際に多数決を必須にします。",
+              "min": "スキップ投票の開始に必要な最小人数"
+            },
+            "vote_to_remove": {
+              "title": "削除投票",
+              "description": "キューからトラックを削除する際に多数決を必須にします。",
+              "min": "削除投票の開始に必要な最小人数"
+            },
+            "vote_to_add": {
+              "title": "追加投票",
+              "description": "トラックをキューに追加する前に多数決を必須にします。",
+              "min": "追加投票の開始に必要な最小人数"
+            }
+          },
+          "category": {
+            "votes": "投票設定",
+            "permissions": "権限管理",
+            "allowed": "許可設定"
+          },
+          "condition": {
+            "title": "条件設定",
+            "meter": "測定指標",
+            "constant": "固定値",
+            "ratio": "比率"
+          },
+          "access": {
+            "add": "追加",
+            "remove": "削除",
+            "remove_own": "削除（自分のトラックのみ）",
+            "move": "移動"
+          }
         },
         "commands": {
           "title": "コマンド",

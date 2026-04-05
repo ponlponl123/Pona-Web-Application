@@ -26,8 +26,14 @@
     "disabled_description": "This feature is currently turned off.",
     "everyone": "Everyone",
     "someone": "Someone",
+    "noone": "No one",
+    "none": "None",
+    "unknown": "Unknown",
     "everytime": "Always",
     "sometime": "Occasionally",
+    "default": "Default",
+    "apply": "Apply",
+    "restore": "Restore",
     "role": {
       "owner": "Owner",
       "administrator": "Administrator",
@@ -586,7 +592,62 @@
       "permissions": {
         "title": "Permissions",
         "music": {
-          "title": "Pona! Music"
+          "title": "Pona! Music",
+          "selector": {
+            "who_can_manage_queue": {
+              "title": "Full Queue Management",
+              "description": "Selected members and roles gain full control to [add], [remove], or [move] tracks freely."
+            },
+            "who_authorized_that_can_be_manage_queue_without_vote": {
+              "title": "Bypass Voting Authority",
+              "description": "Members or roles with this permission can manage the queue immediately without needing a majority vote."
+            },
+            "who_can_add_track": "Who can add tracks?",
+            "who_can_remove_track": "Who can remove tracks from the queue?",
+            "who_can_move_track": "Who can reorder tracks in the queue?"
+          },
+          "everyone": {
+            "title": "Universal Permissions",
+            "description": "Configure basic queue management permissions for all users."
+          },
+          "switch": {
+            "can_everyone_remove_own_track": {
+              "title": "Allow users to remove their own tracks",
+              "description": "Enable this to allow members to remove songs they added without needing special permissions."
+            },
+            "vote_to_skip": {
+              "title": "Vote to Skip",
+              "description": "Require a community vote to skip the current track.",
+              "min": "Minimum listeners required to initiate a skip vote."
+            },
+            "vote_to_remove": {
+              "title": "Vote to Remove",
+              "description": "Require a community vote to remove a track from the queue.",
+              "min": "Minimum listeners required to initiate a removal vote."
+            },
+            "vote_to_add": {
+              "title": "Vote to Add",
+              "description": "Require a community vote before a track is added to the queue.",
+              "min": "Minimum listeners required to initiate an addition vote."
+            }
+          },
+          "category": {
+            "votes": "Voting Systems",
+            "permissions": "Access Control",
+            "allowed": "General Allowances"
+          },
+          "condition": {
+            "title": "Conditions",
+            "meter": "Metric",
+            "constant": "Fixed Value",
+            "ratio": "Ratio"
+          },
+          "access": {
+            "add": "Add",
+            "remove": "Remove",
+            "remove_own": "Remove (Own tracks only)",
+            "move": "Move"
+          }
         },
         "commands": {
           "title": "Commands",

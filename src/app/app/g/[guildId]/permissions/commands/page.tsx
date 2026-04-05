@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils"
 import CustomScrollArea from "@/components/ui/custom/scroll-area"
 import commands from "@/consts/commands"
 import { useAppStore } from "@/store/coreStore"
+import { Alert } from "@/components/ui/alert"
 
 function Page() {
   const { guild } = useDiscordGuildInfo()
@@ -40,6 +41,9 @@ function Page() {
                 {language.data.extensions.comingsoon}
               </Badge>
             </h1>
+            <Alert className="mt-6 rounded-xl border-2 border-amber-400 bg-amber-400/10 tracking-wider text-amber-400 backdrop-blur-xs">
+              {language.data.extensions.comingsoon}
+            </Alert>
             <div className="pointer-events-none mt-8 flex gap-3 opacity-40 max-md:flex-col">
               <div className="max-md:min-w-0 max-md:flex-1 md:w-48">
                 <CustomScrollArea

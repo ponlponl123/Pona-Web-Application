@@ -64,4 +64,5 @@
   @import "./components/scroll-area.css";
   @import "./components/themes.css";
   @import "./components/map.css";
+  @import "./components/ui/guild-perm.css";
 }

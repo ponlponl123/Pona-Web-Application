@@ -1,0 +1,3 @@
+.guild-permission-setting-card {
+  @apply max-[32rem]:px-2 m-1 flex h-max min-w-0 flex-1 flex-col gap-2 rounded-xl border-2 border-border/10 bg-background/40 p-3 backdrop-blur-sm;
+}
