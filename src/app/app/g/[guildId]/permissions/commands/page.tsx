@@ -29,7 +29,7 @@ function Page() {
         {guild ? (
           <>
             <h1 className="text-base text-foreground/40">{guild.name}</h1>
-            <h1 className="mt-4 flex items-center gap-4 text-5xl max-md:gap-2 max-md:text-3xl">
+            <h1 className="mt-4 flex items-center gap-4 text-5xl max-lg:text-4xl max-md:gap-2 max-md:text-3xl">
               <GearIcon weight="fill" className="size-12 max-md:size-6" />{" "}
               {language.data.app.guilds.permissions.title}{" "}
               <CaretRightIcon

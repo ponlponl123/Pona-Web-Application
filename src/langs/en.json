@@ -34,7 +34,9 @@
     "default": "Default",
     "apply": "Apply",
     "restore": "Restore",
+    "member": "Member",
     "role": {
+      "title": "Role",
       "owner": "Owner",
       "administrator": "Administrator",
       "moderator": "Moderator",

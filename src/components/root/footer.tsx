@@ -88,7 +88,7 @@ function Footer() {
               label: language.data.footer.links.updates,
             },
             {
-              href: "https://law.ponlponl123.com/pona",
+              href: "https://law.ponlponl123.com/additional/pona",
               icon: GavelIcon,
               label: language.data.footer.links.legal,
             },

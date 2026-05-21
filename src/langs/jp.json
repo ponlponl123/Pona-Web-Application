@@ -34,7 +34,9 @@
     "default": "デフォルト",
     "apply": "適用",
     "restore": "復元",
+    "member": "メンバー",
     "role": {
+      "title": "ロール",
       "owner": "オーナー",
       "administrator": "管理者",
       "moderator": "モデレーター",
@@ -735,6 +737,7 @@
         },
         "player": {
           "title": "プレイヤーレイアウト",
+          "description": "プレイヤーの視覚的なレイアウト。",
           "preview": {
             "title": "プレビュー",
             "description": "プレイヤーの表示例。",

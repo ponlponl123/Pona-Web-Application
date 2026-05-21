@@ -43,7 +43,7 @@ function Page() {
         {guild ? (
           <>
             <h1 className="text-base text-foreground/40">{guild.name}</h1>
-            <h1 className="mt-4 flex items-center gap-4 text-5xl max-md:gap-2 max-md:text-3xl">
+            <h1 className="mt-4 flex items-center gap-4 text-5xl max-lg:text-4xl max-md:gap-2 max-md:text-3xl">
               <BroadcastIcon weight="fill" className="size-12 max-md:size-6" />{" "}
               {language.data.app.guilds.utilities.live_notify.name}{" "}
               <Badge className="mt-2 -ml-1 rounded-md bg-primary/20 text-primary">

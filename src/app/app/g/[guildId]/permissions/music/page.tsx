@@ -5,7 +5,6 @@ import {
   ArrowCounterClockwiseIcon,
   ArrowsDownUpIcon,
   CaretRightIcon,
-  CrownSimpleIcon,
   GearIcon,
   Icon,
   MusicNotesMinusIcon,
@@ -49,6 +48,7 @@ import {
 import { Switch } from "@/components/ui/switch"
 import { Alert } from "@/components/ui/alert"
 import { cn } from "@/lib/utils"
+import { getPermissionLabel } from "@/lib/parser"
 
 function Page() {
   const { guild } = useDiscordGuildInfo()
@@ -134,12 +134,7 @@ function Page() {
             <Alert className="mt-6 rounded-xl border-2 border-amber-400 bg-amber-400/10 tracking-wider text-amber-400 backdrop-blur-xs">
               {language.data.extensions.comingsoon}
             </Alert>
-            <div
-              className={cn(
-                loading && "pointer-events-none opacity-40",
-                "pointer-events-none opacity-40"
-              )}
-            >
+            <div className={cn(loading && "pointer-events-none opacity-40")}>
               <div className="h-6" />
               <h3 className="px-2 text-foreground/40">
                 {
@@ -162,10 +157,7 @@ function Page() {
                 </p>
                 <div className="flex flex-wrap gap-2 rounded-lg border-2 border-border/10 bg-background/40 p-2">
                   {[...permSettingPayload.universal].map((v, i) => (
-                    <Badge
-                      className="rounded-md bg-foreground/10 text-foreground select-none"
-                      key={i}
-                    >
+                    <Badge key={i} variant="secondary" className="chip">
                       {language.data.app.guilds.permissions.music.access[v] ??
                         language.data.common.unknown}
                     </Badge>
@@ -188,10 +180,7 @@ function Page() {
                     .map((part, i) => {
                       if (tagMap[part]) {
                         return (
-                          <Badge
-                            key={i}
-                            className="rounded-md bg-foreground/10 text-foreground select-none"
-                          >
+                          <Badge key={i} variant="secondary" className="chip">
                             {tagMap[part]}
                           </Badge>
                         )
@@ -201,9 +190,13 @@ function Page() {
                     })}
                 </p>
                 <div className="flex flex-wrap gap-2 rounded-lg border-2 border-border/10 bg-background/40 p-2">
-                  <Badge className="rounded-md bg-foreground/10 text-foreground select-none">
-                    {language.data.common.everyone}
-                  </Badge>
+                  {[...permSettingPayload.who_can_manage_queue].map(
+                    (permId, i) => (
+                      <Badge key={i} variant="secondary" className="chip">
+                        {getPermissionLabel(permId, language.data)}
+                      </Badge>
+                    )
+                  )}
                 </div>
               </div>
               <div className="guild-permission-setting-card">
@@ -225,9 +218,13 @@ function Page() {
                   }
                 </p>
                 <div className="flex flex-wrap gap-2 rounded-lg border-2 border-border/10 bg-background/40 p-2">
-                  <Badge className="rounded-md bg-foreground/10 text-foreground select-none">
-                    {language.data.common.noone}
-                  </Badge>
+                  {[...permSettingPayload.who_can_bypass_vote].map(
+                    (permId, i) => (
+                      <Badge key={i} variant="secondary" className="chip">
+                        {getPermissionLabel(permId, language.data)}
+                      </Badge>
+                    )
+                  )}
                 </div>
               </div>
               <div className="h-6" />
@@ -280,9 +277,13 @@ function Page() {
                   </h1>
                 </div>
                 <div className="flex flex-wrap gap-2 rounded-lg border-2 border-border/10 bg-background/40 p-2">
-                  <Badge className="rounded-md bg-foreground/10 text-foreground select-none">
-                    {language.data.common.everyone}
-                  </Badge>
+                  {[...permSettingPayload.who_can_add_track].map(
+                    (permId, i) => (
+                      <Badge key={i} variant="secondary" className="chip">
+                        {getPermissionLabel(permId, language.data)}
+                      </Badge>
+                    )
+                  )}
                 </div>
               </div>
               <div className="guild-permission-setting-card">
@@ -296,9 +297,13 @@ function Page() {
                   </h1>
                 </div>
                 <div className="flex flex-wrap gap-2 rounded-lg border-2 border-border/10 bg-background/40 p-2">
-                  <Badge className="rounded-md bg-foreground/10 text-foreground select-none">
-                    {language.data.common.everyone}
-                  </Badge>
+                  {[...permSettingPayload.who_can_remove_track].map(
+                    (permId, i) => (
+                      <Badge key={i} variant="secondary" className="chip">
+                        {getPermissionLabel(permId, language.data)}
+                      </Badge>
+                    )
+                  )}
                 </div>
               </div>
               <div className="guild-permission-setting-card">
@@ -312,9 +317,13 @@ function Page() {
                   </h1>
                 </div>
                 <div className="flex flex-wrap gap-2 rounded-lg border-2 border-border/10 bg-background/40 p-2">
-                  <Badge className="rounded-md bg-foreground/10 text-foreground select-none">
-                    {language.data.common.everyone}
-                  </Badge>
+                  {[...permSettingPayload.who_can_move_track].map(
+                    (permId, i) => (
+                      <Badge key={i} variant="secondary" className="chip">
+                        {getPermissionLabel(permId, language.data)}
+                      </Badge>
+                    )
+                  )}
                 </div>
               </div>
               <div className="h-6" />
@@ -460,13 +469,11 @@ function Page() {
                   <Button
                     className={cn(
                       "flex h-max items-center gap-2 rounded-4xl bg-foreground/5 px-5 py-3 text-foreground/30",
-                      permSettingPayload !== prevPermSettingPayload.current &&
+                      permSettingPayload !== Default_Payload &&
                         "bg-primary/30 text-primary-foreground/70"
                     )}
                     data-smooth-interaction="true"
-                    onClick={() =>
-                      setPermSettingPayload(prevPermSettingPayload.current)
-                    }
+                    onClick={() => setPermSettingPayload(Default_Payload)}
                   >
                     <ArrowCounterClockwiseIcon weight="bold" />
                     {language.data.common.restore}

@@ -1,4 +1,5 @@
 import { TimeFormat } from "@/types/settings"
+import { Language } from "./i18n"
 
 export function PatchNoteParser(content: string, needContent = false) {
   const lines = content.split("\n").map((l) => l.trim())
@@ -63,4 +64,32 @@ export function PatchNoteParser(content: string, needContent = false) {
 
 export function parseHour(a: TimeFormat): undefined | boolean {
   return a === "auto" ? undefined : a === 12
+}
+
+export function getPermissionLabel(
+  id: string,
+  langData: Language["data"]
+): string {
+  const { common } = langData
+
+  const staticMap: Record<string, string> = {
+    everyone: common.everyone,
+    owner: common.role.owner,
+    administrator: common.role.administrator,
+    noone: common.noone,
+  }
+
+  if (staticMap[id]) return staticMap[id]
+
+  if (id.startsWith("<@&")) {
+    const roleId = id.replace(/[<@&>]/g, "")
+    return `${common.role.title || "Role"}: ${roleId}`
+  }
+
+  if (id.startsWith("<@")) {
+    const memberId = id.replace(/[<@>]/g, "")
+    return `${common.member || "Member"}: ${memberId}`
+  }
+
+  return id
 }

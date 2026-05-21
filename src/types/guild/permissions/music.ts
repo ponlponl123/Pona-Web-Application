@@ -2,9 +2,17 @@ export type meter = "constant" | "ratio"
 
 export type access = "add" | "remove" | "remove_own" | "move"
 
-export type member = "everyone" | "owner" | string
+export type MemberMention = `<@${number}>`
 
-export type role = "administrator" | string
+export type RoleMention = `<@&${number}>`
+
+export type NoOne = "noone"
+
+export type Member = "everyone" | "owner" | MemberMention
+
+export type Role = "administrator" | RoleMention
+
+export type UnifiedMemberRole = Member | Role | NoOne
 
 export interface VoteOptions {
   enabled: boolean
@@ -15,10 +23,11 @@ export interface VoteOptions {
 
 export interface MusicPermissionsPayload {
   universal: Set<access>
-  who_can_manage_queue: Set<member | role>
-  who_can_add_track: Set<member | role>
-  who_can_remove_track: Set<member | role>
-  who_can_move_track: Set<member | role>
+  who_can_manage_queue: Set<UnifiedMemberRole>
+  who_can_add_track: Set<UnifiedMemberRole>
+  who_can_remove_track: Set<UnifiedMemberRole>
+  who_can_move_track: Set<UnifiedMemberRole>
+  who_can_bypass_vote: Set<UnifiedMemberRole>
   can_everyone_remove_own_track: boolean
   vote_to_skip: VoteOptions
   vote_to_remove: VoteOptions
