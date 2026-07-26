@@ -123,9 +123,9 @@ function Page(): React.ReactElement {
         <section className="mt-12 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
           <div className="flex flex-col gap-2">
             <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.35, delay: 0.1 }}
+              initial={{ opacity: 0, filter: "blur(4px)" }}
+              animate={{ opacity: 1, filter: "blur(0px)" }}
+              transition={{ duration: 0.4, delay: 0.05, ease: "easeOut" }}
               className="inline-flex w-max items-center gap-2 rounded-md bg-foreground/10 px-2.5 py-1.5 text-xs font-semibold tracking-wider text-foreground/80 uppercase backdrop-blur-md"
             >
               <SparkleIcon weight="fill" className="text-amber-400" size={14} />
@@ -133,9 +133,9 @@ function Page(): React.ReactElement {
             </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.2 }}
+              initial={{ opacity: 0, filter: "blur(4px)" }}
+              animate={{ opacity: 1, filter: "blur(0px)" }}
+              transition={{ duration: 0.4, delay: 0.12, ease: "easeOut" }}
               className="flex items-center gap-4"
             >
               {userInfo?.avatar ? (
@@ -177,9 +177,9 @@ function Page(): React.ReactElement {
 
         <section className="mt-12">
           <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.3 }}
+            initial={{ opacity: 0, filter: "blur(4px)" }}
+            animate={{ opacity: 1, filter: "blur(0px)" }}
+            transition={{ duration: 0.4, delay: 0.2, ease: "easeOut" }}
             className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
           >
             <div className="flex items-center gap-2">
@@ -203,6 +203,13 @@ function Page(): React.ReactElement {
                 <Input
                   type="text"
                   placeholder={language.data.app.home.search_placeholder}
+                  fontStyle={{
+                    fontFamily:
+                      "var(--font-ponlponl123-article), var(--font-sn-sanafon-maru-j30), sans-serif",
+                    fontWeight: "bold",
+                    fontSize: "14px",
+                    letterSpacing: "1px",
+                  }}
                   startContent={
                     <MagnifyingGlassIcon
                       size={18}
@@ -252,10 +259,14 @@ function Page(): React.ReactElement {
                     return (
                       <motion.div
                         key={guild.id}
-                        initial={{ opacity: 0, y: 14 }}
-                        animate={{ opacity: 1, y: 0 }}
+                        initial={{ opacity: 0, filter: "blur(4px)" }}
+                        animate={{ opacity: 1, filter: "blur(0px)" }}
                         exit={{ opacity: 0, scale: 0.95 }}
-                        transition={{ duration: 0.35, delay: index * 0.05 }}
+                        transition={{
+                          duration: 0.35,
+                          delay: 0.25 + index * 0.04,
+                          ease: "easeOut",
+                        }}
                       >
                         <GuildButton
                           guild={guild}
@@ -269,8 +280,9 @@ function Page(): React.ReactElement {
               </motion.div>
             ) : (
               <motion.div
-                initial={{ opacity: 0, scale: 0.98 }}
-                animate={{ opacity: 1, scale: 1 }}
+                initial={{ opacity: 0, filter: "blur(4px)" }}
+                animate={{ opacity: 1, filter: "blur(0px)" }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
                 className="flex flex-col items-center justify-center rounded-3xl border-2 border-dashed border-foreground/20 bg-foreground/5 p-12 text-center backdrop-blur-xs"
               >
                 <GhostIcon size={48} className="mb-3 text-foreground/40" />
@@ -317,53 +329,53 @@ function Page(): React.ReactElement {
 
         <section className="mt-16 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.45 }}
-            className="group relative flex flex-col justify-between overflow-hidden rounded-3xl bg-indigo-950/40 p-8 shadow-xl backdrop-blur-md transition-all duration-300 hover:border-indigo-500/40 hover:shadow-indigo-500/10"
+            initial={{ opacity: 0, filter: "blur(4px)" }}
+            animate={{ opacity: 1, filter: "blur(0px)" }}
+            transition={{ duration: 0.4, delay: 0.42, ease: "easeOut" }}
+            className="group relative flex flex-col justify-between overflow-hidden rounded-3xl bg-indigo-500/10 p-8 shadow-xl backdrop-blur-md transition-all duration-300 hover:border-indigo-500/40 hover:shadow-indigo-500/10 dark:border-indigo-500/20 dark:bg-indigo-950/40"
           >
             <div className="relative z-10">
-              <div className="mb-4 inline-flex text-indigo-300">
+              <div className="mb-4 inline-flex text-indigo-600 dark:text-indigo-300">
                 <HeartIcon size={48} weight="fill" />
               </div>
-              <h3 className="text-2xl font-bold text-white">
+              <h3 className="text-2xl font-bold text-foreground dark:text-white">
                 {language.data.app.home.feedback.title}
               </h3>
-              <p className="mt-2 text-sm text-indigo-100/70">
+              <p className="mt-2 text-sm text-foreground/70 dark:text-indigo-100/70">
                 {language.data.app.home.feedback.description}
               </p>
             </div>
             <HeartIcon
               size={160}
-              className="absolute -right-8 -bottom-8 rotate-12 fill-current text-indigo-400/5 transition-transform duration-500 group-hover:scale-110"
+              className="absolute -right-8 -bottom-8 rotate-12 fill-current text-indigo-500/10 transition-transform duration-500 group-hover:scale-110 dark:text-indigo-400/5"
               weight="fill"
             />
           </motion.div>
 
           <Link href="/updates">
             <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.55 }}
-              className="group relative flex flex-col justify-between overflow-hidden rounded-3xl bg-purple-950/40 p-8 shadow-xl backdrop-blur-md transition-all duration-300 hover:border-fuchsia-500/40 hover:shadow-fuchsia-500/10"
+              initial={{ opacity: 0, filter: "blur(4px)" }}
+              animate={{ opacity: 1, filter: "blur(0px)" }}
+              transition={{ duration: 0.4, delay: 0.48, ease: "easeOut" }}
+              className="group relative flex flex-col justify-between overflow-hidden rounded-3xl bg-fuchsia-500/10 p-8 shadow-xl backdrop-blur-md transition-all duration-300 hover:border-fuchsia-500/40 hover:shadow-fuchsia-500/10 dark:border-fuchsia-500/20 dark:bg-purple-950/40"
             >
               <div className="relative z-10">
-                <div className="mb-4 inline-flex text-fuchsia-300">
+                <div className="mb-4 inline-flex text-fuchsia-600 dark:text-fuchsia-300">
                   <NutIcon size={48} weight="fill" />
                 </div>
-                <h3 className="text-2xl font-bold text-white">
+                <h3 className="text-2xl font-bold text-foreground dark:text-white">
                   {language.data.app.home.whatnew.title.replace(
                     "[version]",
                     `v${process.env.NEXT_PUBLIC_APP_VERSION || "1.0"}`
                   )}
                 </h3>
-                <p className="mt-2 text-sm text-fuchsia-100/70">
+                <p className="mt-2 text-sm text-foreground/70 dark:text-fuchsia-100/70">
                   {language.data.app.home.whatnew.description}
                 </p>
               </div>
               <NutIcon
                 size={160}
-                className="absolute -right-8 -bottom-8 -rotate-45 fill-current text-fuchsia-400/5 transition-transform duration-500 group-hover:scale-110"
+                className="absolute -right-8 -bottom-8 -rotate-45 fill-current text-fuchsia-500/10 transition-transform duration-500 group-hover:scale-110 dark:text-fuchsia-400/5"
                 weight="fill"
               />
             </motion.div>
@@ -376,25 +388,25 @@ function Page(): React.ReactElement {
             className="inline-block"
           >
             <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.65 }}
-              className="group relative flex flex-col justify-between overflow-hidden rounded-3xl bg-emerald-950/40 p-8 shadow-xl backdrop-blur-md transition-all duration-300 hover:border-emerald-500/40 hover:shadow-emerald-500/10 md:col-span-2 lg:col-span-1"
+              initial={{ opacity: 0, filter: "blur(4px)" }}
+              animate={{ opacity: 1, filter: "blur(0px)" }}
+              transition={{ duration: 0.4, delay: 0.54, ease: "easeOut" }}
+              className="group relative flex flex-col justify-between overflow-hidden rounded-3xl bg-emerald-500/10 p-8 shadow-xl backdrop-blur-md transition-all duration-300 hover:border-emerald-500/40 hover:shadow-emerald-500/10 md:col-span-2 lg:col-span-1 dark:border-emerald-500/20 dark:bg-emerald-950/40"
             >
               <div className="relative z-10">
-                <div className="mb-4 inline-flex text-emerald-300">
+                <div className="mb-4 inline-flex text-emerald-600 dark:text-emerald-300">
                   <ConfettiIcon size={48} weight="fill" />
                 </div>
-                <h3 className="text-2xl font-bold text-white">
+                <h3 className="text-2xl font-bold text-foreground dark:text-white">
                   {language.data.app.home.invite_card.title}
                 </h3>
-                <p className="mt-2 text-sm text-emerald-100/70">
+                <p className="mt-2 text-sm text-foreground/70 dark:text-emerald-100/70">
                   {language.data.app.home.invite_card.description}
                 </p>
               </div>
               <SparkleIcon
                 size={160}
-                className="absolute -right-8 -bottom-8 rotate-12 fill-current text-emerald-400/5 transition-transform duration-500 group-hover:scale-110"
+                className="absolute -right-8 -bottom-8 rotate-12 fill-current text-emerald-500/10 transition-transform duration-500 group-hover:scale-110 dark:text-emerald-400/5"
                 weight="fill"
               />
             </motion.div>
@@ -406,4 +418,3 @@ function Page(): React.ReactElement {
 }
 
 export default Page
-

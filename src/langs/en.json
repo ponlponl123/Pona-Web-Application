@@ -379,6 +379,11 @@
     "guilds": {
       "name": "Guilds",
       "title": "The server you and Pona join together.",
+      "subtitle": "Select a server to manage music playback, queue tracks, or configure bot permissions.",
+      "search_placeholder": "Search servers...",
+      "search_no_results_title": "No matching servers found",
+      "search_no_results_desc": "No Discord server matching \"[query]\" was found. Try clearing your search filter.",
+      "clear_search": "Clear Search Filter",
       "loading": "Looking for guilds...",
       "not_found": {
         "title": "Guilds not found",

@@ -383,6 +383,11 @@
     "guilds": {
       "name": "ギルド",
       "title": "あなたとポナが一緒に参加しているサーバーです。",
+      "subtitle": "サーバーを選択して、音楽の再生管理、トラックのキュー追加、ボット権限の設定を行います。",
+      "search_placeholder": "サーバーを検索...",
+      "search_no_results_title": "一致するサーバーが見つかりません",
+      "search_no_results_desc": "「[query]」に一致するDiscordサーバーが見つかりませんでした。検索フィルターをクリアしてみてください。",
+      "clear_search": "検索フィルターをクリア",
       "loading": "ギルドを探しています...",
       "not_found": {
         "title": "サーバーが見つかりません",
