@@ -1,10 +1,8 @@
 'use client';
 import Track from '@/components/music/searchResult/track';
 import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo';
-import { useLanguageContext } from '@/contexts/languageContext';
-import { ArtistBasic, VideoDetailed } from '@/interfaces/ytmusic-api';
-import fetchHistory, { History } from '@/server-side-api/internal/history';
-import { Button, Progress } from '@heroui/react';
+import { ArtistBasic, VideoDetailed } from '@/types/youtube/ytmusic-api';
+import fetchHistory, { History } from '@/lib/server-side-api/internal/history';
 import {
   MagnifyingGlass,
   MicrophoneStage,
@@ -14,11 +12,14 @@ import { getCookie } from 'cookies-next';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import React from 'react';
+import { useAppStore } from '@/store/coreStore';
+import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/spinner';
 
 function Page() {
   const [searchResult, setSearchResult] = React.useState<History[]>([]);
   const [loading, setLoading] = React.useState<boolean>(true);
-  const { language } = useLanguageContext();
+  const language = useAppStore((state) => state.language);
   const { guild } = useDiscordGuildInfo();
   const router = useRouter();
 
@@ -27,15 +28,20 @@ function Page() {
     const letSearch = async () => {
       const accessTokenType = String(getCookie('LOGIN_TYPE_'));
       const accessToken = String(getCookie('LOGIN_'));
-      if (!accessTokenType || !accessToken) return;
-      const trackHistory = await fetchHistory(
-        accessTokenType,
-        accessToken,
-        100
-      );
-      if (!trackHistory || !trackHistory.tracks) return;
-      setSearchResult(trackHistory.tracks);
-      setLoading(false);
+      if (!accessTokenType || !accessToken) return setLoading(false);
+      try {
+        const trackHistory = await fetchHistory(
+          accessTokenType,
+          accessToken,
+          100
+        );
+        if (!trackHistory || !trackHistory.tracks) return;
+        setSearchResult(trackHistory.tracks);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
     };
 
     letSearch();
@@ -45,23 +51,16 @@ function Page() {
     <div className='w-full max-w-screen-xl mx-auto mt-24 gap-4 flex flex-col items-center justify-center text-center pb-[16vh]'>
       <div className='w-full flex gap-5'>
         <div className='flex flex-col items-start justify-center w-full'>
-          <h1 className='text-5xl flex gap-4 items-center'>
+          <h1 className='text-4xl font-bold flex gap-4 items-center'>
             <MusicNotesSimple size={32} weight='bold' />{' '}
             {language.data.app.guilds.player.history.title}
           </h1>
-          {loading && (
-            <Progress
-              isIndeterminate
-              aria-label='Loading...'
-              className='w-full mt-2'
-              size='sm'
-            />
-          )}
+          {loading && <Spinner className='mt-2' />}
         </div>
       </div>
       <div id='pona-search-result' className='w-full flex flex-col gap-12 mt-4'>
         <div className='flex flex-col gap-4 w-full'>
-          {searchResult ? (
+          {searchResult && searchResult.length > 0 ? (
             searchResult.map((result, idx) => (
               <motion.div
                 key={idx}
@@ -70,7 +69,6 @@ function Page() {
                 transition={{
                   delay: 0.012 * idx,
                   ease: 'easeInOut',
-                  x: { type: 'spring', damping: 15, stiffness: 150 },
                 }}
               >
                 <Track
@@ -105,27 +103,27 @@ function Page() {
                 />
               </motion.div>
             ))
-          ) : (
-            <div className='absolute top-0 left-0 w-full h-full flex flex-col items-center justify-center gap-4 rounded-3xl bg-foreground/10'>
-              <MicrophoneStage size={48} />
-              <h1 className='text-3xl'>
+          ) : !loading ? (
+            <div className='flex flex-col items-center justify-center gap-4 py-16 rounded-3xl bg-card border'>
+              <MicrophoneStage size={48} className='text-muted-foreground' />
+              <h2 className='text-2xl font-bold'>
                 {language.data.app.guilds.player.home.no_history.title}
-              </h1>
-              <p className='text-lg'>
+              </h2>
+              <p className='text-muted-foreground'>
                 {language.data.app.guilds.player.home.no_history.description}
               </p>
               <Button
-                color='secondary'
-                radius='full'
-                onPress={() => {
+                variant='secondary'
+                className='rounded-full'
+                onClick={() => {
                   router.push(`/app/g/${guild?.id}/player/search`);
                 }}
               >
-                <MagnifyingGlass />{' '}
+                <MagnifyingGlass className='mr-2' />{' '}
                 {language.data.app.guilds.player.home.no_history.get_started}
               </Button>
             </div>
-          )}
+          ) : null}
         </div>
       </div>
     </div>

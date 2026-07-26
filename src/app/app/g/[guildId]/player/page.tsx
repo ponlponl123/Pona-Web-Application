@@ -2,15 +2,12 @@
 import MusicCard, { ArtistCard } from '@/components/music/card';
 import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo';
 import { useDiscordUserInfo } from '@/contexts/discordUserInfo';
-import { useLanguageContext } from '@/contexts/languageContext';
-import { usePonaMusicCacheContext } from '@/contexts/ponaMusicCacheContext';
 import {
   fetchSubscribedChannels,
   SubscribedChannelsResult,
-} from '@/server-side-api/internal/channel';
-import fetchHistory, { History } from '@/server-side-api/internal/history';
-import { usePrevNextButtons } from '@/utils/Embla/CarouselArrowButtons';
-import { Button, Image, Link, Spinner } from "@heroui/react";
+} from '@/lib/server-side-api/internal/channel';
+import fetchHistory, { History } from '@/lib/server-side-api/internal/history';
+import { usePrevNextButtons } from '@/lib/Embla/CarouselArrowButtons';
 import {
   CaretLeft,
   CaretRight,
@@ -24,23 +21,27 @@ import useEmblaCarousel from 'embla-carousel-react';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import React from 'react';
+import { useAppStore } from '@/store/coreStore';
+import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/spinner';
 
 function Page() {
   const router = useRouter();
   const { userInfo } = useDiscordUserInfo();
   const { guild } = useDiscordGuildInfo();
-  const { language } = useLanguageContext();
-  const { SetSubscribeStateCache } = usePonaMusicCacheContext();
+  const language = useAppStore((state) => state.language);
   const fetched = React.useRef(false);
-  const [tracksHistory, setTracksHistory] = React.useState<History[] | null>(
+  const [tracksHistory, setTracksHistory] = React.useState<any[] | null>(
     null
   );
   const [subscribedArtists, setSubscribedArtists] = React.useState<
-    SubscribedChannelsResult[] | null
+    any[] | null
   >(null);
+
   const [emblaRef, emblaApi] = useEmblaCarousel({ skipSnaps: true });
   const [subscribedChannelsEmblaRef, subscribedChannelsEmblaApi] =
     useEmblaCarousel({ skipSnaps: true });
+
   const {
     prevBtnDisabled,
     nextBtnDisabled,
@@ -58,234 +59,151 @@ function Page() {
     const fetchHistoryTracks = async () => {
       const accessTokenType = String(getCookie('LOGIN_TYPE_'));
       const accessToken = String(getCookie('LOGIN_'));
-      if (
-        !accessTokenType ||
-        accessTokenType === 'undefined' ||
-        !accessToken ||
-        accessToken === 'undefined'
-      )
-        return false;
-      const tracks = await fetchHistory(accessTokenType, accessToken);
-      const fetchSubscribedArtists = await fetchSubscribedChannels(
-        accessTokenType,
-        accessToken
-      );
-      if (tracks) setTracksHistory(tracks.tracks);
-      if (fetchSubscribedArtists) {
-        setSubscribedArtists(fetchSubscribedArtists);
-        fetchSubscribedArtists.forEach(channel => {
-          SetSubscribeStateCache(value => {
-            return value
-              .filter(item => item.channelId !== channel.artistId)
-              .concat({ channelId: channel.artistId, state: true });
-          });
-        });
-      }
+      if (!accessTokenType || !accessToken || fetched.current) return;
       fetched.current = true;
-    };
-    if (!fetched.current) fetchHistoryTracks();
-  }, [SetSubscribeStateCache, fetched]);
+      try {
+        const historyData = await fetchHistory(accessTokenType, accessToken, 20);
+        if (historyData && typeof historyData === 'object' && 'tracks' in historyData && (historyData as any).tracks) {
+          setTracksHistory((historyData as any).tracks);
+        }
 
-  return guild ? (
-    <>
-      <div className='w-full max-w-6xl mx-auto mt-16 gap-4 flex flex-col items-center justify-center text-center'>
-        <div className='w-full flex gap-5'>
-          <Image
-            src={
-              userInfo
-                ? `https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}?size=64`
-                : ''
-            }
-            alt={userInfo ? userInfo.global_name : 'User'}
-            height={64}
-            className='rounded-full'
-          />
-          <div className='flex flex-col items-start justify-center'>
-            <h3 className='text-lg leading-none'>{userInfo?.global_name}</h3>
-            <h1 className='text-5xl'>
-              {language.data.app.guilds.player.home.listen_again}
-            </h1>
+        const subChannels = await fetchSubscribedChannels(
+          accessTokenType,
+          accessToken
+        );
+        if (subChannels) setSubscribedArtists(subChannels);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchHistoryTracks();
+  }, []);
+
+  return (
+    <div className='w-full max-w-screen-xl mx-auto mt-12 flex flex-col gap-12 pb-24 px-4'>
+      {/* Subscribed Artists Section */}
+      {subscribedArtists && subscribedArtists.length > 0 && (
+        <div className='flex flex-col gap-4'>
+          <div className='flex items-center justify-between'>
+            <h2 className='text-2xl font-bold'>
+              {language.data.app.guilds.player.home.subscribed_channels}
+            </h2>
+            <div className='flex items-center gap-2'>
+              <Button
+                variant='ghost'
+                size='icon'
+                onClick={subscribedChannelsOnPrevButtonClick}
+                disabled={subscribedChannelsPrevBtnDisabled}
+                className='rounded-full'
+              >
+                <CaretLeft />
+              </Button>
+              <Button
+                variant='ghost'
+                size='icon'
+                onClick={subscribedChannelsOnNextButtonClick}
+                disabled={subscribedChannelsNextBtnDisabled}
+                className='rounded-full'
+              >
+                <CaretRight />
+              </Button>
+            </div>
+          </div>
+          <div className='overflow-hidden' ref={subscribedChannelsEmblaRef}>
+            <div className='flex gap-4'>
+              {subscribedArtists.map((artist, idx) => (
+                <div key={idx} className='flex-[0_0_auto] w-40'>
+                  <ArtistCard
+                    data={{
+                      artistName: artist.artistName || artist.name || '',
+                      browseId: artist.channelId || artist.artistId || '',
+                      thumbnails: artist.thumbnails || [],
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-        <div className='embla w-full max-w-none mx-0 mt-6 z-10 relative'>
+      )}
+
+      {/* Listening History Section */}
+      <div className='flex flex-col gap-4'>
+        <div className='flex items-center justify-between'>
+          <h2 className='text-2xl font-bold'>
+            {language.data.app.guilds.player.home.listen_again}
+          </h2>
           {tracksHistory && tracksHistory.length > 0 && (
-            <div className='embla__controls max-sm:hidden w-full top-0 translate-y-[calc(-100%_-_1rem)] m-0 h-8 absolute justify-end items-center flex'>
-              <div className='embla__buttons gap-3 flex items-center justify-center'>
-                <Button
-                  onPress={onPrevButtonClick}
-                  disabled={prevBtnDisabled}
-                  title='previous'
-                  className='embla__button embla__button--prev border-2 border-foreground/10 bg-foreground/10 disabled:opacity-30 disabled:bg-transparent disabled:border-foreground/5'
-                  type='button'
-                  size='sm'
-                  radius='full'
-                  isIconOnly
-                >
-                  <CaretLeft />
-                </Button>
-                <Button
-                  onPress={onNextButtonClick}
-                  disabled={nextBtnDisabled}
-                  title='next'
-                  className='embla__button embla__button--next border-2 border-foreground/10 bg-foreground/10 disabled:opacity-30 disabled:bg-transparent disabled:border-foreground/5'
-                  type='button'
-                  size='sm'
-                  radius='full'
-                  isIconOnly
-                >
-                  <CaretRight />
-                </Button>
-              </div>
-              <div className='embla__dots'></div>
+            <div className='flex items-center gap-2'>
+              <Button
+                variant='ghost'
+                size='icon'
+                onClick={onPrevButtonClick}
+                disabled={prevBtnDisabled}
+                className='rounded-full'
+              >
+                <CaretLeft />
+              </Button>
+              <Button
+                variant='ghost'
+                size='icon'
+                onClick={onNextButtonClick}
+                disabled={nextBtnDisabled}
+                className='rounded-full'
+              >
+                <CaretRight />
+              </Button>
             </div>
           )}
-          <div className='embla__viewport' ref={emblaRef}>
-            <div className='embla__container gap-5'>
-              {fetched.current ? (
-                (tracksHistory &&
-                  tracksHistory.map((track, index) => (
-                    <motion.div
-                      initial={{ opacity: 0, x: -100 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{
-                        delay: 0.08 * index,
-                        ease: 'easeInOut',
-                        x: { type: 'spring', damping: 15, stiffness: 150 },
-                      }}
-                      className='embla__slide w-max flex-none select-none'
-                      key={index}
-                    >
-                      <MusicCard track={track.track} />
-                    </motion.div>
-                  ))) || (
-                  <>
-                    <div className='h-52'></div>
-                    <div className='absolute top-0 left-0 w-full h-full flex flex-col items-center justify-center gap-2 rounded-3xl bg-foreground/10 border-2 border-foreground/10'>
-                      <MicrophoneStage size={32} />
-                      <h1 className='text-3xl'>
-                        {language.data.app.guilds.player.home.no_history.title}
-                      </h1>
-                      <p className='text-lg'>
-                        {
-                          language.data.app.guilds.player.home.no_history
-                            .description
-                        }
-                      </p>
-                      <Button
-                        color='primary'
-                        radius='lg'
-                        onPress={() => {
-                          router.push(`/app/g/${guild.id}/player/search`);
-                        }}
-                      >
-                        <MagnifyingGlass />{' '}
-                        {
-                          language.data.app.guilds.player.home.no_history
-                            .get_started
-                        }
-                      </Button>
-                    </div>
-                  </>
-                )
-              ) : (
-                <div className='w-full h-52 flex items-center justify-center'>
-                  <Spinner className='m-auto' />
-                </div>
-              )}
-            </div>
-          </div>
         </div>
-        {subscribedArtists && subscribedArtists.length > 0 && (
-          <div className='embla w-full max-w-none mx-0 mt-24 z-10 relative'>
-            <div className='embla__controls max-sm:hidden w-full justify-between items-center flex mb-6'>
-              <h1 className='text-5xl'>
-                {language.data.app.guilds.player.home.subscribed_channels}
-              </h1>
-              <div className='embla__buttons gap-3 flex items-center justify-center'>
-                <Button
-                  onPress={subscribedChannelsOnPrevButtonClick}
-                  disabled={subscribedChannelsPrevBtnDisabled}
-                  title='previous'
-                  className='embla__button embla__button--prev border-2 border-foreground/10 bg-foreground/10 disabled:opacity-30 disabled:bg-transparent disabled:border-foreground/5'
-                  type='button'
-                  size='sm'
-                  radius='full'
-                  isIconOnly
-                >
-                  <CaretLeft />
-                </Button>
-                <Button
-                  onPress={subscribedChannelsOnNextButtonClick}
-                  disabled={subscribedChannelsNextBtnDisabled}
-                  title='next'
-                  className='embla__button embla__button--next border-2 border-foreground/10 bg-foreground/10 disabled:opacity-30 disabled:bg-transparent disabled:border-foreground/5'
-                  type='button'
-                  size='sm'
-                  radius='full'
-                  isIconOnly
-                >
-                  <CaretRight />
-                </Button>
-              </div>
-            </div>
-            <div className='embla__viewport' ref={subscribedChannelsEmblaRef}>
-              <div className='embla__container gap-5'>
-                {subscribedArtists.map((channel, index) => (
-                  <motion.div
-                    initial={{ opacity: 0, x: -100 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{
-                      delay: 0.08 * index,
-                      ease: 'easeInOut',
-                      x: { type: 'spring', damping: 15, stiffness: 150 },
-                    }}
-                    className='embla__slide w-max flex-none select-none'
-                    key={`home-subscribed-channels-${index}`}
-                  >
-                    <ArtistCard
-                      artist={{
-                        artistId: channel.artistId,
-                        name:
-                          channel.info.v1?.name ||
-                          channel.info.v2?.name ||
-                          channel.info.user?.name ||
-                          '',
-                        thumbnails:
-                          channel.info.v1?.thumbnails ||
-                          channel.info.v2?.thumbnails ||
-                          [],
-                        type: 'ARTIST',
+
+        {tracksHistory ? (
+          tracksHistory.length > 0 ? (
+            <div className='overflow-hidden' ref={emblaRef}>
+              <div className='flex gap-4'>
+                {tracksHistory.map((item, idx) => (
+                  <div key={idx} className='flex-[0_0_auto] w-48'>
+                    <MusicCard
+                      data={{
+                        title: item.track.title,
+                        author: item.track.author,
+                        thumbnail:
+                          item.track.thumbnail || item.track.artworkUrl,
+                        identifier: item.track.identifier,
+                        uri: `https://music.youtube.com/watch?v=${item.track.identifier}`,
                       }}
                     />
-                  </motion.div>
+                  </div>
                 ))}
               </div>
             </div>
+          ) : (
+            <div className='flex flex-col items-center justify-center gap-4 py-12 bg-card border rounded-3xl text-center'>
+              <MicrophoneStage size={48} className='text-muted-foreground' />
+              <h3 className='text-xl font-bold'>
+                {language.data.app.guilds.player.home.no_history.title}
+              </h3>
+              <p className='text-muted-foreground'>
+                {language.data.app.guilds.player.home.no_history.description}
+              </p>
+              <Button
+                variant='secondary'
+                className='rounded-full'
+                onClick={() => router.push(`/app/g/${guild?.id}/player/search`)}
+              >
+                <MagnifyingGlass className='mr-2' />
+                {language.data.app.guilds.player.home.no_history.get_started}
+              </Button>
+            </div>
+          )
+        ) : (
+          <div className='flex items-center justify-center py-12'>
+            <Spinner size='md' />
           </div>
         )}
-        <div className='w-full min-h-max h-96 flex flex-col items-center justify-center gap-4'>
-          <CraneTower size={48} weight='fill' />
-          <h1 className='text-xl max-w-screen-md text-center mt-2'>
-            {language.data.app.guilds.player.dev}
-          </h1>
-          <Link
-            href='/app/updates'
-            rel='noopener'
-            onPress={() => {
-              router.push('/app/updates');
-            }}
-          >
-            <Button color='secondary' className='mt-2' radius='full'>
-              <Heart weight='fill' /> {language.data.app.updates.follow}
-            </Button>
-          </Link>
-        </div>
       </div>
-    </>
-  ) : (
-    <>
-      <Spinner />
-    </>
+    </div>
   );
 }
 

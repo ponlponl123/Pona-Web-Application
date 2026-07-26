@@ -1,3 +1,5 @@
+import { NextResponse } from "next/server"
+
 export type ShardData = {
   [key: string]: number
 }
@@ -13,17 +15,17 @@ const dateFormatter = new Intl.DateTimeFormat("en-GB", {
   year: "numeric",
   hour: "numeric",
   minute: "numeric",
-  hour12: false, // ปรับตามต้องการ
+  hour12: false,
 })
 
-export async function GET() {
+export async function GET(): Promise<NextResponse> {
   try {
     const response = await fetch(
       "https://api.ponlponl123.com/v1/services/pona/response"
     )
 
     if (!response.ok) {
-      return Response.json(
+      return NextResponse.json(
         { message: "API Endpoint Error", timestamp: new Date().toISOString() },
         { status: 503 }
       )
@@ -37,7 +39,7 @@ export async function GET() {
         shards: field.shards,
       }))
 
-      return Response.json(
+      return NextResponse.json(
         {
           message: "OK",
           timelapse: dataSet,
@@ -46,14 +48,15 @@ export async function GET() {
       )
     }
 
-    return Response.json(
+    return NextResponse.json(
       { message: "No Data Found", timestamp: new Date().toISOString() },
       { status: 404 }
     )
-  } catch (error) {
-    return Response.json(
+  } catch {
+    return NextResponse.json(
       { message: "Internal Server Error", timestamp: new Date().toISOString() },
       { status: 500 }
     )
   }
 }
+

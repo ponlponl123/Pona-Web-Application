@@ -229,6 +229,20 @@
     "home": {
       "name": "Home",
       "title": "Welcome back, [user]!",
+      "subtitle": "Select a server below to control music playback, view active queues, or adjust voice settings.",
+      "servers_title": "Your Discord Servers",
+      "search_placeholder": "Search servers...",
+      "search_no_results_title": "No matching servers found",
+      "search_no_results_desc": "No Discord server matching \"[query]\" was found. Try clearing your search.",
+      "clear_search": "Clear Search Filter",
+      "feedback": {
+        "title": "Give Us Feedback",
+        "description": "Help us make Pona even better! Share your suggestions, report issues, or tell us what feature you want next."
+      },
+      "invite_card": {
+        "title": "Add Pona to a New Server",
+        "description": "Want high-quality audio playback in your own Discord server? Invite Pona in seconds with a single click."
+      },
       "whatnew": {
         "title": "What's New in Pona! [version]?",
         "description": "Check out the latest features and improvements in Pona! App.",

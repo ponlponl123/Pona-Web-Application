@@ -1,12 +1,15 @@
-import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo';
-import { useGlobalContext } from '@/contexts/globalContext';
-import { useLanguageContext } from '@/contexts/languageContext';
-import { usePonaMusicContext } from '@/contexts/ponaMusicContext';
-import { Button, Chip, Progress, ScrollShadow } from "@heroui/react";
-import { Island, SpeakerHigh } from '@phosphor-icons/react/dist/ssr';
-import { VoiceBasedChannel } from 'discord.js';
-import { motion } from 'framer-motion';
 import React from 'react';
+import { motion } from 'framer-motion';
+import { VoiceBasedChannel } from 'discord.js';
+import { Island, SpeakerHigh } from '@phosphor-icons/react/dist/ssr';
+import { useAtomValue } from 'jotai';
+
+import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo';
+import { useSocket } from '@/contexts/ponaMusicContext';
+import { useAppStore } from '@/store/coreStore';
+import { isMemberInVCAtom } from '@/store/uiAtoms';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 
 function JoinVoiceChannelButton({
   voiceChannel,
@@ -15,54 +18,38 @@ function JoinVoiceChannelButton({
 }) {
   const [loading, setLoading] = React.useState<boolean>(false);
   const { guild } = useDiscordGuildInfo();
-  const { socket } = usePonaMusicContext();
+  const { socket } = useSocket();
   return (
     <Button
-      className='w-full h-max justify-start bg-primary/25 relative'
-      color='primary'
-      variant={loading ? 'shadow' : 'solid'}
-      startContent={
-        <SpeakerHigh className='text-content1-foreground' weight='fill' />
-      }
-      onPress={() => {
+      className='w-full h-auto justify-start p-4 relative'
+      variant='outline'
+      disabled={loading}
+      onClick={() => {
         setLoading(true);
         socket?.emit('join', guild?.id, voiceChannel.id);
       }}
     >
-      {loading && (
-        <Progress
-          isIndeterminate
-          aria-label='Loading...'
-          className='w-full absolute top-0 left-0'
-          size='sm'
-        />
-      )}
-      <div className='flex flex-row justify-between items-center gap-2 w-full py-2 pl-1'>
-        <div className='flex flex-col gap-2 justify-start text-start mr-auto py-2'>
-          <h1 className='text-lg text-content1-foreground leading-3'>
+      <SpeakerHigh className='mr-2' size={24} weight='fill' />
+      <div className='flex flex-row justify-between items-center gap-2 w-full py-1 text-left'>
+        <div className='flex flex-col gap-1'>
+          <h4 className='text-base font-semibold leading-none'>
             {voiceChannel.name}
-          </h1>
-          <span className='text-xs text-content1-foreground leading-3'>
+          </h4>
+          <span className='text-xs text-muted-foreground'>
             ({voiceChannel.id})
           </span>
         </div>
-        <div className='flex gap-2 ml-auto'>
-          {voiceChannel.userLimit ? (
-            <Chip size='sm' color='primary'>
-              Limit {voiceChannel.userLimit}
-            </Chip>
-          ) : (
-            <></>
-          )}
-        </div>
+        {voiceChannel.userLimit ? (
+          <Badge variant='secondary'>Limit {voiceChannel.userLimit}</Badge>
+        ) : null}
       </div>
     </Button>
   );
 }
 
 function LetsPonaJoin() {
-  const { language } = useLanguageContext();
-  const { isMemberInVC } = useGlobalContext();
+  const language = useAppStore((state) => state.language);
+  const isMemberInVC = useAtomValue(isMemberInVCAtom);
 
   return (
     <motion.div
@@ -72,7 +59,7 @@ function LetsPonaJoin() {
       transition={{ duration: 0.48, delay: 0.1 }}
     >
       <motion.div
-        className='relative bg-primary/10 border-3 border-primary/10 backdrop-blur-sm backdrop-saturate-200 rounded-3xl p-8 overflow-hidden w-full max-w-96 flex flex-col gap-4 items-center justify-center'
+        className='relative bg-primary/10 border border-primary/20 backdrop-blur-sm rounded-3xl p-8 overflow-hidden w-full max-w-96 flex flex-col gap-4 items-center justify-center'
         initial={{ opacity: 0, scale: 1.32 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{
@@ -81,24 +68,22 @@ function LetsPonaJoin() {
           type: 'spring',
         }}
       >
-        <h1 className='text-4xl text-center'>
+        <h1 className='text-3xl font-bold text-center'>
           {language.data.app.guilds.player.ponaIsNotInVC.select.title}
         </h1>
-        <ScrollShadow className='w-full h-64 px-2 py-4'>
+        <div className='w-full max-h-64 overflow-y-auto px-2 py-4 flex flex-col gap-2'>
           {isMemberInVC ? (
-            <>
-              <JoinVoiceChannelButton voiceChannel={isMemberInVC} />
-            </>
+            <JoinVoiceChannelButton voiceChannel={isMemberInVC} />
           ) : (
-            <div className='flex flex-col gap-2 items-center justify-center h-full w-full m-auto'>
-              <Island className='text-foreground/60' size={48} />
-              <h1 className='text-2xl text-center text-foreground/60'>
+            <div className='flex flex-col gap-2 items-center justify-center h-full w-full m-auto py-8'>
+              <Island className='text-muted-foreground' size={48} />
+              <h3 className='text-xl font-medium text-center text-muted-foreground'>
                 {
                   language.data.app.guilds.player.ponaIsNotInVC.select.notfound
                     .title
                 }
-              </h1>
-              <span className='text-base text-center text-foreground/30'>
+              </h3>
+              <span className='text-sm text-center text-muted-foreground/60'>
                 {
                   language.data.app.guilds.player.ponaIsNotInVC.select.notfound
                     .description
@@ -106,8 +91,8 @@ function LetsPonaJoin() {
               </span>
             </div>
           )}
-        </ScrollShadow>
-        <span className='text-xs text-center text-foreground/40'>
+        </div>
+        <span className='text-xs text-center text-muted-foreground'>
           {language.data.app.guilds.player.ponaIsNotInVC.select.description}
         </span>
       </motion.div>

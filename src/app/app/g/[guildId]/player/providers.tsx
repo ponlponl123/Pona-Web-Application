@@ -1,34 +1,36 @@
 'use client';
-import { Image } from '@heroui/react';
 import React from 'react';
 import { useMediaQuery } from 'react-responsive';
+import { useAtomValue } from 'jotai';
 
 import PageAnimatePresence from '@/components/HOC/PageAnimatePresence';
 import { MusicNoteSimple } from '@phosphor-icons/react/dist/ssr';
 
 import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo';
 import { useDiscordUserInfo } from '@/contexts/discordUserInfo';
-import { useGlobalContext } from '@/contexts/globalContext';
-import { useLanguageContext } from '@/contexts/languageContext';
-import { usePonaMusicContext } from '@/contexts/ponaMusicContext';
-import { useUserSettingContext } from '@/contexts/userSettingContext';
+import { useSocket } from '@/contexts/ponaMusicContext';
+import { useAppStore } from '@/store/coreStore';
+import { ponaCommonStateAtom } from '@/store/musicAtoms';
+import { isSameVCAtom } from '@/store/uiAtoms';
 
 import LetsPonaJoin from './@system/lets-pona-join';
 import NotInSameVC from './@system/not-in-same-vc';
 import SocketConnecting from './@system/socket-connecting';
 
-import PlayerNav from '@/components/mobile/playerNav';
 import DesktopPonaPlayer from './@system/player/desktop';
 import MobilePonaPlayer from './@system/player/mobile';
 import DesktopPonaPlayerPanel from './@system/player/panel/desktop';
 
 function Providers({ children }: { children: React.ReactNode }) {
   const { guild } = useDiscordGuildInfo();
-  const { language } = useLanguageContext();
+  const language = useAppStore((state) => state.language);
   const { userInfo } = useDiscordUserInfo();
-  const { userSetting } = useUserSettingContext();
-  const { isConnected, socket } = usePonaMusicContext();
-  const { ponaCommonState, isSameVC, isMobile } = useGlobalContext();
+  const userSetting = useAppStore((state) => state.userSetting);
+  const isMobile = useAppStore((state) => state.isMobile);
+  const { isConnected, socket } = useSocket();
+  const ponaCommonState = useAtomValue(ponaCommonStateAtom);
+  const isSameVC = useAtomValue(isSameVCAtom);
+
   const currentTrack = ponaCommonState?.current;
   const backdropBg = currentTrack
     ? currentTrack?.proxyThumbnail
@@ -50,13 +52,18 @@ function Providers({ children }: { children: React.ReactNode }) {
 
   React.useEffect(() => {
     if (musicAppContent.current) {
-      musicAppContent.current.addEventListener('scroll', e => {
+      const handleScroll = (e: Event) => {
         if (e.target instanceof Element && e.target.scrollTop > 0) {
           document.body.classList.add('pona-app-music-scrolled');
         } else {
           document.body.classList.remove('pona-app-music-scrolled');
         }
-      });
+      };
+      const el = musicAppContent.current;
+      el.addEventListener('scroll', handleScroll);
+      return () => {
+        el.removeEventListener('scroll', handleScroll);
+      };
     }
   }, [musicAppContent]);
 
@@ -69,11 +76,9 @@ function Providers({ children }: { children: React.ReactNode }) {
       >
         <div className='absolute w-full h-max max-h-[48vh] min-h-48 top-0 left-0 z-[1] opacity-40 pointer-events-none scale-[2]'>
           {userSetting.transparency ? (
-            <Image
+            <img
               src={`/api/proxy/image?r=${encodeURIComponent(backdropBg || '/static/backdrop.png')}&s=512&blur=16&saturation=96&contrast=12`}
               alt={currentTrack ? currentTrack.title : guild?.name || ''}
-              width={'100%'}
-              height={undefined}
               className='object-cover w-full h-full max-h-[48vh] pointer-events-none saturate-200 brightness-110 -translate-y-1'
             />
           ) : (
@@ -121,7 +126,6 @@ function Providers({ children }: { children: React.ReactNode }) {
           )}
         </>
       )}
-      {isMobile && <PlayerNav />}
     </>
   );
 }

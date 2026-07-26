@@ -264,9 +264,18 @@ export const PonaMusicProvider = ({
       })
 
       iosocket
-        .on("connect", () => setIsConnected(true))
-        .once("connect_error", (error) => {
-          console.error("Socket connection error:", error)
+        .on("connect", () => {
+          setIsConnected(true)
+        })
+        .on("disconnect", () => {
+          setIsConnected(false)
+        })
+        .on("connect_error", (error) => {
+          setIsConnected(false)
+          if (error.message?.includes("Session ID unknown") || error.message?.includes("xhr poll error")) {
+            // Force clean transport reconnect if session was invalidated
+            iosocket.io.opts.transports = ["websocket", "polling"]
+          }
         })
 
       setSocket(iosocket)

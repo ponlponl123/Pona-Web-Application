@@ -233,6 +233,20 @@
     "home": {
       "name": "ホーム",
       "title": "おかえりなさい、[user]！",
+      "subtitle": "下からサーバーを選択して、音楽の再生制御、アクティブなキューの確認、ボイス設定の調整を行います。",
+      "servers_title": "あなたのDiscordサーバー",
+      "search_placeholder": "サーバーを検索...",
+      "search_no_results_title": "一致するサーバーが見つかりません",
+      "search_no_results_desc": "「[query]」に一致するDiscordサーバーが見つかりませんでした。検索をクリアしてみてください。",
+      "clear_search": "検索フィルターをクリア",
+      "feedback": {
+        "title": "フィードバックを送る",
+        "description": "Ponaをさらに良くするためにお手伝いください！ご提案やバグレポート、次に欲しい機能をお知らせください。"
+      },
+      "invite_card": {
+        "title": "新しいサーバーにPonaを追加",
+        "description": "Discordサーバーで高音質な音楽再生を楽しみたいですか？ワンクリックで簡単にPonaを招待できます。"
+      },
       "whatnew": {
         "title": "Pona! [version] の新機能",
         "description": "Pona! Appの最新機能と改善点をチェックしましょう。",

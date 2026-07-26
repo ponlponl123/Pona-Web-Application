@@ -39,7 +39,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
-import { TrendUpIcon } from "@phosphor-icons/react"
+import { TrendDownIcon, TrendUpIcon } from "@phosphor-icons/react"
 import { motion } from "motion/react"
 import { useAppStore } from "@/store/coreStore"
 
@@ -113,10 +113,12 @@ function Page() {
       const aggregatedMembers = data.members.map((entry) => {
         const consolidatedChannels: ChannelId = {}
 
-        Object.entries(entry.channels).forEach(([channel, count]) => {
-          consolidatedChannels[channel] =
-            (consolidatedChannels[channel] || 0) + count
-        })
+        if (entry.channels) {
+          Object.entries(entry.channels).forEach(([channel, count]) => {
+            consolidatedChannels[channel] =
+              (consolidatedChannels[channel] || 0) + count
+          })
+        }
 
         return { ...entry, channels: consolidatedChannels }
       })
@@ -146,31 +148,142 @@ function Page() {
     const colors: { [key: string]: string } = {}
     if (memberInChannel) {
       memberInChannel.forEach((data) => {
-        Object.keys(data.channels).forEach((channel) => {
-          if (!colors[channel]) {
-            colors[channel] = getRandomColor(channel)
-          }
-        })
+        if (data.channels) {
+          Object.keys(data.channels).forEach((channel) => {
+            if (!colors[channel]) {
+              colors[channel] = getRandomColor(channel)
+            }
+          })
+        }
       })
     }
     return colors
   }, [memberInChannel])
 
+  const activeChannels = useMemo(() => {
+    const keys = Object.keys(channelColors)
+    if (keys.length > 0) return keys
+    return ["Voice Channels"]
+  }, [channelColors])
+
+  const effectiveChannelColors = useMemo(() => {
+    if (Object.keys(channelColors).length > 0) return channelColors
+    return { "Voice Channels": "hsl(var(--primary))" }
+  }, [channelColors])
+
   const flattenedData = React.useMemo(() => {
-    if (!memberInChannel) return []
+    const baseData: MemberInChannel[] =
+      memberInChannel ||
+      default_data.map((d): MemberInChannel => ({ date: d.date, channels: {} }))
 
-    const allChannels = Object.keys(channelColors)
-
-    return memberInChannel.map((item) => {
+    return baseData.map((item) => {
       const flatItem: Record<string, string | number> = { date: item.date }
 
-      allChannels.forEach((channel) => {
-        flatItem[channel] = item.channels[channel] || 0
+      activeChannels.forEach((channel) => {
+        flatItem[channel] =
+          ("channels" in item && item.channels && item.channels[channel]) || 0
       })
 
       return flatItem
     })
-  }, [memberInChannel, channelColors])
+  }, [memberInChannel, activeChannels])
+
+  const activeTrend = useMemo(() => {
+    const dataset = activeStats || (default_data as ActiveUsageChart[])
+    const total = dataset.reduce((acc, curr) => acc + (curr.played || 0), 0)
+    if (total === 0) {
+      return {
+        isUp: true,
+        percentage: 0,
+        text: language.data.app.guilds.stats.average_usage.trending_up.replace(
+          "[percentage]",
+          "0"
+        ),
+      }
+    }
+
+    const maxPlayed = Math.max(...dataset.map((d) => d.played || 0))
+    const avgPlayed = total / dataset.length
+    const pct =
+      avgPlayed > 0
+        ? Math.round(((maxPlayed - avgPlayed) / avgPlayed) * 100)
+        : 0
+    const isUp = pct >= 0
+    const absPct = Math.abs(pct)
+
+    const template = isUp
+      ? language.data.app.guilds.stats.average_usage.trending_up
+      : language.data.app.guilds.stats.average_usage.trending_down
+
+    return {
+      isUp,
+      percentage: absPct,
+      text: template.replace("[percentage]", absPct.toString()),
+    }
+  }, [activeStats, language])
+
+  const voiceTrend = useMemo(() => {
+    if (!flattenedData || flattenedData.length === 0) {
+      return {
+        isUp: true,
+        percentage: 0,
+        text: language.data.app.guilds.stats.members_in_voice_channel.trending_up.replace(
+          "[percentage]",
+          "0"
+        ),
+      }
+    }
+
+    const totalMembers = flattenedData.reduce((acc, row) => {
+      let sum = 0
+      Object.entries(row).forEach(([key, val]) => {
+        if (key !== "date" && typeof val === "number") {
+          sum += val
+        }
+      })
+      return acc + sum
+    }, 0)
+
+    if (totalMembers === 0) {
+      return {
+        isUp: true,
+        percentage: 0,
+        text: language.data.app.guilds.stats.members_in_voice_channel.trending_up.replace(
+          "[percentage]",
+          "0"
+        ),
+      }
+    }
+
+    const intervalTotals = flattenedData.map((row) => {
+      let sum = 0
+      Object.entries(row).forEach(([key, val]) => {
+        if (key !== "date" && typeof val === "number") {
+          sum += val
+        }
+      })
+      return sum
+    })
+
+    const maxMembers = Math.max(...intervalTotals)
+    const avgMembers = totalMembers / flattenedData.length
+    const pct =
+      avgMembers > 0
+        ? Math.round(((maxMembers - avgMembers) / avgMembers) * 100)
+        : 0
+    const isUp = pct >= 0
+    const absPct = Math.abs(pct)
+
+    const template = isUp
+      ? language.data.app.guilds.stats.members_in_voice_channel.trending_up
+      : language.data.app.guilds.stats.members_in_voice_channel.trending_down
+
+    return {
+      isUp,
+      percentage: absPct,
+      text: template.replace("[percentage]", absPct.toString()),
+    }
+  }, [flattenedData, language])
 
   return (
     <main id="app-panel">
@@ -267,7 +380,7 @@ function Page() {
                     className="px-4"
                     config={{
                       played: {
-                        label: "Played",
+                        label: "Played (mins)",
                         color: "var(--primary)",
                       },
                     }}
@@ -313,13 +426,18 @@ function Page() {
                     </ResponsiveContainer>
                   </ChartContainer>
                   <div className="mt-2 flex items-center gap-1.5 px-6 text-base">
-                    <h2 className="m-0">
-                      {language.data.app.guilds.stats.average_usage.trending_up}
-                    </h2>
-                    <TrendUpIcon
-                      weight="bold"
-                      className="mt-1 size-3 text-emerald-400"
-                    />
+                    <h2 className="m-0">{activeTrend.text}</h2>
+                    {activeTrend.isUp ? (
+                      <TrendUpIcon
+                        weight="bold"
+                        className="mt-1 size-3 text-emerald-400"
+                      />
+                    ) : (
+                      <TrendDownIcon
+                        weight="bold"
+                        className="mt-1 size-3 text-amber-400"
+                      />
+                    )}
                   </div>
                   <span className="px-6 text-sm text-foreground/40">
                     {language.data.app.guilds.stats.average_usage.note}
@@ -347,28 +465,33 @@ function Page() {
                     >
                       <AreaChart data={flattenedData} accessibilityLayer>
                         <defs>
-                          {memberInChannel &&
-                            Object.keys(channelColors).map((channel, index) => (
-                              <linearGradient
-                                key={channel}
-                                id={`fill-${index}`}
-                                x1="0"
-                                y1="0"
-                                x2="0"
-                                y2="1"
-                              >
-                                <stop
-                                  offset="5%"
-                                  stopColor={channelColors[channel]}
-                                  stopOpacity={0.8}
-                                />
-                                <stop
-                                  offset="95%"
-                                  stopColor={channelColors[channel]}
-                                  stopOpacity={0.1}
-                                />
-                              </linearGradient>
-                            ))}
+                          {activeChannels.map((channel, index) => (
+                            <linearGradient
+                              key={channel}
+                              id={`fill-${index}`}
+                              x1="0"
+                              y1="0"
+                              x2="0"
+                              y2="1"
+                            >
+                              <stop
+                                offset="5%"
+                                stopColor={
+                                  effectiveChannelColors[channel] ||
+                                  "hsl(var(--primary))"
+                                }
+                                stopOpacity={0.8}
+                              />
+                              <stop
+                                offset="95%"
+                                stopColor={
+                                  effectiveChannelColors[channel] ||
+                                  "hsl(var(--primary))"
+                                }
+                                stopOpacity={0.1}
+                              />
+                            </linearGradient>
+                          ))}
                         </defs>
                         <CartesianGrid vertical={false} />
                         <XAxis
@@ -389,33 +512,37 @@ function Page() {
                             />
                           }
                         />
-                        {memberInChannel &&
-                          Object.keys(channelColors).map((channel, index) => (
-                            <Area
-                              key={channel}
-                              type="monotone"
-                              dataKey={channel}
-                              name={channel}
-                              stroke={channelColors[channel]}
-                              fill={`url(#fill-${index})`}
-                              stackId="a"
-                            />
-                          ))}
+                        {activeChannels.map((channel, index) => (
+                          <Area
+                            key={channel}
+                            type="monotone"
+                            dataKey={channel}
+                            name={channel}
+                            stroke={
+                              effectiveChannelColors[channel] ||
+                              "hsl(var(--primary))"
+                            }
+                            fill={`url(#fill-${index})`}
+                            stackId="a"
+                          />
+                        ))}
                         <ChartLegend content={<ChartLegendContent />} />
                       </AreaChart>
                     </ResponsiveContainer>
                   </ChartContainer>
                   <div className="mt-2 flex items-center gap-1.5 px-6 text-base">
-                    <h2 className="m-0">
-                      {
-                        language.data.app.guilds.stats.members_in_voice_channel
-                          .trending_up
-                      }
-                    </h2>
-                    <TrendUpIcon
-                      weight="bold"
-                      className="mt-1 size-3 text-emerald-400"
-                    />
+                    <h2 className="m-0">{voiceTrend.text}</h2>
+                    {voiceTrend.isUp ? (
+                      <TrendUpIcon
+                        weight="bold"
+                        className="mt-1 size-3 text-emerald-400"
+                      />
+                    ) : (
+                      <TrendDownIcon
+                        weight="bold"
+                        className="mt-1 size-3 text-amber-400"
+                      />
+                    )}
                   </div>
                   <span className="px-6 text-sm text-foreground/40">
                     {
@@ -425,6 +552,7 @@ function Page() {
                   </span>
                 </div>
               </div>
+
 
               <div className="pointer-events-none relative rounded-2xl border border-border/80 bg-card/80 pt-4 backdrop-blur-sm backdrop-saturate-200 select-none">
                 <h1 className="absolute top-1/2 left-1/2 z-20 -translate-x-1/2 -translate-y-1/2 text-2xl">

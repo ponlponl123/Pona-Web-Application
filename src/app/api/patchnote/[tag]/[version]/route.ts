@@ -1,35 +1,45 @@
-import { NextRequest } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
+import { readFile, access } from "node:fs/promises"
+import path from "node:path"
 
-const PATCH_NOTES_PATH = "./docs/patches"
-
+/**
+ * Next.js API Route Handler for fetching specific patch note file.
+ * Refactored to standard Node.js runtime (fs/promises) for universal compatibility.
+ */
 export async function GET(
   _: NextRequest,
   { params }: { params: Promise<{ tag: string; version: string }> }
-) {
+): Promise<NextResponse> {
   const { tag, version } = await params
 
   if (!tag || !version) {
-    return Response.json(
+    return NextResponse.json(
       { message: "BAD_REQUEST: Missing parameters" },
       { status: 400 }
     )
   }
 
-  const filePath = `${PATCH_NOTES_PATH}/${tag}/${version}`
-  const file = Bun.file(filePath)
+  // Sanitize path parameters to prevent directory traversal
+  const safeTag = path.basename(tag)
+  const safeVersion = path.basename(version)
+  const filePath = path.join(process.cwd(), "docs", "patches", safeTag, safeVersion)
 
-  if (!(await file.exists())) {
-    return Response.json(
-      { message: `NOT_FOUND: Patch note not found` },
+  try {
+    await access(filePath)
+    const content = await readFile(filePath, "utf-8")
+
+    return new NextResponse(content, {
+      status: 200,
+      headers: {
+        "Content-Type": "text/plain; charset=utf-8",
+        "Cache-Control": "public, max-age=3600, stale-while-revalidate=86400",
+      },
+    })
+  } catch {
+    return NextResponse.json(
+      { message: "NOT_FOUND: Patch note not found" },
       { status: 404 }
     )
   }
-
-  return new Response(file, {
-    headers: {
-      "Content-Type": "text/plain; charset=utf-8",
-      "Cache-Control": "public, max-age=3600",
-    },
-    status: 200,
-  })
 }
+

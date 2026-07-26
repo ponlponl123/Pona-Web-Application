@@ -1,8 +1,11 @@
-export async function GET() {
-  return Response.json(
+import { NextResponse } from "next/server"
+
+export async function GET(): Promise<NextResponse> {
+  return NextResponse.json(
     {
       message: "BAD_REQUEST: Missing patch note tag",
     },
     { status: 400 }
   )
 }
+

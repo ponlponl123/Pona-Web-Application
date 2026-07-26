@@ -2,41 +2,41 @@
 import React from 'react';
 import CountUp from 'react-countup';
 import { motion } from 'framer-motion';
-import { Chip, Progress } from "@heroui/react";
 import { Plugs, Warning } from '@phosphor-icons/react/dist/ssr';
-import { useLanguageContext } from '@/contexts/languageContext';
+import { useAppStore } from '@/store/coreStore';
+import { Badge } from '@/components/ui/badge';
+import { Spinner } from '@/components/ui/spinner';
 
 function SocketConnecting() {
-  const { language } = useLanguageContext();
+  const language = useAppStore((state) => state.language);
   const [timedOut, setTimedOut] = React.useState<boolean>(false);
+
   return (
     <motion.div
-      className='absolute w-full h-full top-0 left-0 flex flex-col gap-3 items-center justify-center bg-background/20'
+      className='absolute w-full h-full top-0 left-0 flex flex-col gap-3 items-center justify-center bg-background/20 z-10'
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.48, delay: 1 }}
     >
       {timedOut ? (
-        <>
-          <motion.div
-            className='relative bg-primary/10 border-2 border-primary/10 rounded-3xl p-8 overflow-hidden w-full max-w-96 flex flex-col gap-4 items-center justify-center'
-            initial={{ opacity: 0, scale: 1.32 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{
-              duration: 0.48,
-              delay: 1.24,
-              type: 'spring',
-            }}
-          >
-            <Warning size={32} />
-            <h1 className='text-2xl text-center'>
-              {language.data.app.guilds.player.socket.failed.title}
-            </h1>
-            <h3 className='text-lg text-center'>
-              {language.data.app.guilds.player.socket.failed.description}
-            </h3>
-          </motion.div>
-        </>
+        <motion.div
+          className='relative bg-primary/10 border border-primary/20 rounded-3xl p-8 overflow-hidden w-full max-w-96 flex flex-col gap-4 items-center justify-center'
+          initial={{ opacity: 0, scale: 1.32 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{
+            duration: 0.48,
+            delay: 1.24,
+            type: 'spring',
+          }}
+        >
+          <Warning size={32} />
+          <h2 className='text-xl font-bold text-center'>
+            {language.data.app.guilds.player.socket.failed.title}
+          </h2>
+          <p className='text-sm text-center text-muted-foreground'>
+            {language.data.app.guilds.player.socket.failed.description}
+          </p>
+        </motion.div>
       ) : (
         <>
           <motion.div
@@ -48,12 +48,8 @@ function SocketConnecting() {
               type: 'spring',
             }}
           >
-            <Chip
-              color='primary'
-              variant='shadow'
-              startContent={<Plugs size={14} weight='fill' className='mx-1' />}
-            >
-              {' '}
+            <Badge variant='outline' className='flex items-center gap-1 px-3 py-1 text-sm'>
+              <Plugs size={14} weight='fill' />
               {language.data.app.guilds.player.socket.connecting.chip} (
               <CountUp
                 start={0}
@@ -65,10 +61,10 @@ function SocketConnecting() {
                 }}
               />
               {language.data.app.guilds.player.socket.connecting.sec})
-            </Chip>
+            </Badge>
           </motion.div>
           <motion.div
-            className='relative bg-primary/10 border-2 border-primary/10 rounded-3xl p-8 overflow-hidden w-full max-w-96 flex flex-col gap-4 items-center justify-center'
+            className='relative bg-primary/10 border border-primary/20 rounded-3xl p-8 overflow-hidden w-full max-w-96 flex flex-col gap-4 items-center justify-center'
             initial={{ opacity: 0, scale: 1.32 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{
@@ -77,19 +73,10 @@ function SocketConnecting() {
               type: 'spring',
             }}
           >
-            <Progress
-              isIndeterminate
-              aria-label='Loading...'
-              className='w-full absolute top-0 left-0'
-              size='sm'
-              radius='full'
-              classNames={{
-                track: 'bg-transparent',
-              }}
-            />
-            <h1 className='text-2xl text-center'>
+            <Spinner size='md' className='mt-2' />
+            <h2 className='text-xl font-semibold text-center mt-2'>
               {language.data.app.guilds.player.socket.connecting.title}
-            </h1>
+            </h2>
           </motion.div>
         </>
       )}
