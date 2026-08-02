@@ -19,6 +19,7 @@ export interface BasicGuildInfo {
   iconURL: string | null
   nameAcronym: string
   bannerURL: string | null
+  isConnected?: boolean
 }
 
 export async function fetchGuildsV1(
@@ -85,6 +86,13 @@ export async function fetchGuilds(
 
     if (response.ok) {
       const data = await response.json()
+      const rawGuilds = data.guilds
+      if (Array.isArray(rawGuilds)) {
+        return rawGuilds.map((g: Record<string, unknown>) => ({
+          ...g,
+          isConnected: Boolean(g.isConnected ?? g.is_connected ?? g.connected ?? false),
+        })) as GuildInfo[]
+      }
       return data.guilds as GuildInfo[]
     }
     return false
@@ -119,7 +127,13 @@ export async function fetchGuild(
 
     if (response.ok) {
       const data = await response.json()
-      return data.guild
+      if (data.guild) {
+        const rawGuild = data.guild as Record<string, unknown>
+        return {
+          ...rawGuild,
+          isConnected: Boolean(rawGuild.isConnected ?? rawGuild.is_connected ?? rawGuild.connected ?? false),
+        } as GuildInfo
+      }
     }
     return false
   } catch (error) {
@@ -150,6 +164,7 @@ export async function fetchBasicGuildInfo(
       iconURL: guildInfo.iconURL,
       nameAcronym: guildInfo.nameAcronym,
       bannerURL: guildInfo.bannerURL,
+      isConnected: guildInfo.isConnected ?? false,
     } as BasicGuildInfo
   } catch (error) {
     console.error(

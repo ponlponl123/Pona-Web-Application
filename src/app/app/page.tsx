@@ -85,13 +85,17 @@ function Page(): React.ReactElement {
 
   const filteredGuilds = React.useMemo(() => {
     if (!Array.isArray(guilds)) return []
-    if (!searchQuery.trim()) return guilds
     const query = searchQuery.toLowerCase().trim()
-    return guilds.filter(
-      (guild) =>
-        guild.name.toLowerCase().includes(query) ||
-        guild.id.toLowerCase().includes(query)
-    )
+    const list = query
+      ? guilds.filter(
+          (guild) =>
+            guild.name.toLowerCase().includes(query) ||
+            guild.id.toLowerCase().includes(query)
+        )
+      : [...guilds]
+
+    // Sort connected guilds to the top (order -1)
+    return list.sort((a, b) => (b.isConnected ? 1 : 0) - (a.isConnected ? 1 : 0))
   }, [guilds, searchQuery])
 
   const welcomeGreeting = React.useMemo(() => {
@@ -259,6 +263,8 @@ function Page(): React.ReactElement {
                     return (
                       <motion.div
                         key={guild.id}
+                        style={{ order: guild.isConnected ? -1 : undefined }}
+                        className={cn(guild.isConnected && "-order-1")}
                         initial={{ opacity: 0, filter: "blur(4px)" }}
                         animate={{ opacity: 1, filter: "blur(0px)" }}
                         exit={{ opacity: 0, scale: 0.95 }}
