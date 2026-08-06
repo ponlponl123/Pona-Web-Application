@@ -1,7 +1,6 @@
 import { cn } from "@/lib/utils"
 import { ScrollArea } from "@base-ui/react/scroll-area"
-import { ScrollShadow } from "@heroui/react"
-import { Ref, forwardRef } from "react"
+import { forwardRef } from "react"
 
 const CustomScrollArea = forwardRef<
   HTMLDivElement,
@@ -21,7 +20,7 @@ const CustomScrollArea = forwardRef<
     <ScrollArea.Root className={cn(className, classNames?.root)}>
       <ScrollArea.Viewport
         ref={forwardedRef}
-        render={<ScrollShadow className={classNames?.render} />}
+        render={<div className={cn("overflow-auto", classNames?.render)} />}
         className={cn("h-full rounded-md", classNames?.viewport)}
       >
         {children}

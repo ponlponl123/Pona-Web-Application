@@ -4,6 +4,7 @@ import React, { useMemo } from "react"
 import Link from "next/link"
 import { CaretRightIcon, UsersIcon } from "@phosphor-icons/react/dist/ssr"
 import { GuildInfo } from "@/lib/server-side-api/discord/fetchGuild"
+import { useAppStore } from "@/store/coreStore"
 import { Avatar, AvatarFallback, AvatarImage } from "../../avatar"
 import { cn } from "@/lib/utils"
 import { Button } from "../../button"
@@ -21,6 +22,7 @@ export function GuildButton({
   uri,
   setCurrentGuild,
 }: GuildButtonProps): React.ReactElement {
+  const language = useAppStore((state) => state.language)
   const [loading, setLoading] = React.useState<boolean>(false)
 
   const backdropBg = useMemo(() => {
@@ -46,8 +48,8 @@ export function GuildButton({
           setCurrentGuild(guild)
         }}
         className={cn(
-          "group relative flex h-auto w-full flex-col justify-between overflow-hidden rounded-3xl border-2 border-foreground/10 bg-foreground/5 p-0 text-foreground backdrop-blur-md transition-all duration-300 hover:border-primary/40 hover:bg-foreground/10 hover:shadow-xl hover:shadow-primary/5",
-          guild.isConnected && "border-emerald-500/30 bg-emerald-500/5 dark:bg-emerald-950/20",
+          "group relative flex h-auto w-full flex-col justify-between overflow-hidden rounded-3xl border-2 border-foreground/10 bg-card/60 p-0 text-foreground backdrop-blur-md transition-all duration-300 hover:border-primary/40 hover:bg-card hover:shadow-xl hover:shadow-primary/5",
+          guild.isConnected && "shadow-2xl shadow-success/30 bg-linear-to-t from-success/15 to-transparent border-success/30",
           loading && "border-primary/60 bg-foreground/10"
         )}
         data-smooth-interaction="true"
@@ -84,8 +86,8 @@ export function GuildButton({
               <Avatar
                 className={cn(
                   "size-16 shadow-lg ring-4 ring-background transition-transform duration-300",
-                  guild.isConnected && "ring-emerald-500/40",
-                  loading ? "scale-90 opacity-60" : "group-hover:scale-105"
+                  guild.isConnected && "ring-success/40",
+                  loading && "scale-90 opacity-60"
                 )}
               >
                 <AvatarImage src={guild.iconURL as string} alt={guild.name} />
@@ -96,7 +98,7 @@ export function GuildButton({
 
               {guild.isConnected && (
                 <span
-                  className="absolute bottom-0 right-0 size-4 rounded-full bg-emerald-500 ring-2 ring-background animate-pulse"
+                  className="absolute bottom-0 right-0 size-4 rounded-full bg-success ring-2 ring-background"
                   title="Connected"
                 />
               )}
@@ -120,16 +122,16 @@ export function GuildButton({
 
               <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
                 {formattedMemberCount && (
-                  <div className="inline-flex w-max items-center gap-1.5 rounded-md bg-foreground/10 px-1.5 py-0.5 text-xs text-foreground/70">
-                    <UsersIcon size={12} weight="bold" className="text-primary" />
-                    <span>{formattedMemberCount}</span>
+                  <div className="inline-flex w-max items-center gap-1 rounded-full bg-success/30 text-xs text-foreground/70">
+                    <UsersIcon size={8} weight="bold" className="text-success py-1 pl-1.5 pr-0 rounded-l-full size-5.5" />
+                    <span className="py-1 px-2 bg-foreground/10 text-success rounded-full">{formattedMemberCount}</span>
                   </div>
                 )}
 
                 {guild.isConnected && (
-                  <div className="inline-flex w-max items-center gap-1 rounded-md bg-emerald-500/10 px-1.5 py-0.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-                    <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    <span>Connected</span>
+                  <div className="inline-flex w-max items-center gap-1 rounded-full bg-success/30 px-2.5 py-1 text-xs font-semibold text-success dark:text-success/80">
+                    <span className="size-1.5 rounded-full bg-success animate-pulse" />
+                    <span>{language.data.app.guilds.you_are_here}</span>
                   </div>
                 )}
               </div>

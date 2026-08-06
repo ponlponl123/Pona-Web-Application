@@ -3,7 +3,9 @@
   "label": "ไทย",
   "country": "th",
   "state": "ready",
-  "translators": ["Ponlponl123"],
+  "translators": [
+    "Ponlponl123"
+  ],
   "looking_for_translator": false,
   "extensions": {
     "new": "ใหม่",
@@ -389,9 +391,18 @@
       "search_no_results_desc": "ไม่พบเซิร์ฟเวอร์ Discord ที่ตรงกับ \"[query]\" ลองล้างตัวกรองการค้นหาดูนะ",
       "clear_search": "ล้างตัวกรองการค้นหา",
       "loading": "กำลังมองหาเซิร์ฟเวอร์...",
+      "you_are_here": "คุณอยู่นี่!",
+      "connected": "เชื่อมต่อแล้ว",
       "not_found": {
         "title": "ไม่พบ Guilds",
         "description": "หรือว่าปาร์ตี้ยังไม่เริ่มกันนะ!?, งั้นเรามาเริ่มปาร์ตี้กันเลยดีกว่า!"
+      },
+      "comingsoon": {
+        "badge": "เร็วๆ นี้",
+        "subtitle": "บางสิ่งที่ยอดเยี่ยมกำลังอยู่ระหว่างการพัฒนา",
+        "description": "เรากำลังสร้างประสบการณ์ที่ราบรื่น ปลอดภัย และทรงพลัง คอยติดตามการเปิดตัวอย่างเป็นทางการนะ",
+        "back": "กลับไปยังพื้นที่ทำงาน",
+        "target_launch": "เป้าหมายการเปิดตัว:"
       },
       "stats": {
         "title": "สถิติ",

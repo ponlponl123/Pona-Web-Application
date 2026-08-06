@@ -1,5 +1,4 @@
 'use client';
-import NextImage from 'next/image';
 import {
   AlbumCard,
   ArtistCard,
@@ -8,21 +7,26 @@ import {
 } from '@/components/music/card';
 import Track from '@/components/music/searchResult/track';
 import SubscribeButton from '@/components/music/subscribe';
-import { ArtistFull as ArtistFullv1 } from '@/types/youtube/ytmusic';
+import { useLanguageContext } from '@/contexts/languageContext';
+import { ArtistFull as ArtistFullv1 } from '@/interfaces/ytmusic';
 import {
   ArtistFull,
   ArtistVideo,
   ProfileFull,
   SongDetailed,
   VideoDetailed,
-} from '@/types/youtube/ytmusic-api';
+} from '@/interfaces/ytmusic-api';
 import {
   getChannel,
   getChannelVideos,
-} from '@/lib/server-side-api/internal/search';
-import { usePrevNextButtons } from '@/lib/Embla/CarouselArrowButtons';
-import { Button } from '@/components/ui/button';
-import { Spinner } from '@/components/ui/spinner';
+} from '@/server-side-api/internal/search';
+import { usePrevNextButtons } from '@/utils/Embla/CarouselArrowButtons';
+import {
+  Button,
+  Image as NextImage,
+  Progress,
+  Spinner,
+} from "@heroui/react";
 import {
   CaretLeft,
   CaretRight,
@@ -33,11 +37,10 @@ import useEmblaCarousel from 'embla-carousel-react';
 import { motion } from 'framer-motion';
 import { useRouter, useSearchParams } from 'next/navigation';
 import React from 'react';
-import { useAppStore } from '@/store/coreStore';
 
 function Page() {
   const router = useRouter();
-  const language = useAppStore((state) => state.language);
+  const { language } = useLanguageContext();
   const searchParams = useSearchParams();
   const [loading, setLoading] = React.useState<boolean>(true);
   const [ready, setReady] = React.useState<boolean>(true);
@@ -166,7 +169,11 @@ function Page() {
   return (
     <div className='flex flex-col gap-4 items-start justify-start w-full'>
       {loading && (
-        <Spinner className='absolute top-2 right-4' />
+        <Progress
+          isIndeterminate
+          size='sm'
+          className='absolute top-0 left-0 w-full'
+        />
       )}
       {!loading && !channelDetail && !channelDetailv1 && (
         <div className='w-full min-h-[36vh] flex flex-col gap-4 items-center justify-center'>
@@ -192,10 +199,14 @@ function Page() {
             className={`w-[calc(100%_+_6rem)] h-screen ${channelDetail && channelDetail.description ? 'max-h-[82vh]' : 'max-h-[64vh]'} min-h-48 relative top-0 left-0 z-[1] -translate-x-12 -translate-y-16 max-lg:-translate-y-24`}
           >
             {/* <div className='absolute top-0 left-0 w-full h-full bg-playground-background -z-10 scale-[200]' /> */}
-            <img
+            <NextImage
+              loading={'eager'}
               src={String(highResArtworkProxyURI.current)}
               alt='hero-image'
               className='absolute top-0 left-0 w-full h-full max-h-full object-cover rounded-none opacity-100'
+              classNames={{
+                wrapper: '!max-w-full h-full',
+              }}
             />
             <div className='flex flex-col -translate-x-1/2 w-full max-w-screen-xl h-full absolute top-0 left-1/2 items-start justify-end z-20 px-16 py-8 gap-4'>
               <h1 className='font-bold text-8xl max-2xl:text-7xl max-xl:text-6xl max-lg:text-5xl max-md:text-4xl max-sm:text-3xl'>
@@ -256,7 +267,7 @@ function Page() {
                     channelDetail.songs &&
                     channelDetail.songs.results &&
                     channelDetail.songs.results.length > 0
-                      ? channelDetail.songs.results.map((songDetail: any, index: number) => (
+                      ? channelDetail.songs.results.map((songDetail, index) => (
                           <React.Fragment key={index}>
                             <Track
                               data={
@@ -281,7 +292,7 @@ function Page() {
                       : channelDetailv1 &&
                         channelDetailv1.topSongs &&
                         channelDetailv1.topSongs.length > 0 &&
-                        channelDetailv1.topSongs.map((songDetail: any, index: number) => (
+                        channelDetailv1.topSongs.map((songDetail, index) => (
                           <React.Fragment key={index}>
                             <Track
                               data={
@@ -318,12 +329,15 @@ function Page() {
                             channelDetail.songs.browseId;
                           return (
                             <Button
+                              href={href}
                               onClick={() => {
                                 router.push(href);
                               }}
-                              variant='outline'
+                              radius='full'
+                              variant='bordered'
                               size='sm'
-                              className='rounded-full font-bold'
+                              color='primary'
+                              className='font-bold max-md:text-sm max-md:min-h-0 max-md:min-w-0 max-md:py-3 max-md:px-4 max-md:h-max'
                             >
                               {language.data.app.guilds.player.artist.showmore}
                             </Button>
@@ -357,10 +371,12 @@ function Page() {
                     {!(fetchingVideos === false) && (
                       <>
                         <Button
-                          variant='outline'
+                          radius='full'
+                          variant='bordered'
                           size='sm'
-                          className='rounded-full font-bold'
-                          onClick={async () => {
+                          color='primary'
+                          className='font-bold max-md:text-sm max-md:min-h-0 max-md:min-w-0 max-md:py-3 max-md:px-4 max-md:h-max'
+                          onPress={async () => {
                             if (!channelId) return;
                             setFetchingVideos(true);
                             const accessTokenType = getCookie('LOGIN_TYPE_');
@@ -383,24 +399,26 @@ function Page() {
                         </Button>
                         <div className='embla__buttons gap-3 flex items-center justify-center'>
                           <Button
-                            onClick={videoEmblaOnPrevButtonClick}
+                            onPress={videoEmblaOnPrevButtonClick}
                             disabled={videoEmblaPrevBtnDisabled}
                             title='previous'
-                            className='rounded-full'
+                            className='embla__button embla__button--prev border-2 border-foreground/10 bg-foreground/10 disabled:opacity-30 disabled:bg-transparent disabled:border-foreground/5'
                             type='button'
-                            size='icon'
-                            variant='ghost'
+                            size='sm'
+                            radius='full'
+                            isIconOnly
                           >
                             <CaretLeft />
                           </Button>
                           <Button
-                            onClick={videoEmblaOnNextButtonClick}
+                            onPress={videoEmblaOnNextButtonClick}
                             disabled={videoEmblaNextBtnDisabled}
                             title='next'
-                            className='rounded-full'
+                            className='embla__button embla__button--next border-2 border-foreground/10 bg-foreground/10 disabled:opacity-30 disabled:bg-transparent disabled:border-foreground/5'
                             type='button'
-                            size='icon'
-                            variant='ghost'
+                            size='sm'
+                            radius='full'
+                            isIconOnly
                           >
                             <CaretRight />
                           </Button>
@@ -569,24 +587,26 @@ function Page() {
                       <div className='flex-1'></div>
                       <div className='embla__buttons gap-3 flex items-center justify-center'>
                         <Button
-                          onClick={channelEmblaOnPrevButtonClick}
+                          onPress={channelEmblaOnPrevButtonClick}
                           disabled={channelEmblaPrevBtnDisabled}
                           title='previous'
-                          className='rounded-full'
+                          className='embla__button embla__button--prev border-2 border-foreground/10 bg-foreground/10 disabled:opacity-30 disabled:bg-transparent disabled:border-foreground/5'
                           type='button'
-                          size='icon'
-                          variant='ghost'
+                          size='sm'
+                          radius='full'
+                          isIconOnly
                         >
                           <CaretLeft />
                         </Button>
                         <Button
-                          onClick={channelEmblaOnNextButtonClick}
+                          onPress={channelEmblaOnNextButtonClick}
                           disabled={channelEmblaNextBtnDisabled}
                           title='next'
-                          className='rounded-full'
+                          className='embla__button embla__button--next border-2 border-foreground/10 bg-foreground/10 disabled:opacity-30 disabled:bg-transparent disabled:border-foreground/5'
                           type='button'
-                          size='icon'
-                          variant='ghost'
+                          size='sm'
+                          radius='full'
+                          isIconOnly
                         >
                           <CaretRight />
                         </Button>
@@ -618,7 +638,7 @@ function Page() {
               <>
                 <section className='c section'>
                   <div className='flex gap-4 items-center justify-between w-full p-1 -mt-2'>
-                    <h1 className='text-start text-4xl font-bold'>
+                    <h1 className='text-start text-4xl'>
                       {
                         language.data.app.guilds.player.artist.category
                           .topSingles
@@ -629,33 +649,37 @@ function Page() {
                       channelDetail?.singles?.browseId &&
                       channelDetail?.singles?.params && (
                         <Button
-                          variant='outline'
+                          radius='full'
+                          variant='bordered'
                           size='sm'
-                          className='rounded-full font-bold'
+                          color='primary'
+                          className='font-bold max-md:text-sm max-md:min-h-0 max-md:min-w-0 max-md:py-3 max-md:px-4 max-md:h-max'
                         >
                           {language.data.app.guilds.player.artist.showmore}
                         </Button>
                       )}
                     <div className='embla__buttons gap-3 flex items-center justify-center'>
                       <Button
-                        onClick={singleEmblaOnPrevButtonClick}
+                        onPress={singleEmblaOnPrevButtonClick}
                         disabled={singleEmblaPrevBtnDisabled}
                         title='previous'
-                        className='rounded-full'
+                        className='embla__button embla__button--prev border-2 border-foreground/10 bg-foreground/10 disabled:opacity-30 disabled:bg-transparent disabled:border-foreground/5'
                         type='button'
-                        size='icon'
-                        variant='ghost'
+                        size='sm'
+                        radius='full'
+                        isIconOnly
                       >
                         <CaretLeft />
                       </Button>
                       <Button
-                        onClick={singleEmblaOnNextButtonClick}
+                        onPress={singleEmblaOnNextButtonClick}
                         disabled={singleEmblaNextBtnDisabled}
                         title='next'
-                        className='rounded-full'
+                        className='embla__button embla__button--next border-2 border-foreground/10 bg-foreground/10 disabled:opacity-30 disabled:bg-transparent disabled:border-foreground/5'
                         type='button'
-                        size='icon'
-                        variant='ghost'
+                        size='sm'
+                        radius='full'
+                        isIconOnly
                       >
                         <CaretRight />
                       </Button>
@@ -669,7 +693,7 @@ function Page() {
                         channelDetail.singles.results &&
                         channelDetail.singles.results.length > 0
                           ? channelDetail.singles.results.map(
-                              (singleDetail: any, index: number) => (
+                              (singleDetail, index) => (
                                 <React.Fragment key={index}>
                                   <AlbumCard
                                     album={{
@@ -698,7 +722,7 @@ function Page() {
                             channelDetailv1.topSingles &&
                             channelDetailv1.topSingles.length > 0 &&
                             channelDetailv1.topSingles.map(
-                              (singleDetail: any, index: number) => (
+                              (singleDetail, index) => (
                                 <React.Fragment key={index}>
                                   <AlbumCard
                                     album={{
@@ -751,33 +775,37 @@ function Page() {
                         channelDetail?.albums?.browseId &&
                         channelDetail?.albums?.params && (
                           <Button
-                            variant='outline'
+                            radius='full'
+                            variant='bordered'
                             size='sm'
-                            className='rounded-full font-bold'
+                            color='primary'
+                            className='font-bold max-md:text-sm max-md:min-h-0 max-md:min-w-0 max-md:py-3 max-md:px-4 max-md:h-max'
                           >
                             {language.data.app.guilds.player.artist.showmore}
                           </Button>
                         )}
                       <div className='embla__buttons gap-3 flex items-center justify-center'>
                         <Button
-                          onClick={albumEmblaOnPrevButtonClick}
+                          onPress={albumEmblaOnPrevButtonClick}
                           disabled={albumEmblaPrevBtnDisabled}
                           title='previous'
-                          className='rounded-full'
+                          className='embla__button embla__button--prev border-2 border-foreground/10 bg-foreground/10 disabled:opacity-30 disabled:bg-transparent disabled:border-foreground/5'
                           type='button'
-                          size='icon'
-                          variant='ghost'
+                          size='sm'
+                          radius='full'
+                          isIconOnly
                         >
                           <CaretLeft />
                         </Button>
                         <Button
-                          onClick={albumEmblaOnNextButtonClick}
+                          onPress={albumEmblaOnNextButtonClick}
                           disabled={albumEmblaNextBtnDisabled}
                           title='next'
-                          className='rounded-full'
+                          className='embla__button embla__button--next border-2 border-foreground/10 bg-foreground/10 disabled:opacity-30 disabled:bg-transparent disabled:border-foreground/5'
                           type='button'
-                          size='icon'
-                          variant='ghost'
+                          size='sm'
+                          radius='full'
+                          isIconOnly
                         >
                           <CaretRight />
                         </Button>
@@ -791,13 +819,13 @@ function Page() {
                           channelDetail.albums.results &&
                           channelDetail.albums.results.length > 0
                             ? channelDetail.albums.results.map(
-                                (albumDetail: any, index: number) => (
+                                (albumDetail, index) => (
                                   <React.Fragment key={index}>
                                     <AlbumCard
                                       album={{
                                         artists: [
                                           {
-                                            id: channelId || '',
+                                            id: channelId,
                                             name: channelDetail.name,
                                           },
                                         ],
@@ -820,7 +848,7 @@ function Page() {
                               channelDetailv1.topAlbums &&
                               channelDetailv1.topAlbums.length > 0 &&
                               channelDetailv1.topAlbums.map(
-                                (albumDetail: any, index: number) => (
+                                (albumDetail, index) => (
                                   <React.Fragment key={index}>
                                     <AlbumCard
                                       album={{
@@ -861,7 +889,7 @@ function Page() {
               <>
                 <section className='c section'>
                   <div className='flex gap-4 items-center justify-between w-full p-1 -mt-2'>
-                    <h1 className='w-full text-start text-4xl font-bold'>
+                    <h1 className='w-full text-start text-4xl'>
                       {
                         language.data.app.guilds.player.artist.category
                           .similarArtists
@@ -872,24 +900,26 @@ function Page() {
                     <div className='flex-1'></div>
                     <div className='embla__buttons gap-3 flex items-center justify-center'>
                       <Button
-                        onClick={artistEmblaOnPrevButtonClick}
+                        onPress={artistEmblaOnPrevButtonClick}
                         disabled={artistEmblaPrevBtnDisabled}
                         title='previous'
-                        className='rounded-full'
+                        className='embla__button embla__button--prev border-2 border-foreground/10 bg-foreground/10 disabled:opacity-30 disabled:bg-transparent disabled:border-foreground/5'
                         type='button'
-                        size='icon'
-                        variant='ghost'
+                        size='sm'
+                        radius='full'
+                        isIconOnly
                       >
                         <CaretLeft />
                       </Button>
                       <Button
-                        onClick={artistEmblaOnNextButtonClick}
+                        onPress={artistEmblaOnNextButtonClick}
                         disabled={artistEmblaNextBtnDisabled}
                         title='next'
-                        className='rounded-full'
+                        className='embla__button embla__button--next border-2 border-foreground/10 bg-foreground/10 disabled:opacity-30 disabled:bg-transparent disabled:border-foreground/5'
                         type='button'
-                        size='icon'
-                        variant='ghost'
+                        size='sm'
+                        radius='full'
+                        isIconOnly
                       >
                         <CaretRight />
                       </Button>
@@ -903,7 +933,7 @@ function Page() {
                         channelDetail.related.results &&
                         channelDetail.related.results.length > 0
                           ? channelDetail.related.results.map(
-                              (artistDetail: any, index: number) => (
+                              (artistDetail, index) => (
                                 <React.Fragment key={index}>
                                   <ArtistCard
                                     artist={{
@@ -920,7 +950,7 @@ function Page() {
                             channelDetailv1.similarArtists &&
                             channelDetailv1.similarArtists.length > 0 &&
                             channelDetailv1.similarArtists.map(
-                              (artistDetail: any, index: number) => (
+                              (artistDetail, index) => (
                                 <React.Fragment key={index}>
                                   <ArtistCard artist={artistDetail} />
                                 </React.Fragment>

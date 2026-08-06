@@ -1,11 +1,12 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useLanguageContext } from '@/contexts/languageContext';
+import { ScrollShadow } from "@heroui/react";
 import { Confetti } from '@phosphor-icons/react/dist/ssr';
 import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo';
-import { useAppStore } from '@/store/coreStore';
 
 function NotInSameVC() {
-  const language = useAppStore((state) => state.language);
+  const { language } = useLanguageContext();
   const { guild } = useDiscordGuildInfo();
 
   return (
@@ -16,7 +17,7 @@ function NotInSameVC() {
       transition={{ duration: 0.48, delay: 0.1 }}
     >
       <motion.div
-        className='relative bg-primary/10 border border-primary/20 rounded-3xl p-8 overflow-hidden w-full max-w-96 flex flex-col gap-4 items-center justify-center'
+        className='relative bg-primary/10 border-2 border-primary/10 rounded-3xl p-8 overflow-hidden w-full max-w-96 flex flex-col gap-4 items-center justify-center'
         initial={{ opacity: 0, scale: 1.32 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{
@@ -25,20 +26,20 @@ function NotInSameVC() {
           type: 'spring',
         }}
       >
-        <div className='w-full max-h-64 overflow-y-auto px-2 py-4'>
-          <div className='flex flex-col gap-2 items-center justify-center h-full w-full m-auto text-center'>
-            <Confetti className='text-muted-foreground' size={48} />
-            <h2 className='text-xl font-semibold text-muted-foreground'>
+        <ScrollShadow className='w-full h-64 px-2 py-4'>
+          <div className='flex flex-col gap-2 items-center justify-center h-full w-full m-auto'>
+            <Confetti className='text-foreground/60' size={48} />
+            <h1 className='text-2xl text-foreground/60'>
               {language.data.app.guilds.player.notSameVC.title}
-            </h2>
-            <span className='text-sm text-muted-foreground/60'>
+            </h1>
+            <span className='text-base text-foreground/30'>
               {language.data.app.guilds.player.notSameVC.description.replace(
                 '[guildName]',
                 guild?.name || ''
               )}
             </span>
           </div>
-        </div>
+        </ScrollShadow>
       </motion.div>
     </motion.div>
   );

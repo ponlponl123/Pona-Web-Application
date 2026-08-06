@@ -3,7 +3,9 @@
   "label": "English",
   "country": "us",
   "state": "ready",
-  "translators": ["Ponlponl123"],
+  "translators": [
+    "Ponlponl123"
+  ],
   "looking_for_translator": false,
   "extensions": {
     "new": "New",
@@ -385,9 +387,18 @@
       "search_no_results_desc": "No Discord server matching \"[query]\" was found. Try clearing your search filter.",
       "clear_search": "Clear Search Filter",
       "loading": "Looking for guilds...",
+      "you_are_here": "You are Here!",
+      "connected": "Connected",
       "not_found": {
         "title": "Guilds not found",
         "description": "Or the party hasn't started yet!? Then let's make our party!"
+      },
+      "comingsoon": {
+        "badge": "Coming Soon",
+        "subtitle": "Something awesome is in the works",
+        "description": "We are crafting a seamless, secure, and powerful experience. Stay tuned for the official launch.",
+        "back": "Back to Workspace",
+        "target_launch": "Target Launch:"
       },
       "stats": {
         "title": "Statistics",

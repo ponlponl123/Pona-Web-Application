@@ -28,11 +28,18 @@ import {
   SquaresFourIcon,
 } from "@phosphor-icons/react/dist/ssr"
 import { Input } from "react-smooth-input"
+import { useSetAtom } from "jotai"
+import { isFeedbackModalOpenAtom } from "@/store/uiAtoms"
+import { Sparkles } from "@/components/animate-ui/icons/sparkles"
+import { AnimateIcon } from "@/components/animate-ui/icons/icon"
+import { Heart } from "@/components/animate-ui/icons/heart"
+import { PartyPopper } from "@/components/animate-ui/icons/party-popper"
 
 function Page(): React.ReactElement {
   const language = useAppStore((state) => state.language)
   const { userInfo } = useDiscordUserInfo()
   const { setCurrentGuild } = useDiscordGuildInfo()
+  const setIsFeedbackModalOpen = useSetAtom(isFeedbackModalOpenAtom)
 
   const [guilds, setGuilds] = React.useState<GuildInfo[] | false | null>(null)
   const [searchQuery, setSearchQuery] = React.useState<string>("")
@@ -88,10 +95,10 @@ function Page(): React.ReactElement {
     const query = searchQuery.toLowerCase().trim()
     const list = query
       ? guilds.filter(
-          (guild) =>
-            guild.name.toLowerCase().includes(query) ||
-            guild.id.toLowerCase().includes(query)
-        )
+        (guild) =>
+          guild.name.toLowerCase().includes(query) ||
+          guild.id.toLowerCase().includes(query)
+      )
       : [...guilds]
 
     // Sort connected guilds to the top (order -1)
@@ -300,9 +307,9 @@ function Page(): React.ReactElement {
                 <p className="mt-1 max-w-md text-sm text-foreground/60">
                   {searchQuery
                     ? language.data.app.home.search_no_results_desc.replace(
-                        "[query]",
-                        searchQuery
-                      )
+                      "[query]",
+                      searchQuery
+                    )
                     : language.data.app.guilds.not_found.description}
                 </p>
                 <div className="mt-6 flex gap-3">
@@ -334,57 +341,62 @@ function Page(): React.ReactElement {
         </section>
 
         <section className="mt-16 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          <motion.div
-            initial={{ opacity: 0, filter: "blur(4px)" }}
-            animate={{ opacity: 1, filter: "blur(0px)" }}
-            transition={{ duration: 0.4, delay: 0.42, ease: "easeOut" }}
-            className="group relative flex flex-col justify-between overflow-hidden rounded-3xl bg-indigo-500/10 p-8 shadow-xl backdrop-blur-md transition-all duration-300 hover:border-indigo-500/40 hover:shadow-indigo-500/10 dark:border-indigo-500/20 dark:bg-indigo-950/40"
-          >
-            <div className="relative z-10">
-              <div className="mb-4 inline-flex text-indigo-600 dark:text-indigo-300">
-                <HeartIcon size={48} weight="fill" />
-              </div>
-              <h3 className="text-2xl font-bold text-foreground dark:text-white">
-                {language.data.app.home.feedback.title}
-              </h3>
-              <p className="mt-2 text-sm text-foreground/70 dark:text-indigo-100/70">
-                {language.data.app.home.feedback.description}
-              </p>
-            </div>
-            <HeartIcon
-              size={160}
-              className="absolute -right-8 -bottom-8 rotate-12 fill-current text-indigo-500/10 transition-transform duration-500 group-hover:scale-110 dark:text-indigo-400/5"
-              weight="fill"
-            />
-          </motion.div>
-
-          <Link href="/updates">
+          <AnimateIcon animateOnHover={"fill"}>
             <motion.div
               initial={{ opacity: 0, filter: "blur(4px)" }}
               animate={{ opacity: 1, filter: "blur(0px)" }}
-              transition={{ duration: 0.4, delay: 0.48, ease: "easeOut" }}
-              className="group relative flex flex-col justify-between overflow-hidden rounded-3xl bg-fuchsia-500/10 p-8 shadow-xl backdrop-blur-md transition-all duration-300 hover:border-fuchsia-500/40 hover:shadow-fuchsia-500/10 dark:border-fuchsia-500/20 dark:bg-purple-950/40"
+              transition={{ duration: 0.4, delay: 0.42, ease: "easeOut" }}
+              onClick={() => setIsFeedbackModalOpen(true)}
+              className="group cursor-pointer relative flex flex-col justify-between overflow-hidden rounded-3xl bg-primary/10 p-8 shadow-xl backdrop-blur-md transition-all duration-300 hover:border-primary/40 hover:shadow-primary/10"
             >
               <div className="relative z-10">
-                <div className="mb-4 inline-flex text-fuchsia-600 dark:text-fuchsia-300">
-                  <NutIcon size={48} weight="fill" />
+                <div className="mb-4 inline-flex text-primary">
+                  <Heart size={48} />
                 </div>
-                <h3 className="text-2xl font-bold text-foreground dark:text-white">
-                  {language.data.app.home.whatnew.title.replace(
-                    "[version]",
-                    `v${process.env.NEXT_PUBLIC_APP_VERSION || "1.0"}`
-                  )}
+                <h3 className="text-2xl font-bold text-default-foreground">
+                  {language.data.app.home.feedback.title}
                 </h3>
-                <p className="mt-2 text-sm text-foreground/70 dark:text-fuchsia-100/70">
-                  {language.data.app.home.whatnew.description}
+                <p className="mt-2 text-sm text-primary/70">
+                  {language.data.app.home.feedback.description}
                 </p>
               </div>
-              <NutIcon
+              <HeartIcon
                 size={160}
-                className="absolute -right-8 -bottom-8 -rotate-45 fill-current text-fuchsia-500/10 transition-transform duration-500 group-hover:scale-110 dark:text-fuchsia-400/5"
+                className="absolute -right-8 -bottom-8 rotate-12 fill-current text-primary/10 transition-transform duration-500 group-hover:scale-110"
                 weight="fill"
               />
             </motion.div>
+          </AnimateIcon>
+
+          <Link href="/updates">
+            <AnimateIcon animateOnHover={"fill"}>
+              <motion.div
+                initial={{ opacity: 0, filter: "blur(4px)" }}
+                animate={{ opacity: 1, filter: "blur(0px)" }}
+                transition={{ duration: 0.4, delay: 0.48, ease: "easeOut" }}
+                className="group relative flex flex-col justify-between overflow-hidden rounded-3xl bg-focus/10 p-8 shadow-xl backdrop-blur-md transition-all duration-300 hover:border-focus/40 hover:shadow-focus/10"
+              >
+                <div className="relative z-10">
+                  <div className="mb-4 inline-flex text-focus">
+                    <Sparkles size={48} />
+                  </div>
+                  <h3 className="text-2xl font-bold text-default-foreground">
+                    {language.data.app.home.whatnew.title.replace(
+                      "[version]",
+                      `v${process.env.NEXT_PUBLIC_APP_VERSION || "1.0"}`
+                    )}
+                  </h3>
+                  <p className="mt-2 text-sm text-focus/70">
+                    {language.data.app.home.whatnew.description}
+                  </p>
+                </div>
+                <NutIcon
+                  size={160}
+                  className="absolute -right-8 -bottom-8 -rotate-45 fill-current text-focus/10 transition-transform duration-500 group-hover:scale-110"
+                  weight="fill"
+                />
+              </motion.div>
+            </AnimateIcon>
           </Link>
 
           <Link
@@ -393,29 +405,31 @@ function Page(): React.ReactElement {
             rel="noopener noreferrer"
             className="inline-block"
           >
-            <motion.div
-              initial={{ opacity: 0, filter: "blur(4px)" }}
-              animate={{ opacity: 1, filter: "blur(0px)" }}
-              transition={{ duration: 0.4, delay: 0.54, ease: "easeOut" }}
-              className="group relative flex flex-col justify-between overflow-hidden rounded-3xl bg-emerald-500/10 p-8 shadow-xl backdrop-blur-md transition-all duration-300 hover:border-emerald-500/40 hover:shadow-emerald-500/10 md:col-span-2 lg:col-span-1 dark:border-emerald-500/20 dark:bg-emerald-950/40"
-            >
-              <div className="relative z-10">
-                <div className="mb-4 inline-flex text-emerald-600 dark:text-emerald-300">
-                  <ConfettiIcon size={48} weight="fill" />
+            <AnimateIcon animateOnHover>
+              <motion.div
+                initial={{ opacity: 0, filter: "blur(4px)" }}
+                animate={{ opacity: 1, filter: "blur(0px)" }}
+                transition={{ duration: 0.4, delay: 0.54, ease: "easeOut" }}
+                className="group relative flex flex-col justify-between overflow-hidden rounded-3xl bg-success/10 p-8 shadow-xl backdrop-blur-md transition-all duration-300 hover:border-success/40 hover:shadow-success/10 md:col-span-2 lg:col-span-1"
+              >
+                <div className="relative z-10">
+                  <div className="mb-4 inline-flex text-success">
+                    <PartyPopper size={48} />
+                  </div>
+                  <h3 className="text-2xl font-bold text-default-foreground">
+                    {language.data.app.home.invite_card.title}
+                  </h3>
+                  <p className="mt-2 text-sm text-success/70">
+                    {language.data.app.home.invite_card.description}
+                  </p>
                 </div>
-                <h3 className="text-2xl font-bold text-foreground dark:text-white">
-                  {language.data.app.home.invite_card.title}
-                </h3>
-                <p className="mt-2 text-sm text-foreground/70 dark:text-emerald-100/70">
-                  {language.data.app.home.invite_card.description}
-                </p>
-              </div>
-              <SparkleIcon
-                size={160}
-                className="absolute -right-8 -bottom-8 rotate-12 fill-current text-emerald-500/10 transition-transform duration-500 group-hover:scale-110 dark:text-emerald-400/5"
-                weight="fill"
-              />
-            </motion.div>
+                <SparkleIcon
+                  size={160}
+                  className="absolute -right-8 -bottom-8 rotate-12 fill-current text-success/10 transition-transform duration-500 group-hover:scale-110"
+                  weight="fill"
+                />
+              </motion.div>
+            </AnimateIcon>
           </Link>
         </section>
       </main>

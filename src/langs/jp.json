@@ -3,7 +3,9 @@
   "label": "日本語",
   "country": "jp",
   "state": "dev",
-  "translators": ["Ponlponl123"],
+  "translators": [
+    "Ponlponl123"
+  ],
   "looking_for_translator": true,
   "extensions": {
     "new": "新着",
@@ -389,9 +391,18 @@
       "search_no_results_desc": "「[query]」に一致するDiscordサーバーが見つかりませんでした。検索フィルターをクリアしてみてください。",
       "clear_search": "検索フィルターをクリア",
       "loading": "ギルドを探しています...",
+      "you_are_here": "ここにいます！",
+      "connected": "接続済み",
       "not_found": {
         "title": "サーバーが見つかりません",
         "description": "まだパーティーが始まっていないようです。さあ、パーティーを始めましょう！"
+      },
+      "comingsoon": {
+        "badge": "近日公開",
+        "subtitle": "素晴らしい新機能を開発中です",
+        "description": "シームレスで安全、かつ強力な体験を構築しています。正式リリースをお楽しみに！",
+        "back": "ワークスペースに戻る",
+        "target_launch": "リリース予定:"
       },
       "stats": {
         "title": "統計",
