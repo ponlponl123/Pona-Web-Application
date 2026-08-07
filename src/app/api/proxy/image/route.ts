@@ -19,6 +19,7 @@ const cache = new LRUCache<string, CacheEntry>({
 })
 
 function resolveRelativeUrl(req: NextRequest, path: string): string {
+  if (path.startsWith("//")) return `https:${path}`
   if (path.startsWith("http")) return path
 
   const protocol =
@@ -107,7 +108,11 @@ export async function GET(req: NextRequest) {
     )
   }
 
-  const ref = rawRef.startsWith("/") ? resolveRelativeUrl(req, rawRef) : rawRef
+  const ref = rawRef.startsWith("//")
+    ? `https:${rawRef}`
+    : rawRef.startsWith("/")
+    ? resolveRelativeUrl(req, rawRef)
+    : rawRef
 
   try {
     const imageUrl = new URL(ref)
@@ -138,10 +143,7 @@ export async function GET(req: NextRequest) {
     })
 
     if (!response.ok) {
-      return NextResponse.json(
-        { error: `Failed to fetch image: ${response.statusText}` },
-        { status: response.status }
-      )
+      return NextResponse.redirect(ref, 302)
     }
 
     let contentType =
@@ -183,12 +185,6 @@ export async function GET(req: NextRequest) {
     })
   } catch (err) {
     console.error("Image proxy error:", err)
-    return NextResponse.json(
-      {
-        error: "Failed to process image",
-        details: err instanceof Error ? err.message : "Unknown",
-      },
-      { status: 500 }
-    )
+    return NextResponse.redirect(ref, 302)
   }
 }

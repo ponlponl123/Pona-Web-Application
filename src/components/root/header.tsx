@@ -8,6 +8,7 @@ import { fetchSearchHistory } from "@/lib/server-side-api/internal/history"
 import { fetchSearchSuggestionResult } from "@/lib/server-side-api/internal/search"
 import { Controller, useForm } from "react-hook-form"
 import {
+  ArrowLeftIcon,
   CaretDownIcon,
   ClockCounterClockwiseIcon,
   ConfettiIcon,
@@ -48,9 +49,9 @@ function Header() {
   const { guild } = useDiscordGuildInfo()
   const { userInfo } = useDiscordUserInfo()
   const language = useAppStore((state) => state.language)
-    const ponaCommonState = useAtomValue(ponaCommonStateAtom)
-    const isSameVC = useAtomValue(isSameVCAtom)
-    const isMemberInVC = useAtomValue(isMemberInVCAtom)
+  const ponaCommonState = useAtomValue(ponaCommonStateAtom)
+  const isSameVC = useAtomValue(isSameVCAtom)
+  const isMemberInVC = useAtomValue(isMemberInVCAtom)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -58,13 +59,17 @@ function Header() {
   })
 
   const isApp = pathname.startsWith("/app")
+  const pathSegments = pathname.split("/")
   const isInGuild =
     isApp &&
-    pathname.split("/").includes("g") &&
-    !isNaN(Number(pathname.split("/")[3]))
-  const guildPath = isInGuild ? pathname.split("/")[4] : ""
+    pathSegments.includes("g") &&
+    !isNaN(Number(pathSegments[3]))
+  const currentGuildId = isInGuild ? pathSegments[3] : guild?.id || ""
+  const guildPath = isInGuild ? pathSegments[4] : ""
+  const playerHomePath = currentGuildId ? `/app/g/${currentGuildId}/player` : "/app"
   const isMusicApp = isApp && pathname.includes("/player")
   const isIndex = pathname === "/"
+  const isInChannelPage = pathname.includes("player/c")
 
   const searchSuggestionRef = useRef<HTMLDivElement>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
@@ -121,16 +126,16 @@ function Header() {
     <motion.header
       className={cn(
         `nav-opened-${navOpened}`,
-        "pona-header flex h-20 w-full items-center justify-center gap-3 p-6 px-8",
+        "pona-header flex h-20 w-full items-center justify-center gap-3 p-6 px-8 max-md:px-3",
         isApp && "md:px-2",
         !isIndex && !isMusicApp && "max-md:backdrop-blur-md",
         !isIndex &&
-          isMusicApp &&
-          "max-md:[body.pona-app-music-scrolled_&]:bg-playground-background/40 apply-soft-transition border-b-2 border-foreground/0 bg-transparent duration-1000! max-md:[body.pona-app-music-scrolled_&]:border-foreground/10 max-md:[body.pona-app-music-scrolled_&]:backdrop-blur-md",
+        isMusicApp &&
+        "max-md:[body.pona-app-music-scrolled_&]:bg-playground-background/40 apply-soft-transition border-b-2 border-foreground/0 bg-transparent duration-1000! max-md:[body.pona-app-music-scrolled_&]:border-foreground/10 max-md:[body.pona-app-music-scrolled_&]:backdrop-blur-md",
         !isIndex &&
-          isMemberInVC &&
-          isSameVC &&
-          "max-md:[body.pona-player-focused_&]:pointer-events-none max-md:[body.pona-player-focused_&]:opacity-0"
+        isMemberInVC &&
+        isSameVC &&
+        "max-md:[body.pona-player-focused_&]:pointer-events-none max-md:[body.pona-player-focused_&]:opacity-0"
       )}
       initial={isIndex && { y: "-100%", opacity: 0 }}
       animate={isIndex && { y: 0, opacity: 1 }}
@@ -145,6 +150,9 @@ function Header() {
             onClick={() => {
               setNavOpened(false)
             }}
+            className={cn(
+              isInChannelPage && "max-md:hidden"
+            )}
           >
             <h1 className="flex items-center gap-2 text-xl max-md:text-base">
               {isApp ? (
@@ -200,6 +208,20 @@ function Header() {
                 "Pona!"
               )}
             </h1>
+          </Link>
+          <Link
+            href={isApp ? playerHomePath : "/"}
+            onClick={() => {
+              setNavOpened(false)
+            }}
+            className={cn(
+              !isInChannelPage && "hidden",
+              isInChannelPage && "md:hidden"
+            )}
+          >
+            <Button variant={"ghost"} size={"icon-lg"} className={"rounded-full size-12"}>
+              <ArrowLeftIcon weight="bold" />
+            </Button>
           </Link>
         </div>
         <div className="z-20 flex items-center gap-4">
@@ -302,12 +324,11 @@ function Header() {
                               }
                             }}
                             onBlur={handleBlur}
-                            className={`${
-                              pathname.includes("player") &&
+                            className={`${pathname.includes("player") &&
                               pathname.includes("search")
-                                ? "max-miniscreen:translate-x-0"
-                                : "max-miniscreen:min-w-0 max-miniscreen:w-10 max-miniscreen:pointer-events-none max-miniscreen:opacity-0 max-miniscreen:-translate-y-8"
-                            } pona-music-searchbox z-10 rounded-xl text-foreground backdrop-blur max-md:rounded-full`}
+                              ? "max-miniscreen:translate-x-0"
+                              : "max-miniscreen:min-w-0 max-miniscreen:w-10 max-miniscreen:pointer-events-none max-miniscreen:opacity-0 max-miniscreen:-translate-y-8"
+                              } pona-music-searchbox z-10 rounded-xl text-foreground backdrop-blur max-md:rounded-full`}
                           />
                         )}
                       />
@@ -471,7 +492,7 @@ function Header() {
             )}
             {userInfo && isInGuild && guildPath === "player" ? (
               <>
-                <UserAccountDropdown minimize={true} />
+                {/* <UserAccountDropdown minimize={false} /> */}
               </>
             ) : (
               <>

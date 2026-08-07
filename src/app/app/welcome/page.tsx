@@ -4,6 +4,7 @@ import confetti from "canvas-confetti"
 import MyButton from "@/components/ui/custom/button"
 import { useDiscordUserInfo } from "@/contexts/discordUserInfo"
 import Link from "next/link"
+import { randomInRange } from "@/lib/utils"
 
 function Page() {
   const { userInfo } = useDiscordUserInfo()
@@ -12,10 +13,6 @@ function Page() {
     const duration = 5 * 1000
     const animationEnd = Date.now() + duration
     const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 }
-
-    function randomInRange(min: number, max: number): number {
-      return Math.random() * (max - min) + min
-    }
 
     const interval = setInterval(function () {
       const timeLeft = animationEnd - Date.now()

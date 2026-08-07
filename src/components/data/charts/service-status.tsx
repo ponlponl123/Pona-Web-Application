@@ -14,6 +14,9 @@ import {
   ResponsiveContainer,
   XAxis,
 } from "recharts"
+import { getRandomColor } from "@/lib/colorUtils"
+
+export { getRandomColor }
 
 type ShardData = {
   [key: string]: number
@@ -22,15 +25,6 @@ type ShardData = {
 type Dataset = {
   time: string
   shards: ShardData
-}
-
-export function getRandomColor(seed: string): string {
-  let hash = 0
-  for (let i = 0; i < seed.length; i++) {
-    hash = seed.charCodeAt(i) + ((hash << 5) - hash)
-  }
-  const color = (hash & 0x00ffffff).toString(16).toUpperCase()
-  return "#" + "00000".substring(0, 6 - color.length) + color
 }
 
 function ManagerChart({ mode }: { mode?: viewType }) {

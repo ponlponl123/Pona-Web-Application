@@ -439,6 +439,7 @@
           "connected": {},
           "connecting": {
             "title": "Trying to connect to socket service..",
+            "description": "Establishing secure real-time music sync...",
             "chip": "Connecting...",
             "sec": "s"
           },

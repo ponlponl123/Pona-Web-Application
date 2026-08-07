@@ -141,6 +141,7 @@ const ModalBody = React.forwardRef<
     </CustomScrollArea>
   )
 })
+ModalBody.displayName = "ModalBody"
 
 function ModalFooter({
   children,

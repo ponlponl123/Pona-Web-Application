@@ -119,7 +119,7 @@ const SettingModalProvider = ({ children }: { children: React.ReactNode }) => {
       clearTimeout(timeoutId)
       observer.disconnect()
     }
-  }, [SelectedPageKey, isSettingModalOpen, bodyRef.current])
+  }, [SelectedPageKey, isSettingModalOpen])
 
   const scrollTo = (rawId: string) => {
     const targetId = rawId.startsWith("#") ? rawId.substring(1) : rawId

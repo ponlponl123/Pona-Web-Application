@@ -33,9 +33,9 @@ function ActivationLink({
 }: ActivationLinkProps) {
   const pathname = usePathname() || ""
 
-  let isHere = href && pathname === href
+  const isHere = href && pathname === href
 
-  const Button = () => (
+  const buttonContent = (
     <motion.button
       onClick={onClick}
       className={cn(
@@ -75,14 +75,14 @@ function ActivationLink({
     return (
       <motion.div className="block w-full rounded-lg duration-0">
         <Link href={href}>
-          <Button />
+          {buttonContent}
         </Link>
       </motion.div>
     )
 
   return (
     <motion.div className="block w-full rounded-lg duration-0">
-      <Button />
+      {buttonContent}
     </motion.div>
   )
 }

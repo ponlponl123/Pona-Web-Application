@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Spinner } from "@/components/ui/spinner"
 import { useAppStore } from "@/store/coreStore"
 
-interface GuildSettings {}
+type GuildSettings = Record<string, unknown>
 
 function Page() {
   const { guild } = useDiscordGuildInfo()
@@ -17,7 +17,7 @@ function Page() {
     React.useState<GuildSettings | null>(null)
 
   React.useEffect(() => {
-    setLoading(false)
+    queueMicrotask(() => setLoading(false))
   }, [])
 
   return (

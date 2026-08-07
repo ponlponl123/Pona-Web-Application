@@ -17,8 +17,11 @@ export interface SpecificArtistBasic {
 }
 
 export interface AlbumBasic {
-  id: string
   name: string
+  albumId: string
+  id?: string
+  browseId?: string
+  title?: string
 }
 
 export type ResultType =
@@ -181,6 +184,22 @@ export interface VideoDetailed {
   thumbnails: ThumbnailFull[]
 }
 
+export interface TrackResultItem {
+  title?: string
+  name?: string
+  videoId?: string
+  browseId?: string
+  artists?: ArtistBasic[]
+  artist?: ArtistBasic
+  album?: AlbumBasic | { name?: string; title?: string; albumId?: string; id?: string; browseId?: string } | null
+  thumbnails?: ThumbnailFull[] | null
+  duration?: string
+  duration_seconds?: number | null
+  resultType?: string
+  category?: string
+  isExplicit?: boolean
+}
+
 export interface ExtendedVideoDetailed extends VideoDetailed {
   likeStatus: string
   inLibrary: boolean
@@ -296,6 +315,7 @@ export interface ProfilePlaylist {
 
 export interface ProfileFull {
   name: string
+  thumbnails?: ThumbnailFull[]
   videos: {
     browseId: string | null
     results: ArtistVideo[]

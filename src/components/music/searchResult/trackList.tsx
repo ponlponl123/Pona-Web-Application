@@ -1,11 +1,12 @@
 'use client';
+import React from 'react';
+import { useAtomValue } from 'jotai';
+
+import { ponaCommonStateAtom } from '@/store/musicAtoms';
 import { AlbumTrack } from '@/types/youtube/ytmusic-api';
-import { msToTime } from '@/utils/time';
+import { msToTime } from '@/lib/utils';
 import PlayButton from '../button/play';
 import { combineArtistName } from './track';
-import { useAtomValue } from 'jotai';
-import { ponaCommonStateAtom } from '@/store/musicAtoms';
-import React from 'react';
 
 function TrackList({
   data,
@@ -17,22 +18,26 @@ function TrackList({
   showThumbnail?: boolean;
 }) {
   const ponaCommonState = useAtomValue(ponaCommonStateAtom);
-  const isCurrent = ponaCommonState?.current?.identifier === data.videoId;
+  const isCurrentPlaying = ponaCommonState?.current?.identifier === data.videoId;
 
   return (
     <div
       className={
-        'w-full max-w-full flex gap-4 items-center justify-start group py-2 px-4 rounded-2xl overflow-hidden group hover:bg-card/50 transition-colors ' +
-        (isCurrent ? 'bg-primary/10' : '')
+        'w-full max-w-full flex gap-4 items-center justify-start group py-2 px-4 rounded-2xl overflow-hidden ' +
+        ` ${isCurrentPlaying ? 'bg-foreground/10' : 'hover:bg-muted/40 transition-colors'}`
       }
     >
-      <div className='flex flex-row gap-1 justify-center items-center w-12 h-12 relative flex-shrink-0'>
+      <div className='flex flex-row gap-1 justify-center items-center w-12 h-12 min-w-12 max-w-12 max-h-12 relative shrink-0'>
         <PlayButton
+          playPause={isCurrentPlaying}
           className={
-            'absolute top-0 left-0 rounded-xl bg-transparent shadow-none hover:bg-primary/20 ' +
-            (isCurrent ? 'opacity-100' : 'group-hover:opacity-100 opacity-0')
+            'rounded-xl absolute top-0 left-0 bg-transparent ' +
+            ` ${isCurrentPlaying ? '' : 'group-hover:opacity-100 opacity-0'}`
           }
-          iconSize={14}
+          iconSize={12}
+          classNames={{
+            playpause: 'text-sm',
+          }}
           detail={{
             author: combineArtistName(data?.artists || []),
             identifier: data?.videoId,
@@ -44,35 +49,34 @@ function TrackList({
         />
         <span
           className={
-            'text-sm text-muted-foreground w-full text-center ' +
-            (isCurrent ? 'opacity-0' : 'group-hover:opacity-0 opacity-100')
+            'text-sm w-full overflow-hidden text-ellipsis whitespace-nowrap text-center text-muted-foreground font-medium' +
+            ` ${isCurrentPlaying ? '' : 'group-hover:opacity-0 opacity-100'}`
           }
         >
           {index}
         </span>
       </div>
-
       {showThumbnail && data.thumbnails && data.thumbnails.length > 0 && (
-        <div className='w-12 h-12 rounded-lg overflow-hidden flex-shrink-0'>
+        <div className='flex flex-row gap-1 justify-center items-center w-12 h-12 min-w-12 max-w-12 max-h-12 relative shrink-0 rounded-lg overflow-hidden'>
           <img
-            src={`/api/proxy/image?r=` + data.thumbnails[0].url}
+            src={`/api/proxy/image?r=${encodeURIComponent(data.thumbnails[0].url)}`}
             alt={data.title}
-            className='w-full h-full object-cover'
+            className='aspect-square h-full w-full object-cover'
           />
         </div>
       )}
-
-      <div className='flex flex-col gap-1 justify-center items-start flex-1 min-w-0'>
-        <h4 className='text-base font-medium truncate w-full text-left'>
+      <div className='flex flex-col gap-1 justify-center items-start flex-1 w-0 min-w-0 opacity-80 group-hover:opacity-100 transition-opacity'>
+        <h1 className='text-base font-medium max-w-full w-full overflow-hidden text-ellipsis whitespace-nowrap text-start'>
           {data?.title}
-        </h4>
-        <p className='text-xs text-muted-foreground truncate w-full text-left'>
+        </h1>
+        <h3 className='text-xs max-w-full w-full overflow-hidden text-ellipsis whitespace-nowrap text-start text-muted-foreground'>
           {combineArtistName(data?.artists || [])}
-        </p>
+        </h3>
       </div>
-
-      <div className='flex flex-row gap-1 justify-center items-center flex-shrink-0 text-xs text-muted-foreground'>
-        {data.duration_seconds ? msToTime(data.duration_seconds * 1000) : ''}
+      <div className='flex flex-row gap-1 justify-center items-start relative shrink-0 min-w-max'>
+        <h3 className='text-xs text-muted-foreground font-mono w-full overflow-hidden text-ellipsis whitespace-nowrap text-start'>
+          {data.duration_seconds ? msToTime(data.duration_seconds * 1000) : ''}
+        </h3>
       </div>
     </div>
   );

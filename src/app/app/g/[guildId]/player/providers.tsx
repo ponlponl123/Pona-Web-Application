@@ -1,88 +1,115 @@
 'use client';
-import { Image } from '@heroui/react';
-import React from 'react';
+
+import React, { useEffect, useMemo, useRef } from 'react';
 import { useMediaQuery } from 'react-responsive';
+import { useAtomValue } from 'jotai';
+import { MusicNoteSimple } from '@phosphor-icons/react/dist/ssr';
 
 import PageAnimatePresence from '@/components/HOC/PageAnimatePresence';
-import { MusicNoteSimple } from '@phosphor-icons/react/dist/ssr';
+import PlayerNav from '@/components/mobile/playerNav';
 
 import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo';
 import { useDiscordUserInfo } from '@/contexts/discordUserInfo';
-import { useGlobalContext } from '@/contexts/globalContext';
-import { useLanguageContext } from '@/contexts/languageContext';
-import { usePonaMusicContext } from '@/contexts/ponaMusicContext';
-import { useUserSettingContext } from '@/contexts/userSettingContext';
+import { useSocket } from '@/contexts/ponaMusicContext';
+import { useAppStore } from '@/store/coreStore';
+import { ponaCommonStateAtom } from '@/store/musicAtoms';
+import { isSameVCAtom } from '@/store/uiAtoms';
 
 import LetsPonaJoin from './@system/lets-pona-join';
 import NotInSameVC from './@system/not-in-same-vc';
 import SocketConnecting from './@system/socket-connecting';
 
-import PlayerNav from '@/components/mobile/playerNav';
 import DesktopPonaPlayer from './@system/player/desktop';
 import MobilePonaPlayer from './@system/player/mobile';
 import DesktopPonaPlayerPanel from './@system/player/panel/desktop';
 
-function Providers({ children }: { children: React.ReactNode }) {
+export default function Providers({ children }: { children: React.ReactNode }) {
   const { guild } = useDiscordGuildInfo();
-  const { language } = useLanguageContext();
   const { userInfo } = useDiscordUserInfo();
-  const { userSetting } = useUserSettingContext();
-  const { isConnected, socket } = usePonaMusicContext();
-  const { ponaCommonState, isSameVC, isMobile } = useGlobalContext();
+  const { isConnected, socket } = useSocket();
+
+  const isMobile = useAppStore((state) => state.isMobile);
+  const language = useAppStore((state) => state.language);
+  const userSetting = useAppStore((state) => state.userSetting);
+
+  const ponaCommonState = useAtomValue(ponaCommonStateAtom);
+  const isSameVC = useAtomValue(isSameVCAtom);
+
   const currentTrack = ponaCommonState?.current;
-  const backdropBg = currentTrack
-    ? currentTrack?.proxyThumbnail
-      ? currentTrack?.proxyArtworkUrl
-      : currentTrack?.thumbnail
-    : guild?.bannerURL
-      ? guild?.bannerURL + '?size=640'
-      : guild?.iconURL
-        ? guild?.iconURL + '?size=640'
-        : userInfo?.banner
-          ? `https://cdn.discordapp.com/banners/${userInfo?.id}/${userInfo?.banner}?size=640`
-          : userInfo?.avatar
-            ? `https://cdn.discordapp.com/avatars/${userInfo?.id}/${userInfo?.avatar}?size=640`
-            : '/static/backdrop.png';
+
+  const backdropBg = useMemo(() => {
+    if (currentTrack) {
+      return currentTrack.proxyThumbnail
+        ? currentTrack.proxyArtworkUrl
+        : currentTrack.thumbnail;
+    }
+    if (guild?.bannerURL) return `${guild.bannerURL}?size=640`;
+    if (guild?.iconURL) return `${guild.iconURL}?size=640`;
+    if (userInfo?.banner)
+      return `https://cdn.discordapp.com/banners/${userInfo.id}/${userInfo.banner}?size=640`;
+    if (userInfo?.avatar)
+      return `https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}?size=640`;
+    return '/static/backdrop.png';
+  }, [
+    currentTrack,
+    guild?.bannerURL,
+    guild?.iconURL,
+    userInfo?.banner,
+    userInfo?.id,
+    userInfo?.avatar,
+  ]);
 
   const isTabletOrMobile = useMediaQuery({ query: '(max-width: 768px)' });
+  const showMobilePlayer = isTabletOrMobile || isMobile;
 
-  const musicAppContent = React.useRef<HTMLElement>(null);
+  const musicAppContent = useRef<HTMLDivElement>(null);
 
-  React.useEffect(() => {
-    if (musicAppContent.current) {
-      musicAppContent.current.addEventListener('scroll', e => {
-        if (e.target instanceof Element && e.target.scrollTop > 0) {
-          document.body.classList.add('pona-app-music-scrolled');
-        } else {
-          document.body.classList.remove('pona-app-music-scrolled');
-        }
-      });
-    }
-  }, [musicAppContent]);
+  useEffect(() => {
+    const element = musicAppContent.current;
+    if (!element) return;
+
+    const handleScroll = (e: Event) => {
+      if (e.target instanceof Element && e.target.scrollTop > 0) {
+        document.body.classList.add('pona-app-music-scrolled');
+      } else {
+        document.body.classList.remove('pona-app-music-scrolled');
+      }
+    };
+
+    element.addEventListener('scroll', handleScroll, { passive: true });
+
+    return () => {
+      element.removeEventListener('scroll', handleScroll);
+      document.body.classList.remove('pona-app-music-scrolled');
+    };
+  }, []);
+
+  const isSocketConnected = isConnected || socket?.connected;
+  const hasVoiceChannel = Boolean(ponaCommonState?.pona.voiceChannel);
 
   return (
     <>
-      <main
+      <div
         id='app-panel'
         ref={musicAppContent}
-        className='relative h-screen overflow-x-hidden overflow-y-auto scrollbar-hide -mb-6 pb-12 select-none'
+        className='relative min-h-screen scrollbar-hide -mb-6 pb-12 select-none'
       >
-        <div className='absolute w-full h-max max-h-[48vh] min-h-48 top-0 left-0 z-[1] opacity-40 pointer-events-none scale-[2]'>
+        <div className='absolute w-full h-screen top-0 left-0 z-1 opacity-40 overflow-hidden pointer-events-none mask-b-from-0%'>
           {userSetting.transparency ? (
-            <Image
-              src={`/api/proxy/image?r=${encodeURIComponent(backdropBg || '/static/backdrop.png')}&s=512&blur=16&saturation=96&contrast=12`}
+            <img
+              src={`/api/proxy/image?r=${encodeURIComponent(
+                backdropBg || '/static/backdrop.png'
+              )}&s=512&blur=16&saturation=96&contrast=12`}
               alt={currentTrack ? currentTrack.title : guild?.name || ''}
-              width={'100%'}
-              height={undefined}
-              className='object-cover w-full h-full max-h-[48vh] pointer-events-none saturate-200 brightness-110 -translate-y-1'
+              className='object-cover w-full h-screen pointer-events-none saturate-200 brightness-110 scale-200'
             />
           ) : (
-            <div className='w-full h-96 bg-gradient-to-t from-transparent to-[hsl(var(--pona-app-music-accent-color-500))]' />
+            <div className='w-full h-96 bg-linear-to-t from-transparent to-[hsl(var(--pona-app-music-accent-color-500))]' />
           )}
-          <div className='absolute top-[unset] bottom-0 left-0 w-full h-2/4 bg-gradient-to-b from-transparent to-playground-background z-10' />
+          <div className='absolute top-[unset] bottom-0 left-0 w-full h-2/4 bg-linear-to-b from-transparent to-playground-background z-10' />
         </div>
         <main
-          className={`[body.pona-player-focused_&]:opacity-0 [body.pona-player-focused_&]:-translate-y-8 apply-soft-transition`}
+          className='[body.pona-player-focused_&]:opacity-0 [body.pona-player-focused_&]:-translate-y-8 apply-soft-transition'
           id='app-workspace'
           style={{ maxWidth: 'unset' }}
         >
@@ -92,8 +119,8 @@ function Providers({ children }: { children: React.ReactNode }) {
               {language.data.app.guilds.player.name}
             </h1>
           </div>
-          {isConnected || socket?.connected ? (
-            !ponaCommonState?.pona.voiceChannel ? (
+          {isSocketConnected ? (
+            !hasVoiceChannel ? (
               <LetsPonaJoin />
             ) : isSameVC ? (
               <PageAnimatePresence presenceAffectsLayout mode='popLayout'>
@@ -106,13 +133,11 @@ function Providers({ children }: { children: React.ReactNode }) {
             <SocketConnecting />
           )}
         </main>
-      </main>
+      </div>
       {isSameVC && (
         <>
-          {isTabletOrMobile || isMobile ? (
-            <>
-              <MobilePonaPlayer />
-            </>
+          {showMobilePlayer ? (
+            <MobilePonaPlayer />
           ) : (
             <>
               <DesktopPonaPlayerPanel />
@@ -126,4 +151,4 @@ function Providers({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default Providers;
+

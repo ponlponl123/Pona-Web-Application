@@ -47,7 +47,7 @@
 
   html[data-disabled-scroll="true"],
   html[data-disabled-scroll="true"] body {
-    @apply overflow-hidden!;
+    @apply !overflow-hidden;
   }
   html[data-disabled-scroll="true"] {
     padding-right: var(--scrollbar-width);

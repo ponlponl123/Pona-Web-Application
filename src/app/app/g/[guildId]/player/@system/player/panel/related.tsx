@@ -1,33 +1,67 @@
-import { ArtistCard, PlaylistCard } from '@/components/music/card';
-import Track from '@/components/music/searchResult/track';
-import { useGlobalContext } from '@/contexts/globalContext';
-import { useLanguageContext } from '@/contexts/languageContext';
-import {
-  relatedInfo,
-  usePonaMusicCacheContext,
-} from '@/contexts/ponaMusicCacheContext';
-import { getSongRelated } from '@/server-side-api/internal/search';
-import { usePrevNextButtons } from '@/utils/Embla/CarouselArrowButtons';
-import { Button, Spinner } from "@heroui/react";
-import { CaretLeft, CaretRight, Ghost } from '@phosphor-icons/react/dist/ssr';
+'use client';
+
+import React, { memo, useEffect, useMemo, useState } from 'react';
 import { getCookie } from 'cookies-next';
 import useEmblaCarousel from 'embla-carousel-react';
 import { motion } from 'framer-motion';
-import React from 'react';
+import { useAtomValue } from 'jotai';
+import {
+  CaretLeftIcon,
+  CaretRightIcon,
+  GhostIcon,
+} from '@phosphor-icons/react/dist/ssr';
+
+import { ArtistCard, PlaylistCard } from '@/components/music/card';
+import Track from '@/components/music/searchResult/track';
+import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/spinner';
+import { getSongRelated } from '@/lib/server-side-api/internal/search';
+import { useAppStore } from '@/store/coreStore';
+import { ponaCommonStateAtom } from '@/store/musicAtoms';
+import { RelatedInfo, useMusicCacheStore } from '@/store/musicCacheStore';
+import { usePrevNextButtons } from '@/lib/Embla/CarouselArrowButtons';
+import {
+  ArtistRelated,
+  PlaylistBasic,
+  SongBasic,
+  SongDetailed,
+  ThumbnailFull,
+  WatchPlaylistTrack,
+} from '@/types/youtube/ytmusic-api';
+
+interface TrackColumnsProps {
+  tracks: (WatchPlaylistTrack | SongBasic)[];
+}
 
 // Memoized track columns component to prevent unnecessary re-renders
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const TrackColumns = React.memo(({ tracks }: { tracks: any[] }) => {
-  const columns = React.useMemo(() => {
-    const result = [];
-    for (let i = 0; i < Math.ceil(tracks.length / 3); i++) {
-      const columnTracks = [];
+const TrackColumns = memo(({ tracks }: TrackColumnsProps) => {
+  const columns = useMemo(() => {
+    const result: React.ReactNode[] = [];
+    const totalCols = Math.ceil(tracks.length / 3);
+
+    for (let i = 0; i < totalCols; i++) {
+      const columnTracks: React.ReactNode[] = [];
       for (let j = 0; j < 3; j++) {
-        const track = tracks[i * 3 + j];
-        if (track) {
+        const item = tracks[i * 3 + j];
+        if (item) {
+          const songDetailedResult: SongDetailed = {
+            category: 'Songs',
+            resultType: 'song',
+            videoId: item.videoId || '',
+            videoType: 'MUSIC_VIDEO_TYPE_ATV',
+            title: item.title || '',
+            artists: item.artists || [],
+            album: 'album' in item && item.album && typeof item.album === 'object' ? item.album : null,
+            duration: 'length' in item && typeof item.length === 'string' ? item.length : ('duration' in item && typeof item.duration === 'string' ? item.duration : ''),
+            duration_seconds: 'duration_seconds' in item && typeof item.duration_seconds === 'number' ? item.duration_seconds : null,
+            isExplicit: 'isExplicit' in item ? item.isExplicit : false,
+            thumbnails: 'thumbnails' in item && item.thumbnails ? item.thumbnails : ('thumbnail' in item && item.thumbnail ? item.thumbnail : []),
+            year: 'year' in item && typeof item.year === 'number' ? item.year : null,
+          };
+
           columnTracks.push(
             <Track
-              key={`track-${track.videoId || i}-${j}`}
+              key={`track-${item.videoId || i}-${j}`}
               classNames={{
                 title: 'text-[hsl(var(--pona-app-music-accent-color-500))]',
                 subtitle: 'text-[hsl(var(--pona-app-music-accent-color-500))]',
@@ -36,20 +70,7 @@ const TrackColumns = React.memo(({ tracks }: { tracks: any[] }) => {
                     'text-[hsl(var(--pona-app-music-accent-color-500))]',
                 },
               }}
-              data={{
-                album: track.album || null,
-                artists: track.artists,
-                category: 'Songs',
-                duration: '',
-                duration_seconds: null,
-                isExplicit: track.isExplicit || false,
-                resultType: 'song',
-                thumbnails: track.thumbnails || track.thumbnail,
-                title: track.title,
-                videoId: track.videoId,
-                videoType: '',
-                year: null,
-              }}
+              result={songDetailedResult}
             />
           );
         }
@@ -70,51 +91,63 @@ const TrackColumns = React.memo(({ tracks }: { tracks: any[] }) => {
 });
 TrackColumns.displayName = 'TrackColumns';
 
+interface PlaylistCardsProps {
+  playlists: (PlaylistBasic | { playlistId: string; thumbnails: ThumbnailFull[]; title: string })[];
+}
+
 // Memoized playlist cards component
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const PlaylistCards = React.memo(({ playlists }: { playlists: any[] }) => {
+const PlaylistCards = memo(({ playlists }: PlaylistCardsProps) => {
   return (
     <>
-      {playlists.map((playlist, index) => (
-        <PlaylistCard
-          key={`related-playlist-${playlist.playlistId || index}`}
-          playlist={{
-            playlistId: playlist.playlistId,
-            thumbnails: playlist.thumbnails,
-            name: playlist.title,
-            artist: { artistId: '', name: '' },
-            type: 'PLAYLIST',
-          }}
-        />
-      ))}
+      {playlists.map((playlist, index) => {
+        const p = playlist as PlaylistBasic;
+        return (
+          <PlaylistCard
+            key={`related-playlist-${p.playlistId || index}`}
+            playlist={{
+              playlistId: p.playlistId,
+              thumbnails: p.thumbnails || [],
+              name: p.title,
+              artist: { artistId: '', name: '' },
+              type: 'PLAYLIST',
+            }}
+          />
+        );
+      })}
     </>
   );
 });
 PlaylistCards.displayName = 'PlaylistCards';
 
+interface ArtistCardsProps {
+  artists: (ArtistRelated | { browseId: string; title: string; thumbnails: ThumbnailFull[] })[];
+}
+
 // Memoized artist cards component
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const ArtistCards = React.memo(({ artists }: { artists: any[] }) => {
+const ArtistCards = memo(({ artists }: ArtistCardsProps) => {
   return (
     <>
-      {artists.map((artist, index) => (
-        <ArtistCard
-          key={`related-artist-${artist.browseId || index}`}
-          artist={{
-            name: artist.title,
-            artistId: artist.browseId,
-            thumbnails: artist.thumbnails,
-            type: 'ARTIST',
-          }}
-        />
-      ))}
+      {artists.map((artist, index) => {
+        const a = artist as ArtistRelated;
+        return (
+          <ArtistCard
+            key={`related-artist-${a.browseId || index}`}
+            artist={{
+              name: a.title,
+              artistId: a.browseId,
+              thumbnails: a.thumbnails || [],
+              type: 'ARTIST',
+            }}
+          />
+        );
+      })}
     </>
   );
 });
 ArtistCards.displayName = 'ArtistCards';
 
 // Memoized carousel buttons component
-const CarouselButtons = React.memo(
+const CarouselButtons = memo(
   ({
     onPrev,
     onNext,
@@ -128,53 +161,51 @@ const CarouselButtons = React.memo(
   }) => (
     <div className='embla__buttons gap-3 flex items-center justify-center'>
       <Button
-        onPress={onPrev}
+        onClick={onPrev}
         disabled={prevDisabled}
         title='previous'
-        className='embla__button embla__button--prev border-2 border-foreground/10 bg-foreground/10 disabled:opacity-30 disabled:bg-transparent disabled:border-foreground/5'
+        variant='outline'
+        size='icon'
+        className='rounded-full size-8 embla__button embla__button--prev border-2 border-foreground/10 bg-foreground/10 disabled:opacity-30'
         type='button'
-        size='sm'
-        radius='full'
-        isIconOnly
       >
-        <CaretLeft />
+        <CaretLeftIcon className='size-4' />
       </Button>
       <Button
-        onPress={onNext}
+        onClick={onNext}
         disabled={nextDisabled}
         title='next'
-        className='embla__button embla__button--next border-2 border-foreground/10 bg-foreground/10 disabled:opacity-30 disabled:bg-transparent disabled:border-foreground/5'
+        variant='outline'
+        size='icon'
+        className='rounded-full size-8 embla__button embla__button--next border-2 border-foreground/10 bg-foreground/10 disabled:opacity-30'
         type='button'
-        size='sm'
-        radius='full'
-        isIconOnly
       >
-        <CaretRight />
+        <CaretRightIcon className='size-4' />
       </Button>
     </div>
   )
 );
 CarouselButtons.displayName = 'CarouselButtons';
 
-const Related = React.memo(({ videoId }: { videoId?: string }) => {
-  const { language } = useLanguageContext();
-  const { ponaCommonState } = useGlobalContext();
-  const { relatedInfoCache, SetRelatedInfoCache } = usePonaMusicCacheContext();
-  const [fetched, setFetched] = React.useState<boolean>(
-    relatedInfoCache.videoId === videoId
+const Related = memo(({ videoId }: { videoId?: string }) => {
+  const language = useAppStore((state) => state.language);
+  const ponaCommonState = useAtomValue(ponaCommonStateAtom);
+  const relatedInfoCache = useMusicCacheStore((state) => state.relatedInfoCache);
+  const setRelatedInfo = useMusicCacheStore((state) => state.setRelatedInfo);
+
+  const currentCache = videoId ? relatedInfoCache[videoId] : undefined;
+  const [fetched, setFetched] = useState<boolean>(Boolean(currentCache));
+
+  const watchPlaylistTracks = useMemo(
+    () => currentCache?.watch_playlist?.tracks || [],
+    [currentCache?.watch_playlist?.tracks]
   );
 
-  // Memoize watch playlist tracks to prevent unnecessary re-renders
-  const watchPlaylistTracks = React.useMemo(
-    () => relatedInfoCache.watch_playlist?.tracks || [],
-    [relatedInfoCache.watch_playlist?.tracks]
+  const relatedItems = useMemo(
+    () => currentCache?.related || [],
+    [currentCache?.related]
   );
 
-  // Memoize related items to prevent unnecessary re-renders
-  const relatedItems = React.useMemo(
-    () => relatedInfoCache.related || [],
-    [relatedInfoCache.related]
-  );
   const [recommendsEmblaRef, recommendsEmblaApi] = useEmblaCarousel({
     skipSnaps: true,
     align: 'start',
@@ -189,44 +220,46 @@ const Related = React.memo(({ videoId }: { videoId?: string }) => {
   const [artistEmblaRef, artistEmblaApi] = useEmblaCarousel({
     skipSnaps: true,
   });
+
   const {
     prevBtnDisabled: recommendsEmblaPrevBtnDisabled,
     nextBtnDisabled: recommendsEmblaNextBtnDisabled,
     onPrevButtonClick: recommendsEmblaOnPrevButtonClick,
     onNextButtonClick: recommendsEmblaOnNextButtonClick,
   } = usePrevNextButtons(recommendsEmblaApi);
+
   const {
     prevBtnDisabled: watchPlaylistEmblaPrevBtnDisabled,
     nextBtnDisabled: watchPlaylistEmblaNextBtnDisabled,
     onPrevButtonClick: watchPlaylistEmblaOnPrevButtonClick,
     onNextButtonClick: watchPlaylistEmblaOnNextButtonClick,
   } = usePrevNextButtons(watchPlaylistEmblaApi);
+
   const {
     prevBtnDisabled: playlistEmblaPrevBtnDisabled,
     nextBtnDisabled: playlistEmblaNextBtnDisabled,
     onPrevButtonClick: playlistEmblaOnPrevButtonClick,
     onNextButtonClick: playlistEmblaOnNextButtonClick,
   } = usePrevNextButtons(playlistEmblaApi);
+
   const {
     prevBtnDisabled: artistEmblaPrevBtnDisabled,
     nextBtnDisabled: artistEmblaNextBtnDisabled,
     onPrevButtonClick: artistEmblaOnPrevButtonClick,
     onNextButtonClick: artistEmblaOnNextButtonClick,
   } = usePrevNextButtons(artistEmblaApi);
-  React.useEffect(() => {
-    // Only trigger when videoId changes and we haven't fetched for this videoId yet
-    if (!videoId || (fetched && relatedInfoCache.videoId === videoId)) return;
 
-    const setFetchedCache = (value: relatedInfo | null) => {
+  useEffect(() => {
+    if (!videoId || (fetched && currentCache)) return;
+
+    const setFetchedCache = (value: Omit<RelatedInfo, 'videoId'> | null) => {
       if (value === null)
-        SetRelatedInfoCache({
-          videoId,
+        setRelatedInfo(videoId, {
           related: undefined,
           watch_playlist: undefined,
         });
       else
-        SetRelatedInfoCache({
-          videoId,
+        setRelatedInfo(videoId, {
           related: value.related,
           watch_playlist: value.watch_playlist,
         });
@@ -236,7 +269,8 @@ const Related = React.memo(({ videoId }: { videoId?: string }) => {
     const fetchRelated = async () => {
       const accessToken = String(getCookie('LOGIN_'));
       const accessTokenType = String(getCookie('LOGIN_TYPE_'));
-      if (!accessToken || accessTokenType === 'undefined') return setFetchedCache(null);
+      if (!accessToken || accessTokenType === 'undefined')
+        return setFetchedCache(null);
       const songRelated = await getSongRelated(
         accessTokenType,
         accessToken,
@@ -244,27 +278,27 @@ const Related = React.memo(({ videoId }: { videoId?: string }) => {
       );
       if (!songRelated) return setFetchedCache(null);
       setFetchedCache({
-        videoId,
         related: songRelated.related,
         watch_playlist: songRelated.watch_playlist,
       });
     };
     fetchRelated();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [videoId, relatedInfoCache.videoId]);
+  }, [videoId, currentCache, fetched, setRelatedInfo]);
+
   if (!videoId)
     return (
       <div className='flex flex-col gap-4 items-center justify-center w-full h-full'>
-        <Ghost
+        <GhostIcon
           size={56}
           weight='fill'
           className='text-[hsl(var(--pona-app-music-accent-color-500))]'
         />
-        <h1 className='text-2xl max-w-screen-md text-center text-[hsl(var(--pona-app-music-accent-color-500)/0.64)]'>
+        <h1 className='text-2xl max-w-3xl text-center text-[hsl(var(--pona-app-music-accent-color-500))/0.64]'>
           {language.data.app.guilds.player.related.videoId_not_provided}
         </h1>
       </div>
     );
+
   return fetched ? (
     <motion.div
       initial={{ opacity: 0, y: 8 }}
@@ -277,12 +311,10 @@ const Related = React.memo(({ videoId }: { videoId?: string }) => {
       {watchPlaylistTracks.length > 0 && (
         <>
           <div className='flex gap-4 items-center justify-between w-full p-1 -mt-2'>
-            <h1
-              className={`text-3xl -mb-2 font-bold text-[hsl(var(--pona-app-music-accent-color-500)/0.64)]`}
-            >
+            <h1 className='text-3xl -mb-2 font-bold text-[hsl(var(--pona-app-music-accent-color-500))/0.64]'>
               {language.data.app.guilds.player.related.play_continuously}
             </h1>
-            <div className='flex-1'></div>
+            <div className='flex-1' />
             <CarouselButtons
               onPrev={watchPlaylistEmblaOnPrevButtonClick}
               onNext={watchPlaylistEmblaOnNextButtonClick}
@@ -311,99 +343,114 @@ const Related = React.memo(({ videoId }: { videoId?: string }) => {
             >
               {language.data.app.guilds.player.related[langKeyType]
                 ? language.data.app.guilds.player.related[langKeyType]
-                : String(title).toLocaleUpperCase()}
+                : String(title).toUpperCase()}
             </h1>
           );
-          return (
-            <React.Fragment key={index}>
-              {title === 'You might also like' ? (
-                <>
-                  <div className='flex gap-4 items-center justify-between w-full p-1 -mt-2'>
-                    <HeaderTitle />
-                    <div className='flex-1'></div>
-                    <CarouselButtons
-                      onPrev={recommendsEmblaOnPrevButtonClick}
-                      onNext={recommendsEmblaOnNextButtonClick}
-                      prevDisabled={recommendsEmblaPrevBtnDisabled}
-                      nextDisabled={recommendsEmblaNextBtnDisabled}
-                    />
-                  </div>
-                  <div className='embla w-full max-w-none mx-0 my-0 z-10 relative'>
-                    <div className='embla__viewport' ref={recommendsEmblaRef}>
-                      <div className='embla__container gap-5 select-none flex-row w-full'>
-                        <TrackColumns tracks={item.contents} />
-                      </div>
-                    </div>
-                  </div>
-                </>
-              ) : title === 'Recommended playlists' ? (
-                <>
-                  <div className='flex gap-4 items-center justify-between w-full p-1 -mt-2'>
-                    <HeaderTitle />
-                    <div className='flex-1'></div>
-                    <CarouselButtons
-                      onPrev={playlistEmblaOnPrevButtonClick}
-                      onNext={playlistEmblaOnNextButtonClick}
-                      prevDisabled={playlistEmblaPrevBtnDisabled}
-                      nextDisabled={playlistEmblaNextBtnDisabled}
-                    />
-                  </div>
-                  <div className='embla w-full max-w-none mx-0 mt-3 z-10 relative'>
-                    <div className='embla__viewport' ref={playlistEmblaRef}>
-                      <div className='embla__container gap-5 select-none'>
-                        <PlaylistCards playlists={item.contents} />
-                      </div>
-                    </div>
-                  </div>
-                </>
-              ) : title === 'Similar artists' ? (
-                <>
-                  <div className='flex gap-4 items-center justify-between w-full p-1 -mt-2'>
-                    <HeaderTitle />
-                    <div className='flex-1'></div>
-                    <CarouselButtons
-                      onPrev={artistEmblaOnPrevButtonClick}
-                      onNext={artistEmblaOnNextButtonClick}
-                      prevDisabled={artistEmblaPrevBtnDisabled}
-                      nextDisabled={artistEmblaNextBtnDisabled}
-                    />
-                  </div>
-                  <div className='embla w-full max-w-none mx-0 mt-3 z-10 relative'>
-                    <div className='embla__viewport' ref={artistEmblaRef}>
-                      <div className='embla__container gap-5 select-none'>
-                        <ArtistCards artists={item.contents} />
-                      </div>
-                    </div>
-                  </div>
-                </>
-              ) : title === 'About the artist' ? (
-                <>
+
+          if (title === 'You might also like') {
+            const contents = item.contents as SongBasic[];
+            return (
+              <React.Fragment key={`related-sec-${index}`}>
+                <div className='flex gap-4 items-center justify-between w-full p-1 -mt-2'>
                   <HeaderTitle />
-                  <p className='text-[hsl(var(--pona-app-music-accent-color-500))]'>
-                    {item.contents}
-                  </p>
-                </>
-              ) : (
-                String(title).replace(' - Topic', '') ===
-                  ponaCommonState?.current?.author?.replace(' - Topic', '') &&
-                (() => {
-                  return <></>;
-                })()
-              )}
-            </React.Fragment>
+                  <div className='flex-1' />
+                  <CarouselButtons
+                    onPrev={recommendsEmblaOnPrevButtonClick}
+                    onNext={recommendsEmblaOnNextButtonClick}
+                    prevDisabled={recommendsEmblaPrevBtnDisabled}
+                    nextDisabled={recommendsEmblaNextBtnDisabled}
+                  />
+                </div>
+                <div className='embla w-full max-w-none mx-0 my-0 z-10 relative'>
+                  <div className='embla__viewport' ref={recommendsEmblaRef}>
+                    <div className='embla__container gap-5 select-none flex-row w-full'>
+                      <TrackColumns tracks={contents || []} />
+                    </div>
+                  </div>
+                </div>
+              </React.Fragment>
+            );
+          }
+
+          if (title === 'Recommended playlists') {
+            const contents = item.contents as PlaylistBasic[];
+            return (
+              <React.Fragment key={`related-sec-${index}`}>
+                <div className='flex gap-4 items-center justify-between w-full p-1 -mt-2'>
+                  <HeaderTitle />
+                  <div className='flex-1' />
+                  <CarouselButtons
+                    onPrev={playlistEmblaOnPrevButtonClick}
+                    onNext={playlistEmblaOnNextButtonClick}
+                    prevDisabled={playlistEmblaPrevBtnDisabled}
+                    nextDisabled={playlistEmblaNextBtnDisabled}
+                  />
+                </div>
+                <div className='embla w-full max-w-none mx-0 mt-3 z-10 relative'>
+                  <div className='embla__viewport' ref={playlistEmblaRef}>
+                    <div className='embla__container gap-5 select-none'>
+                      <PlaylistCards playlists={contents || []} />
+                    </div>
+                  </div>
+                </div>
+              </React.Fragment>
+            );
+          }
+
+          if (title === 'Similar artists') {
+            const contents = item.contents as ArtistRelated[];
+            return (
+              <React.Fragment key={`related-sec-${index}`}>
+                <div className='flex gap-4 items-center justify-between w-full p-1 -mt-2'>
+                  <HeaderTitle />
+                  <div className='flex-1' />
+                  <CarouselButtons
+                    onPrev={artistEmblaOnPrevButtonClick}
+                    onNext={artistEmblaOnNextButtonClick}
+                    prevDisabled={artistEmblaPrevBtnDisabled}
+                    nextDisabled={artistEmblaNextBtnDisabled}
+                  />
+                </div>
+                <div className='embla w-full max-w-none mx-0 mt-3 z-10 relative'>
+                  <div className='embla__viewport' ref={artistEmblaRef}>
+                    <div className='embla__container gap-5 select-none'>
+                      <ArtistCards artists={contents || []} />
+                    </div>
+                  </div>
+                </div>
+              </React.Fragment>
+            );
+          }
+
+          if (title === 'About the artist') {
+            const description = typeof item.contents === 'string' ? item.contents : '';
+            return (
+              <React.Fragment key={`related-sec-${index}`}>
+                <HeaderTitle />
+                <p className='text-[hsl(var(--pona-app-music-accent-color-500))]'>
+                  {description}
+                </p>
+              </React.Fragment>
+            );
+          }
+
+          return (
+            String(title).replace(' - Topic', '') ===
+            ponaCommonState?.current?.author?.replace(' - Topic', '') ? null : null
           );
         })}
-      <div className='h-[16vh]'></div>
+      <div className='h-[16vh]' />
     </motion.div>
   ) : (
     <div className='flex flex-col gap-4 items-center justify-center w-full h-full'>
       <Spinner className='text-[hsl(var(--pona-app-music-accent-color-500))]' />
-      <h1 className='text-2xl max-w-screen-md text-center text-[hsl(var(--pona-app-music-accent-color-500)/0.64)]'>
+      <h1 className='text-2xl max-w-3xl text-center text-[hsl(var(--pona-app-music-accent-color-500))/0.64]'>
         {language.data.common.friendly_loading}
       </h1>
     </div>
   );
 });
+
 Related.displayName = 'Related';
 
 export default Related;

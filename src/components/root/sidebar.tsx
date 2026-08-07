@@ -113,11 +113,11 @@ function Sidebar({
         `scrollbar disable-default-transition apply-long-soft-transition duration-700! max-md:h-full`,
         !nav
           ? cn(
-              isCollapsed
-                ? "w-12 max-w-12 min-w-12 p-1"
-                : "w-48 max-w-48 min-w-48 p-2",
-              `relative flex h-screen flex-col gap-2 pt-20 max-md:hidden`
-            )
+            isCollapsed
+              ? "w-12 max-w-12 min-w-12 p-1"
+              : "w-48 max-w-48 min-w-48 p-2",
+            `relative flex h-screen flex-col gap-2 pt-20 max-md:hidden`
+          )
           : "flex w-full flex-col gap-2 md:hidden"
       )}
     >
@@ -367,7 +367,7 @@ function Sidebar({
                             <div
                               className={cn(
                                 "ml-2 flex min-w-0 flex-1 items-center justify-between text-start",
-                                sidebarCollapsed && "hidden"
+                                sidebarCollapsed && "md:hidden"
                               )}
                             >
                               {item.title}
@@ -486,9 +486,9 @@ function Sidebar({
                 className={cn("w-full", isSettingModalOpen && "invisible")}
                 iconOnly={canCollapsed && sidebarCollapsed}
                 onClick={() => {
-                  ;(setSettingLayoutId(
+                  ; (setSettingLayoutId(
                     "setting-modal-by-app-sidebar-iscollapsed-" +
-                      sidebarCollapsed
+                    sidebarCollapsed
                   ),
                     setIsSettingModalOpen(true),
                     setNavActive?.(false))

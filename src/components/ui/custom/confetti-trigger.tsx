@@ -1,8 +1,7 @@
 /**
  * @experimental This component is still in development.
  */
-// @ts-nocheck
-// @ts-ignore
+
 import React, {
   ReactNode,
   ReactElement,
@@ -12,17 +11,14 @@ import React, {
 } from "react"
 import confetti from "canvas-confetti"
 
-type AsChildProps<T extends React.ElementType> = {
-  asChild?: boolean
-  children?: ReactElement | ((props: ComponentProps<T>) => ReactElement)
-}
-
-interface ConfettiTriggerProps<T extends React.ElementType = "button">
-  extends Omit<ComponentProps<T>, "children">, AsChildProps<T> {
-  children?: ReactNode
-  particleCount?: number
-  spread?: number
-}
+export type ConfettiTriggerProps<T extends React.ElementType = "button"> =
+  ComponentProps<T> & {
+    asChild?: boolean
+    children?: ReactNode
+    particleCount?: number
+    spread?: number
+    as?: T
+  }
 
 const ConfettiTrigger = <T extends React.ElementType = "button">({
   children,
@@ -48,8 +44,9 @@ const ConfettiTrigger = <T extends React.ElementType = "button">({
   const handleClick = (event: MouseEvent<HTMLElement>) => {
     handleConfetti(event)
 
-    if (typeof props.onClick === "function") {
-      props.onClick(event)
+    const rawOnClick = (props as Record<string, unknown>).onClick
+    if (typeof rawOnClick === "function") {
+      (rawOnClick as (e: MouseEvent<HTMLElement>) => void)(event)
     }
   }
 
@@ -57,16 +54,12 @@ const ConfettiTrigger = <T extends React.ElementType = "button">({
     return React.cloneElement(children, {
       ...props,
       onClick: handleClick,
-    } as any)
+    } as React.HTMLAttributes<HTMLElement>)
   }
 
-  const Component = (props.as as T) || "button"
+  const Component = ((props as Record<string, unknown>).as as React.ElementType) || "button"
 
-  return (
-    <Component {...props} onClick={handleClick}>
-      {children}
-    </Component>
-  )
+  return React.createElement(Component, { ...props, onClick: handleClick }, children)
 }
 
 export default ConfettiTrigger

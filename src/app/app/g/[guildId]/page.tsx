@@ -85,13 +85,17 @@ function Page() {
     return "/static/backdrop.png"
   }, [guild, userInfo])
 
-  const formattedPastDate = useMemo(() => {
+  const [formattedPastDate, setFormattedPastDate] = React.useState<string>("")
+
+  React.useEffect(() => {
     const pastDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
-    return new Intl.DateTimeFormat(language.key, {
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-    }).format(pastDate)
+    setFormattedPastDate(
+      new Intl.DateTimeFormat(language.key, {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      }).format(pastDate)
+    )
   }, [language])
 
   React.useEffect(() => {

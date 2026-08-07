@@ -123,3 +123,38 @@ export interface Lyric {
   isTimestamp: boolean
   lyrics: TimestampLyrics[] | NonTimestampLyrics[]
 }
+
+export interface PlayDetail {
+  title: string
+  author: string
+  uri: string
+  resultType?: string
+  sourceName: string
+  identifier: string
+}
+
+export interface PlaylistDetail {
+  title: string
+  author: string
+  thumbnails: string[]
+  tracks: PlayDetail[]
+}
+
+export interface PlayButtonClassNames {
+  wrapper?: string
+  button?: string
+  icon?: string
+  playpause?: string
+}
+
+export interface PlayButtonProps<T extends 'song' | 'playlist' = 'song'> {
+  s?: number
+  type?: T
+  iconSize?: number
+  className?: string
+  classNames?: PlayButtonClassNames
+  detail: T extends 'playlist' ? PlaylistDetail : PlayDetail
+  children?: React.ReactNode
+  style?: React.CSSProperties
+  playPause?: boolean
+}

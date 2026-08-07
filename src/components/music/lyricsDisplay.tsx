@@ -1,6 +1,7 @@
+'use client';
+import React, { useEffect, useRef, useState } from 'react';
 import { Lyric, TimestampLyrics } from '@/types/ponaPlayer';
 import { clsx } from 'clsx';
-import React, { useEffect, useRef, useState } from 'react';
 
 interface Track {
   lyrics?: Lyric;
@@ -21,10 +22,14 @@ const LyricsDisplay: React.FC<LyricsDisplayProps> = ({
   const lyricsContainerRef = useRef<HTMLElement>(lyricsProvider);
 
   useEffect(() => {
+    lyricsContainerRef.current = lyricsProvider;
+  }, [lyricsProvider]);
+
+  useEffect(() => {
     if (!currentTrack?.lyrics || !currentTrack?.lyrics?.isTimestamp) return;
 
     const newIndex = (
-      currentTrack?.lyrics.lyrics as TimestampLyrics[]
+      currentTrack.lyrics.lyrics as TimestampLyrics[]
     ).findIndex((lyrics, index) => {
       const nextLyrics = currentTrack?.lyrics?.lyrics?.[
         index + 1
@@ -35,18 +40,18 @@ const LyricsDisplay: React.FC<LyricsDisplayProps> = ({
       );
     });
 
-    if (newIndex !== -1) setActiveIndex(newIndex);
+    if (newIndex !== -1) {
+      queueMicrotask(() => setActiveIndex(newIndex));
+    }
   }, [playerPosition, currentTrack]);
 
-  // Auto-scroll to active lyrics
   useEffect(() => {
     if (!lyricsContainerRef.current) return;
 
     const activeLyric = document.getElementById(`lyrics-index-${activeIndex}`);
     if (activeLyric) {
       lyricsContainerRef.current.scrollTo({
-        top:
-          activeLyric.offsetTop - lyricsContainerRef.current.clientHeight / 2,
+        top: activeLyric.offsetTop - lyricsContainerRef.current.clientHeight / 2,
         behavior: 'smooth',
       });
     }
@@ -54,22 +59,24 @@ const LyricsDisplay: React.FC<LyricsDisplayProps> = ({
 
   if (!currentTrack?.lyrics || !currentTrack?.lyrics.isTimestamp) {
     return (
-      <div className='text-center text-muted-foreground'>No lyrics available</div>
+      <div className='text-center text-muted-foreground py-8'>
+        No lyrics available
+      </div>
     );
   }
 
   const getLyricsClassName = (index: number): string => {
     const baseClasses =
-      'w-full h-max flex items-center text-start justify-between px-2.5 my-8 transition-all ease-out duration-400 tracking-wide';
+      'w-full h-max flex items-center text-start justify-between px-2.5 my-8 disable-default-transition transition-all ease-out duration-400 tracking-wide';
 
     const conditions = {
-      'text-3xl text-[hsl(var(--pona-app-music-accent-color-500))] font-bold':
+      'text-3xl text-[hsl(var(--pona-app-music-accent-color-500))]! font-bold [html.dark_&]:brightness-150 [html.light_&]:brightness-50':
         index === activeIndex,
-      'text-xl text-[hsl(var(--pona-app-music-accent-color-500)/0.4)]':
+      'text-xl text-[hsl(var(--pona-app-music-accent-color-500)/0.4)]! [html.light_&]:brightness-90 [html.dark_&]:brightness-125':
         index === activeIndex + 1 || index === activeIndex - 1,
-      'text-base text-[hsl(var(--pona-app-music-accent-color-500)/0.48)]':
+      'text-base text-[hsl(var(--pona-app-music-accent-color-500)/0.48)]!':
         index < activeIndex,
-      'text-base text-[hsl(var(--pona-app-music-accent-color-500)/0.16)]':
+      'text-base text-[hsl(var(--pona-app-music-accent-color-500)/0.16)]!':
         index > activeIndex && index !== activeIndex + 1,
     };
 
@@ -78,7 +85,7 @@ const LyricsDisplay: React.FC<LyricsDisplayProps> = ({
 
   return (
     <div className='w-full text-center pb-[24vh]'>
-      {(currentTrack?.lyrics.lyrics as TimestampLyrics[]).map(
+      {(currentTrack.lyrics.lyrics as TimestampLyrics[]).map(
         (lyrics, index) => (
           <div
             key={index}

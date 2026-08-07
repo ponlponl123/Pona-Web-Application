@@ -1,75 +1,88 @@
 'use client';
-import { useGlobalContext } from '@/contexts/globalContext';
-import { useLanguageContext } from '@/contexts/languageContext';
-import { usePlaybackContext } from '@/contexts/playbackContext';
-import { usePonaMusicContext } from '@/contexts/ponaMusicContext';
-import { useUserSettingContext } from '@/contexts/userSettingContext';
-import { AnimatePresence, motion } from 'framer-motion';
-import React from 'react';
 
-import { msToTime } from '@/utils/time';
+import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { AnimatePresence, motion } from 'framer-motion';
+import { useAtom, useAtomValue } from 'jotai';
+import { toast } from 'sonner';
+import {
+  CaretDownIcon,
+  CaretLineLeftIcon,
+  CaretLineRightIcon,
+  CaretUpIcon,
+  EqualizerIcon,
+  InfoIcon,
+  MusicNotesIcon,
+  PauseIcon,
+  PlayIcon,
+  RepeatIcon,
+  RepeatOnceIcon,
+  SpeakerSimpleHighIcon,
+} from '@phosphor-icons/react/dist/ssr';
 
 import { combineArtistName } from '@/components/music/searchResult/track';
+import { Button } from '@/components/ui/button';
 import {
-  Button,
-  Dropdown,
-  DropdownItem,
   DropdownMenu,
-  DropdownSection,
-  DropdownTrigger,
-  Image,
-  Link,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-  Slider,
-  Tooltip,
-} from "@heroui/react";
+} from '@/components/ui/popover';
 import {
-  CaretDown,
-  CaretLineLeft,
-  CaretLineRight,
-  CaretUp,
-  Equalizer,
-  Info,
-  MusicNotes,
-  Pause,
-  Play,
-  Repeat,
-  RepeatOnce,
-  SpeakerSimpleHigh,
-} from '@phosphor-icons/react/dist/ssr';
-import { useRouter } from 'next/navigation';
-import toast from 'react-hot-toast';
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
-function DesktopPonaPlayer() {
+import { useSocket } from '@/contexts/ponaMusicContext';
+import { useAppStore } from '@/store/coreStore';
+import { playbackAtom, ponaCommonStateAtom } from '@/store/musicAtoms';
+import { playerPopupAtom } from '@/store/uiAtoms';
+import { msToTime } from '@/lib/utils';
+
+export default function DesktopPonaPlayer() {
   const router = useRouter();
-  const { language } = useLanguageContext();
-  const { userSetting } = useUserSettingContext();
-  const { ponaCommonState } = useGlobalContext();
-  const { playback } = usePlaybackContext();
-  const { socket, playerPopup, setPlayerPopup } = usePonaMusicContext();
+  const language = useAppStore((state) => state.language);
+  const userSetting = useAppStore((state) => state.userSetting);
+
+  const ponaCommonState = useAtomValue(ponaCommonStateAtom);
+  const playback = useAtomValue(playbackAtom);
+  const [playerPopup, setPlayerPopup] = useAtom(playerPopupAtom);
+  const { socket } = useSocket();
+
   const currentTrack = ponaCommonState?.current;
   const isLoopTrack = ponaCommonState?.pona.repeat.track;
   const isLoopQueue = ponaCommonState?.pona.repeat.queue;
 
-  const [sliderValue, setSliderValue] = React.useState<number | number[]>(
-    playback
-  );
+  const [sliderValue, setSliderValue] = useState<number>(playback);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setSliderValue(playback);
   }, [playback]);
 
-  React.useEffect(() => {
-    if (!currentTrack)
-      setPlayerPopup(() => {
-        document.body.classList.remove('pona-player-focused');
-        return false;
-      });
-    if (!playerPopup || !currentTrack)
+  useEffect(() => {
+    if (!currentTrack) {
+      setPlayerPopup(false);
       document.body.classList.remove('pona-player-focused');
+    }
+    if (!playerPopup || !currentTrack) {
+      document.body.classList.remove('pona-player-focused');
+    }
   }, [currentTrack, playerPopup, setPlayerPopup]);
+
+  const maxLength = ponaCommonState?.pona.length || 100;
+  const progressPercent = Math.min(
+    100,
+    Math.max(0, (sliderValue / maxLength) * 100)
+  );
 
   return (
     <AnimatePresence>
@@ -90,57 +103,56 @@ function DesktopPonaPlayer() {
           style={{ width: 'calc(100% - 1rem)' }}
         >
           <div className='absolute top-0 left-0 w-full h-full z-0 overflow-hidden pointer-events-none rounded-3xl max-md:rounded-lg [body.pona-player-focused_&]:opacity-0 opacity-20'>
-            <Image
+            <img
               src={`/api/proxy/image?r=${encodeURIComponent(
                 currentTrack?.proxyArtworkUrl ||
-                  '/static/Ponlponl123 (1459).png'
+                '/static/Ponlponl123 (1459).png'
               )}&s=512&blur=16&saturation=96&contrast=12`}
               alt={currentTrack ? currentTrack.title : 'Thumbnail'}
-              width={'100%'}
-              height={undefined}
               className='object-cover w-full h-full pointer-events-none saturate-200 brightness-100 -translate-y-1'
             />
           </div>
-          <div className='absolute top-0 left-0 z-0 w-full h-full [body.pona-player-focused_&]:bg-none [html.light_&]:[body.pona-player-focused_&]:bg-[hsl(var(--pona-app-music-accent-color-50))] [html.dark_&]:[body.pona-player-focused_&]:bg-[hsl(var(--pona-app-music-accent-color-900))] max-md:rounded-lg rounded-3xl'></div>
-          <Slider
-            aria-label='PlayerSeekBar'
+          <div className='absolute top-0 left-0 z-0 w-full h-full [body.pona-player-focused_&]:bg-none [html.light_&]:[body.pona-player-focused_&]:bg-[hsl(var(--pona-app-music-accent-color-500))] [html.dark_&]:[body.pona-player-focused_&]:bg-[hsl(var(--pona-app-music-accent-color-900))] max-md:rounded-lg rounded-3xl' />
+
+          {/* Seekbar */}
+          <div
             className={
               userSetting.dev_pona_player_style === 'modern'
-                ? 'absolute -top-4 left-2 z-20 group shadow-2xl w-[calc(100%_-_1rem)]'
-                : 'absolute top-1 left-24 z-20 group shadow-2xl max-lg:-top-2.5 max-lg:left-2 w-[calc(100%_-_7rem)] max-lg:w-[calc(100%_-_1rem)] max-md:max-w-none max-md:w-full max-md:left-0'
+                ? 'absolute -top-3 left-2 z-20 w-[calc(100%_-_1rem)] h-3 cursor-pointer group'
+                : 'absolute top-0 left-24 z-20 max-lg:-top-2.5 max-lg:left-2 w-[calc(100%_-_7rem)] max-lg:w-[calc(100%_-_1rem)] max-md:max-w-none max-md:w-full max-md:left-0 h-3 cursor-pointer group'
             }
-            classNames={{
-              track:
-                '!border-s-[hsl(var(--pona-app-music-accent-color-500))] cursor-pointer',
-              filler:
-                '!bg-[hsl(var(--pona-app-music-accent-color-500))] transition-all ease-linear group-active:duration-0 duration-[1s]',
-            }}
-            renderThumb={props => (
+          >
+            <input
+              type='range'
+              min={0}
+              max={maxLength}
+              value={sliderValue}
+              onChange={(e) => setSliderValue(Number(e.target.value))}
+              onMouseUp={(e) =>
+                socket?.emit('seek', Number((e.target as HTMLInputElement).value))
+              }
+              onTouchEnd={(e) =>
+                socket?.emit('seek', Number((e.target as HTMLInputElement).value))
+              }
+              aria-label='PlayerSeekBar'
+              className='absolute inset-0 w-full h-full opacity-0 cursor-pointer z-30'
+            />
+            <div className='w-full h-1 bg-muted/40 rounded-full overflow-hidden relative'>
               <div
-                {...props}
-                className='transition-all md:p-1 ease-linear group-active:duration-0 duration-[1s] top-1/2 !bg-[hsl(var(--pona-app-music-accent-color-500))] shadow-medium rounded-full cursor-grab data-[dragging=true]:cursor-grabbing'
-              >
-                <span className='group-hover:h-1 group-hover:w-1 transition-transform !bg-[hsl(var(--pona-app-music-accent-color-500))] rounded-full max-md:w-1 max-md:h-1 w-0 h-0 block group-data-[dragging=true]:scale-80' />
-              </div>
-            )}
-            value={sliderValue}
-            maxValue={ponaCommonState?.pona.length}
-            minValue={0}
-            size='sm'
-            step={1}
-            onChange={value => setSliderValue(value)}
-            onChangeEnd={value => {
-              socket?.emit('seek', value);
-            }}
-          />
+                className='h-full bg-[hsl(var(--pona-app-music-accent-color-500))] transition-all duration-300'
+                style={{ width: `${progressPercent}%` }}
+              />
+            </div>
+          </div>
+
           <div
             id='pona-player'
-            className={`rounded-3xl max-md:rounded-lg max-md:p-2 p-2 max-lg:p-1 flex flex-row items-center justify-between gap-4 absolute overflow-hidden w-full h-full select-none`}
+            className='rounded-3xl max-md:rounded-lg max-md:p-2 p-2 max-lg:p-1 flex flex-row items-center justify-between gap-4 absolute overflow-hidden w-full h-full select-none'
           >
             <div
-              className='absolute top-0 left-0 w-full h-full'
+              className='absolute top-0 left-0 w-full h-full z-0'
               onClick={() => {
-                setPlayerPopup(value => {
+                setPlayerPopup((value) => {
                   if (!value)
                     document.body.classList.add('pona-player-focused');
                   else document.body.classList.remove('pona-player-focused');
@@ -148,31 +160,10 @@ function DesktopPonaPlayer() {
                 });
               }}
               id='pona-music-panel-trigger'
-            ></div>
-            {userSetting.transparency ? (
-              <Image
-                src={
-                  currentTrack
-                    ? currentTrack?.proxyArtworkUrl
-                    : '/static/Ponlponl123 (1459).png'
-                }
-                alt={currentTrack ? currentTrack.title : 'Thumbnail'}
-                className='z-10 blur-3xl absolute left-0 -translate-y-1/2 h-full aspect-square object-cover max-md:hidden'
-                classNames={{ wrapper: 'pointer-events-none h-full' }}
-              />
-            ) : (
-              <div></div>
-            )}
-            <motion.div
-              className='flex items-center justify-start gap-4 w-full -ml-4 max-lg:max-w-[calc(50%_-_2.4rem)] max-md:max-w-[calc(100%_-_4rem)] max-w-[calc(33.33%_-_1rem)]'
-              animate={{
-                transition: {
-                  duration: 0.2,
-                  type: 'spring',
-                },
-              }}
-            >
-              <Image
+            />
+
+            <motion.div className='flex items-center justify-start gap-4 w-full -ml-4 max-lg:max-w-[calc(50%_-_2.4rem)] max-md:max-w-[calc(100%_-_4rem)] max-w-[calc(33.33%_-_1rem)] z-10'>
+              <img
                 src={
                   currentTrack
                     ? currentTrack?.proxyArtworkUrl
@@ -181,81 +172,74 @@ function DesktopPonaPlayer() {
                 alt={currentTrack ? currentTrack.title : 'Thumbnail'}
                 className={
                   userSetting.dev_pona_player_style === 'modern'
-                    ? 'w-[3.6rem] h-[3.6rem] object-cover max-lg:h-12 max-lg:w-12 max-md:rounded-lg'
-                    : 'w-[4.4rem] h-[4.4rem] object-cover max-lg:h-12 max-lg:w-12 max-md:rounded-lg'
+                    ? 'w-[3.6rem] h-[3.6rem] object-cover max-lg:h-12 max-lg:w-12 rounded-xl shadow-lg'
+                    : 'w-[4.4rem] h-[4.4rem] object-cover max-lg:h-12 max-lg:w-12 rounded-xl shadow-lg'
                 }
                 loading='lazy'
-                shadow='lg'
-                isBlurred={userSetting.transparency}
                 id='pona-music-thumbnail'
               />
               <div
-                className={`flex flex-col justify-center items-start ${userSetting.dev_pona_player_style === 'modern' ? '' : 'lg:mt-4'}`}
+                className='flex flex-col justify-center items-start'
                 style={{ width: 'calc(100% - 5.4rem)' }}
               >
-                <div className='text-xl max-w-full flex gap-2'>
-                  <h1 className='text-xl max-lg:text-base !text-[hsl(var(--pona-app-music-accent-color-500))] w-full whitespace-nowrap overflow-hidden overflow-ellipsis'>
+                <div className='text-xl max-w-full flex gap-2 items-center'>
+                  <h1 className='text-xl max-lg:text-base font-medium text-[hsl(var(--pona-app-music-accent-color-500))] w-full whitespace-nowrap overflow-hidden overflow-ellipsis'>
                     {currentTrack ? currentTrack.title : 'Music Name'}
                   </h1>
-                  {currentTrack ? (
+                  {currentTrack?.uri && (
                     <Link
                       href={currentTrack.uri}
-                      className='!text-[hsl(var(--pona-app-music-accent-color-500))]'
-                      showAnchorIcon
+                      className='text-xs text-[hsl(var(--pona-app-music-accent-color-500))] hover:underline'
                       target='_blank'
-                    />
-                  ) : (
-                    <></>
+                    >
+                      ↗
+                    </Link>
                   )}
                 </div>
                 <div className='w-full flex flex-row gap-1 items-center justify-start'>
                   {currentTrack?.artist ? (
-                    <div className='text-sm max-lg:text-xs !text-[hsl(var(--pona-app-music-accent-color-500))]/40 max-w-[calc(100%_-_1rem)] whitespace-nowrap overflow-hidden overflow-ellipsis'>
+                    <div className='text-sm max-lg:text-xs text-[hsl(var(--pona-app-music-accent-color-500))]/60 max-w-[calc(100%_-_1rem)] whitespace-nowrap overflow-hidden overflow-ellipsis'>
                       {combineArtistName(currentTrack?.artist, true, router, {
                         className:
-                          'text-sm max-lg:text-xs !text-[hsl(var(--pona-app-music-accent-color-500))]/40',
+                          'text-sm max-lg:text-xs text-[hsl(var(--pona-app-music-accent-color-500))]/60',
                       })}
                     </div>
                   ) : (
-                    <span className='text-sm max-lg:text-xs !text-[hsl(var(--pona-app-music-accent-color-500))]/40 max-w-[calc(100%_-_1rem)] whitespace-nowrap overflow-hidden overflow-ellipsis'>
+                    <span className='text-sm max-lg:text-xs text-[hsl(var(--pona-app-music-accent-color-500))]/60 max-w-[calc(100%_-_1rem)] whitespace-nowrap overflow-hidden overflow-ellipsis'>
                       {currentTrack?.author}
                     </span>
                   )}
-                  <Tooltip
-                    classNames={{
-                      content:
-                        'text-[hsl(var(--pona-app-music-accent-color-500))]',
-                    }}
-                    content={`${language.data.app.guilds.player.request_by} ${currentTrack.requester?.displayName || '@' + currentTrack.requester?.username}`}
-                  >
-                    <div className='relative group w-3 opacity-40'>
-                      <Info
-                        size={12}
-                        className='group-hover:opacity-0 text-[hsl(var(--pona-app-music-accent-color-500))]'
-                      />
-                      <Info
-                        size={12}
-                        weight='fill'
-                        className='absolute top-0 left-0 opacity-0 group-hover:opacity-100 text-[hsl(var(--pona-app-music-accent-color-500))]'
-                      />
-                    </div>
-                  </Tooltip>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <div className='relative group w-3 opacity-60 cursor-pointer'>
+                          <InfoIcon
+                            size={12}
+                            className='text-[hsl(var(--pona-app-music-accent-color-500))]'
+                          />
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        {`${language.data.app.guilds.player.request_by} ${currentTrack.requester?.displayName ||
+                          '@' + currentTrack.requester?.username
+                          }`}
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </div>
               </div>
             </motion.div>
-            <div
-              className={`flex items-center justify-center gap-4 w-full max-lg:max-w-[calc(50%_-_3rem)] max-md:max-w-[3rem] max-w-[calc(33.33%_-_1rem)]  ${userSetting.dev_pona_player_style === 'modern' ? '' : 'lg:mt-4'}`}
-            >
-              <span className='w-16 text-center max-lg:hidden !text-[hsl(var(--pona-app-music-accent-color-500))]'>
+
+            {/* Controls */}
+            <div className='flex items-center justify-center gap-4 w-full max-lg:max-w-[calc(50%_-_3rem)] max-md:max-w-[3rem] max-w-[calc(33.33%_-_1rem)] z-10'>
+              <span className='w-16 text-center max-lg:hidden text-[hsl(var(--pona-app-music-accent-color-500))] text-sm font-medium'>
                 {msToTime(playback)}
               </span>
               <Button
-                isIconOnly
-                radius='full'
-                size='md'
-                variant='light'
-                className='scale-110 max-lg:scale-100 max-md:hidden'
-                onPress={() => {
+                variant='ghost'
+                size='icon'
+                className='rounded-full size-10 scale-110 max-lg:scale-100 max-md:hidden'
+                onClick={() => {
                   toast.promise(
                     new Promise<void>((resolve, reject) => {
                       socket?.emit('previous', (error: unknown) => {
@@ -276,101 +260,82 @@ function DesktopPonaPlayer() {
                         language.data.app.guilds.player.toast.previous.success,
                       error:
                         language.data.app.guilds.player.toast.previous.error,
-                    },
-                    {
-                      position: 'top-center',
                     }
                   );
                 }}
               >
-                <CaretLineLeft weight='fill' />
+                <CaretLineLeftIcon weight='fill' className='size-5' />
               </Button>
               {!ponaCommonState?.pona.paused ? (
-                <>
-                  <Button
-                    isIconOnly
-                    radius='full'
-                    size='lg'
-                    variant='light'
-                    className='scale-125 max-lg:scale-100'
-                    onPress={() => {
-                      toast.promise(
-                        new Promise<void>((resolve, reject) => {
-                          socket?.emit('pause', (error: unknown) => {
-                            if (
-                              error &&
-                              (error as { status?: string }).status !== 'ok'
-                            ) {
-                              reject(error);
-                            } else {
-                              resolve();
-                            }
-                          });
-                        }),
-                        {
-                          loading:
-                            language.data.app.guilds.player.toast.pause.loading,
-                          success:
-                            language.data.app.guilds.player.toast.pause.success,
-                          error:
-                            language.data.app.guilds.player.toast.pause.error,
-                        },
-                        {
-                          position: 'top-center',
-                        }
-                      );
-                    }}
-                  >
-                    <Pause weight='fill' />
-                  </Button>
-                </>
+                <Button
+                  variant='ghost'
+                  size='icon'
+                  className='rounded-full size-12 scale-125 max-lg:scale-100'
+                  onClick={() => {
+                    toast.promise(
+                      new Promise<void>((resolve, reject) => {
+                        socket?.emit('pause', (error: unknown) => {
+                          if (
+                            error &&
+                            (error as { status?: string }).status !== 'ok'
+                          ) {
+                            reject(error);
+                          } else {
+                            resolve();
+                          }
+                        });
+                      }),
+                      {
+                        loading:
+                          language.data.app.guilds.player.toast.pause.loading,
+                        success:
+                          language.data.app.guilds.player.toast.pause.success,
+                        error:
+                          language.data.app.guilds.player.toast.pause.error,
+                      }
+                    );
+                  }}
+                >
+                  <PauseIcon weight='fill' className='size-6' />
+                </Button>
               ) : (
-                <>
-                  <Button
-                    isIconOnly
-                    radius='full'
-                    size='lg'
-                    variant='light'
-                    className='scale-125 max-lg:scale-100'
-                    onPress={() => {
-                      toast.promise(
-                        new Promise<void>((resolve, reject) => {
-                          socket?.emit('play', (error: unknown) => {
-                            if (
-                              error &&
-                              (error as { status?: string }).status !== 'ok'
-                            ) {
-                              reject(error);
-                            } else {
-                              resolve();
-                            }
-                          });
-                        }),
-                        {
-                          loading:
-                            language.data.app.guilds.player.toast.play.loading,
-                          success:
-                            language.data.app.guilds.player.toast.play.success,
-                          error:
-                            language.data.app.guilds.player.toast.play.error,
-                        },
-                        {
-                          position: 'top-center',
-                        }
-                      );
-                    }}
-                  >
-                    <Play weight='fill' />
-                  </Button>
-                </>
+                <Button
+                  variant='ghost'
+                  size='icon'
+                  className='rounded-full size-12 scale-125 max-lg:scale-100'
+                  onClick={() => {
+                    toast.promise(
+                      new Promise<void>((resolve, reject) => {
+                        socket?.emit('play', (error: unknown) => {
+                          if (
+                            error &&
+                            (error as { status?: string }).status !== 'ok'
+                          ) {
+                            reject(error);
+                          } else {
+                            resolve();
+                          }
+                        });
+                      }),
+                      {
+                        loading:
+                          language.data.app.guilds.player.toast.play.loading,
+                        success:
+                          language.data.app.guilds.player.toast.play.success,
+                        error:
+                          language.data.app.guilds.player.toast.play.error,
+                      }
+                    );
+                  }}
+                >
+                  <PlayIcon weight='fill' className='size-6' />
+                </Button>
               )}
               <Button
-                isIconOnly
-                radius='full'
-                size='md'
-                variant='light'
-                className='scale-110 max-lg:scale-100 max-md:hidden'
-                onPress={() => {
+                variant='ghost'
+                size='icon'
+                className='rounded-full size-10 scale-110 max-lg:scale-100 max-md:hidden'
+                onClick={() => {
                   toast.promise(
                     new Promise<void>((resolve, reject) => {
                       socket?.emit('next', (error: unknown) => {
@@ -390,141 +355,99 @@ function DesktopPonaPlayer() {
                       success:
                         language.data.app.guilds.player.toast.next.success,
                       error: language.data.app.guilds.player.toast.next.error,
-                    },
-                    {
-                      position: 'top-center',
                     }
                   );
                 }}
               >
-                <CaretLineRight weight='fill' />
+                <CaretLineRightIcon weight='fill' className='size-5' />
               </Button>
-              <div className='w-16 max-lg:w-max max-md:hidden flex gap-1 text-center whitespace-nowrap !text-[hsl(var(--pona-app-music-accent-color-500))]'>
-                <span className='lg:hidden flex !text-[hsl(var(--pona-app-music-accent-color-500))]'>
+              <div className='w-16 max-lg:w-max max-md:hidden flex gap-1 text-center whitespace-nowrap text-[hsl(var(--pona-app-music-accent-color-500))] text-sm font-medium'>
+                <span className='lg:hidden flex text-[hsl(var(--pona-app-music-accent-color-500))]'>
                   {msToTime(playback)} /{' '}
                 </span>
                 {msToTime(ponaCommonState?.pona.length || 0)}
               </div>
             </div>
-            <div
-              className={`flex items-center justify-end gap-2 w-full max-lg:max-w-[2rem] max-md:hidden mr-3 max-w-[calc(33.33%_-_1rem)]  ${userSetting.dev_pona_player_style === 'modern' ? '' : 'lg:mt-4'}`}
-            >
-              <Dropdown>
-                <DropdownTrigger>
+
+            {/* Actions / Dropdown */}
+            <div className='flex items-center justify-end gap-2 w-full max-lg:max-w-[2rem] max-md:hidden mr-3 max-w-[calc(33.33%_-_1rem)] z-10'>
+              <DropdownMenu>
+                <DropdownMenuTrigger>
                   <Button
-                    isIconOnly
-                    radius='lg'
-                    size='md'
-                    variant='light'
-                    className='scale-110 max-lg:hidden'
+                    variant='ghost'
+                    size='icon'
+                    className='rounded-lg size-10 scale-110 max-lg:hidden'
                   >
-                    <Repeat weight='fill' />
+                    <RepeatIcon weight='fill' className='size-5' />
                   </Button>
-                </DropdownTrigger>
-                <DropdownMenu
-                  disallowEmptySelection
-                  selectionMode='single'
-                  selectedKeys={
-                    new Set<string>(
-                      [
-                        !isLoopTrack && !isLoopQueue && 'none',
-                        isLoopTrack && 'track',
-                        isLoopQueue && 'queue',
-                      ].filter(Boolean) as string[]
-                    )
-                  }
-                  onAction={key => {
-                    toast.promise(
-                      new Promise<void>((resolve, reject) => {
-                        socket?.emit('repeat', key, (error: unknown) => {
-                          if (
-                            error &&
-                            (error as { status?: string }).status !== 'ok'
-                          ) {
-                            reject(error);
-                          } else {
-                            resolve();
-                          }
-                        });
-                      }),
-                      {
-                        loading:
-                          language.data.app.guilds.player.toast.repeat.loading.replace(
-                            '[repeat_mode]',
-                            String(key).toWellFormed()
-                          ),
-                        success:
-                          language.data.app.guilds.player.toast.repeat.success.replace(
-                            '[repeat_mode]',
-                            String(key).toWellFormed()
-                          ),
-                        error:
-                          language.data.app.guilds.player.toast.repeat.error,
-                      },
-                      {
-                        position: 'top-center',
-                      }
-                    );
-                  }}
-                  variant='flat'
-                >
-                  <DropdownSection
-                    title={language.data.app.guilds.player.repeat.title}
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align='end' className='w-48'>
+                  <DropdownMenuLabel>
+                    {language.data.app.guilds.player.repeat.title}
+                  </DropdownMenuLabel>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      socket?.emit('repeat', 'none');
+                    }}
                   >
-                    <DropdownItem startContent={<MusicNotes />} key='none'>
-                      {language.data.app.guilds.player.repeat.off}
-                    </DropdownItem>
-                    <DropdownItem startContent={<RepeatOnce />} key='track'>
-                      {language.data.app.guilds.player.repeat.track}
-                    </DropdownItem>
-                    <DropdownItem startContent={<Repeat />} key='queue'>
-                      {language.data.app.guilds.player.repeat.queue}
-                    </DropdownItem>
-                  </DropdownSection>
-                </DropdownMenu>
-              </Dropdown>
-              <Popover placement='top'>
+                    <MusicNotesIcon className='size-4 mr-2' />
+                    {language.data.app.guilds.player.repeat.off}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      socket?.emit('repeat', 'track');
+                    }}
+                  >
+                    <RepeatOnceIcon className='size-4 mr-2' />
+                    {language.data.app.guilds.player.repeat.track}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      socket?.emit('repeat', 'queue');
+                    }}
+                  >
+                    <RepeatIcon className='size-4 mr-2' />
+                    {language.data.app.guilds.player.repeat.queue}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              <Popover>
                 <PopoverTrigger>
                   <Button
-                    isIconOnly
-                    radius='lg'
-                    size='md'
-                    variant='light'
-                    className='scale-110 max-lg:hidden'
+                    variant='ghost'
+                    size='icon'
+                    className='rounded-lg size-10 scale-110 max-lg:hidden'
                   >
-                    <Equalizer weight='fill' />
+                    <EqualizerIcon weight='fill' className='size-5' />
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent>
-                  <div className='p-1'>
-                    <div className='w-72 h-36 relative'>
-                      <div className='text-base font-bold'>
-                        {language.data.app.guilds.player.equalizer.title}
-                      </div>
-                      <div className='text-lg absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2'>
-                        {language.data.extensions.comingsoon}
-                      </div>
+                <PopoverContent className='w-72 p-4'>
+                  <div className='w-full h-32 flex flex-col justify-between relative'>
+                    <div className='text-base font-bold'>
+                      {language.data.app.guilds.player.equalizer.title}
+                    </div>
+                    <div className='text-sm text-muted-foreground text-center my-auto'>
+                      {language.data.extensions.comingsoon}
                     </div>
                   </div>
                 </PopoverContent>
               </Popover>
+
               <Button
-                isIconOnly
-                radius='lg'
-                size='md'
-                variant='light'
-                className='scale-110 max-lg:hidden hidden'
+                variant='ghost'
+                size='icon'
+                className='rounded-lg size-10 scale-110 max-lg:hidden hidden'
               >
-                <SpeakerSimpleHigh weight='fill' />
+                <SpeakerSimpleHighIcon weight='fill' className='size-5' />
               </Button>
+
               <Button
-                isIconOnly
-                radius='lg'
-                size='md'
-                variant='light'
-                className='scale-110 max-md:hidden'
-                onPress={() => {
-                  setPlayerPopup(value => {
+                variant='ghost'
+                size='icon'
+                className='rounded-lg size-10 scale-110 max-md:hidden'
+                onClick={() => {
+                  setPlayerPopup((value) => {
                     if (!value)
                       document.body.classList.add('pona-player-focused');
                     else document.body.classList.remove('pona-player-focused');
@@ -532,10 +455,10 @@ function DesktopPonaPlayer() {
                   });
                 }}
               >
-                <CaretUp
+                <CaretUpIcon
                   className={`absolute ${playerPopup ? 'opacity-0 -translate-y-6' : ''}`}
                 />
-                <CaretDown
+                <CaretDownIcon
                   className={`absolute ${!playerPopup ? 'opacity-0 translate-y-6' : ''}`}
                 />
               </Button>
@@ -547,4 +470,4 @@ function DesktopPonaPlayer() {
   );
 }
 
-export default DesktopPonaPlayer;
+

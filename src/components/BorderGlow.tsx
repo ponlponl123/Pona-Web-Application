@@ -1,4 +1,5 @@
 import { useRef, useCallback, useState, useEffect, type ReactNode } from 'react';
+import { parseHSL } from '@/lib/colorUtils';
 
 interface BorderGlowProps {
   children?: ReactNode;
@@ -13,12 +14,6 @@ interface BorderGlowProps {
   animated?: boolean;
   colors?: string[];
   fillOpacity?: number;
-}
-
-function parseHSL(hslStr: string): { h: number; s: number; l: number } {
-  const match = hslStr.match(/([\d.]+)\s*([\d.]+)%?\s*([\d.]+)%?/);
-  if (!match) return { h: 40, s: 80, l: 80 };
-  return { h: parseFloat(match[1]), s: parseFloat(match[2]), l: parseFloat(match[3]) };
 }
 
 function buildBoxShadow(glowColor: string, intensity: number): string {
@@ -131,8 +126,10 @@ const BorderGlow: React.FC<BorderGlowProps> = ({
     if (!animated) return;
     const angleStart = 110;
     const angleEnd = 465;
-    setSweepActive(true);
-    setCursorAngle(angleStart);
+    queueMicrotask(() => {
+      setSweepActive(true);
+      setCursorAngle(angleStart);
+    });
 
     animateValue({ duration: 500, onUpdate: v => setEdgeProximity(v / 100) });
     animateValue({ ease: easeInCubic, duration: 1500, end: 50, onUpdate: v => {

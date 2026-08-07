@@ -1,13 +1,14 @@
 'use client';
-import { useLanguageContext } from '@/contexts/languageContext';
-import { Button, Link } from "@heroui/react";
-import { Coffee, Heart } from '@phosphor-icons/react/dist/ssr';
-import { useRouter } from 'next/navigation';
+
 import React from 'react';
+import Link from 'next/link';
+import { Coffee, Heart } from '@phosphor-icons/react/dist/ssr';
+
+import { Button } from '@/components/ui/button';
+import { useAppStore } from '@/store/coreStore';
 
 function Page() {
-  const { language } = useLanguageContext();
-  const router = useRouter();
+  const language = useAppStore((state) => state.language);
   return (
     <div
       className='flex flex-col gap-4 items-center justify-center w-full'
@@ -17,14 +18,8 @@ function Page() {
       <h1 className='text-2xl max-w-screen-md text-center'>
         {language.data.app.guilds.player.dev}
       </h1>
-      <Link
-        href='/app/updates'
-        rel='noopener'
-        onPress={() => {
-          router.push('/app/updates');
-        }}
-      >
-        <Button color='secondary' className='mt-2' radius='full'>
+      <Link href='/app/updates'>
+        <Button variant='secondary' className='mt-2 rounded-full gap-2'>
           <Heart weight='fill' /> {language.data.app.updates.follow}
         </Button>
       </Link>

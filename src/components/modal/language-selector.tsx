@@ -61,7 +61,7 @@ function LanguageSelectorModal() {
 
   useEffect(() => {
     if (!isLanguageModalOpen) {
-      setFilterLangs("")
+      queueMicrotask(() => setFilterLangs(""))
     }
   }, [isLanguageModalOpen])
 

@@ -10,9 +10,9 @@ export interface SubscribeResult {
 export interface SubscribedChannelsResult {
   artistId: string
   info: {
-    v1: ArtistFullv1 | undefined
-    v2: ArtistFull | undefined
-    user: ProfileFull | undefined
+    v1: ArtistFullv1 | Partial<ArtistFullv1> | undefined
+    v2: ArtistFull | Partial<ArtistFull> | undefined
+    user: ProfileFull | Partial<ProfileFull> | undefined
   }
 }
 
@@ -76,7 +76,8 @@ export async function fetchSubscribedChannels(
 
     if (response.ok) {
       const data = await response.json()
-      return data.result as SubscribedChannelsResult[]
+      const list = (data.result || []) as SubscribedChannelsResult[]
+      return Array.isArray(list) ? list : []
     }
     return false
   } catch {

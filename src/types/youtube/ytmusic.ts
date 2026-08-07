@@ -95,9 +95,18 @@ export interface UpNextsDetails {
   thumbnails: ThumbnailFull[];
 }
 
+export interface ArtistHeaderV1 {
+  title?: { text?: string } | string;
+  description?: { text?: string } | string;
+  thumbnail?: { contents?: { url: string; width?: number; height?: number }[] };
+  foregroundThumbnail?: { thumbnails?: ThumbnailFull[] };
+}
+
 export interface ArtistFull {
   artistId: string;
   name: string;
+  description?: string | { text?: string } | null;
+  header?: ArtistHeaderV1;
   type: 'ARTIST';
   thumbnails: ThumbnailFull[];
   topSongs: SongDetailed[];
