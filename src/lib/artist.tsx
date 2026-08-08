@@ -53,11 +53,12 @@ export function combineArtistName(
       <>
         {artists.map((artist, index) => {
           const id = artist.id || artist.artistId;
+          const cleanName = (artist.name || '').replace(/\s*-\s*Topic\s*$/i, '').trim();
           if (!id)
             return index === 0 ? (
-              <React.Fragment key={index}>{artist.name}</React.Fragment>
+              <React.Fragment key={index}>{cleanName}</React.Fragment>
             ) : (
-              <React.Fragment key={index}> & {artist.name}</React.Fragment>
+              <React.Fragment key={index}> & {cleanName}</React.Fragment>
             );
           const href =
             typeof window !== 'undefined'
@@ -75,7 +76,7 @@ export function combineArtistName(
               }}
               className={clsx('cursor-pointer hover:underline text-foreground', options?.className)}
             >
-              {artist.name}
+              {cleanName}
             </Link>
           );
           return index === 0 ? (
@@ -91,7 +92,8 @@ export function combineArtistName(
     );
   }
   artists.forEach((a, index) => {
-    artist += index === 0 ? a.name : ` & ${a.name}`;
+    const cleanName = (a.name || '').replace(/\s*-\s*Topic\s*$/i, '').trim();
+    artist += index === 0 ? cleanName : ` & ${cleanName}`;
   });
   return artist;
 }
@@ -262,8 +264,8 @@ export function parseV1ChannelData(v1Data: unknown): ArtistFullv1 | null {
   const rawContents = Array.isArray(headerThumb?.contents)
     ? (headerThumb.contents as ThumbnailFull[])
     : Array.isArray(v1.thumbnails)
-    ? (v1.thumbnails as ThumbnailFull[])
-    : [];
+      ? (v1.thumbnails as ThumbnailFull[])
+      : [];
 
   const thumbnails: ThumbnailFull[] = rawContents.map((t) => ({
     url: t.url?.startsWith('//') ? `https:${t.url}` : t.url || '',

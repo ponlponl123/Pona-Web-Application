@@ -52,10 +52,10 @@ export default function UserAccountDropdown({
   } as const
 
   const btnClassname = cn(
-    "m-3 h-max w-max rounded-xl border-2 border-transparent p-3 backdrop-blur-none! outline-none",
+    "m-3 h-max w-max rounded-xl border-2 border-transparent p-3 backdrop-blur-none! outline-none z-40",
     "hover:border-card/5 active:border-card/5 active:bg-card/5",
     !minimize &&
-      "flex w-fit items-center justify-center gap-3 backdrop-blur-md",
+    "flex w-fit items-center justify-center gap-3 backdrop-blur-md",
     className
   )
 
@@ -222,7 +222,7 @@ export default function UserAccountDropdown({
                         className={cn(
                           "apply- flex w-full flex-col items-center justify-center gap-2 rounded-lg p-3 select-none",
                           !userInfo &&
-                            "border-2 border-dashed border-foreground/10 bg-foreground/5 not-dark:bg-foreground/10 hover:bg-foreground/10 not-dark:hover:bg-foreground/5"
+                          "border-2 border-dashed border-foreground/10 bg-foreground/5 not-dark:bg-foreground/10 hover:bg-foreground/10 not-dark:hover:bg-foreground/5"
                         )}
                         onClick={() => setIsActive(false)}
                         data-smooth-interaction="true"
@@ -264,7 +264,7 @@ export default function UserAccountDropdown({
                     className: cn(),
                     layoutId: "setting-modal-by-account-dropdown",
                     onClick: () => {
-                      ;(setSettingLayoutId("setting-modal-by-account-dropdown"),
+                      ; (setSettingLayoutId("setting-modal-by-account-dropdown"),
                         setIsSettingModalOpen(true))
                     },
                     href: null,

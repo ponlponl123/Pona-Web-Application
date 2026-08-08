@@ -84,8 +84,16 @@ export const PonaMusicProvider = ({
     const oauth_type = getCookie("LOGIN_TYPE_")
     const oauth_token = getCookie("LOGIN_")
 
+    const authObj: Record<string, string> = {}
+    if (oauth_type && String(oauth_type) !== "undefined" && String(oauth_type) !== "null") {
+      authObj.type = String(oauth_type)
+    }
+    if (oauth_token && String(oauth_token) !== "undefined" && String(oauth_token) !== "null") {
+      authObj.key = String(oauth_token)
+    }
+
     const iosocket = ws_manager.socket(`/guild/${guild.id}`, {
-      auth: { type: String(oauth_type), key: String(oauth_token) },
+      auth: authObj,
     })
 
     if (!iosocket.connected) {
@@ -298,6 +306,7 @@ export const PonaMusicProvider = ({
     iosocket
       .on("connect", () => {
         setIsConnected(true)
+        iosocket.emit("sync")
       })
       .on("disconnect", () => {
         setIsConnected(false)

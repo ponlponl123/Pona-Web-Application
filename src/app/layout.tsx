@@ -86,7 +86,7 @@ export default function RootLayout({
       </head>
       <body>
         <NextTopLoader
-          color="#ff80c6"
+          color="var(--primary)"
           initialPosition={0.08}
           crawlSpeed={200}
           height={3}
@@ -94,7 +94,7 @@ export default function RootLayout({
           showSpinner={true}
           easing="ease"
           speed={200}
-          shadow="0 0 24px #ff80c6,0 0 12px #ff80c6"
+          shadow="0 0 24px var(--primary),0 0 12px var(--primary)"
         />
         <NextThemeProvider>
           <Suspense

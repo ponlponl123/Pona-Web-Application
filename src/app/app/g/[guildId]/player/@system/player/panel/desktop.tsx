@@ -436,8 +436,8 @@ export function TrackQueue({
         <motion.div
           ref={ref}
           className={`w-full py-2 px-2.5 flex gap-4 items-center rounded-3xl group ${active
-              ? '[.light_&]:bg-[hsl(var(--pona-app-music-accent-color-100))] [.dark_&]:bg-[hsl(var(--pona-app-music-accent-color-800))] active'
-              : ''
+            ? '[.light_&]:bg-[hsl(var(--pona-app-music-accent-color-100))] [.dark_&]:bg-[hsl(var(--pona-app-music-accent-color-800))] active'
+            : ''
             } ${isLoading ? 'pointer-events-none' : ''}`}
           key={index}
           {...params}

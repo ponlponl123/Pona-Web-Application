@@ -21,13 +21,13 @@ export interface MusicCardProps {
 
 function MusicCard({ track, className }: MusicCardProps) {
   const router = useRouter();
-  if (!track?.proxyArtworkUrl) {
+  if (!track?.proxyHighResArtworkUrl) {
     const resolvedTrack = proxyArtwork(track);
-    if (resolvedTrack?.proxyArtworkUrl) {
+    if (resolvedTrack?.proxyHighResArtworkUrl) {
       track = resolvedTrack as Track;
     }
   }
-  const artworkUrl = track?.proxyArtworkUrl;
+  const artworkUrl = track?.proxyHighResArtworkUrl || track?.proxyArtworkUrl || track?.artworkUrl;
 
   return (
     <div className={cn('music-card w-48', className)} aria-label={track?.title}>
@@ -64,7 +64,7 @@ function MusicCard({ track, className }: MusicCardProps) {
           })
         ) : (
           <span className='w-full text-xs text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis text-start'>
-            {track?.author}
+            {track?.author ? track.author.replace(/\s*-\s*Topic\s*$/i, '').trim() : ''}
           </span>
         )}
       </div>
