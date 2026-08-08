@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { getCookie } from 'cookies-next';
 import { motion } from 'framer-motion';
@@ -163,18 +163,23 @@ function Page() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            transition={{ delay: 1 }}
             key={'playlist-backdrop'}
-            className='absolute w-full top-0 left-0 z-1 bg-playground-background pointer-events-none'
+            className='absolute w-full h-[64vh] top-0 left-0 z-1 bg-playground-background pointer-events-none'
           >
             <div className='absolute top-0 left-0 w-full h-full bg-[hsl(var(--pona-app-background))] -z-10 scale-200' />
             {playlist?.thumbnails && playlist.thumbnails.length > 0 && (
-              <img
+              <Image
                 src={
                   `/api/proxy/image?r=` +
                   encodeURIComponent(playlist.thumbnails[playlist.thumbnails.length - 1].url) + "&s=512&blur=16&saturation=96&contrast=12"
                 }
                 alt='backdrop'
-                className='w-full h-[64vh] object-cover saturate-200 brightness-125 in-[.light]:brightness-200 opacity-40 !max-w-full mask-b-from-0%'
+                fill
+                unoptimized
+                priority
+                sizes='100vw'
+                className='w-full h-[64vh] object-cover saturate-200 brightness-125 in-[.light]:brightness-200 opacity-40 max-w-full! mask-b-from-0% pointer-events-none select-none'
               />
             )}
             <div className='absolute top-0 left-0 w-full h-full bg-linear-to-b from-transparent to-[hsl(var(--pona-app-background))] z-10' />
@@ -194,13 +199,16 @@ function Page() {
                     </span>
                   )}
                 </h3>
-                <img
+                <Image
                   src={
                     `/api/proxy/image?r=` +
                     encodeURIComponent(playlist.thumbnails[playlist.thumbnails.length - 1].url)
                   }
-                  alt={title}
-                  className='object-cover w-full aspect-square rounded-3xl shadow-lg'
+                  alt={title || ''}
+                  width={320}
+                  height={320}
+                  unoptimized
+                  className='object-cover w-full aspect-square rounded-3xl shadow-lg pointer-events-none select-none'
                 />
                 <h1 className='text-center text-3xl w-full mt-3 font-bold'>{title}</h1>
                 {year && (

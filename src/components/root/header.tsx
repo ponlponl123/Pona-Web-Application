@@ -6,7 +6,7 @@ import { useDiscordGuildInfo } from "@/contexts/discordGuildInfo"
 import { useDiscordUserInfo } from "@/contexts/discordUserInfo"
 import { fetchSearchHistory } from "@/lib/server-side-api/internal/history"
 import { fetchSearchSuggestionResult } from "@/lib/server-side-api/internal/search"
-import { Controller, useForm } from "react-hook-form"
+import { useForm } from "react-hook-form"
 import {
   ArrowLeftIcon,
   CaretDownIcon,
@@ -23,7 +23,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { ScrollArea } from "../ui/scroll-area"
 import { getCookie } from "cookies-next"
 import { Button } from "../ui/button"
-import { Field } from "../ui/field"
+import { Input } from "react-smooth-input"
 import Sidebar from "./sidebar"
 import Image from "next/image"
 import Link from "next/link"
@@ -33,6 +33,8 @@ import { useAppStore } from "@/store/coreStore"
 import { useAtomValue } from "jotai"
 import { ponaCommonStateAtom } from "@/store/musicAtoms"
 import { isMemberInVCAtom, isSameVCAtom } from "@/store/uiAtoms"
+import { AnimateIcon } from "../animate-ui/icons/icon"
+import { Search } from "../animate-ui/icons/search"
 
 const formSchema = z.object({
   search: z
@@ -146,7 +148,7 @@ function Header() {
       >
         <div className="z-20 flex gap-2 pl-1 active:scale-95">
           <Link
-            href={isApp ? "/app" : "/"}
+            href={isApp ? playerHomePath || "/app" : "/"}
             onClick={() => {
               setNavOpened(false)
             }}
@@ -210,7 +212,7 @@ function Header() {
             </h1>
           </Link>
           <Link
-            href={isApp ? playerHomePath : "/"}
+            href={isApp ? playerHomePath || "/app" : "/"}
             onClick={() => {
               setNavOpened(false)
             }}
@@ -229,17 +231,17 @@ function Header() {
             ponaCommonState &&
             ponaCommonState.pona.voiceChannel &&
             isSameVC && (
-              <div className={`${navOpened ? "hidden" : "contents"}`}>
+              <div className={cn(navOpened && "hidden")}>
                 <Link href={`/app/g/${guild?.id}/player/search`}>
                   <Button
-                    className={`${navOpened || (pathname.includes("player") && pathname.includes("search")) ? "hidden" : ""} miniscreen:translate-y-8 miniscreen:pointer-events-none miniscreen:opacity-0 absolute left-1/2 z-20 -translate-x-1/2 bg-black text-white`}
+                    className={`${navOpened || (pathname.includes("player") && pathname.includes("search")) ? "hidden" : ""} max-md:translate-y-8 md:pointer-events-none md:opacity-0 absolute left-1/2 z-20 -translate-x-1/2 bg-black text-white`}
                     size="sm"
                   >
                     <MagnifyingGlassIcon size={14} />
                   </Button>
                 </Link>
                 <form
-                  className="top-5 flex items-center justify-center gap-3 max-md:contents md:absolute md:left-72 md:w-[calc(100%-18rem)] md:px-4 md:[body.sidebar-collapsed_&]:left-16 md:[body.sidebar-collapsed_&]:w-[calc(100%-4rem)]"
+                  className="top-5 flex items-center justify-center gap-3 max-md:contents md:absolute md:left-44 md:w-[calc(100%-18rem)] md:px-4 md:[body.sidebar-collapsed_&]:left-16 md:[body.sidebar-collapsed_&]:w-[calc(100%-4rem)]"
                   onSubmit={(e) => {
                     e.preventDefault()
                     const data = Object.fromEntries(
@@ -251,26 +253,47 @@ function Header() {
                     addToSearchHistory(data.search.toString())
                   }}
                 >
-                  <div className="flex w-full max-w-6xl items-center justify-start gap-4 max-md:contents">
-                    <div className="miniscreen:w-80 max-miniscreen:top-24 max-miniscreen:left-4 max-miniscreen:translate-x-0 max-miniscreen:max-w-full max-miniscreen:w-[calc(100%-2rem)] max-md:fixed max-md:left-1/2 max-md:max-w-[32vw] max-md:-translate-x-1/2 md:relative [body.pona-player-focused_&]:pointer-events-none [body.pona-player-focused_&]:-translate-y-6 [body.pona-player-focused_&]:opacity-0">
-                      <Controller
-                        name="search"
-                        control={form.control}
-                        render={() => (
-                          <Field
+                  <div className="flex w-full px-6 items-center justify-start gap-2 max-md:contents">
+                    <div className="md:w-80 max-md:top-24 max-md:w-[calc(100%-2rem)] max-md:fixed max-md:left-1/2 max-md:max-w-[32vw] max-md:-translate-x-1/2 md:relative [body.pona-player-focused_&]:pointer-events-none [body.pona-player-focused_&]:-translate-y-6 [body.pona-player-focused_&]:opacity-0">
+                      <div className="relative z-20">
+                        <AnimateIcon animateOnHover>
+                          <Input
                             ref={searchInputRef}
-                            aria-placeholder={
+                            name="search"
+                            type="text"
+                            autoComplete="off"
+                            autoCorrect="off"
+                            autoCapitalize="off"
+                            spellCheck={false}
+                            startContent={
+                              <Search
+                                className="mr-1 size-4 max-md:absolute max-md:scale-75"
+                              />
+                            }
+                            placeholder={
                               language.data.app.guilds.player.search.search_box
                             }
-                            defaultValue={searchValue}
-                            onChange={(value) => {
+                            fontStyle={{
+                              fontFamily:
+                                "var(--font-ponlponl123-article), var(--font-sn-sanafon-maru-j30), sans-serif",
+                              fontWeight: "bold",
+                              fontSize: "14px",
+                              letterSpacing: "1px",
+                            }}
+                            style={{
+                              backdropFilter: "blur(16px)",
+                              WebkitBackdropFilter: "blur(16px)",
+                            }}
+                            value={searchValue}
+                            maxLength={512}
+                            onChange={(e) => {
+                              const val = e.target.value
                               setSearching(true)
-                              setSearchValue(value.target.nodeValue as string)
+                              setSearchValue(val)
                               if (typingTimeout) clearTimeout(typingTimeout)
                               setTypingTimeout(
                                 setTimeout(async () => {
-                                  if (!value.target.nodeValue)
-                                    return setSearchSuggestions([])
+                                  if (!val) return setSearchSuggestions([])
                                   const accessTokenType = String(
                                     getCookie("LOGIN_TYPE_")
                                   )
@@ -289,7 +312,7 @@ function Header() {
                                     await fetchSearchSuggestionResult(
                                       accessTokenType,
                                       accessToken,
-                                      value.target.nodeValue as string
+                                      val
                                     )
                                   if (searcher)
                                     setSearchSuggestions(
@@ -324,73 +347,58 @@ function Header() {
                               }
                             }}
                             onBlur={handleBlur}
-                            className={`${pathname.includes("player") &&
-                              pathname.includes("search")
-                              ? "max-miniscreen:translate-x-0"
-                              : "max-miniscreen:min-w-0 max-miniscreen:w-10 max-miniscreen:pointer-events-none max-miniscreen:opacity-0 max-miniscreen:-translate-y-8"
-                              } pona-music-searchbox z-10 rounded-xl text-foreground backdrop-blur max-md:rounded-full`}
+                            className={cn(
+                              pathname.includes("player") &&
+                                pathname.includes("search")
+                                ? "max-md:translate-x-0"
+                                : "max-md:min-w-0 max-md:w-10 max-md:pointer-events-none max-md:opacity-0 max-md:-translate-y-8",
+                              "pona-music-searchbox"
+                            )}
                           />
-                        )}
-                      />
+                        </AnimateIcon>
+                      </div>
                       <motion.div
-                        initial={{ y: -10 }}
-                        animate={{ y: 0 }}
-                        exit={{ y: -10 }}
+                        initial={{ y: -6, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        exit={{ y: -6, opacity: 0 }}
                         transition={{ duration: 0.16 }}
                         layoutId="search-suggestions"
                         key={String(searching)}
-                        className={`lef-0 absolute top-0 h-max max-h-[calc(96vh-64px)] min-h-6 w-full`}
+                        className="pointer-events-none absolute left-0 top-0 z-10 flex min-h-6 h-max max-h-[calc(96vh-64px)] w-full"
                       >
-                        <ScrollArea
+                        <div
                           id="pona-search-suggestions"
                           ref={searchSuggestionRef}
-                          className={`max-miniscreen:bg-playground-background miniscreen:backdrop-blur-3xl absolute top-12 z-30 h-max max-h-[calc(96vh-64px)] min-h-6 w-full rounded-2xl border-2 border-foreground/10 bg-background/25 p-1 ${searching && (searchHistory.length > 0 || searchSuggestions.length > 0) ? "" : "pointer-events-none -translate-y-6 opacity-0"}`}
+                          className={cn(
+                            "absolute top-12 left-0 z-30 flex flex-col min-h-6 h-max max-h-[calc(96vh-64px)] w-full rounded-2xl border-2 border-foreground/10 p-1 shadow-2xl bg-background/30 dark:bg-background/25 max-md:bg-playground-background transition-all duration-200 overflow-hidden",
+                            searching && (searchHistory.length > 0 || searchSuggestions.length > 0)
+                              ? "opacity-100 pointer-events-auto translate-y-0"
+                              : "opacity-0 pointer-events-none -translate-y-4"
+                          )}
                           style={{
-                            scrollbarWidth: "thin",
-                            scrollbarColor: "hsl(var(--pona-app)) transparent",
+                            backdropFilter: "blur(32px)",
+                            WebkitBackdropFilter: "blur(32px)",
                           }}
                         >
-                          <div className="flex h-max w-full flex-col gap-1">
-                            {searchValue && (
-                              <Button
-                                onClick={() => {
-                                  router.push(
-                                    `/app/g/${guild?.id}/player/search?q=${searchValue}`
-                                  )
-                                  setSearching(false)
-                                  setSearchValue(searchValue)
-                                  addToSearchHistory(searchValue)
-                                }}
-                                value={searchValue}
-                                variant="ghost"
-                                className="flex flex-row items-center justify-start gap-3 text-start"
-                              >
-                                <MagnifyingGlassIcon
-                                  size={14}
-                                  weight="bold"
-                                  className="text-foreground"
-                                />{" "}
-                                <span className="flex-1 overflow-hidden overflow-ellipsis whitespace-nowrap">
-                                  {searchValue}
-                                </span>
-                              </Button>
-                            )}
-                            {searchSuggestions.length > 0 &&
-                              searchSuggestions?.map((value, index) => (
+                          <ScrollArea
+                            className="w-full flex-1 max-h-[calc(96vh-80px)]"
+                            style={{
+                              scrollbarWidth: "thin",
+                              scrollbarColor: "hsl(var(--pona-app)) transparent",
+                            }}
+                          >
+                            <div className="flex h-max w-full flex-col gap-1">
+                              {searchValue && (
                                 <Button
-                                  key={index}
                                   onClick={() => {
                                     router.push(
-                                      `/app/g/${guild?.id}/player/search?q=${value}`
+                                      `/app/g/${guild?.id}/player/search?q=${searchValue}`
                                     )
                                     setSearching(false)
-                                    setSearchValue(value)
-                                    addToSearchHistory(value)
+                                    setSearchValue(searchValue)
+                                    addToSearchHistory(searchValue)
                                   }}
-                                  onFocus={() => {
-                                    setSearchValue(value)
-                                  }}
-                                  value={value}
+                                  value={searchValue}
                                   variant="ghost"
                                   className="flex flex-row items-center justify-start gap-3 text-start"
                                 >
@@ -400,41 +408,71 @@ function Header() {
                                     className="text-foreground"
                                   />{" "}
                                   <span className="flex-1 overflow-hidden overflow-ellipsis whitespace-nowrap">
-                                    {value}
+                                    {searchValue}
                                   </span>
                                 </Button>
-                              ))}
-                            {searchHistory.length > 0 &&
-                              !searchSuggestions.length &&
-                              searchHistory?.map((value, index) => (
-                                <Button
-                                  key={index}
-                                  onClick={() => {
-                                    router.push(
-                                      `/app/g/${guild?.id}/player/search?q=${value}`
-                                    )
-                                    setSearching(false)
-                                    setSearchValue(value)
-                                    addToSearchHistory(value)
-                                  }}
-                                  onFocus={() => {
-                                    setSearchValue(value)
-                                  }}
-                                  value={value}
-                                  className="flex flex-row items-center justify-start gap-3 text-start"
-                                >
-                                  <ClockCounterClockwiseIcon
-                                    size={14}
-                                    weight="bold"
-                                    className="text-foreground"
-                                  />{" "}
-                                  <span className="flex-1 overflow-hidden overflow-ellipsis whitespace-nowrap">
-                                    {value}
-                                  </span>
-                                </Button>
-                              ))}
-                          </div>
-                        </ScrollArea>
+                              )}
+                              {searchSuggestions.length > 0 &&
+                                searchSuggestions?.map((value, index) => (
+                                  <Button
+                                    key={index}
+                                    onClick={() => {
+                                      router.push(
+                                        `/app/g/${guild?.id}/player/search?q=${value}`
+                                      )
+                                      setSearching(false)
+                                      setSearchValue(value)
+                                      addToSearchHistory(value)
+                                    }}
+                                    onFocus={() => {
+                                      setSearchValue(value)
+                                    }}
+                                    value={value}
+                                    variant="ghost"
+                                    className="flex flex-row items-center justify-start gap-3 text-start"
+                                  >
+                                    <MagnifyingGlassIcon
+                                      size={14}
+                                      weight="bold"
+                                      className="text-foreground"
+                                    />{" "}
+                                    <span className="flex-1 overflow-hidden overflow-ellipsis whitespace-nowrap">
+                                      {value}
+                                    </span>
+                                  </Button>
+                                ))}
+                              {searchHistory.length > 0 &&
+                                !searchSuggestions.length &&
+                                searchHistory?.map((value, index) => (
+                                  <Button
+                                    key={index}
+                                    onClick={() => {
+                                      router.push(
+                                        `/app/g/${guild?.id}/player/search?q=${value}`
+                                      )
+                                      setSearching(false)
+                                      setSearchValue(value)
+                                      addToSearchHistory(value)
+                                    }}
+                                    onFocus={() => {
+                                      setSearchValue(value)
+                                    }}
+                                    value={value}
+                                    className="flex flex-row items-center justify-start gap-3 text-start"
+                                  >
+                                    <ClockCounterClockwiseIcon
+                                      size={14}
+                                      weight="bold"
+                                      className="text-foreground"
+                                    />{" "}
+                                    <span className="flex-1 overflow-hidden overflow-ellipsis whitespace-nowrap">
+                                      {value}
+                                    </span>
+                                  </Button>
+                                ))}
+                            </div>
+                          </ScrollArea>
+                        </div>
                       </motion.div>
                     </div>
                   </div>
@@ -443,7 +481,7 @@ function Header() {
             )}
           <UserAccountDropdown minimize={true} className="-mr-2 md:hidden" />
           <MyButton
-            className={`btn-icon m-0 mr-0! h-12 w-12 min-w-0! md:hidden! ${isMusicApp ? "max-miniscreen:hidden" : ""}`}
+            className={`btn-icon m-0 mr-0! h-12 w-12 min-w-0! md:hidden! ${isMusicApp ? "max-md:hidden" : ""}`}
             style="rounded"
             variant="text"
             onClick={() => {
@@ -492,7 +530,7 @@ function Header() {
             )}
             {userInfo && isInGuild && guildPath === "player" ? (
               <>
-                {/* <UserAccountDropdown minimize={false} /> */}
+                <UserAccountDropdown minimize={true} />
               </>
             ) : (
               <>

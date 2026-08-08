@@ -59,18 +59,27 @@ export const PonaMusicProvider = ({
 
   // Reactively synchronize isSameVC whenever ponaCommonState or isMemberInVC changes
   useEffect(() => {
-    const ponaVcId = ponaCommonState?.pona?.voiceChannel
-    const memberVcId = isMemberInVC?.id
+    const rawPonaVc = ponaCommonState?.pona?.voiceChannel
+    const ponaVcId =
+      typeof rawPonaVc === "object" && rawPonaVc !== null
+        ? String((rawPonaVc as unknown as { id: string })?.id || "")
+        : String(rawPonaVc || "")
+
+    const rawMemberVc = isMemberInVC
+    const memberVcId =
+      typeof rawMemberVc === "object" && rawMemberVc !== null
+        ? String((rawMemberVc as unknown as { id: string })?.id || "")
+        : String(rawMemberVc || "")
 
     if (ponaVcId && memberVcId && ponaVcId === memberVcId) {
       setIsSameVC(true)
     } else {
       setIsSameVC(false)
     }
-  }, [ponaCommonState?.pona?.voiceChannel, isMemberInVC?.id, setIsSameVC])
+  }, [ponaCommonState?.pona?.voiceChannel, isMemberInVC, setIsSameVC])
 
   useEffect(() => {
-    if (!guild?.id || !pathname.includes("player")) return
+    if (!guild?.id) return
 
     const oauth_type = getCookie("LOGIN_TYPE_")
     const oauth_token = getCookie("LOGIN_")

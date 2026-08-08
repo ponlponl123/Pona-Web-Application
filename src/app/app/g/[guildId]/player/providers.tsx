@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useMemo, useRef } from 'react';
+import Image from 'next/image';
 import { useMediaQuery } from 'react-responsive';
 import { useAtomValue } from 'jotai';
 import { MusicNoteSimple } from '@phosphor-icons/react/dist/ssr';
@@ -96,12 +97,16 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       >
         <div className='absolute w-full h-screen top-0 left-0 z-1 opacity-40 overflow-hidden pointer-events-none mask-b-from-0%'>
           {userSetting.transparency ? (
-            <img
+            <Image
               src={`/api/proxy/image?r=${encodeURIComponent(
                 backdropBg || '/static/backdrop.png'
               )}&s=512&blur=16&saturation=96&contrast=12`}
               alt={currentTrack ? currentTrack.title : guild?.name || ''}
-              className='object-cover w-full h-screen pointer-events-none saturate-200 brightness-110 scale-200'
+              fill
+              unoptimized
+              priority
+              sizes='100vw'
+              className='object-cover w-full h-screen pointer-events-none saturate-200 brightness-110 scale-200 select-none'
             />
           ) : (
             <div className='w-full h-96 bg-linear-to-t from-transparent to-[hsl(var(--pona-app-music-accent-color-500))]' />

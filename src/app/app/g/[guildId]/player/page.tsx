@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { getCookie } from 'cookies-next';
@@ -24,7 +25,6 @@ import { useAppStore } from '@/store/coreStore';
 import { useMusicCacheStore } from '@/store/musicCacheStore';
 import {
   fetchSubscribedChannels,
-  SubscribedChannelsResult,
 } from '@/lib/server-side-api/internal/channel';
 import fetchHistory, { History } from '@/lib/server-side-api/internal/history';
 import { usePrevNextButtons } from '@/lib/Embla/CarouselArrowButtons';
@@ -90,12 +90,14 @@ export default function Page() {
 
   return guild ? (
     <div className='w-full max-w-6xl mx-auto mt-16 gap-4 flex flex-col items-center justify-center text-center'>
-      <div className='w-full flex gap-5'>
+      <div className='w-full flex gap-5 z-10'>
         {userInfo?.avatar ? (
-          <img
+          <Image
             src={`https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}?size=64`}
             alt={userInfo.global_name || 'User'}
-            className='w-16 h-16 rounded-full object-cover'
+            width={64}
+            height={64}
+            className='w-16 h-16 rounded-full object-cover pointer-events-none select-none'
           />
         ) : (
           <div className='w-16 h-16 rounded-full bg-muted flex items-center justify-center text-xl font-bold'>
@@ -103,7 +105,7 @@ export default function Page() {
           </div>
         )}
         <div className='flex flex-col items-start justify-center'>
-          <h3 className='text-lg leading-none'>{userInfo?.global_name}</h3>
+          <h3 className='text-lg leading-none -translate-y-3'>{userInfo?.global_name}</h3>
           <h1 className='text-5xl font-bold'>
             {language.data.app.guilds.player.home.listen_again}
           </h1>
