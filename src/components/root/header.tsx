@@ -73,7 +73,7 @@ function Header() {
       >
         <div className="z-20 flex gap-2 pl-1 active:scale-95">
           <Link
-            href={isApp ? playerHomePath || "/app" : "/"}
+            href={isApp ? pathname.includes("/player") ? playerHomePath : "/app" : "/"}
             onClick={() => {
               setNavOpened(false)
             }}

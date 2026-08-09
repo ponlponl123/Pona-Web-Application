@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { getCookie } from 'cookies-next';
-import { IconProps, type Icon } from '@phosphor-icons/react';
+import { HeartBreakIcon, IconProps, type Icon } from '@phosphor-icons/react';
 import { clsx } from 'clsx';
 
 import { useAppStore } from '@/store/coreStore';
@@ -14,7 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from '@/components/ui/dialog';
+} from '@/components/animate-ui/components/radix/dialog';
 
 import { ThumbnailFull } from '@/types/youtube/ytmusic-api';
 
@@ -145,24 +145,27 @@ export function UnSubscribeModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className='sm:max-w-md'>
+      <DialogContent className='sm:max-w-xs' showCloseButton={false}>
         <DialogHeader>
-          <DialogTitle>
+          <DialogTitle className='flex items-center gap-2'>
+            <HeartBreakIcon weight='fill' />
             {language.data.app.guilds.player.artist.unsubscribe_confirmation.replace(
               '[artist_name]',
               artistName || ''
             )}
           </DialogTitle>
         </DialogHeader>
-        <DialogFooter className='gap-2 sm:gap-0'>
+        <DialogFooter className='flex items-center gap-1 mt-2'>
           <Button
-            variant='outline'
+            variant='ghost'
+            className={"rounded-md"}
             onClick={() => onOpenChange(false)}
           >
             {language.data.common.no}
           </Button>
           <Button
             variant='destructive'
+            className={"rounded-md"}
             onClick={async () => {
               if (onSubmit) onSubmit();
               const accessToken = getCookie('LOGIN_');
@@ -223,8 +226,8 @@ export function SubscribeButtonTrigger({
     preset === 'full'
       ? 'rounded-full font-bold max-md:text-sm max-md:py-3 max-md:px-4 cursor-pointer'
       : preset === 'minimal'
-      ? 'rounded-full cursor-pointer'
-      : className;
+        ? 'rounded-full cursor-pointer'
+        : className;
 
   return (
     <Button
