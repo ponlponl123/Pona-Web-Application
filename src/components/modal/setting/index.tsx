@@ -39,6 +39,7 @@ const SettingModalContext = React.createContext<{
   SelectedPageKey: PageKey
   setSelectedPage: (pageKey: PageKey) => void
   bodyRef: React.RefObject<HTMLDivElement | null>
+  bodyCallbackRef: (node: HTMLDivElement | null) => void
   sidebarRef: React.RefObject<HTMLDivElement | null>
   lookingAt?: string[]
   scrollTo: (id: string) => void
@@ -48,6 +49,7 @@ const SettingModalContext = React.createContext<{
   SelectedPageKey: "layout",
   setSelectedPage: () => {},
   bodyRef: React.createRef(),
+  bodyCallbackRef: () => {},
   sidebarRef: React.createRef(),
   lookingAt: [],
   scrollTo: () => {},
@@ -64,6 +66,14 @@ const SettingModalProvider = ({ children }: { children: React.ReactNode }) => {
   const bodyRef = React.useRef<HTMLDivElement | null>(null)
   const sidebarRef = React.useRef<HTMLDivElement | null>(null)
   const [isNavExtended, setIsNavExtended] = React.useState(false)
+  // Incremented each time the new Modal.Body mounts — the reliable signal
+  // that bodyRef.current points to a fresh live DOM node.
+  const [bodyMountCount, setBodyMountCount] = React.useState(0)
+
+  const bodyCallbackRef = React.useCallback((node: HTMLDivElement | null) => {
+    bodyRef.current = node
+    if (node) setBodyMountCount((c) => c + 1)
+  }, [])
 
   const setSelectedPage = (pageKey: PageKey) => {
     setSelectedPageKey(pageKey)
@@ -71,55 +81,57 @@ const SettingModalProvider = ({ children }: { children: React.ReactNode }) => {
 
   React.useEffect(() => {
     setLookingAt([])
-    if (!isSettingModalOpen || !bodyRef.current) return
+  }, [SelectedPageKey])
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        setLookingAt((prev) => {
-          const updated = new Set(prev)
-          let hasChanges = false
+  React.useEffect(() => {
+    if (!isSettingModalOpen) return
 
-          entries.forEach((entry) => {
-            const id = entry.target.id
-            if (!id) return
+    let observer: IntersectionObserver | null = null
 
-            if (entry.isIntersecting) {
-              if (!updated.has(id)) {
-                updated.add(id)
-                hasChanges = true
-              }
-            } else {
-              if (updated.has(id)) {
-                updated.delete(id)
-                hasChanges = true
-              }
-            }
-          })
-
-          return hasChanges ? Array.from(updated) : prev
-        })
-      },
-      {
-        root: bodyRef.current,
-        rootMargin: "0px",
-        threshold: 0.1,
-      }
-    )
-
+    // bodyMountCount just incremented — bodyRef.current is the fresh node.
+    // Use a minimal delay (50ms) only to let the browser compute layout.
     const timeoutId = setTimeout(() => {
-      if (bodyRef.current) {
-        const sections = bodyRef.current.querySelectorAll(
-          '[data-section="true"]'
-        )
-        sections.forEach((section) => observer.observe(section))
-      }
-    }, 120)
+      const root = bodyRef.current
+      if (!root) return
+
+      observer = new IntersectionObserver(
+        (entries) => {
+          setLookingAt((prev) => {
+            const updated = new Set(prev)
+            let hasChanges = false
+
+            entries.forEach((entry) => {
+              const id = entry.target.id
+              if (!id) return
+
+              if (entry.isIntersecting) {
+                if (!updated.has(id)) {
+                  updated.add(id)
+                  hasChanges = true
+                }
+              } else {
+                if (updated.has(id)) {
+                  updated.delete(id)
+                  hasChanges = true
+                }
+              }
+            })
+
+            return hasChanges ? Array.from(updated) : prev
+          })
+        },
+        { root, rootMargin: "0px", threshold: 0.1 }
+      )
+
+      const sections = root.querySelectorAll('[data-section="true"]')
+      sections.forEach((section) => observer!.observe(section))
+    }, 50)
 
     return () => {
       clearTimeout(timeoutId)
-      observer.disconnect()
+      observer?.disconnect()
     }
-  }, [SelectedPageKey, isSettingModalOpen])
+  }, [bodyMountCount, isSettingModalOpen])
 
   const scrollTo = (rawId: string) => {
     const targetId = rawId.startsWith("#") ? rawId.substring(1) : rawId
@@ -162,6 +174,7 @@ const SettingModalProvider = ({ children }: { children: React.ReactNode }) => {
         SelectedPageKey,
         setSelectedPage,
         bodyRef,
+        bodyCallbackRef,
         sidebarRef,
         lookingAt,
         scrollTo,
@@ -188,7 +201,7 @@ function SettingModal() {
   const {
     SelectedPageKey,
     sidebarRef,
-    bodyRef,
+    bodyCallbackRef,
     isNavExtended,
     setIsNavExtended,
   } = useSettingModalContext()
@@ -299,7 +312,7 @@ function SettingModal() {
               >
                 <Modal.Body
                   className="mt-0 h-full w-full text-foreground"
-                  ref={bodyRef}
+                  ref={bodyCallbackRef}
                 >
                   {Pages[SelectedPageKey]}
                 </Modal.Body>
