@@ -489,7 +489,9 @@
           "next": "次へ",
           "lyrics": "歌詞",
           "related": "関連",
-          "open_queue": "もっと見る"
+          "open_queue": "もっと見る",
+          "now_playing": "再生中",
+          "playing_next": "次に再生"
         },
         "related": {
           "videoId_not_provided": "バスは全然来ない…",

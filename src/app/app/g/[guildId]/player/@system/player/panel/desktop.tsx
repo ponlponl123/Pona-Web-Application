@@ -251,7 +251,7 @@ export default function DesktopPonaPlayerPanel() {
                         {currentTrack && (
                           <div className='flex flex-col gap-1.5'>
                             <span className='text-xs font-semibold text-muted-foreground uppercase tracking-wider px-2'>
-                              Now Playing
+                              {language.data.app.guilds.player.tabs.now_playing}
                             </span>
                             <TrackQueue
                               active={true}
@@ -264,7 +264,7 @@ export default function DesktopPonaPlayerPanel() {
                         {playingNextQueue.length > 0 && (
                           <div className='flex flex-col gap-1.5 mt-2'>
                             <span className='text-xs font-semibold text-muted-foreground uppercase tracking-wider px-2'>
-                              Playing Next
+                              {language.data.app.guilds.player.tabs.playing_next}
                             </span>
                             <DndContext
                               sensors={sensors}
