@@ -494,14 +494,14 @@ export function TrackQueue({
       <ContextMenuTrigger>
         <motion.div
           ref={ref}
-          className={`w-full py-2 px-2.5 flex gap-4 items-center rounded-3xl group ${active
+          className={`w-full p-1 pl-2 flex gap-4 items-center rounded-xl group ${active
             ? 'in-[.light]:bg-[hsl(var(--pona-app-music-accent-color-100))] in-[.dark]:bg-[hsl(var(--pona-app-music-accent-color-900)/.64)] active'
             : ''
             } ${isLoading ? 'pointer-events-none' : ''}`}
           key={index}
           {...params}
         >
-          <div className='flex-[0 1 auto] w-11 h-11 select-none relative overflow-hidden rounded-2xl'>
+          <div className='flex-[0 1 auto] size-10 select-none relative overflow-hidden rounded-lg'>
             {!isLoading ? (
               <Image
                 src={
@@ -512,11 +512,11 @@ export function TrackQueue({
                     : '/static/Ponlponl123 (1459).png')
                 }
                 alt={track.title}
-                height={44}
-                width={44}
+                height={40}
+                width={40}
                 unoptimized
                 className={
-                  'object-cover rounded-lg z-0 size-11 ' +
+                  'object-cover rounded-lg z-0 size-10 ' +
                   (!paused && active
                     ? 'brightness-50 saturate-0'
                     : 'group-hover:brightness-75 transition-all')
@@ -570,7 +570,7 @@ export function TrackQueue({
           >
             {!isLoading ? (
               <>
-                <h1 className='max-w-full text-[hsl(var(--pona-app-music-accent-color-500))] truncate font-medium'>
+                <h1 className='max-w-full text-[hsl(var(--pona-app-music-accent-color-500))] text-sm truncate font-medium'>
                   {track.title}
                 </h1>
                 {track.artist ? (

@@ -1,6 +1,5 @@
-'use client';
-
 import React, { memo, useCallback, useRef } from 'react';
+import { useAtomValue } from 'jotai';
 import { Socket } from 'socket.io-client';
 import {
   CaretDownIcon,
@@ -11,8 +10,9 @@ import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import {
@@ -25,6 +25,8 @@ import { Music, MusicIconHandle, Repeat, Repeat1, RepeatIconHandle } from '@anim
 import { AnimateIcon } from '@/components/animate-ui/icons/icon';
 import { AudioLines } from '@/components/animate-ui/icons/audio-lines';
 import { RefreshCw } from '@/components/animate-ui/icons/refresh-cw';
+import { ponaCommonStateAtom } from '@/store/musicAtoms';
+import { cn } from '@/lib/utils';
 
 export const PlayerActions = memo(function PlayerActions({
   socket,
@@ -37,6 +39,13 @@ export const PlayerActions = memo(function PlayerActions({
   playerPopup: boolean;
   setPlayerPopup: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
+  const ponaState = useAtomValue(ponaCommonStateAtom);
+  const repeatMode = ponaState?.pona?.repeat?.track
+    ? 'track'
+    : ponaState?.pona?.repeat?.queue
+      ? 'queue'
+      : 'none';
+
   const handleRepeat = useCallback(
     (mode: 'none' | 'track' | 'queue') => {
       socket?.emit('repeat', mode);
@@ -47,10 +56,6 @@ export const PlayerActions = memo(function PlayerActions({
   const noloopIconRef = useRef<MusicIconHandle>(null)
   const repeatIconRef = useRef<RepeatIconHandle>(null)
   const queueIconRef = useRef<RepeatIconHandle>(null)
-
-  const handleRepeatNone = useCallback(() => handleRepeat('none'), [handleRepeat]);
-  const handleRepeatTrack = useCallback(() => handleRepeat('track'), [handleRepeat]);
-  const handleRepeatQueue = useCallback(() => handleRepeat('queue'), [handleRepeat]);
 
   const togglePopup = useCallback(() => {
     setPlayerPopup((value) => {
@@ -70,11 +75,20 @@ export const PlayerActions = memo(function PlayerActions({
               <Button
                 variant='ghost'
                 size='icon'
-                className='rounded-lg p-0! size-10 scale-110 max-md:hidden'
+                className={cn(
+                  'rounded-lg p-0! size-10 scale-110 max-md:hidden',
+                  repeatMode !== 'none' && 'bg-[hsl(var(--pona-app-music-accent-color-500)/0.12)]'
+                )}
                 data-smooth-interaction="true"
               >
                 <RefreshCw
-                  className='size-4 text-[hsl(var(--pona-app-music-accent-color-500))]' />
+                  className={cn(
+                    'size-4',
+                    repeatMode !== 'none'
+                      ? 'text-[hsl(var(--pona-app-music-accent-color-500))]'
+                      : 'text-[hsl(var(--pona-app-music-accent-color-500)/0.24)]'
+                  )}
+                />
               </Button>
             </AnimateIcon>
           }
@@ -83,18 +97,35 @@ export const PlayerActions = memo(function PlayerActions({
           <DropdownMenuLabel>
             {language.data.app.guilds.player.repeat.title}
           </DropdownMenuLabel>
-          <DropdownMenuItem onMouseEnter={() => noloopIconRef.current?.startAnimation()} onMouseLeave={() => noloopIconRef.current?.stopAnimation()} onClick={handleRepeatNone}>
-            <Music ref={noloopIconRef} className='size-4 mr-2' />
-            {language.data.app.guilds.player.repeat.off}
-          </DropdownMenuItem>
-          <DropdownMenuItem onMouseEnter={() => repeatIconRef.current?.startAnimation()} onMouseLeave={() => repeatIconRef.current?.stopAnimation()} onClick={handleRepeatTrack}>
-            <Repeat1 ref={repeatIconRef} className='size-4 mr-2' />
-            {language.data.app.guilds.player.repeat.track}
-          </DropdownMenuItem>
-          <DropdownMenuItem onMouseEnter={() => queueIconRef.current?.startAnimation()} onMouseLeave={() => queueIconRef.current?.stopAnimation()} onClick={handleRepeatQueue}>
-            <Repeat ref={queueIconRef} className='size-4 mr-2' />
-            {language.data.app.guilds.player.repeat.queue}
-          </DropdownMenuItem>
+          <DropdownMenuRadioGroup
+            value={repeatMode}
+            onValueChange={(val) => handleRepeat(val as 'none' | 'track' | 'queue')}
+          >
+            <DropdownMenuRadioItem
+              value='none'
+              onMouseEnter={() => noloopIconRef.current?.startAnimation()}
+              onMouseLeave={() => noloopIconRef.current?.stopAnimation()}
+            >
+              <Music ref={noloopIconRef} className='size-4 mr-2' />
+              {language.data.app.guilds.player.repeat.off}
+            </DropdownMenuRadioItem>
+            <DropdownMenuRadioItem
+              value='track'
+              onMouseEnter={() => repeatIconRef.current?.startAnimation()}
+              onMouseLeave={() => repeatIconRef.current?.stopAnimation()}
+            >
+              <Repeat1 ref={repeatIconRef} className='size-4 mr-2' />
+              {language.data.app.guilds.player.repeat.track}
+            </DropdownMenuRadioItem>
+            <DropdownMenuRadioItem
+              value='queue'
+              onMouseEnter={() => queueIconRef.current?.startAnimation()}
+              onMouseLeave={() => queueIconRef.current?.stopAnimation()}
+            >
+              <Repeat ref={queueIconRef} className='size-4 mr-2' />
+              {language.data.app.guilds.player.repeat.queue}
+            </DropdownMenuRadioItem>
+          </DropdownMenuRadioGroup>
         </DropdownMenuContent>
       </DropdownMenu>
 

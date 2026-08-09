@@ -18,7 +18,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from '@/components/ui/dialog';
+} from '@/components/animate-ui/components/radix/dialog';
 import PlayPauseButton from './playPause';
 
 import {
@@ -27,6 +27,8 @@ import {
   PlayDetail,
   PlaylistDetail,
 } from '@/types/ponaPlayer';
+import { AnimateIcon } from '@/components/animate-ui/icons/icon';
+import { Plus } from '@/components/animate-ui/icons/plus';
 export type { PlayButtonClassNames, PlayButtonProps, PlayDetail, PlaylistDetail };
 
 
@@ -184,9 +186,12 @@ function PlayButton<T extends 'song' | 'playlist' = 'song'>({
       )}
 
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className='sm:max-w-md'>
+        <DialogContent className='sm:max-w-xs' showCloseButton={false}>
           <DialogHeader>
-            <DialogTitle>
+            <DialogTitle className='flex items-center gap-2'>
+              <AnimateIcon animate>
+                <Plus className={"size-5"} />
+              </AnimateIcon>
               {language.data.app.guilds.player.music_card.action.add_to_queue.title}
             </DialogTitle>
           </DialogHeader>
@@ -194,10 +199,11 @@ function PlayButton<T extends 'song' | 'playlist' = 'song'>({
             <h1 className='font-medium text-foreground'>{detail.title}</h1>
             <span className='text-xs text-muted-foreground'>{detail.author}</span>
           </div>
-          <DialogFooter className='gap-2 sm:gap-0'>
+          <DialogFooter className='flex items-center gap-1 mt-2'>
             <Button
               variant='outline'
               onClick={() => setIsModalOpen(false)}
+              className={"rounded-md"}
             >
               {language.data.app.guilds.player.music_card.action.add_to_queue.close}
             </Button>
@@ -206,6 +212,7 @@ function PlayButton<T extends 'song' | 'playlist' = 'song'>({
                 addToQueue();
                 setIsModalOpen(false);
               }}
+              className={"rounded-md"}
             >
               {language.data.app.guilds.player.music_card.action.add_to_queue.add}
             </Button>
@@ -214,9 +221,12 @@ function PlayButton<T extends 'song' | 'playlist' = 'song'>({
       </Dialog>
 
       <Dialog open={isDuplicateModalOpen} onOpenChange={setIsDuplicateModalOpen}>
-        <DialogContent className='sm:max-w-md'>
+        <DialogContent className='sm:max-w-xs' showCloseButton={false}>
           <DialogHeader>
-            <DialogTitle>
+            <DialogTitle className='flex items-center gap-2'>
+              <AnimateIcon animate>
+                <Plus className={"size-5"} />
+              </AnimateIcon>
               {language.data.app.guilds.player.music_card.action.add_duplicated_track_to_queue.title}
             </DialogTitle>
           </DialogHeader>
@@ -224,10 +234,11 @@ function PlayButton<T extends 'song' | 'playlist' = 'song'>({
             <h1 className='font-medium text-foreground'>{detail.title}</h1>
             <span className='text-xs text-muted-foreground'>{detail.author}</span>
           </div>
-          <DialogFooter className='gap-2 sm:gap-0'>
+          <DialogFooter className='flex items-center gap-1 mt-2'>
             <Button
               variant='outline'
               onClick={() => setIsDuplicateModalOpen(false)}
+              className={"rounded-md"}
             >
               {language.data.app.guilds.player.music_card.action.add_duplicated_track_to_queue.close}
             </Button>
@@ -237,6 +248,7 @@ function PlayButton<T extends 'song' | 'playlist' = 'song'>({
                 addToQueue();
                 setIsDuplicateModalOpen(false);
               }}
+              className={"rounded-md"}
             >
               {language.data.app.guilds.player.music_card.action.add_duplicated_track_to_queue.add}
             </Button>
