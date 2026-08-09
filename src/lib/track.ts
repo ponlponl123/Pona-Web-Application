@@ -18,17 +18,20 @@ export async function makeTrack(
   track: Track | UnresolvedTrack
 ): Promise<Track | UnresolvedTrack> {
   if (!track?.identifier) return track
-  const accentColor = await getAccentHEXColorFromUrl(
-    "/api/proxy/watch?v=" + track.identifier
-  )
-  const colorPalette = generatePalette(accentColor)
-  for (const [key, value] of Object.entries(colorPalette)) {
-    document.documentElement.style.setProperty(
-      key,
-      value[0] + " " + value[1] + "% " + value[2] + "%",
-      "important"
+
+  try {
+    const accentColor = await getAccentHEXColorFromUrl(
+      "/api/proxy/watch?v=" + track.identifier + "&s=sm"
     )
-  }
+    const colorPalette = generatePalette(accentColor)
+    for (const [key, [h, s, l]] of Object.entries(colorPalette)) {
+      document.documentElement.style.setProperty(
+        `--pona-app-music-accent-color-${key}`,
+        `${h} ${s}% ${l}%`
+      )
+    }
+  } catch {}
+
   document.body.setAttribute("playing", track.identifier)
   track = proxyArtwork(track)
 

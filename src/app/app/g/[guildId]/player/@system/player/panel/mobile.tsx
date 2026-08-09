@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -33,9 +34,9 @@ import { useSocket } from '@/contexts/ponaMusicContext';
 import { useAppStore } from '@/store/coreStore';
 import { playbackAtom, ponaCommonStateAtom } from '@/store/musicAtoms';
 import { playerPopupAtom } from '@/store/uiAtoms';
-import { Track } from '@/types/ponaPlayer';
+import { Track, UnresolvedTrack } from '@/types/ponaPlayer';
 import { msToTime } from '@/lib/utils';
-import { MobilePonaPlayerPanelAnimationState } from '../mobile';
+import { MobilePonaPlayerPanelAnimationState } from '../index';
 
 
 export default function MobilePonaPlayerPanel({
@@ -69,6 +70,13 @@ export default function MobilePonaPlayerPanel({
   const currentTrack = ponaCommonState?.current;
   const [lyricsContainer, setLyricsContainer] = useState<HTMLDivElement | null>(null);
 
+  const playingNextQueue = useMemo(() => {
+    const queue = ponaCommonState?.queue;
+    const currentUniqueId = currentTrack?.uniqueId;
+    if (!queue) return [];
+    return queue.filter((track) => track.uniqueId !== currentUniqueId);
+  }, [ponaCommonState, currentTrack]);
+
   const [isRepeatModalOpen, setIsRepeatModalOpen] = useState(false);
   const [isEqualizerModalOpen, setIsEqualizerModalOpen] = useState(false);
   const [sliderValue, setSliderValue] = useState<number>(playback);
@@ -92,6 +100,24 @@ export default function MobilePonaPlayerPanel({
     100,
     Math.max(0, (sliderValue / maxLength) * 100)
   );
+
+  const handleSliderChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setSliderValue(Number(e.target.value));
+  }, []);
+
+  const handleSeek = useCallback(
+    (e: React.MouseEvent<HTMLInputElement> | React.TouchEvent<HTMLInputElement>) => {
+      socket?.emit('seek', Number((e.target as HTMLInputElement).value));
+    },
+    [socket]
+  );
+
+  const handlePrevious = useCallback(() => socket?.emit('previous'), [socket]);
+  const handlePause = useCallback(() => socket?.emit('pause'), [socket]);
+  const handlePlay = useCallback(() => socket?.emit('play'), [socket]);
+  const handleNext = useCallback(() => socket?.emit('next'), [socket]);
+  const handleOpenEqualizer = useCallback(() => setIsEqualizerModalOpen(true), []);
+  const handleOpenRepeat = useCallback(() => setIsRepeatModalOpen(true), []);
 
   return (
     <>
@@ -159,16 +185,18 @@ export default function MobilePonaPlayerPanel({
               id='mobile-pona-player-controller'
             >
               <div className='w-[calc(100vw_-_3rem)] max-w-[48vh] aspect-square relative flex pointer-events-none'>
-                <img
+                <Image
                   src={
                     currentTrack
                       ? currentTrack.proxyHighResArtworkUrl ||
-                      currentTrack?.proxyArtworkUrl
+                      currentTrack?.proxyArtworkUrl ||
+                      '/static/Ponlponl123 (1459).png'
                       : '/static/Ponlponl123 (1459).png'
                   }
                   alt={currentTrack ? currentTrack.title : 'Artwork'}
+                  fill
+                  unoptimized
                   className='w-full h-full object-cover rounded-2xl shadow-xl'
-                  loading='lazy'
                   id='pona-music-artwork'
                 />
               </div>
@@ -192,13 +220,9 @@ export default function MobilePonaPlayerPanel({
                       min={0}
                       max={maxLength}
                       value={sliderValue}
-                      onChange={(e) => setSliderValue(Number(e.target.value))}
-                      onMouseUp={(e) =>
-                        socket?.emit('seek', Number((e.target as HTMLInputElement).value))
-                      }
-                      onTouchEnd={(e) =>
-                        socket?.emit('seek', Number((e.target as HTMLInputElement).value))
-                      }
+                      onChange={handleSliderChange}
+                      onMouseUp={handleSeek}
+                      onTouchEnd={handleSeek}
                       aria-label='PlayerSeekBar'
                       className='absolute inset-0 w-full h-full opacity-0 cursor-pointer z-30'
                     />
@@ -226,7 +250,7 @@ export default function MobilePonaPlayerPanel({
                     variant='ghost'
                     size='icon'
                     className='mr-auto rounded-lg'
-                    onClick={() => setIsEqualizerModalOpen(true)}
+                    onClick={handleOpenEqualizer}
                   >
                     <EqualizerIcon weight='fill' className='size-5' />
                   </Button>
@@ -234,7 +258,7 @@ export default function MobilePonaPlayerPanel({
                     variant='ghost'
                     size='icon'
                     className='rounded-full size-10'
-                    onClick={() => socket?.emit('previous')}
+                    onClick={handlePrevious}
                   >
                     <CaretLineLeftIcon weight='fill' className='size-5' />
                   </Button>
@@ -243,7 +267,7 @@ export default function MobilePonaPlayerPanel({
                       variant='ghost'
                       size='icon'
                       className='rounded-full size-14 scale-125 mx-auto'
-                      onClick={() => socket?.emit('pause')}
+                      onClick={handlePause}
                     >
                       <PauseIcon weight='fill' className='size-7' />
                     </Button>
@@ -252,7 +276,7 @@ export default function MobilePonaPlayerPanel({
                       variant='ghost'
                       size='icon'
                       className='rounded-full size-14 scale-125 mx-auto'
-                      onClick={() => socket?.emit('play')}
+                      onClick={handlePlay}
                     >
                       <PlayIcon weight='fill' className='size-7' />
                     </Button>
@@ -261,7 +285,7 @@ export default function MobilePonaPlayerPanel({
                     variant='ghost'
                     size='icon'
                     className='rounded-full size-10'
-                    onClick={() => socket?.emit('next')}
+                    onClick={handleNext}
                   >
                     <CaretLineRightIcon weight='fill' className='size-5' />
                   </Button>
@@ -269,7 +293,7 @@ export default function MobilePonaPlayerPanel({
                     variant='ghost'
                     size='icon'
                     className='ml-auto rounded-lg'
-                    onClick={() => setIsRepeatModalOpen(true)}
+                    onClick={handleOpenRepeat}
                   >
                     <RepeatIcon weight='fill' className='size-5' />
                   </Button>
@@ -402,40 +426,38 @@ export default function MobilePonaPlayerPanel({
                     value='next'
                     className='flex-1 overflow-y-auto pt-4 pb-4 pr-2 scrollbar-hide'
                   >
-                    <div className='flex flex-col gap-2'>
-                      {ponaCommonState.queue.map((track, index) => {
-                        const isThisTrack =
-                          ponaCommonState.current?.uniqueId === track.uniqueId;
-                        return (
+                    <div className='flex flex-col gap-3'>
+                      {ponaCommonState.current && (
+                        <div className='flex flex-col gap-1.5'>
+                          <span className='text-xs font-semibold text-muted-foreground uppercase tracking-wider px-2'>
+                            Now Playing
+                          </span>
                           <div
-                            className={`w-full py-2 px-2.5 flex gap-4 items-center rounded-3xl hover:bg-foreground/5 group ${isThisTrack
-                                ? '[.light_&]:bg-[hsl(var(--pona-app-music-accent-color-100))] [.dark_&]:bg-[hsl(var(--pona-app-music-accent-color-800))] active'
-                                : ''
-                              }`}
-                            key={index}
+                            className='w-full py-2 px-2.5 flex gap-4 items-center rounded-3xl hover:bg-foreground/5 group [.light_&]:bg-[hsl(var(--pona-app-music-accent-color-100))] [.dark_&]:bg-[hsl(var(--pona-app-music-accent-color-800))] active'
                           >
                             <div className='w-11 h-11 select-none relative overflow-hidden rounded-2xl'>
-                              <img
-                                src={track?.proxyArtworkUrl}
-                                alt={track.title}
+                              <Image
+                                src={ponaCommonState.current?.proxyArtworkUrl || '/static/Ponlponl123 (1459).png'}
+                                alt={ponaCommonState.current.title}
                                 height={44}
                                 width={44}
+                                unoptimized
                                 className={
                                   'object-cover rounded-lg z-0 ' +
-                                  (!ponaCommonState.pona.paused && isThisTrack
+                                  (!ponaCommonState.pona.paused
                                     ? 'brightness-50 saturate-0'
-                                    : 'group-hover:brightness-50 group-hover:saturate-0')
+                                    : 'group-hover:brightness-75 transition-all')
                                 }
                               />
                               <div
                                 className={
                                   'absolute top-0 left-0 w-full h-full bg-background/35 z-[5] ' +
-                                  (!ponaCommonState.pona.paused && isThisTrack
+                                  (!ponaCommonState.pona.paused
                                     ? 'opacity-100'
                                     : 'group-hover:opacity-100 opacity-0')
                                 }
                               />
-                              {!ponaCommonState.pona.paused && isThisTrack ? (
+                              {!ponaCommonState.pona.paused ? (
                                 <Button
                                   variant='ghost'
                                   size='icon'
@@ -452,12 +474,7 @@ export default function MobilePonaPlayerPanel({
                                   variant='ghost'
                                   size='icon'
                                   className='absolute z-10 top-0 left-0 w-full h-full group-hover:opacity-100 opacity-0'
-                                  onClick={() => {
-                                    if (isThisTrack) socket?.emit('play');
-                                    else if (index - 1 === 0)
-                                      socket?.emit('next');
-                                    else socket?.emit('skipto', index - 1);
-                                  }}
+                                  onClick={() => socket?.emit('play')}
                                 >
                                   <PlayIcon
                                     className='text-white size-5'
@@ -466,6 +483,63 @@ export default function MobilePonaPlayerPanel({
                                 </Button>
                               )}
                             </div>
+                            <div className='w-[calc(100%_-_10rem)]'>
+                              <h1 className='w-full text-[hsl(var(--pona-app-music-accent-color-500))] truncate font-medium'>
+                                {ponaCommonState.current.title}
+                              </h1>
+                              <span className='w-full text-xs text-foreground/60 truncate block'>
+                                {ponaCommonState.current.author} (
+                                {ponaCommonState.current.requester?.displayName ||
+                                  '@' + ponaCommonState.current.requester?.username}
+                                )
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {playingNextQueue.length > 0 && (
+                        <div className='flex flex-col gap-1.5 mt-2'>
+                          <span className='text-xs font-semibold text-muted-foreground uppercase tracking-wider px-2'>
+                            Playing Next
+                          </span>
+                          {playingNextQueue.map((track: Track | UnresolvedTrack, targetIdx: number) => {
+                            return (
+                              <div
+                                className='w-full py-2 px-2.5 flex gap-4 items-center rounded-3xl hover:bg-foreground/5 group'
+                                key={track.uniqueId || targetIdx}
+                              >
+                                <div className='w-11 h-11 select-none relative overflow-hidden rounded-2xl'>
+                                  <Image
+                                    src={
+                                      track?.proxyArtworkUrl ||
+                                      track?.artworkUrl ||
+                                      (track?.identifier
+                                        ? `/api/proxy/watch?v=${track.identifier}&s=md`
+                                        : '/static/Ponlponl123 (1459).png')
+                                    }
+                                    alt={track.title}
+                                    height={44}
+                                    width={44}
+                                    unoptimized
+                                    className='object-cover rounded-lg z-0 group-hover:brightness-75 transition-all'
+                                  />
+                                  <div className='absolute top-0 left-0 w-full h-full bg-background/35 z-[5] group-hover:opacity-100 opacity-0' />
+                                  <Button
+                                    variant='ghost'
+                                    size='icon'
+                                    className='absolute z-10 top-0 left-0 w-full h-full group-hover:opacity-100 opacity-0'
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      socket?.emit('skipto', targetIdx);
+                                    }}
+                                  >
+                                    <PlayIcon
+                                      className='text-white size-5'
+                                      weight='fill'
+                                    />
+                                  </Button>
+                                </div>
                             <div className='w-[calc(100%_-_10rem)]'>
                               <h1 className='w-full [div.active_&]:text-[hsl(var(--pona-app-music-accent-color-500))] truncate font-medium'>
                                 {track.title}
@@ -485,6 +559,8 @@ export default function MobilePonaPlayerPanel({
                           </div>
                         );
                       })}
+                        </div>
+                      )}
                     </div>
                   </TabsContent>
                   <TabsContent

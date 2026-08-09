@@ -10,6 +10,8 @@
   --color-playground-background: oklab(97% -0.01 0.02);
   --card: oklab(99% -0.005 0.01);
   --card-foreground: oklab(30% -0.02 0.02);
+  --popover: oklab(99% -0.005 0.01);
+  --popover-foreground: oklab(30% -0.02 0.02);
   --muted: oklab(90% -0.03 0.03);
   --border: oklab(82% -0.04 0.04);
   --input: oklab(82% -0.04 0.04);
@@ -24,6 +26,8 @@
     --color-playground-background: oklab(22% -0.02 0.02);
     --card: oklab(24% -0.02 0.02);
     --card-foreground: oklab(90% -0.02 0.03);
+    --popover: oklab(24% -0.02 0.02);
+    --popover-foreground: oklab(90% -0.02 0.03);
     --muted: oklab(35% -0.03 0.03);
     --border: oklab(40% -0.03 0.03);
     --input: oklab(40% -0.03 0.03);

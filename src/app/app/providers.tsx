@@ -25,6 +25,15 @@ function Providers({ children }: { children: React.ReactNode }) {
     }
   }, [appContent])
 
+  const content = <div className="relative min-h-screen">
+    <div className="pointer-events-none absolute top-0 left-0 z-0 h-full w-full bg-[radial-gradient(var(--foreground)_1px,transparent_1px)] bg-size-[16px_16px] opacity-6 dark:opacity-5" />
+    <div className="relative z-10 pb-6">
+      <PageAnimatePresence customKey={pathname} mode="wait">
+        {children}
+      </PageAnimatePresence>
+    </div>
+  </div>
+
   return (
     <>
       {pathname.startsWith("/app/callback") ? (
@@ -43,21 +52,17 @@ function Providers({ children }: { children: React.ReactNode }) {
             id="app-content"
             className="scrollbar-hide w-full overflow-hidden bg-(--color-playground-background) max-md:h-[calc(100vh+1rem)] max-md:rounded-b-xl md:h-screen md:rounded-l-xl"
           >
-            <ScrollArea
-              className="h-full border-0 outline-0"
-              classNames={{
-                viewport: "relative rounded-none",
-              }}
-            >
-              <div className="relative min-h-screen">
-                <div className="pointer-events-none absolute top-0 left-0 z-0 h-full w-full bg-[radial-gradient(var(--foreground)_1px,transparent_1px)] bg-size-[16px_16px] opacity-6 dark:opacity-5" />
-                <div className="relative z-10 pb-6">
-                  <PageAnimatePresence customKey={pathname} mode="wait">
-                    {children}
-                  </PageAnimatePresence>
-                </div>
-              </div>
-            </ScrollArea>
+            {
+              pathname.includes("/player") ? content :
+                <ScrollArea
+                  className="h-full border-0 outline-0"
+                  classNames={{
+                    viewport: "relative rounded-none",
+                  }}
+                >
+                  {content}
+                </ScrollArea>
+            }
           </main>
         </main>
       )}

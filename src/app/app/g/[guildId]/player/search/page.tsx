@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { getCookie } from 'cookies-next';
 import { motion } from 'framer-motion';
 import {
@@ -11,7 +11,7 @@ import {
 } from '@phosphor-icons/react/dist/ssr';
 
 import PlayButton from '@/components/music/button/play';
-import Track, { combineArtistName } from '@/components/music/searchResult/track';
+import Track, { combineArtistName, extractArtistsFromItem } from '@/components/music/searchResult/track';
 import SubscribeButton from '@/components/music/subscribe';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
@@ -37,8 +37,10 @@ interface TopResultCardProps {
 }
 
 function TopResultCard({ track }: TopResultCardProps) {
+  const router = useRouter();
   const trackTitle = track.title || track.name || '';
   const isArtist = track.resultType === 'artist';
+  const finalArtists = extractArtistsFromItem(track as unknown as Record<string, unknown>);
 
   return (
     <div className='relative w-full rounded-3xl p-6 bg-card border border-border shadow-md overflow-hidden text-card-foreground flex flex-col gap-4 items-start'>
@@ -61,16 +63,22 @@ function TopResultCard({ track }: TopResultCardProps) {
           <h3 className='text-2xl font-bold truncate w-full text-start'>
             {trackTitle}
           </h3>
-          <p className='text-sm text-muted-foreground capitalize'>
-            {track.resultType || 'Result'}
-          </p>
+          <div className='text-sm text-muted-foreground flex gap-1 items-center'>
+            {finalArtists.length > 0 ? (
+              <>
+                {combineArtistName(finalArtists, true, router)}
+                <span>•</span>
+              </>
+            ) : null}
+            <span className='capitalize'>{track.resultType || 'Result'}</span>
+          </div>
         </div>
       </div>
       <div className='flex gap-3 items-center justify-end w-full mt-2'>
         {!isArtist && track.videoId && (
           <PlayButton
             detail={{
-              author: combineArtistName(track.artists || []),
+              author: combineArtistName(finalArtists),
               identifier: track.videoId,
               sourceName: 'youtube music',
               resultType: track.resultType || 'song',
@@ -152,9 +160,33 @@ export function Page() {
         return;
       }
 
+      const categoryMap: { [key: string]: string } = {
+        top_result: 'Top result',
+        'top result': 'Top result',
+        songs: 'Songs',
+        song: 'Songs',
+        videos: 'Videos',
+        video: 'Videos',
+        albums: 'Albums',
+        album: 'Albums',
+        playlists: 'Community playlists',
+        playlist: 'Community playlists',
+        community_playlists: 'Community playlists',
+        artists: 'Artists',
+        artist: 'Artists',
+        podcasts: 'Podcasts',
+        podcast: 'Podcasts',
+        episodes: 'Episodes',
+        episode: 'Episodes',
+        profiles: 'Profiles',
+        profile: 'Profiles',
+      };
+
       const sortedResult = res.result.reduce(
         (acc: { [key: string]: HTTP_SearchResult[] }, item: HTTP_SearchResult) => {
-          const type = item.category || 'OTHER';
+          const itemAny = item as unknown as Record<string, unknown>;
+          const rawCategory = (typeof item.category === 'string' ? item.category : undefined) || (itemAny.resultType ? categoryMap[String(itemAny.resultType).toLowerCase()] : null) || 'Other';
+          const type = categoryMap[rawCategory.toLowerCase()] || rawCategory;
           if (!acc[type]) acc[type] = [];
           acc[type].push(item);
           return acc;
@@ -162,15 +194,18 @@ export function Page() {
         {}
       );
 
-      const orderedResult = ORDERED_KEYS.reduce(
-        (acc: { [key: string]: HTTP_SearchResult[] }, key) => {
-          if (sortedResult[key]) {
-            acc[key] = sortedResult[key];
-          }
-          return acc;
-        },
-        {}
-      );
+      const orderedResult: { [key: string]: HTTP_SearchResult[] } = {};
+      ORDERED_KEYS.forEach((key) => {
+        if (sortedResult[key] && sortedResult[key].length > 0) {
+          orderedResult[key] = sortedResult[key];
+        }
+      });
+
+      Object.keys(sortedResult).forEach((key) => {
+        if (!orderedResult[key] && sortedResult[key] && sortedResult[key].length > 0) {
+          orderedResult[key] = sortedResult[key];
+        }
+      });
 
       setSearchResult(orderedResult);
       setLoading(false);
@@ -253,7 +288,12 @@ export function Page() {
                     className='w-full flex flex-col gap-2 items-center justify-start'
                   >
                     {category === 'Top result' ? (
-                      <TopResultCard track={searchResult[category][0] as TrackResultItem} />
+                      <>
+                        <TopResultCard track={searchResult[category][0] as TrackResultItem} />
+                        {searchResult[category].slice(1).map((result, idx) => (
+                          <Track key={getTrackKey(result, idx + 1)} result={result} />
+                        ))}
+                      </>
                     ) : (
                       searchResult[category].map((result, idx) => (
                         <Track key={getTrackKey(result, idx)} result={result} />

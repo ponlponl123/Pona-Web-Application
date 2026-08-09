@@ -25,17 +25,22 @@ function Account() {
       data-section
     >
       <motion.div className="flex flex-col gap-6">
-        <div className="rounded-4xl">
+        <div className="rounded-4xl overflow-hidden">
           {userInfo?.banner ? (
             <ImageWithSkeleton
               alt={`${userInfo && userInfo.global_name} Banner`}
               src={
                 userInfo
-                  ? `https://cdn.discordapp.com/banners/${userInfo.id}/${userInfo.banner}.png?size=1024`
+                  ? `https://cdn.discordapp.com/banners/${userInfo.id}/${userInfo.banner}.${userInfo.banner.startsWith("a_") ? "gif" : "png"}?size=1024`
                   : ""
               }
-              className="rounded-4xl bg-primary object-cover object-center"
+              className="h-48 w-full rounded-4xl bg-primary object-cover object-center"
               width="100%"
+              height="12rem"
+              classNames={{
+                wrapper: "h-48 w-full",
+                image: "h-48 w-full object-cover",
+              }}
             />
           ) : (
             <div className="relative h-48 w-full overflow-hidden rounded-3xl bg-primary/40">

@@ -12,6 +12,11 @@ const nextConfig = {
   },
   cacheComponents: true,
   images: {
+    localPatterns: [
+      {
+        pathname: '/api/proxy/image/**',
+      },
+    ],
     remotePatterns: [
       {
         protocol: "https",

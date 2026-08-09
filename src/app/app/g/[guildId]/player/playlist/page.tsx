@@ -118,6 +118,14 @@ function Page() {
         if (playlistResult) pl_result = playlistResult;
       }
       if (!pl_result) {
+        const albumFallback = await getAlbum(
+          accessTokenType,
+          accessToken,
+          pl_query
+        );
+        if (albumFallback) pl_result = albumFallback;
+      }
+      if (!pl_result) {
         const channel = await getChannel(
           accessTokenType,
           accessToken,

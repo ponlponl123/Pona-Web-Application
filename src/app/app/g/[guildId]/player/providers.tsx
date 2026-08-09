@@ -20,9 +20,10 @@ import LetsPonaJoin from './@system/lets-pona-join';
 import NotInSameVC from './@system/not-in-same-vc';
 import SocketConnecting from './@system/socket-connecting';
 
-import DesktopPonaPlayer from './@system/player/desktop';
-import MobilePonaPlayer from './@system/player/mobile';
+import DesktopPonaPlayer, { MobilePonaPlayer } from './@system/player';
 import DesktopPonaPlayerPanel from './@system/player/panel/desktop';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import CustomScrollArea from '@/components/ui/custom/scroll-area';
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   const { guild } = useDiscordGuildInfo();
@@ -93,51 +94,58 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       <div
         id='app-panel'
         ref={musicAppContent}
-        className='relative min-h-screen scrollbar-hide -mb-6 pb-12 select-none'
+        className='relative h-screen scrollbar-hide -mb-6 pb-12 select-none'
       >
-        <div className='absolute w-full h-screen top-0 left-0 z-1 opacity-40 overflow-hidden pointer-events-none mask-b-from-0%'>
-          {userSetting.transparency ? (
-            <Image
-              src={`/api/proxy/image?r=${encodeURIComponent(
-                backdropBg || '/static/backdrop.png'
-              )}&s=512&blur=16&saturation=96&contrast=12`}
-              alt={currentTrack ? currentTrack.title : guild?.name || ''}
-              fill
-              unoptimized
-              priority
-              sizes='100vw'
-              className='object-cover w-full h-screen pointer-events-none saturate-200 brightness-110 scale-200 select-none'
-            />
-          ) : (
-            <div className='w-full h-96 bg-linear-to-t from-transparent to-[hsl(var(--pona-app-music-accent-color-500))]' />
-          )}
-          <div className='absolute top-[unset] bottom-0 left-0 w-full h-2/4 bg-linear-to-b from-transparent to-playground-background z-10' />
-        </div>
-        <main
-          className='[body.pona-player-focused_&]:opacity-0 [body.pona-player-focused_&]:-translate-y-8 apply-soft-transition'
-          id='app-workspace'
-          style={{ maxWidth: 'unset' }}
+        <CustomScrollArea
+          className="h-full border-0 outline-0"
+          classNames={{
+            viewport: "relative rounded-none",
+          }}
         >
-          <div className='absolute top-6 left-6 flex items-center gap-12 z-50 w-full'>
-            <h1 className='items-center text-2xl gap-4 hidden'>
-              <MusicNoteSimple weight='fill' size={24} />{' '}
-              {language.data.app.guilds.player.name}
-            </h1>
-          </div>
-          {isSocketConnected ? (
-            !hasVoiceChannel ? (
-              <LetsPonaJoin />
-            ) : isSameVC ? (
-              <PageAnimatePresence presenceAffectsLayout mode='popLayout'>
-                {children}
-              </PageAnimatePresence>
+          <div className='absolute w-full h-screen top-0 left-0 z-1 opacity-40 overflow-hidden pointer-events-none mask-b-from-0%'>
+            {userSetting.transparency ? (
+              <Image
+                src={`/api/proxy/image?r=${encodeURIComponent(
+                  backdropBg || '/static/backdrop.png'
+                )}&s=512&blur=16&saturation=96&contrast=12`}
+                alt={currentTrack ? currentTrack.title : guild?.name || ''}
+                fill
+                unoptimized
+                priority
+                sizes='100vw'
+                className='object-cover w-full h-screen pointer-events-none saturate-200 brightness-110 scale-200 select-none'
+              />
             ) : (
-              <NotInSameVC />
-            )
-          ) : (
-            <SocketConnecting />
-          )}
-        </main>
+              <div className='w-full h-96 bg-linear-to-t from-transparent to-[hsl(var(--pona-app-music-accent-color-500))]' />
+            )}
+            <div className='absolute top-[unset] bottom-0 left-0 w-full h-2/4 bg-linear-to-b from-transparent to-playground-background z-10' />
+          </div>
+          <main
+            className='[body.pona-player-focused_&]:opacity-0 [body.pona-player-focused_&]:-translate-y-8 apply-soft-transition'
+            id='app-workspace'
+            style={{ maxWidth: 'unset' }}
+          >
+            <div className='absolute top-6 left-6 flex items-center gap-12 z-50 w-full'>
+              <h1 className='items-center text-2xl gap-4 hidden'>
+                <MusicNoteSimple weight='fill' size={24} />{' '}
+                {language.data.app.guilds.player.name}
+              </h1>
+            </div>
+            {isSocketConnected ? (
+              !hasVoiceChannel ? (
+                <LetsPonaJoin />
+              ) : isSameVC ? (
+                <PageAnimatePresence presenceAffectsLayout mode='popLayout'>
+                  {children}
+                </PageAnimatePresence>
+              ) : (
+                <NotInSameVC />
+              )
+            ) : (
+              <SocketConnecting />
+            )}
+          </main>
+        </CustomScrollArea>
       </div>
       {isSameVC && (
         <>

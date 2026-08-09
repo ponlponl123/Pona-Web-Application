@@ -205,7 +205,8 @@ export default function HeaderSearch({
               pathname.includes("player") && pathname.includes("search")
                 ? "max-md:translate-x-0"
                 : "max-md:min-w-0 max-md:w-10 max-md:pointer-events-none max-md:opacity-0 max-md:-translate-y-8",
-              "pona-music-searchbox backdrop-blur-xl",
+              "pona-music-searchbox backdrop-blur-xl rounded-xl",
+              searching && "bg-background/60",
               inputClassName
             )}
           />

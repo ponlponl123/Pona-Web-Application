@@ -1,9 +1,11 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import SubscribeButton from '@/components/music/subscribe';
 import { ThumbnailFull } from '@/types/youtube/ytmusic-api';
+import ImageWithSkeleton from '@/components/ui/custom/image';
 
 export interface ArtistHeroProps {
   highResArtworkProxyURI: string;
@@ -34,10 +36,11 @@ export function ArtistHero({
         } min-h-48 relative top-0 left-0 z-1 -translate-x-12 -translate-y-16 max-lg:-translate-y-24`}
     >
       {highResArtworkProxyURI ? (
-        <img
-          loading='eager'
+        <ImageWithSkeleton
           src={highResArtworkProxyURI}
-          alt='hero-image'
+          alt={artistName || 'Artist hero image'}
+          priority
+          unoptimized
           className='absolute mask-b-from-60% top-0 left-0 w-full h-full max-h-full object-cover rounded-none opacity-100'
         />
       ) : null}

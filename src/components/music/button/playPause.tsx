@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { Pause, Play } from '@phosphor-icons/react/dist/ssr';
+import { PauseIcon, PlayIcon } from '@phosphor-icons/react/dist/ssr';
 import { toast } from 'sonner';
 import { useAtomValue } from 'jotai';
 
@@ -54,9 +54,9 @@ function PlayPauseButton({
       }}
     >
       {isPaused ? (
-        <Play weight='fill' size={iconSize} />
+        <PlayIcon weight='fill' size={iconSize} />
       ) : (
-        <Pause weight='fill' size={iconSize} />
+        <PauseIcon weight='fill' size={iconSize} />
       )}
     </Button>
   );

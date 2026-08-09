@@ -140,7 +140,7 @@ export const PonaMusicProvider = ({
           decodedState.current = newTrack
         }
         if (decodedState.queue && decodedState.queue.length > 0) {
-          decodedState.queue.map((track) => {
+          decodedState.queue = decodedState.queue.map((track) => {
             return proxyArtwork(track)
           })
         }
@@ -323,14 +323,12 @@ export const PonaMusicProvider = ({
 
     return () => {
       document.documentElement.classList.remove("pona-music-ready")
-      setPonaCommonState(null)
       setIsConnected(false)
       setSocket(null)
       destroySocket(`/guild/${guild.id}`)
     }
   }, [
     guild?.id,
-    pathname,
     setPlayback,
     setPonaCommonState,
     setQueue,

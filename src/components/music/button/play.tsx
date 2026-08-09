@@ -1,6 +1,6 @@
 'use client';
-import React, { useState } from 'react';
-import { Play, Spinner } from '@phosphor-icons/react/dist/ssr';
+import { useState } from 'react';
+import { PlayIcon, SpinnerIcon } from '@phosphor-icons/react/dist/ssr';
 import { getCookie } from 'cookies-next';
 import { toast } from 'sonner';
 import { twMerge } from 'tailwind-merge';
@@ -130,7 +130,7 @@ function PlayButton<T extends 'song' | 'playlist' = 'song'>({
           size='icon'
           disabled={loading}
           className={twMerge(
-            'absolute top-0 left-0 w-full h-full z-10 rounded-3xl group-hover:opacity-100 opacity-0 transition-opacity bg-black/40 text-white hover:bg-black/60 cursor-pointer ' +
+            'absolute top-0 left-0 w-full h-full z-10 rounded-xl group-hover:opacity-100 opacity-0 transition-opacity bg-black/40 text-white hover:bg-black/60 cursor-pointer ' +
             className,
             classNames?.playpause
           )}
@@ -174,11 +174,11 @@ function PlayButton<T extends 'song' | 'playlist' = 'song'>({
           style={{ width: s, height: s, ...style }}
         >
           {loading ? (
-            <Spinner className='animate-spin' size={iconSize || 32} />
+            <SpinnerIcon className='animate-spin' size={iconSize || 32} />
           ) : children ? (
             children
           ) : (
-            <Play weight='fill' size={iconSize || 32} />
+            <PlayIcon weight='fill' size={iconSize || 32} />
           )}
         </Button>
       )}

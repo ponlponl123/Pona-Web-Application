@@ -1,5 +1,6 @@
 'use client';
 import React from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -34,11 +35,12 @@ function MusicCard({ track, className }: MusicCardProps) {
       <div className='flex flex-col items-start justify-start gap-3 w-full'>
         <div className='overflow-hidden aspect-square w-full group rounded-3xl relative bg-muted'>
           {artworkUrl ? (
-            <img
+            <Image
               className='object-cover w-full h-full group-hover:scale-110 transition-transform duration-300'
               src={artworkUrl}
               alt={track?.title || 'Track artwork'}
-              loading='lazy'
+              fill
+              unoptimized
             />
           ) : (
             <div className='w-full h-full bg-muted flex items-center justify-center text-muted-foreground' />
@@ -84,11 +86,12 @@ export function VideoCard({ video, className }: VideoCardProps) {
       <div className='flex flex-col items-start justify-start gap-3 w-full'>
         <div className='overflow-hidden aspect-video w-full group rounded-3xl relative bg-muted'>
           {thumbnail ? (
-            <img
+            <Image
               className='object-cover w-full h-full group-hover:scale-110 transition-transform duration-300'
               src={thumbnail}
               alt={video?.title || 'Video thumbnail'}
-              loading='lazy'
+              fill
+              unoptimized
             />
           ) : (
             <div className='w-full h-full bg-muted flex items-center justify-center text-muted-foreground' />
@@ -138,11 +141,12 @@ export function AlbumCard({ album, className }: AlbumCardProps) {
         <div className='flex flex-col items-start justify-start gap-3 w-full'>
           <div className='overflow-hidden aspect-square w-full group rounded-3xl relative bg-muted'>
             {thumbnail ? (
-              <img
+              <Image
                 className='object-cover w-full h-full group-hover:scale-110 transition-transform duration-300'
                 src={thumbnail}
                 alt={album?.title || 'Album artwork'}
-                loading='lazy'
+                fill
+                unoptimized
               />
             ) : (
               <div className='w-full h-full bg-muted flex items-center justify-center text-muted-foreground' />
@@ -185,11 +189,12 @@ export function PlaylistCard({ playlist, className }: PlaylistCardProps) {
         <div className='flex flex-col items-start justify-start gap-3 w-full'>
           <div className='overflow-hidden aspect-square w-full group rounded-3xl relative bg-muted'>
             {thumbnail ? (
-              <img
+              <Image
                 className='object-cover w-full h-full group-hover:scale-110 transition-transform duration-300'
                 src={thumbnail}
                 alt={playlist?.name || 'Playlist artwork'}
-                loading='lazy'
+                fill
+                unoptimized
               />
             ) : (
               <div className='w-full h-full bg-muted flex items-center justify-center text-muted-foreground' />
@@ -232,11 +237,12 @@ export function ArtistCard({ artist, guildId, className }: ArtistCardProps) {
           <div className='flex flex-col items-center justify-center gap-3 w-full'>
             <div className='overflow-hidden aspect-square w-full rounded-full relative bg-muted/60 border-2 border-transparent group-hover:border-primary/40 transition-colors shadow-sm'>
               {thumbnail ? (
-                <img
+                <Image
                   className='object-cover w-full h-full group-hover:scale-110 transition-transform duration-300'
                   src={thumbnail}
                   alt={artist?.name || 'Artist avatar'}
-                  loading='lazy'
+                  fill
+                  unoptimized
                 />
               ) : (
                 <div className='w-full h-full flex items-center justify-center bg-primary/10 text-primary text-3xl font-bold'>

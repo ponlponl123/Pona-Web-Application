@@ -295,16 +295,14 @@ function Page() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 0.4 }}
         transition={{ duration: 1, delay: 0.48 }}
-        className="pointer-events-none absolute top-0 left-0 z-1 h-max max-h-[48vh] min-h-48 w-full scale-[2] mask-[linear-gradient(to_bottom,black,transparent)] opacity-40 select-none [-webkit-mask-image:linear-gradient(to_bottom,black,transparent)]"
+        className="pointer-events-none absolute top-0 left-0 z-1 h-48 max-h-[48vh] min-h-48 w-full scale-[2] mask-[linear-gradient(to_bottom,black,transparent)] opacity-40 select-none [-webkit-mask-image:linear-gradient(to_bottom,black,transparent)]"
       >
         {userSetting.transparency ? (
           <ImageWithSkeleton
             src={`/api/proxy/image?r=${encodeURIComponent(backdropBg)}&s=512&blur=16&saturation=96&contrast=12`}
             alt={guild?.name || "Guild Backdrop"}
-            width={"100%"}
-            height={undefined}
             classNames={{
-              wrapper: "w-full top-0 left-0",
+              wrapper: "w-full h-full absolute inset-0",
             }}
             className="pointer-events-none h-full max-h-[48vh] w-full -translate-y-1 object-cover brightness-110 saturate-200"
           />

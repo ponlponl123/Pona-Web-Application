@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useMemo, useState } from 'react';
+import Image from 'next/image';
+import { useParams, useRouter } from 'next/navigation';
 import { AnimatePresence, HTMLMotionProps, motion } from 'framer-motion';
 import { useAtom, useAtomValue } from 'jotai';
 import { toast } from 'sonner';
@@ -52,7 +53,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Spinner } from '@/components/ui/spinner';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 import { useSocket } from '@/contexts/ponaMusicContext';
 import { useAppStore } from '@/store/coreStore';
@@ -63,8 +63,12 @@ import {
 } from '@/store/musicAtoms';
 import { isFullscreenModeAtom, playerPopupAtom } from '@/store/uiAtoms';
 import { Track, UnresolvedTrack } from '@/types/ponaPlayer';
-import { msToTime } from '@/lib/utils';
+import { cn, msToTime } from '@/lib/utils';
 import Related from './related';
+import CustomScrollArea from '@/components/ui/custom/scroll-area';
+import { Tabs, TabsContent, TabsContents, TabsList, TabsTrigger } from '@/components/animate-ui/components/animate/tabs';
+import { AnimateIcon } from '@/components/animate-ui/icons/icon';
+import { AudioLines } from '@/components/animate-ui/icons/audio-lines';
 
 
 export default function DesktopPonaPlayerPanel() {
@@ -111,17 +115,26 @@ export default function DesktopPonaPlayerPanel() {
     }
   }
 
+  const playingNextQueue = useMemo(() => {
+    const queue = ponaTrackQueue?.queue;
+    const currentUniqueId = currentTrack?.uniqueId;
+    if (!queue) return [];
+    return queue.filter((track) => track.uniqueId !== currentUniqueId);
+  }, [ponaTrackQueue, currentTrack]);
+
   return (
     <AnimatePresence>
       {currentTrack && playerPopup && (
         <motion.div
           className={
-            (userSetting.dev_pona_player_style === 'modern'
-              ? 'absolute z-40 left-2 p-8 bottom-[6.1rem] max-lg:bottom-[5.3rem] max-lg:h-[calc(100vh_-_5.8rem)] max-md:rounded-lg rounded-3xl w-[calc(100%_-_1rem)] h-[calc(100vh_-_6.6rem)] transition-all ease-out duration-250 overflow-hidden'
-              : 'absolute z-40 left-2 p-8 bottom-[6.4rem] max-lg:bottom-[5.3rem] max-lg:h-[calc(100vh_-_6rem)] max-md:rounded-lg rounded-3xl w-[calc(100%_-_1rem)] h-[calc(100vh_-_6.8rem)] transition-all ease-out duration-250 overflow-hidden') +
-            (userSetting.transparency
-              ? ' to-playground-background/100'
-              : ' [html.light_&]:!from-[hsl(var(--pona-app-music-accent-color-200))] [html.light_&]:!to-[hsl(var(--pona-app-music-accent-color-50))] [html.dark_&]:!to-[hsl(var(--pona-app-music-accent-color-800))] [html.dark_&]:!from-[hsl(var(--pona-app-music-accent-color-400))]')
+            cn(
+              (userSetting.dev_pona_player_style === 'modern'
+                ? 'absolute z-40 left-2 p-8 bottom-[6.1rem] max-lg:bottom-[5.3rem] max-lg:h-[calc(100vh-5.8rem)] rounded-lg w-[calc(100%-1rem)] h-[calc(100vh-6.6rem)] transition-all ease-out duration-250 overflow-hidden'
+                : 'absolute z-40 left-2 p-8 bottom-[6.4rem] max-lg:bottom-[5.3rem] max-lg:h-[calc(100vh-6rem)] rounded-lg w-[calc(100%-1rem)] h-[calc(100vh-6.8rem)] transition-all ease-out duration-250 overflow-hidden') +
+              (userSetting.transparency
+                ? ' to-playground-background/100'
+                : ' [html.light_&]:from-[hsl(var(--pona-app-music-accent-color-200))]! [html.light_&]:to-[hsl(var(--pona-app-music-accent-color-50))]! [html.dark_&]:to-[hsl(var(--pona-app-music-accent-color-800))]! [html.dark_&]:from-[hsl(var(--pona-app-music-accent-color-400))]!'),
+            )
           }
           id='pona=player-panel'
           transition={{ duration: 0.12 }}
@@ -130,27 +143,30 @@ export default function DesktopPonaPlayerPanel() {
           exit={{ opacity: 0, pointerEvents: 'none', translateY: 64 }}
         >
           {userSetting.transparency && (
-            <img
+            <Image
               src={`/api/proxy/image?r=${encodeURIComponent(
                 currentTrack?.proxyArtworkUrl ||
                 '/static/Ponlponl123 (1459).png'
               )}&s=512&blur=16&saturation=96&contrast=12`}
               alt={currentTrack ? currentTrack?.title : 'Backdrop'}
+              fill
+              unoptimized
               className='absolute -z-10 scale-[2] w-full h-full top-0 left-0 object-cover [html.dark_&]:brightness-50 [html.light_&]:brightness-200 [html.dark_&]:saturate-150'
             />
           )}
           <div
             className={
-              'absolute -z-10 w-full h-full top-0 left-0 ' +
-              (userSetting.transparency
-                ? ' bg-gradient-to-t [html.light_&]:!from-[hsl(var(--pona-app-music-accent-color-50))] [html.dark_&]:!from-[hsl(var(--pona-app-music-accent-color-900))]'
-                : '[html.light_&]:!bg-[hsl(var(--pona-app-music-accent-color-50))] [html.dark_&]:!bg-[hsl(var(--pona-app-music-accent-color-900))]')
+              cn('absolute -z-10 w-full h-full top-0 left-0 mask-t-from-0 mask-t-to-30%',
+                userSetting.transparency
+                  ? ' bg-linear-to-t [html.light_&]:from-[hsl(var(--pona-app-music-accent-color-50))]! [html.dark_&]:from-[hsl(var(--pona-app-music-accent-color-900))]!'
+                  : '[html.light_&]:bg-[hsl(var(--pona-app-music-accent-color-50))]! [html.dark_&]:bg-[hsl(var(--pona-app-music-accent-color-900))]!'
+              )
             }
           />
-          <div className='w-full h-full flex gap-12 justify-between items-center pt-16'>
+          <div className='w-full h-full flex gap-6 justify-between items-center pt-16'>
             <motion.div
               layoutId='pona-music-panel-artwork'
-              className='m-auto flex flex-col items-center gap-6 max-lg:[body:not(.sidebar-collapsed)_&]:hidden'
+              className='m-auto flex flex-1 min-w-0 flex-col items-center gap-6 max-lg:[body:not(.sidebar-collapsed)_&]:hidden'
             >
               <div className='flex flex-wrap max-xl:flex-col gap-4 items-center justify-center -mt-12'>
                 <Button
@@ -174,30 +190,31 @@ export default function DesktopPonaPlayerPanel() {
                 </Button>
               </div>
               <div className='w-[56vh] max-2xl:w-[42vh] max-xl:w-[28vh] max-xl:[body:not(.sidebar-collapsed)_&]:w-[20vh] max-lg:w-[12vh] aspect-square relative flex group hover:scale-[1.032] active:scale-[1.016] transition-transform'>
-                <img
+                <Image
                   src={
-                    currentTrack
+                    (currentTrack
                       ? currentTrack?.proxyHighResArtworkUrl ||
                       currentTrack?.proxyArtworkUrl
-                      : '/static/Ponlponl123 (1459).png'
+                      : '/static/Ponlponl123 (1459).png') || '/static/Ponlponl123 (1459).png'
                   }
                   alt={currentTrack ? currentTrack?.title : 'Artwork'}
+                  fill
+                  unoptimized
                   className='w-full h-full object-cover select-none rounded-2xl shadow-xl'
-                  loading='lazy'
                   id='pona-music-artwork'
                 />
                 <div className='absolute top-0 left-0 z-14 w-full h-full bg-gradient-to-t to-transparent rounded-2xl [html.light_&]:from-white/40 [html.dark_&]:from-black/40 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity' />
               </div>
             </motion.div>
             <div
-              className='flex-1 min-w-0 h-full max-w-3xl'
+              className='w-lg h-full flex max-w-3xl justify-end'
               id='pona-music-queue'
             >
-              <Tabs defaultValue='next' className='w-full h-full flex flex-col'>
-                <TabsList className='w-full justify-start border-b rounded-none bg-transparent p-0 gap-4'>
+              <Tabs defaultValue='next' className='w-lg h-full flex flex-col'>
+                <TabsList className='w-lg max-w-lg justify-start rounded-none bg-transparent p-0 gap-4'>
                   <TabsTrigger
                     value='next'
-                    className='rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent'
+                    className='rounded-none data-[state=active]:bg-transparent data-[state=active]:text-[hsl(var(--pona-app-music-accent-color-500))] relative'
                   >
                     {language.data.app.guilds.player.tabs.next}
                   </TabsTrigger>
@@ -209,94 +226,121 @@ export default function DesktopPonaPlayerPanel() {
                         currentTrack?.lyrics?.lyrics?.length > 0
                       )
                     }
-                    className='rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent'
+                    className='rounded-none data-[state=active]:bg-transparent data-[state=active]:text-[hsl(var(--pona-app-music-accent-color-500))]'
                   >
                     {language.data.app.guilds.player.tabs.lyrics}
-                    <span className='ml-2 text-xs font-semibold px-2 py-0.5 rounded-full bg-primary/20 text-primary'>
-                      {language.data.extensions.beta}
-                    </span>
                   </TabsTrigger>
                   <TabsTrigger
                     value='related'
-                    className='rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent'
+                    className='rounded-none data-[state=active]:bg-transparent data-[state=active]:text-[hsl(var(--pona-app-music-accent-color-500))]'
                   >
                     {language.data.app.guilds.player.tabs.related}
                   </TabsTrigger>
                 </TabsList>
-                <TabsContent value='next' className='flex-1 overflow-y-auto pt-4 pr-2 scrollbar-hide'>
-                  <div className='flex flex-col gap-2 px-3 py-1'>
-                    {ponaTrackQueue?.queue?.[0] && (
-                      <TrackQueue
-                        active={
-                          currentTrack?.uniqueId ===
-                          ponaTrackQueue.queue[0].uniqueId
-                        }
-                        index={0}
-                        track={ponaTrackQueue.queue[0]}
-                      />
-                    )}
-                    {ponaTrackQueue?.queue && (
-                      <DndContext
-                        sensors={sensors}
-                        collisionDetection={closestCenter}
-                        onDragEnd={handleDragEnd}
-                        autoScroll
-                      >
-                        <SortableContext
-                          items={ponaTrackQueue.queue
-                            .filter((track) => track.uniqueId !== undefined)
-                            .map((track) => track.uniqueId as string)}
-                          strategy={verticalListSortingStrategy}
-                        >
-                          {ponaTrackQueue.queue
-                            .slice(1)
-                            .map((track, index) => {
-                              const isThisTrack =
-                                currentTrack?.uniqueId === track.uniqueId;
-                              return (
-                                <DraggableTrack
-                                  isLoading={ponaTrackQueue.updating}
-                                  active={isThisTrack}
-                                  index={index + 1}
-                                  key={track.uniqueId}
-                                  track={track}
-                                />
-                              );
-                            })}
-                        </SortableContext>
-                      </DndContext>
-                    )}
-                  </div>
-                </TabsContent>
-                <TabsContent
-                  value='lyrics'
-                  className='flex-1 overflow-y-auto pt-4 pb-12 pr-2 scrollbar-hide'
-                  ref={setLyricsContainer}
-                >
-                  {lyricsContainer &&
-                    (currentTrack?.lyrics?.isTimestamp ? (
-                      <LyricsDisplay
-                        playerPosition={playerPos}
-                        currentTrack={currentTrack as Track}
-                        lyricsProvider={lyricsContainer}
-                      />
-                    ) : (
-                      currentTrack?.lyrics?.lyrics &&
-                      currentTrack?.lyrics?.lyrics?.length > 0 &&
-                      (currentTrack?.lyrics?.lyrics as string[]).map(
-                        (lyric, index) => (
-                          <div key={index} className='flex items-center gap-2'>
-                            <span className='text-2xl my-4 text-[hsl(var(--pona-app-music-accent-color-500))] font-medium'>
-                              {lyric}
+                <TabsContents className='min-h-0 flex-1 max-h-full w-full flex'>
+                  <TabsContent value='next'
+                    className='flex-1 w-lg flex min-h-0 max-h-full'
+                  >
+                    <CustomScrollArea
+                      className="min-h-0 flex-1 border-0 outline-0"
+                      classNames={{
+                        viewport: "relative rounded-none pt-4 pb-12 pr-2 mask-t-from-90% mask-b-from-90%",
+                      }}
+                    >
+                      <div className='flex flex-col gap-3 px-3 py-1'>
+                        {currentTrack && (
+                          <div className='flex flex-col gap-1.5'>
+                            <span className='text-xs font-semibold text-muted-foreground uppercase tracking-wider px-2'>
+                              Now Playing
                             </span>
+                            <TrackQueue
+                              active={true}
+                              index={0}
+                              track={currentTrack}
+                            />
                           </div>
-                        )
-                      )
-                    ))}
-                </TabsContent>
-                <TabsContent value='related' className='flex-1 overflow-y-auto pr-2 scrollbar-hide'>
-                  <Related videoId={videoId} />
-                </TabsContent>
+                        )}
+
+                        {playingNextQueue.length > 0 && (
+                          <div className='flex flex-col gap-1.5 mt-2'>
+                            <span className='text-xs font-semibold text-muted-foreground uppercase tracking-wider px-2'>
+                              Playing Next
+                            </span>
+                            <DndContext
+                              sensors={sensors}
+                              collisionDetection={closestCenter}
+                              onDragEnd={handleDragEnd}
+                              autoScroll
+                            >
+                              <SortableContext
+                                items={playingNextQueue
+                                  .filter((track: Track | UnresolvedTrack) => track.uniqueId !== undefined)
+                                  .map((track: Track | UnresolvedTrack) => track.uniqueId as string)}
+                                strategy={verticalListSortingStrategy}
+                              >
+                                {playingNextQueue.map((track: Track | UnresolvedTrack, targetIdx: number) => (
+                                  <DraggableTrack
+                                    isLoading={ponaTrackQueue.updating}
+                                    active={false}
+                                    index={targetIdx + 1}
+                                    queueIndex={targetIdx}
+                                    key={track.uniqueId || targetIdx}
+                                    track={track}
+                                  />
+                                ))}
+                              </SortableContext>
+                            </DndContext>
+                          </div>
+                        )}
+                      </div>
+                    </CustomScrollArea>
+                  </TabsContent>
+                  <TabsContent
+                    value='lyrics'
+                    className='flex-1 w-lg flex min-h-0 max-h-full'
+                  >
+                    <CustomScrollArea
+                      className="max-h-full flex-1 border-0 outline-0"
+                      classNames={{
+                        viewport: "relative rounded-none pt-4 pb-12 pr-2 mask-t-from-90% mask-b-from-90%",
+                      }}
+                      ref={setLyricsContainer}
+                    >
+                      {lyricsContainer &&
+                        (currentTrack?.lyrics?.isTimestamp ? (
+                          <LyricsDisplay
+                            playerPosition={playerPos}
+                            currentTrack={currentTrack as Track}
+                            lyricsProvider={lyricsContainer}
+                          />
+                        ) : (
+                          currentTrack?.lyrics?.lyrics &&
+                          currentTrack?.lyrics?.lyrics?.length > 0 &&
+                          (currentTrack?.lyrics?.lyrics as string[]).map(
+                            (lyric, index) => (
+                              <div key={index} className='flex items-center gap-2'>
+                                <span className='text-2xl my-4 text-[hsl(var(--pona-app-music-accent-color-500))] font-medium'>
+                                  {lyric}
+                                </span>
+                              </div>
+                            )
+                          )
+                        ))}
+                    </CustomScrollArea>
+                  </TabsContent>
+                  <TabsContent value='related'
+                    className='flex-1 w-lg flex min-h-0 max-h-full'
+                  >
+                    <CustomScrollArea
+                      className="min-h-0 flex-1 w-lg border-0 outline-0"
+                      classNames={{
+                        viewport: "relative rounded-none pt-4 pr-2 mask-t-from-90% mask-b-from-90%",
+                      }}
+                    >
+                      <Related videoId={videoId} />
+                    </CustomScrollArea>
+                  </TabsContent>
+                </TabsContents>
               </Tabs>
             </div>
           </div>
@@ -308,27 +352,33 @@ export default function DesktopPonaPlayerPanel() {
 
 export function DraggableTrack({
   index,
+  queueIndex,
   track,
   active,
   isLoading,
 }: {
   index: number;
+  queueIndex?: number;
   track: Track | UnresolvedTrack;
   active: boolean;
   isLoading?: boolean;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id: track.uniqueId as string });
+    useSortable({
+      id: (track.uniqueId as string) || index,
+    });
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
   };
+
   return (
     <TrackQueue
-      ref={setNodeRef}
       active={active}
       index={index}
+      queueIndex={queueIndex}
+      ref={setNodeRef}
       track={track}
       isLoading={isLoading}
       params={{
@@ -398,8 +448,13 @@ export function TrackQueueContextFunction({
       <ContextMenuItem
         disabled={!track?.artist}
         onClick={() => {
-          if (track?.artist && track?.artist[0])
-            router.push('player/c?c=' + track?.artist[0].id);
+          if (track?.artist && track?.artist[0]) {
+            const currentPath = window.location.pathname;
+            const basePath = currentPath.includes('/player')
+              ? currentPath.split('/player')[0] + '/player'
+              : currentPath;
+            router.push(`${basePath}/c?c=${track.artist[0].id}`);
+          }
         }}
       >
         <PersonSimpleIcon className='size-4 mr-2' />
@@ -411,6 +466,7 @@ export function TrackQueueContextFunction({
 
 export function TrackQueue({
   index,
+  queueIndex,
   track,
   active,
   isLoading,
@@ -418,6 +474,7 @@ export function TrackQueue({
   params,
 }: {
   index: number;
+  queueIndex?: number;
   track: Track | UnresolvedTrack;
   active: boolean;
   isLoading?: boolean;
@@ -425,6 +482,8 @@ export function TrackQueue({
   params?: HTMLMotionProps<'div'>;
 }) {
   const router = useRouter();
+  const routeParams = useParams();
+  const guildId = routeParams?.guildId;
   const ponaCommonState = useAtomValue(ponaCommonStateAtom);
   const { socket } = useSocket();
   const paused = ponaCommonState?.pona?.paused || false;
@@ -436,7 +495,7 @@ export function TrackQueue({
         <motion.div
           ref={ref}
           className={`w-full py-2 px-2.5 flex gap-4 items-center rounded-3xl group ${active
-            ? '[.light_&]:bg-[hsl(var(--pona-app-music-accent-color-100))] [.dark_&]:bg-[hsl(var(--pona-app-music-accent-color-800))] active'
+            ? 'in-[.light]:bg-[hsl(var(--pona-app-music-accent-color-100))] in-[.dark]:bg-[hsl(var(--pona-app-music-accent-color-900)/.64)] active'
             : ''
             } ${isLoading ? 'pointer-events-none' : ''}`}
           key={index}
@@ -444,16 +503,23 @@ export function TrackQueue({
         >
           <div className='flex-[0 1 auto] w-11 h-11 select-none relative overflow-hidden rounded-2xl'>
             {!isLoading ? (
-              <img
-                src={track?.proxyArtworkUrl}
+              <Image
+                src={
+                  track?.proxyArtworkUrl ||
+                  track?.artworkUrl ||
+                  (track?.identifier
+                    ? `/api/proxy/watch?v=${track.identifier}&s=md`
+                    : '/static/Ponlponl123 (1459).png')
+                }
                 alt={track.title}
                 height={44}
                 width={44}
+                unoptimized
                 className={
-                  'object-cover rounded-lg z-0 ' +
+                  'object-cover rounded-lg z-0 size-11 ' +
                   (!paused && active
                     ? 'brightness-50 saturate-0'
-                    : 'group-hover:brightness-50 group-hover:saturate-0')
+                    : 'group-hover:brightness-75 transition-all')
                 }
               />
             ) : (
@@ -461,7 +527,7 @@ export function TrackQueue({
             )}
             <div
               className={
-                'absolute top-0 left-0 w-full h-full bg-background/35 z-[5] ' +
+                'absolute top-0 left-0 w-full h-full bg-background/35 z-5 ' +
                 (!paused && active
                   ? 'opacity-100'
                   : 'group-hover:opacity-100 opacity-0')
@@ -472,19 +538,26 @@ export function TrackQueue({
                 variant='ghost'
                 size='icon'
                 className='absolute z-10 top-0 left-0 w-full h-full opacity-100'
-                onClick={() => socket?.emit('pause')}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  socket?.emit('pause');
+                }}
               >
-                <Equalizing steps={3} />
+                <AnimateIcon animate loop>
+                  <AudioLines className='text-[hsl(var(--pona-app-music-accent-color-500))] size-4' />
+                </AnimateIcon>
               </Button>
             ) : (
               <Button
                 variant='ghost'
                 size='icon'
-                className='absolute z-10 top-0 left-0 w-full h-full group-hover:opacity-100 opacity-0'
-                onClick={() => {
+                className='absolute z-20 top-0 left-0 w-full h-full group-hover:opacity-100 opacity-0 pointer-events-auto'
+                onPointerDown={(e) => e.stopPropagation()}
+                onClick={(e) => {
+                  e.stopPropagation();
                   if (active) socket?.emit('play');
-                  else if (index - 1 === 0) socket?.emit('next');
-                  else socket?.emit('skipto', index - 1);
+                  else if (typeof queueIndex === 'number')
+                    socket?.emit('skipto', queueIndex);
                 }}
               >
                 <PlayIcon className='text-white size-5' weight='fill' />
@@ -497,15 +570,15 @@ export function TrackQueue({
           >
             {!isLoading ? (
               <>
-                <h1 className='max-w-full [div.active_&]:text-[hsl(var(--pona-app-music-accent-color-500))] truncate font-medium'>
+                <h1 className='max-w-full text-[hsl(var(--pona-app-music-accent-color-500))] truncate font-medium'>
                   {track.title}
                 </h1>
                 {track.artist ? (
-                  <div className='max-w-full text-xs text-foreground/60 truncate'>
+                  <div className='max-w-full text-xs text-[hsl(var(--pona-app-music-accent-color-500))]/60 truncate'>
                     {combineArtistName(track.artist, true, router, {
-                      className: 'text-foreground/60 text-xs',
+                      className: 'text-[hsl(var(--pona-app-music-accent-color-500))]/60! text-xs',
                     })}{' '}
-                    <span>
+                    <span className='text-[hsl(var(--pona-app-music-accent-color-500))]/60 text-xs'>
                       (
                       {track.requester?.displayName ||
                         '@' + track.requester?.username}
@@ -513,7 +586,7 @@ export function TrackQueue({
                     </span>
                   </div>
                 ) : (
-                  <span className='max-w-full text-xs text-foreground/60 truncate'>
+                  <span className='max-w-full text-xs text-[hsl(var(--pona-app-music-accent-color-500))]/60 truncate'>
                     {track.author} (
                     {track.requester?.displayName ||
                       '@' + track.requester?.username}
@@ -528,24 +601,20 @@ export function TrackQueue({
               </>
             )}
           </div>
+
           <div
             className={`flex-[0 1 auto] ml-auto relative w-12 h-12 flex items-center justify-center ${isLoading ? 'opacity-0 pointer-events-none' : ''
               }`}
           >
-            <span className='text-xs text-muted-foreground group-hover:opacity-0 opacity-100 transition-opacity'>
-              {msToTime(track.duration || 0)}
-            </span>
             <DropdownMenu>
-              <DropdownMenuTrigger>
-                <Button
-                  variant='ghost'
-                  size='icon'
-                  className='absolute z-10 top-0 left-0 w-full h-full group-hover:opacity-100 opacity-0'
-                >
-                  <DotsThreeVerticalIcon className='size-5' weight='bold' />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align='end' className='w-56'>
+              <DropdownMenuTrigger
+                render={
+                  <Button variant='ghost' size='icon' className='rounded-full'>
+                    <DotsThreeVerticalIcon className='size-5' />
+                  </Button>
+                }
+              />
+              <DropdownMenuContent align='end' className='w-56 rounded-lg'>
                 <DropdownMenuLabel>{track.title}</DropdownMenuLabel>
                 <DropdownMenuItem disabled>
                   <HeartIcon className='size-4 mr-2' />
@@ -554,7 +623,7 @@ export function TrackQueue({
                       .add_to_favorite
                   }
                 </DropdownMenuItem>
-                {!active && (
+                {ponaCommonState?.current?.uniqueId !== track.uniqueId && (
                   <DropdownMenuItem
                     onClick={() => {
                       toast.promise(
@@ -597,8 +666,13 @@ export function TrackQueue({
                 <DropdownMenuItem
                   disabled={!track.artist}
                   onClick={() => {
-                    if (track?.artist && track?.artist[0])
-                      router.push('player/c?c=' + track?.artist[0].id);
+                    if (track?.artist && track?.artist[0]) {
+                      const currentPath = window.location.pathname;
+                      const basePath = currentPath.includes('/player')
+                        ? currentPath.split('/player')[0] + '/player'
+                        : `/app/g/${guildId}/player`;
+                      router.push(`${basePath}/c?c=${track.artist[0].id}`);
+                    }
                   }}
                 >
                   <PersonSimpleIcon className='size-4 mr-2' />
@@ -610,7 +684,7 @@ export function TrackQueue({
         </motion.div>
       </ContextMenuTrigger>
 
-      <ContextMenuContent className='w-56'>
+      <ContextMenuContent className='w-56 rounded-lg'>
         <TrackQueueContextFunction track={track} />
       </ContextMenuContent>
     </ContextMenu>

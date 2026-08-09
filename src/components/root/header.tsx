@@ -194,6 +194,7 @@ function Header() {
                   size="small"
                   variant="text"
                   style="rounded"
+                  className="z-40"
                   onClick={() => {
                     setNavOpened(false)
                   }}
@@ -216,7 +217,7 @@ function Header() {
                     size="small"
                     variant="primary"
                     effect="confetti"
-                    className="max-md:hidden"
+                    className="max-md:hidden z-10"
                     onClick={() => {
                       setNavOpened(false)
                     }}

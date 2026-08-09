@@ -64,11 +64,13 @@ const TrackColumns = memo(({ tracks }: TrackColumnsProps) => {
               key={`track-${item.videoId || i}-${j}`}
               classNames={{
                 title: 'text-[hsl(var(--pona-app-music-accent-color-500))]',
-                subtitle: 'text-[hsl(var(--pona-app-music-accent-color-500))]',
+                subtitle: 'text-[hsl(var(--pona-app-music-accent-color-500)/0.64)]!',
                 playButton: {
                   playpause:
                     'text-[hsl(var(--pona-app-music-accent-color-500))]',
                 },
+                artistLink: "text-[hsl(var(--pona-app-music-accent-color-500)/0.75)]!",
+                duration: 'text-[hsl(var(--pona-app-music-accent-color-500)/0.64)]',
               }}
               result={songDetailedResult}
             />
@@ -77,7 +79,7 @@ const TrackColumns = memo(({ tracks }: TrackColumnsProps) => {
       }
       result.push(
         <div
-          className='relative flex flex-col min-w-[50%] overflow-hidden'
+          className='relative flex flex-col min-w-[77%] overflow-hidden'
           key={`tracks-col-${i}`}
         >
           {columnTracks}
@@ -138,6 +140,7 @@ const ArtistCards = memo(({ artists }: ArtistCardsProps) => {
               thumbnails: a.thumbnails || [],
               type: 'ARTIST',
             }}
+            className='**:text-[hsl(var(--pona-app-music-accent-color-500))]!'
           />
         );
       })}
@@ -293,7 +296,7 @@ const Related = memo(({ videoId }: { videoId?: string }) => {
           weight='fill'
           className='text-[hsl(var(--pona-app-music-accent-color-500))]'
         />
-        <h1 className='text-2xl max-w-3xl text-center text-[hsl(var(--pona-app-music-accent-color-500))/0.64]'>
+        <h1 className='text-2xl max-w-3xl text-center text-[hsl(var(--pona-app-music-accent-color-500)/0.64)]'>
           {language.data.app.guilds.player.related.videoId_not_provided}
         </h1>
       </div>
@@ -305,13 +308,12 @@ const Related = memo(({ videoId }: { videoId?: string }) => {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 8 }}
       transition={{ duration: 0.16 }}
-      layoutId='panel-related'
       className='flex flex-col gap-4 w-full mx-auto min-h-full py-2 px-6'
     >
       {watchPlaylistTracks.length > 0 && (
         <>
           <div className='flex gap-4 items-center justify-between w-full p-1 -mt-2'>
-            <h1 className='text-3xl -mb-2 font-bold text-[hsl(var(--pona-app-music-accent-color-500))/0.64]'>
+            <h1 className='text-3xl -mb-2 font-bold text-[hsl(var(--pona-app-music-accent-color-500)/0.64)]'>
               {language.data.app.guilds.player.related.play_continuously}
             </h1>
             <div className='flex-1' />
@@ -436,7 +438,7 @@ const Related = memo(({ videoId }: { videoId?: string }) => {
 
           return (
             String(title).replace(' - Topic', '') ===
-            ponaCommonState?.current?.author?.replace(' - Topic', '') ? null : null
+              ponaCommonState?.current?.author?.replace(' - Topic', '') ? null : null
           );
         })}
       <div className='h-[16vh]' />

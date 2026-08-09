@@ -10,12 +10,15 @@
   --color-playground-background: oklab(95.839% 0.02771 -0.01366);
   --card: oklab(99% 0.015 -0.008);
   --card-foreground: oklab(34.295% 0.02235 -0.01082);
+  --popover: oklab(99% 0.015 -0.008);
+  --popover-foreground: oklab(34.295% 0.02235 -0.01082);
   --muted: oklab(89% 0.015 -0.008);
   --border: oklab(81% 0.015 -0.008);
   --input: oklab(81% 0.015 -0.008);
 }
 
 [data-theme="cupcake"]:not(.light) {
+
   &[data-theme].dark:not(.light),
   & .dark:not(.light),
   &:is(.dark:not(.light) *) {
@@ -23,6 +26,8 @@
     --background: oklab(20.705% 0.02404 -0.00603);
     --card: oklab(25% 0.015 -0.004);
     --card-foreground: oklab(80.039% 0.0685 -0.00464);
+    --popover: oklab(25% 0.015 -0.004);
+    --popover-foreground: oklab(80.039% 0.0685 -0.00464);
     --muted: oklab(33% 0.01 -0.002);
     --border: oklab(41% 0.01 -0.002);
     --input: oklab(41% 0.01 -0.002);

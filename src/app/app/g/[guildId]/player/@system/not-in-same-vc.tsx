@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { BroadcastIcon } from '@phosphor-icons/react/dist/ssr';
 import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo';
@@ -25,9 +26,12 @@ export default function NotInSameVC() {
       >
         <div className='relative flex items-center justify-center size-20 rounded-3xl bg-primary/10 text-primary shadow-inner overflow-hidden'>
           {guild?.iconURL ? (
-            <img
+            <Image
               src={guild.iconURL}
               alt={guild.name}
+              width={80}
+              height={80}
+              unoptimized
               className='size-full object-cover rounded-2xl'
             />
           ) : (
