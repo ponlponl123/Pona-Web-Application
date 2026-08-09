@@ -22,10 +22,18 @@ export interface Tracks {
   pagination?: Pagination
 }
 
+export interface TopArtistEntry {
+  name: string
+  count: number
+  artistId?: string
+  thumbnail?: string
+}
+
 export interface HistoryStats {
   totalTracks: number
   totalDurationMs: number
   topArtist: string
+  topArtists?: TopArtistEntry[]
 }
 
 export interface HistoryStatsResponse {

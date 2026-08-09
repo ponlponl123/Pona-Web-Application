@@ -557,10 +557,41 @@
           }
         },
         "favorite": {
-          "title": "お気に入り"
+          "title": "お気に入り",
+          "subscribed_artists_title": "購読中のアーティスト",
+          "subscribed_artists_desc": "お気に入りの音楽クリエイターと登録チャンネル。",
+          "top_artists_this_month": "今月のトップアーティスト",
+          "top_artists_desc": "過去30日間に最もよく聴いたクリエイター。",
+          "favorite_tracks_coming_soon_title": "トラックのお気に入り機能はまもなく登場",
+          "favorite_tracks_coming_soon_desc": "パーソナライズされたトラックライブラリを準備中です。それまでの間、登録中のアーティストを以下で管理できます！",
+          "search_artists": "購読中のアーティストを検索...",
+          "sort_recent": "最近登録した順",
+          "sort_name": "名前順 (A-Z)",
+          "total_artists": "[count] 人のアーティスト",
+          "no_subscriptions_title": "まだ購読中のアーティストはいません",
+          "no_subscriptions_desc": "音楽を聴いている際にお気に入りのアーティストを登録して、ここに表示させましょう。",
+          "view_artist": "アーティストを表示",
+          "unsubscribed_toast": "[artist_name] の登録を解除しました",
+          "artist_badge": "アーティスト"
         },
         "history": {
-          "title": "履歴"
+          "title": "履歴",
+          "stats": {
+            "total_listened": "総再生回数",
+            "tracks_unit": "曲",
+            "listen_time": "総再生時間",
+            "top_artist_7d": "トップアーティスト (7日間)"
+          },
+          "pagination": {
+            "prev": "前へ",
+            "next": "次へ",
+            "tracks_summary": "[page] / [totalPages] ([total] 曲)"
+          },
+          "no_results": {
+            "title": "一致するトラックが見つかりません",
+            "description": "「[query]」の検索結果は見つかりませんでした。",
+            "clear_search": "検索をクリア"
+          }
         },
         "search": {
           "title": "検索",

@@ -557,10 +557,41 @@
           }
         },
         "favorite": {
-          "title": "ชื่นชอบ"
+          "title": "ชื่นชอบ",
+          "subscribed_artists_title": "ศิลปินที่ติดตาม",
+          "subscribed_artists_desc": "ศิลปินและช่องเพลงโปรดที่คุณติดตาม",
+          "top_artists_this_month": "ศิลปินยอดนิยมประจำเดือนนี้",
+          "top_artists_desc": "ศิลปินที่คุณรับฟังบ่อยที่สุดในรอบ 30 วันที่ผ่านมา",
+          "favorite_tracks_coming_soon_title": "ระบบเพลงโปรดกำลังจะมาถึงเร็วๆ นี้",
+          "favorite_tracks_coming_soon_desc": "เรากำลังพัฒนาคลังเพลงโปรดส่วนตัวของคุณ ในระหว่างนี้ คุณสามารถเลือกดูและจัดการศิลปินที่คุณติดตามได้ที่ด้านล่างนี้!",
+          "search_artists": "ค้นหาศิลปินที่ติดตาม...",
+          "sort_recent": "ติดตามล่าสุด",
+          "sort_name": "ชื่อ (A-Z)",
+          "total_artists": "[count] ศิลปิน",
+          "no_subscriptions_title": "ยังไม่มีศิลปินที่ติดตาม",
+          "no_subscriptions_desc": "กดติดตามศิลปินที่คุณชอบในขณะรับฟัง เพื่อเข้าถึงได้ง่ายๆ ที่นี่",
+          "view_artist": "ดูหน้าศิลปิน",
+          "unsubscribed_toast": "ยกเลิกการติดตาม [artist_name] แล้ว",
+          "artist_badge": "ศิลปิน"
         },
         "history": {
-          "title": "ประวัติการฟัง"
+          "title": "ประวัติการฟัง",
+          "stats": {
+            "total_listened": "ฟังทั้งหมด",
+            "tracks_unit": "เพลง",
+            "listen_time": "เวลาที่ฟัง",
+            "top_artist_7d": "ศิลปินยอดนิยม (7 วัน)"
+          },
+          "pagination": {
+            "prev": "ย้อนกลับ",
+            "next": "ถัดไป",
+            "tracks_summary": "[page] / [totalPages] ([total] เพลง)"
+          },
+          "no_results": {
+            "title": "ไม่พบเพลงที่ตรงกับการค้นหา",
+            "description": "ไม่พบผลลัพธ์สำหรับ \"[query]\"",
+            "clear_search": "ล้างการค้นหา"
+          }
         },
         "search": {
           "title": "ค้นหาเพลงโปรด",

@@ -12,7 +12,6 @@ import {
   MicrophoneStageIcon,
   CaretRightIcon,
   CaretLeftIcon,
-  X,
 } from '@phosphor-icons/react/dist/ssr';
 
 import Track from '@/components/music/searchResult/track';
@@ -51,7 +50,6 @@ function Page() {
   const { guild } = useDiscordGuildInfo();
   const router = useRouter();
 
-  // Fetch Server-side Stats
   useEffect(() => {
     const loadStats = async () => {
       const accessTokenType = String(getCookie('LOGIN_TYPE_'));
@@ -73,7 +71,6 @@ function Page() {
     loadStats();
   }, []);
 
-  // Fetch Server-side History with Pagination & Search Query
   const loadHistoryData = useCallback(async (page: number, query: string) => {
     setLoading(true);
     const accessTokenType = String(getCookie('LOGIN_TYPE_'));
@@ -95,7 +92,6 @@ function Page() {
     setLoading(false);
   }, []);
 
-  // Debounced search trigger
   useEffect(() => {
     const timer = setTimeout(() => {
       startTransition(() => {
@@ -107,7 +103,6 @@ function Page() {
     return () => clearTimeout(timer);
   }, [searchQuery, loadHistoryData]);
 
-  // Handle Page Changes
   const handlePageChange = (newPage: number) => {
     if (!pagination || newPage < 1 || newPage > pagination.totalPages) return;
     setCurrentPage(newPage);
@@ -115,7 +110,6 @@ function Page() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Format Duration
   const formattedDuration = useCallback((ms: number) => {
     const totalMinutes = Math.floor(ms / 60000);
     const hours = Math.floor(totalMinutes / 60);
@@ -125,95 +119,124 @@ function Page() {
 
   return (
     <div className='w-full max-w-6xl mx-auto mt-10 md:mt-16 px-4 md:px-6 flex flex-col gap-8 pb-[16vh] antialiased text-foreground'>
+
       <div className='flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-border/40 pb-6'>
-        <div className='flex items-center gap-3'>
-          <MusicIcon
-            size={32}
-            duration={1}
-          />
+        <motion.div
+          initial={{ opacity: 0, filter: 'blur(2px)' }}
+          animate={{ opacity: 1, filter: 'blur(0px)' }}
+          transition={{ duration: 0.44, delay: 0, ease: 'easeOut' }}
+          className='flex items-center gap-3'
+        >
+          <MusicIcon size={32} duration={1} />
           <h1 className='text-3xl md:text-4xl font-semibold tracking-tight text-foreground'>
             {language.data.app.guilds.player.history.title}
           </h1>
-        </div>
+        </motion.div>
 
-        <AnimateIcon className='w-full max-w-xs' animateOnHover>
-          <Input
-            name="search-history"
-            type="text"
-            autoComplete="off"
-            autoCorrect="off"
-            autoCapitalize="off"
-            spellCheck={false}
-            startContent={
-              <Search className="mr-1 size-4 max-md:absolute max-md:scale-75" />
-            }
-            placeholder={language.data.app.guilds.player.search.search_box}
-            fontStyle={{
-              fontFamily:
-                "var(--font-ponlponl123-article), var(--font-sn-sanafon-maru-j30), sans-serif",
-              fontWeight: "bold",
-              fontSize: "14px",
-              letterSpacing: "1px",
-            }}
-            value={searchQuery}
-            maxLength={512}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
-            className={cn(
-              "pona-music-searchbox backdrop-blur-xl rounded-xl w-full",
-            )}
-          />
-        </AnimateIcon>
+        <motion.div
+          initial={{ opacity: 0, filter: 'blur(2px)' }}
+          animate={{ opacity: 1, filter: 'blur(0px)' }}
+          transition={{ duration: 0.44, delay: 0.08, ease: 'easeOut' }}
+          className='w-full max-w-xs'
+        >
+          <AnimateIcon className='w-full' animateOnHover>
+            <Input
+              name="search-history"
+              type="text"
+              autoComplete="off"
+              autoCorrect="off"
+              autoCapitalize="off"
+              spellCheck={false}
+              startContent={<Search className="mr-1 size-4" />}
+              placeholder={language.data.app.guilds.player.search.search_box}
+              fontStyle={{
+                fontFamily:
+                  "var(--font-ponlponl123-article), var(--font-sn-sanafon-maru-j30), sans-serif",
+                fontWeight: "bold",
+                fontSize: "14px",
+                letterSpacing: "1px",
+              }}
+              value={searchQuery}
+              maxLength={512}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
+              className={cn("pona-music-searchbox backdrop-blur-xl rounded-xl w-full")}
+            />
+          </AnimateIcon>
+        </motion.div>
       </div>
 
       <div className='grid grid-cols-1 sm:grid-cols-3 border border-border/40 divide-y sm:divide-y-0 sm:divide-x divide-border/40 rounded-xl bg-background/40 backdrop-blur-sm overflow-hidden'>
-        <div className='p-5 flex flex-col justify-between gap-3'>
+        <motion.div
+          initial={{ opacity: 0, filter: 'blur(2px)' }}
+          animate={{ opacity: 1, filter: 'blur(0px)' }}
+          transition={{ duration: 0.44, delay: 0.16, ease: 'easeOut' }}
+          className='p-5 flex flex-col justify-between gap-3'
+        >
           <div className='flex items-center justify-between text-muted-foreground'>
-            <span className='text-xs font-mono uppercase tracking-wider'>Total Listened</span>
+            <span className='text-lg uppercase tracking-wider'>
+              {language.data.app.guilds.player.history.stats?.total_listened || 'Total Listened'}
+            </span>
             <FlameIcon size={18} />
           </div>
           {statsLoading ? (
             <Skeleton className='h-8 w-24 rounded bg-muted/40' />
           ) : (
             <div className='flex items-baseline gap-1.5'>
-              <span className='text-2xl md:text-3xl font-semibold font-mono tracking-tight'>
+              <span className='text-lg md:text-3xl font-semibold tracking-tight'>
                 {stats?.totalTracks || 0}
               </span>
-              <span className='text-xs text-muted-foreground'>tracks</span>
+              <span className='text-sm text-muted-foreground'>
+                {language.data.app.guilds.player.history.stats?.tracks_unit || 'tracks'}
+              </span>
             </div>
           )}
-        </div>
+        </motion.div>
 
-        <div className='p-5 flex flex-col justify-between gap-3'>
+        <motion.div
+          initial={{ opacity: 0, filter: 'blur(2px)' }}
+          animate={{ opacity: 1, filter: 'blur(0px)' }}
+          transition={{ duration: 0.44, delay: 0.24, ease: 'easeOut' }}
+          className='p-5 flex flex-col justify-between gap-3'
+        >
           <div className='flex items-center justify-between text-muted-foreground'>
-            <span className='text-xs font-mono uppercase tracking-wider'>Listen Time</span>
+            <span className='text-lg uppercase tracking-wider'>
+              {language.data.app.guilds.player.history.stats?.listen_time || 'Listen Time'}
+            </span>
             <ClockIcon size={18} />
           </div>
           {statsLoading ? (
             <Skeleton className='h-8 w-24 rounded bg-muted/40' />
           ) : (
             <div className='flex items-baseline gap-1.5'>
-              <span className='text-2xl md:text-3xl font-semibold font-mono tracking-tight'>
+              <span className='text-lg md:text-3xl font-semibold tracking-tight'>
                 {formattedDuration(stats?.totalDurationMs || 0)}
               </span>
             </div>
           )}
-        </div>
+        </motion.div>
 
-        <div className='p-5 flex flex-col justify-between gap-3'>
+        <motion.div
+          initial={{ opacity: 0, filter: 'blur(2px)' }}
+          animate={{ opacity: 1, filter: 'blur(0px)' }}
+          transition={{ duration: 0.44, delay: 0.32, ease: 'easeOut' }}
+          className='p-5 flex flex-col justify-between gap-3'
+        >
           <div className='flex items-center justify-between text-muted-foreground'>
-            <span className='text-xs font-mono uppercase tracking-wider'>Top Artist (7D)</span>
+            <span className='text-lg uppercase tracking-wider'>
+              {language.data.app.guilds.player.history.stats?.top_artist_7d || 'Top Artist (7D)'}
+            </span>
             <MicrophoneStageIcon size={18} />
           </div>
           {statsLoading ? (
             <Skeleton className='h-8 w-32 rounded bg-muted/40' />
           ) : (
             <div className='flex items-baseline gap-1.5 overflow-hidden'>
-              <span className='text-lg md:text-xl font-medium tracking-tight truncate'>
+              <span className='text-lg md:text-3xl font-medium tracking-tight truncate'>
                 {stats?.topArtist || '-'}
               </span>
             </div>
           )}
-        </div>
+        </motion.div>
       </div>
 
       <div id='pona-search-result' className='w-full flex flex-col gap-4'>
@@ -264,14 +287,17 @@ function Page() {
                   isExplicit: false,
                 };
 
+                const delay = 0.40 + idx * 0.08;
+
                 return (
                   <motion.div
                     key={result.id || result.uniqueid || idx}
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.99 }}
+                    initial={{ opacity: 0, filter: 'blur(2px)' }}
+                    animate={{ opacity: 1, filter: 'blur(0px)' }}
+                    exit={{ opacity: 0, filter: 'blur(2px)' }}
                     transition={{
-                      delay: Math.min(0.015 * idx, 0.15),
+                      duration: 0.44,
+                      delay,
                       ease: 'easeOut',
                     }}
                   >
@@ -285,44 +311,80 @@ function Page() {
 
             {pagination && pagination.totalPages > 1 && (
               <div className='flex items-center justify-between border-t border-border/40 pt-4 mt-2'>
-                <span className='text-xs font-mono text-muted-foreground'>
-                  {pagination.page} / {pagination.totalPages} ({pagination.total} tracks)
-                </span>
+                <motion.span
+                  initial={{ opacity: 0, filter: 'blur(2px)' }}
+                  animate={{ opacity: 1, filter: 'blur(0px)' }}
+                  transition={{
+                    duration: 0.44,
+                    delay: 0.40 + historyList.length * 0.08 + 0.08,
+                    ease: 'easeOut',
+                  }}
+                  className='text-sm tracking-wider text-muted-foreground'
+                >
+                  {(language.data.app.guilds.player.history.pagination?.tracks_summary || '[page] / [totalPages] ([total] tracks)')
+                    .replace('[page]', String(pagination.page))
+                    .replace('[totalPages]', String(pagination.totalPages))
+                    .replace('[total]', String(pagination.total))}
+                </motion.span>
                 <div className='flex items-center gap-1.5'>
-                  <Button
-                    variant='outline'
-                    size='sm'
-                    className='h-8 text-xs rounded-md border-border/60 gap-1 font-mono'
-                    disabled={currentPage <= 1}
-                    onClick={() => handlePageChange(currentPage - 1)}
+                  <motion.div
+                    initial={{ opacity: 0, filter: 'blur(2px)' }}
+                    animate={{ opacity: 1, filter: 'blur(0px)' }}
+                    transition={{
+                      duration: 0.44,
+                      delay: 0.40 + historyList.length * 0.08 + 0.16,
+                      ease: 'easeOut',
+                    }}
                   >
-                    <CaretLeftIcon size={14} />
-                    Prev
-                  </Button>
-                  <Button
-                    variant='outline'
-                    size='sm'
-                    className='h-8 text-xs rounded-md border-border/60 gap-1 font-mono'
-                    disabled={currentPage >= pagination.totalPages}
-                    onClick={() => handlePageChange(currentPage + 1)}
+                    <Button
+                      variant='outline'
+                      size='sm'
+                      className='h-8 text-xs rounded-md border-border/60 gap-1'
+                      disabled={currentPage <= 1}
+                      onClick={() => handlePageChange(currentPage - 1)}
+                    >
+                      <CaretLeftIcon size={14} />
+                      {language.data.app.guilds.player.history.pagination?.prev || 'Prev'}
+                    </Button>
+                  </motion.div>
+                  <motion.div
+                    initial={{ opacity: 0, filter: 'blur(2px)' }}
+                    animate={{ opacity: 1, filter: 'blur(0px)' }}
+                    transition={{
+                      duration: 0.44,
+                      delay: 0.40 + historyList.length * 0.08 + 0.24,
+                      ease: 'easeOut',
+                    }}
                   >
-                    Next
-                    <CaretRightIcon size={14} />
-                  </Button>
+                    <Button
+                      variant='outline'
+                      size='sm'
+                      className='h-8 text-xs rounded-md border-border/60 gap-1'
+                      disabled={currentPage >= pagination.totalPages}
+                      onClick={() => handlePageChange(currentPage + 1)}
+                    >
+                      {language.data.app.guilds.player.history.pagination?.next || 'Next'}
+                      <CaretRightIcon size={14} />
+                    </Button>
+                  </motion.div>
                 </div>
               </div>
             )}
           </div>
         ) : searchQuery ? (
           <motion.div
-            initial={{ opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
+            initial={{ opacity: 0, filter: 'blur(2px)' }}
+            animate={{ opacity: 1, filter: 'blur(0px)' }}
+            transition={{ duration: 0.25, delay: 0.25, ease: 'easeOut' }}
             className='w-full py-16 flex flex-col items-center justify-center gap-3 border border-border/40 rounded-xl bg-muted/10 text-center px-4'
           >
             <MagnifyingGlassIcon size={28} className='text-muted-foreground' />
-            <h2 className='text-base font-semibold'>No matching tracks found</h2>
+            <h2 className='text-base font-semibold'>
+              {language.data.app.guilds.player.history.no_results?.title || 'No matching tracks found'}
+            </h2>
             <p className='text-xs text-muted-foreground max-w-sm'>
-              No results found for &quot;{searchQuery}&quot;.
+              {(language.data.app.guilds.player.history.no_results?.description || 'No results found for "[query]".')
+                .replace('[query]', searchQuery)}
             </p>
             <Button
               variant='outline'
@@ -330,13 +392,14 @@ function Page() {
               className='rounded-md border-border/60 text-xs mt-1'
               onClick={() => setSearchQuery('')}
             >
-              Clear Search
+              {language.data.app.guilds.player.history.no_results?.clear_search || 'Clear Search'}
             </Button>
           </motion.div>
         ) : (
           <motion.div
-            initial={{ opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
+            initial={{ opacity: 0, filter: 'blur(2px)' }}
+            animate={{ opacity: 1, filter: 'blur(0px)' }}
+            transition={{ duration: 0.25, delay: 0.25, ease: 'easeOut' }}
             className='w-full py-16 flex flex-col items-center justify-center gap-3 border border-border/40 rounded-xl bg-muted/10 text-center px-4'
           >
             <MicrophoneStageIcon size={32} className='text-muted-foreground' />
@@ -365,6 +428,3 @@ function Page() {
 }
 
 export default Page;
-
-
-

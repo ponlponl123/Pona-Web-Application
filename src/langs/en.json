@@ -553,10 +553,41 @@
           }
         },
         "favorite": {
-          "title": "Favorite"
+          "title": "Favorite",
+          "subscribed_artists_title": "Subscribed Artists",
+          "subscribed_artists_desc": "Your favorite music creators and subscribed channels.",
+          "top_artists_this_month": "Top Artists This Month",
+          "top_artists_desc": "Creators you've listened to most over the past 30 days.",
+          "favorite_tracks_coming_soon_title": "Track Favorites Coming Soon",
+          "favorite_tracks_coming_soon_desc": "We are building a seamless personalized favorite track library. In the meantime, browse and manage your subscribed artists below!",
+          "search_artists": "Search subscribed artists...",
+          "sort_recent": "Recently Subscribed",
+          "sort_name": "Name (A-Z)",
+          "total_artists": "[count] Artists",
+          "no_subscriptions_title": "No subscribed artists yet",
+          "no_subscriptions_desc": "Subscribe to your favorite music artists while listening to quickly view them here.",
+          "view_artist": "View Artist",
+          "unsubscribed_toast": "Unsubscribed from [artist_name]",
+          "artist_badge": "Artist"
         },
         "history": {
-          "title": "History"
+          "title": "History",
+          "stats": {
+            "total_listened": "Total Listened",
+            "tracks_unit": "tracks",
+            "listen_time": "Listen Time",
+            "top_artist_7d": "Top Artist (7D)"
+          },
+          "pagination": {
+            "prev": "Prev",
+            "next": "Next",
+            "tracks_summary": "[page] / [totalPages] ([total] tracks)"
+          },
+          "no_results": {
+            "title": "No matching tracks found",
+            "description": "No results found for \"[query]\".",
+            "clear_search": "Clear Search"
+          }
         },
         "search": {
           "title": "Search",
