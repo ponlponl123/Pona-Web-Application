@@ -289,7 +289,7 @@ function Page() {
         </Link>
       </motion.div>
 
-      <AutoHeight>
+      <AutoHeight className='z-10'>
         {loading ? (
           <div className='flex flex-col gap-4'>
             <div className='flex items-center gap-2'>
@@ -352,7 +352,7 @@ function Page() {
 
       </AutoHeight>
 
-      <div className='flex flex-col gap-5'>
+      <div className='flex flex-col gap-5 z-10'>
         <div className='flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-border/30 pb-5'>
           <motion.div
             initial={{ opacity: 0, filter: 'blur(2px)' }}
@@ -409,7 +409,7 @@ function Page() {
               </AnimateIcon>
             </div>
 
-            <div className='flex items-center bg-background p-0.5 rounded-xl border-2 border-border/50'>
+            <div className='flex items-center bg-default-foreground/10 backdrop-blur-sm p-0.5 rounded-xl border-2 border-default-foreground/5'>
               <button
                 type='button'
                 onClick={() => {
