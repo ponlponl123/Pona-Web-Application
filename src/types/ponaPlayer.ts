@@ -123,6 +123,7 @@ export interface Lyric {
   isTimestamp: boolean
   lyrics: TimestampLyrics[] | NonTimestampLyrics[]
   source?: string
+  error?: string
 }
 
 export interface PlayDetail {

@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { PlayIcon, SpinnerIcon } from '@phosphor-icons/react/dist/ssr';
 import { getCookie } from 'cookies-next';
 import { toast } from 'sonner';
-import { twMerge } from 'tailwind-merge';
 import { useAtomValue } from 'jotai';
 
 import { useSocket } from '@/contexts/ponaMusicContext';
@@ -29,6 +28,7 @@ import {
 } from '@/types/ponaPlayer';
 import { AnimateIcon } from '@/components/animate-ui/icons/icon';
 import { Plus } from '@/components/animate-ui/icons/plus';
+import { cn } from '@/lib/utils';
 export type { PlayButtonClassNames, PlayButtonProps, PlayDetail, PlaylistDetail };
 
 
@@ -131,8 +131,8 @@ function PlayButton<T extends 'song' | 'playlist' = 'song'>({
           variant='ghost'
           size='icon'
           disabled={loading}
-          className={twMerge(
-            'absolute top-0 left-0 w-full h-full z-10 rounded-xl group-hover:opacity-100 opacity-0 transition-opacity bg-black/40 text-white hover:bg-black/60 cursor-pointer ' +
+          className={cn(
+            'absolute top-0 left-0 w-full h-full z-10 rounded-xl group-hover:opacity-100 opacity-0 transition-opacity bg-black/40 text-white hover:bg-black/60 cursor-pointer backdrop-blur-xs!' +
             className,
             classNames?.playpause
           )}

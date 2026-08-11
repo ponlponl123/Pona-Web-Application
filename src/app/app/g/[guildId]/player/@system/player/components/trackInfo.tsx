@@ -73,13 +73,13 @@ export const PlayerTrackInfo = memo(function PlayerTrackInfo({
         style={{ width: 'calc(100% - 5.4rem)' }}
       >
         <div className='text-xl max-w-full flex gap-2 items-center'>
-          <h1 className={`${isMobile ? 'text-base' : 'text-xl max-lg:text-base'} font-medium text-[hsl(var(--pona-app-music-accent-color-500))] w-full whitespace-nowrap overflow-hidden text-ellipsis`}>
+          <h1 className={`${isMobile ? 'text-base' : 'text-xl max-lg:text-base'} font-medium text-[hsl(var(--pona-app-music-accent-color-800))] dark:text-[hsl(var(--pona-app-music-accent-color-500))] w-full whitespace-nowrap overflow-hidden text-ellipsis`}>
             {currentTrack ? currentTrack.title : 'Music Name'}
           </h1>
           {currentTrack?.uri && (
             <Link
               href={currentTrack.uri}
-              className='text-xs text-[hsl(var(--pona-app-music-accent-color-500))] hover:underline'
+              className='text-xs text-[hsl(var(--pona-app-music-accent-color-800))] dark:text-[hsl(var(--pona-app-music-accent-color-500))] hover:underline'
               target='_blank'
             >
               ↗
@@ -88,14 +88,14 @@ export const PlayerTrackInfo = memo(function PlayerTrackInfo({
         </div>
         <div className='w-full flex flex-row gap-1 items-center justify-start'>
           {currentTrack?.artist ? (
-            <div className='text-sm max-lg:text-xs text-[hsl(var(--pona-app-music-accent-color-500))]/60 max-w-[calc(100%_-_1rem)] whitespace-nowrap overflow-hidden overflow-ellipsis'>
+            <div className='text-sm max-lg:text-xs text-[hsl(var(--pona-app-music-accent-color-800))]/60! dark:text-[hsl(var(--pona-app-music-accent-color-500))]/60 max-w-[calc(100%-1rem)] whitespace-nowrap overflow-hidden text-ellipsis'>
               {combineArtistName(currentTrack?.artist, true, router, {
                 className:
-                  'text-sm max-lg:text-xs text-[hsl(var(--pona-app-music-accent-color-500))]/60!',
+                  'text-sm max-lg:text-xs text-[hsl(var(--pona-app-music-accent-color-800))]/60! dark:text-[hsl(var(--pona-app-music-accent-color-500))]/60!',
               })}
             </div>
           ) : (
-            <span className='text-sm max-lg:text-xs text-[hsl(var(--pona-app-music-accent-color-500))]/60 max-w-[calc(100%_-_1rem)] whitespace-nowrap overflow-hidden overflow-ellipsis'>
+            <span className='text-sm max-lg:text-xs text-[hsl(var(--pona-app-music-accent-color-800))]/60! dark:text-[hsl(var(--pona-app-music-accent-color-500))]/60 max-w-[calc(100%-1rem)] whitespace-nowrap overflow-hidden text-ellipsis'>
               {currentTrack?.author}
             </span>
           )}
@@ -107,7 +107,7 @@ export const PlayerTrackInfo = memo(function PlayerTrackInfo({
                     <div className='relative group w-3 opacity-60 cursor-pointer'>
                       <InfoIcon
                         size={12}
-                        className='text-[hsl(var(--pona-app-music-accent-color-500))]'
+                        className='text-[hsl(var(--pona-app-music-accent-color-800))] dark:text-[hsl(var(--pona-app-music-accent-color-500))]'
                       />
                     </div>
                   }

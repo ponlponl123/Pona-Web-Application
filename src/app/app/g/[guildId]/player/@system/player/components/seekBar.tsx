@@ -46,11 +46,11 @@ export const PlayerSeekBar = memo(function PlayerSeekBar({
       />
       <div className='w-full h-1 rounded-full overflow-hidden relative flex flex-row'>
         <div
-          className='h-full bg-[hsl(var(--pona-app-music-accent-color-500))] transition-all duration-1000 ease-linear transform-gpu rounded-full'
+          className='h-full bg-[hsl(var(--pona-app-music-accent-color-800))] dark:bg-[hsl(var(--pona-app-music-accent-color-500))] transition-all duration-1000 ease-linear transform-gpu rounded-full'
           style={{ width: `${progressPercent}%` }}
         />
         <div
-          className='h-full bg-[hsl(var(--pona-app-music-accent-color-500))]/20 transition-all duration-1000 ease-linear transform-gpu min-w-0 flex-1 ml-0.5 rounded-full'
+          className='h-full bg-[hsl(var(--pona-app-music-accent-color-800))]/20 dark:bg-[hsl(var(--pona-app-music-accent-color-500))]/20 transition-all duration-1000 ease-linear transform-gpu min-w-0 flex-1 ml-0.5 rounded-full'
         />
       </div>
     </div>

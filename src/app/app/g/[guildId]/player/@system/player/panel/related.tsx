@@ -63,14 +63,14 @@ const TrackColumns = memo(({ tracks }: TrackColumnsProps) => {
             <Track
               key={`track-${item.videoId || i}-${j}`}
               classNames={{
-                title: 'text-[hsl(var(--pona-app-music-accent-color-500))]',
-                subtitle: 'text-[hsl(var(--pona-app-music-accent-color-500)/0.64)]!',
+                title: 'text-[hsl(var(--pona-app-music-accent-color-800))] dark:text-[hsl(var(--pona-app-music-accent-color-500))]',
+                subtitle: 'text-[hsl(var(--pona-app-music-accent-color-800)/0.64)]! dark:text-[hsl(var(--pona-app-music-accent-color-500)/0.64)]!',
                 playButton: {
                   playpause:
                     'text-[hsl(var(--pona-app-music-accent-color-500))]',
                 },
-                artistLink: "text-[hsl(var(--pona-app-music-accent-color-500)/0.75)]!",
-                duration: 'text-[hsl(var(--pona-app-music-accent-color-500)/0.64)]',
+                artistLink: "text-[hsl(var(--pona-app-music-accent-color-800)/0.75)]! dark:text-[hsl(var(--pona-app-music-accent-color-500)/0.75)]!",
+                duration: 'text-[hsl(var(--pona-app-music-accent-color-800)/0.64)] dark:text-[hsl(var(--pona-app-music-accent-color-500)/0.64)]',
               }}
               result={songDetailedResult}
             />
@@ -140,7 +140,7 @@ const ArtistCards = memo(({ artists }: ArtistCardsProps) => {
               thumbnails: a.thumbnails || [],
               type: 'ARTIST',
             }}
-            className='**:text-[hsl(var(--pona-app-music-accent-color-500))]!'
+            className='**:text-[hsl(var(--pona-app-music-accent-color-700))]! **:dark:text-[hsl(var(--pona-app-music-accent-color-500))]!'
           />
         );
       })}
@@ -294,9 +294,9 @@ const Related = memo(({ videoId }: { videoId?: string }) => {
         <GhostIcon
           size={56}
           weight='fill'
-          className='text-[hsl(var(--pona-app-music-accent-color-500))]'
+          className='text-[hsl(var(--pona-app-music-accent-color-800))] dark:text-[hsl(var(--pona-app-music-accent-color-500))]'
         />
-        <h1 className='text-2xl max-w-3xl text-center text-[hsl(var(--pona-app-music-accent-color-500)/0.64)]'>
+        <h1 className='text-2xl max-w-3xl text-center text-[hsl(var(--pona-app-music-accent-color-800)/0.64)] dark:text-[hsl(var(--pona-app-music-accent-color-500)/0.64)]'>
           {language.data.app.guilds.player.related.videoId_not_provided}
         </h1>
       </div>
@@ -313,7 +313,7 @@ const Related = memo(({ videoId }: { videoId?: string }) => {
       {watchPlaylistTracks.length > 0 && (
         <>
           <div className='flex gap-4 items-center justify-between w-full p-1 -mt-2'>
-            <h1 className='text-3xl -mb-2 font-bold text-[hsl(var(--pona-app-music-accent-color-500)/0.64)]'>
+            <h1 className='text-3xl -mb-2 font-bold text-[hsl(var(--pona-app-music-accent-color-800)/0.64)] dark:text-[hsl(var(--pona-app-music-accent-color-500)/0.64)]'>
               {language.data.app.guilds.player.related.play_continuously}
             </h1>
             <div className='flex-1' />
@@ -341,7 +341,7 @@ const Related = memo(({ videoId }: { videoId?: string }) => {
             toLangKey as keyof typeof language.data.app.guilds.player.related;
           const HeaderTitle = () => (
             <h1
-              className={`text-3xl ${index > 0 ? 'mt-4' : ''} -mb-2 font-bold text-[hsl(var(--pona-app-music-accent-color-500)/0.64)]`}
+              className={`text-3xl ${index > 0 ? 'mt-4' : ''} -mb-2 font-bold text-[hsl(var(--pona-app-music-accent-color-800)/0.64)] dark:text-[hsl(var(--pona-app-music-accent-color-500)/0.64)]`}
             >
               {language.data.app.guilds.player.related[langKeyType]
                 ? language.data.app.guilds.player.related[langKeyType]
@@ -429,7 +429,7 @@ const Related = memo(({ videoId }: { videoId?: string }) => {
             return (
               <React.Fragment key={`related-sec-${index}`}>
                 <HeaderTitle />
-                <p className='text-[hsl(var(--pona-app-music-accent-color-500))]'>
+                <p className='text-[hsl(var(--pona-app-music-accent-color-800))] dark:text-[hsl(var(--pona-app-music-accent-color-500))]'>
                   {description}
                 </p>
               </React.Fragment>
@@ -445,8 +445,8 @@ const Related = memo(({ videoId }: { videoId?: string }) => {
     </motion.div>
   ) : (
     <div className='flex flex-col gap-4 items-center justify-center w-full h-full'>
-      <Spinner className='text-[hsl(var(--pona-app-music-accent-color-500))]' />
-      <h1 className='text-2xl max-w-3xl text-center text-[hsl(var(--pona-app-music-accent-color-500))/0.64]'>
+      <Spinner className='text-[hsl(var(--pona-app-music-accent-color-800))] dark:text-[hsl(var(--pona-app-music-accent-color-500))]' />
+      <h1 className='text-2xl max-w-3xl text-center text-[hsl(var(--pona-app-music-accent-color-800)/0.64)] dark:text-[hsl(var(--pona-app-music-accent-color-500))/0.64]'>
         {language.data.common.friendly_loading}
       </h1>
     </div>

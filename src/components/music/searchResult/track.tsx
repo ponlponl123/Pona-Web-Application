@@ -1,9 +1,8 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import clsx from 'clsx';
 
 import { getCookie } from 'cookies-next';
 import {
@@ -280,18 +279,28 @@ export function TrackSearchResult({
   const initialDuration = extractDurationFromItem(itemRec);
 
   const [fetchedMeta, setFetchedMeta] = useState<{ artists?: CombineArtistItem[]; duration?: string }>({});
+  const hasAttemptedFetch = useRef(false);
 
   const isPlayableTrack = type === 'song' || type === 'video' || type === 'episode';
 
   // Asynchronously resolve missing metadata (artists or duration) for playable tracks
   useEffect(() => {
-    if (isPlayableTrack && videoId && (initialArtists.length === 0 || !initialDuration)) {
+    if (
+      isPlayableTrack &&
+      videoId &&
+      title &&
+      (initialArtists.length === 0 || !initialDuration) &&
+      !hasAttemptedFetch.current
+    ) {
+      hasAttemptedFetch.current = true;
       let isMounted = true;
       const token = (getCookie('LOGIN_') || getCookie('token')) as string;
       const tokenType = (getCookie('LOGIN_TYPE_') || getCookie('tokenType') || 'Bearer') as string;
 
+      const artistParam = initialArtists.length > 0 ? initialArtists[0].name : (typeof rawArtistName === 'string' ? rawArtistName : '');
+
       if (token && token !== 'undefined') {
-        getSong(tokenType, token, title, '', videoId)
+        getSong(tokenType, token, title, artistParam, videoId)
           .then((res) => {
             if (!isMounted || !res) return;
             const updates: { artists?: CombineArtistItem[]; duration?: string } = {};
@@ -315,7 +324,7 @@ export function TrackSearchResult({
         isMounted = false;
       };
     }
-  }, [isPlayableTrack, videoId, initialArtists.length, initialDuration, title]);
+  }, [isPlayableTrack, videoId, initialArtists.length, initialDuration, title, rawArtistName]);
 
   const finalArtists = initialArtists.length > 0 ? initialArtists : fetchedMeta.artists || [];
   const duration = initialDuration || fetchedMeta.duration || '';
@@ -351,7 +360,7 @@ export function TrackSearchResult({
   return (
     <div
       onClick={handleRowClick}
-      className={clsx(
+      className={cn(
         'w-full max-w-full flex gap-4 items-center justify-start group hover:bg-muted/40 p-2 rounded-2xl transition-colors',
         !isPlayableTrack && targetUrl !== '#' && 'cursor-pointer',
         classNames?.wrapper
@@ -371,7 +380,7 @@ export function TrackSearchResult({
       >
         {thumbnailUrl ? (
           <Image
-            className={clsx(
+            className={cn(
               'object-cover w-full h-full group-hover:scale-105 transition-transform duration-300',
               (type === 'artist' || type === 'profile' || type === 'user') && 'rounded-full',
               classNames?.image
@@ -406,7 +415,7 @@ export function TrackSearchResult({
       <div className='flex flex-col justify-center items-start flex-1 min-w-0'>
         {isPlayableTrack || targetUrl === '#' ? (
           <h1
-            className={clsx(
+            className={cn(
               'text-base font-medium whitespace-nowrap overflow-hidden text-ellipsis w-full text-start',
               classNames?.title
             )}
@@ -422,7 +431,7 @@ export function TrackSearchResult({
                 router.push(targetUrl);
               }
             }}
-            className={clsx(
+            className={cn(
               'text-base font-medium whitespace-nowrap overflow-hidden text-ellipsis w-full text-start text-foreground',
               classNames?.title
             )}
@@ -432,7 +441,7 @@ export function TrackSearchResult({
         )}
 
         <div
-          className={clsx(
+          className={cn(
             'text-xs text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis w-full text-start flex gap-1 items-center',
             classNames?.subtitle
           )}

@@ -114,10 +114,12 @@ const LyricsDisplay: React.FC<LyricsDisplayProps> = ({
     setAutoScrollEnabled(true);
   };
 
-  if (!currentTrack?.lyrics || !currentTrack?.lyrics.isTimestamp) {
+  if (!currentTrack?.lyrics || !currentTrack?.lyrics.isTimestamp || currentTrack.lyrics.error || !currentTrack.lyrics.lyrics || currentTrack.lyrics.lyrics.length === 0) {
     return (
-      <div className='text-center text-muted-foreground py-8'>
-        {language.data.app.guilds.player.tabs.no_lyrics_available || 'No lyrics available'}
+      <div className='text-center py-8'>
+        <p className='text-[hsl(var(--pona-app-music-accent-color-800))] dark:text-[hsl(var(--pona-app-music-accent-color-500))]'>
+          {language.data.app.guilds.player.tabs.no_lyrics_available || 'No lyrics available'}
+        </p>
       </div>
     );
   }
@@ -127,13 +129,13 @@ const LyricsDisplay: React.FC<LyricsDisplayProps> = ({
       'w-full h-max flex items-center text-start justify-between px-2.5 my-8 cursor-pointer disable-default-transition transition-all ease-out duration-400 tracking-wide select-none hover:opacity-90';
 
     const conditions = {
-      'text-3xl text-[hsl(var(--pona-app-music-accent-color-500))]! font-bold [html.dark_&]:brightness-150 [html.light_&]:brightness-50':
+      'text-3xl text-[hsl(var(--pona-app-music-accent-color-800))]! dark:text-[hsl(var(--pona-app-music-accent-color-500))]! font-bold [html.dark_&]:brightness-150 [html.light_&]:brightness-50':
         index === activeIndex,
-      'text-xl text-[hsl(var(--pona-app-music-accent-color-500)/0.4)]! [html.light_&]:brightness-90 [html.dark_&]:brightness-125':
+      'text-xl text-[hsl(var(--pona-app-music-accent-color-800))]! dark:text-[hsl(var(--pona-app-music-accent-color-500)/0.4)]! [html.light_&]:brightness-90 [html.dark_&]:brightness-125':
         index === activeIndex + 1 || index === activeIndex - 1,
-      'text-base text-[hsl(var(--pona-app-music-accent-color-500)/0.48)]!':
+      'text-base text-[hsl(var(--pona-app-music-accent-color-800))]! dark:text-[hsl(var(--pona-app-music-accent-color-500)/0.48)]!':
         index < activeIndex,
-      'text-base text-[hsl(var(--pona-app-music-accent-color-500)/0.16)]!':
+      'text-base text-[hsl(var(--pona-app-music-accent-color-800))]! dark:text-[hsl(var(--pona-app-music-accent-color-500)/0.16)]!':
         index > activeIndex && index !== activeIndex + 1,
     };
 

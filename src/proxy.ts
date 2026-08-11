@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 
 const allowedOrigins = [
-  "https://pona.ponlponl123.com",
-  "http://localhost:3000",
-  "http://localhost:3001",
-  "http://127.0.0.1:3000",
+  "https://pona.ponlponl123.com"
 ]
 
 export async function proxy(req: NextRequest) {
@@ -15,7 +12,7 @@ export async function proxy(req: NextRequest) {
 
   if (
     origin &&
-    (isDev || allowedOrigins.includes(origin) || origin.startsWith("http://localhost:"))
+    (isDev || allowedOrigins.includes(origin))
   ) {
     res.headers.set("Access-Control-Allow-Origin", origin)
   }

@@ -572,13 +572,17 @@ export default function MobilePonaPlayerPanel({
                               {(language.data.app.guilds.player.tabs as Record<string, string>).fetching_lyrics || 'Loading lyrics...'}
                             </span>
                           </div>
+                        ) : currentTrack.lyrics.error || !currentTrack.lyrics.lyrics || currentTrack.lyrics.lyrics.length === 0 ? (
+                          <div className='text-center text-muted-foreground py-16'>
+                            {language.data.app.guilds.player.tabs.no_lyrics_available || 'No lyrics available'}
+                          </div>
                         ) : currentTrack.lyrics?.isTimestamp ? (
                           <LyricsDisplay
                             playerPosition={playback}
                             currentTrack={currentTrack as Track}
                             lyricsProvider={lyricsContainer}
                           />
-                        ) : currentTrack.lyrics?.lyrics && currentTrack.lyrics.lyrics.length > 0 ? (
+                        ) : (
                           <div className='w-full text-center pb-[8vh]'>
                             {(currentTrack.lyrics.lyrics as string[]).map(
                               (lyric, index) => (
@@ -597,10 +601,6 @@ export default function MobilePonaPlayerPanel({
                                 ).replace('[provider]', currentTrack.lyrics.source)}
                               </div>
                             )}
-                          </div>
-                        ) : (
-                          <div className='text-center text-muted-foreground py-16'>
-                            {language.data.app.guilds.player.tabs.no_lyrics_available || 'No lyrics available'}
                           </div>
                         )}
                       </>

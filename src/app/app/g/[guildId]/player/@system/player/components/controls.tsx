@@ -100,7 +100,7 @@ export const PlayerControls = memo(function PlayerControls({
 
   return (
     <div className='flex items-center justify-center gap-4 z-10'>
-      <span className='w-16 z-10 text-center max-lg:hidden text-[hsl(var(--pona-app-music-accent-color-500))] text-sm font-medium'>
+      <span className='w-16 z-10 text-center max-lg:hidden text-[hsl(var(--pona-app-music-accent-color-800))] dark:text-[hsl(var(--pona-app-music-accent-color-500))] text-sm font-medium'>
         {formattedPlayback}
       </span>
       <Button
@@ -109,7 +109,7 @@ export const PlayerControls = memo(function PlayerControls({
         className='rounded-full size-10 scale-110 max-lg:scale-100 max-md:hidden'
         onClick={handlePrevious}
       >
-        <CaretLineLeftIcon weight='fill' className='size-5 text-[hsl(var(--pona-app-music-accent-color-500))]' />
+        <CaretLineLeftIcon weight='fill' className='size-5 text-[hsl(var(--pona-app-music-accent-color-800))] dark:text-[hsl(var(--pona-app-music-accent-color-500))]' />
       </Button>
       {!isPaused ? (
         <Button
@@ -118,7 +118,7 @@ export const PlayerControls = memo(function PlayerControls({
           className='rounded-full size-12 scale-125 max-lg:scale-100'
           onClick={handlePause}
         >
-          <PauseIcon weight='fill' className='size-6 text-[hsl(var(--pona-app-music-accent-color-500))]' />
+          <PauseIcon weight='fill' className='size-6 text-[hsl(var(--pona-app-music-accent-color-800))] dark:text-[hsl(var(--pona-app-music-accent-color-500))]' />
         </Button>
       ) : (
         <Button
@@ -127,7 +127,7 @@ export const PlayerControls = memo(function PlayerControls({
           className='rounded-full size-12 scale-125 max-lg:scale-100'
           onClick={handlePlay}
         >
-          <PlayIcon weight='fill' className='size-6 text-[hsl(var(--pona-app-music-accent-color-500))]' />
+          <PlayIcon weight='fill' className='size-6 text-[hsl(var(--pona-app-music-accent-color-800))] dark:text-[hsl(var(--pona-app-music-accent-color-500))]' />
         </Button>
       )}
       <Button
@@ -136,10 +136,10 @@ export const PlayerControls = memo(function PlayerControls({
         className='rounded-full size-10 scale-110 max-lg:scale-100 max-md:hidden'
         onClick={handleNext}
       >
-        <CaretLineRightIcon weight='fill' className='size-5 text-[hsl(var(--pona-app-music-accent-color-500))]' />
+        <CaretLineRightIcon weight='fill' className='size-5 text-[hsl(var(--pona-app-music-accent-color-800))] dark:text-[hsl(var(--pona-app-music-accent-color-500))]' />
       </Button>
-      <div className='w-16 z-10 max-lg:w-max max-md:hidden flex gap-1 text-center whitespace-nowrap text-[hsl(var(--pona-app-music-accent-color-500))] text-sm font-medium'>
-        <span className='lg:hidden flex text-[hsl(var(--pona-app-music-accent-color-500))]'>
+      <div className='w-16 z-10 max-lg:w-max max-md:hidden flex gap-1 text-center whitespace-nowrap text-[hsl(var(--pona-app-music-accent-color-800))] dark:text-[hsl(var(--pona-app-music-accent-color-500))] text-sm font-medium'>
+        <span className='lg:hidden flex text-[hsl(var(--pona-app-music-accent-color-800))] dark:text-[hsl(var(--pona-app-music-accent-color-500))]'>
           {formattedPlayback} /{' '}
         </span>
         {formattedMaxLength}

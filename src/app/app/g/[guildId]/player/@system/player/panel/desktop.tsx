@@ -69,6 +69,7 @@ import CustomScrollArea from '@/components/ui/custom/scroll-area';
 import { Tabs, TabsContent, TabsContents, TabsList, TabsTrigger } from '@/components/animate-ui/components/animate/tabs';
 import { AnimateIcon } from '@/components/animate-ui/icons/icon';
 import { AudioLines } from '@/components/animate-ui/icons/audio-lines';
+import { Bot } from '@/components/animate-ui/icons/bot';
 
 
 export default function DesktopPonaPlayerPanel() {
@@ -147,11 +148,11 @@ export default function DesktopPonaPlayerPanel() {
               src={`/api/proxy/image?r=${encodeURIComponent(
                 currentTrack?.proxyArtworkUrl ||
                 '/static/Ponlponl123 (1459).png'
-              )}&s=512&blur=16&saturation=96&contrast=12`}
+              )}&s=512&blur=24&saturation=96&contrast=16&brightness=24`}
               alt={currentTrack ? currentTrack?.title : 'Backdrop'}
               fill
               unoptimized
-              className='absolute -z-10 scale-[2] w-full h-full top-0 left-0 object-cover [html.dark_&]:brightness-50 [html.light_&]:brightness-200 [html.dark_&]:saturate-150'
+              className='absolute -z-10 scale-[2] w-full h-full top-0 left-0 object-cover [html.dark_&]:brightness-36 contrast-125 blur-3xl [html.light_&]:blur-[128px] [html.light_&]:contrast-75 [html.light_&]:brightness-140 [html.dark_&]:saturate-150'
             />
           )}
           <div
@@ -309,13 +310,22 @@ export default function DesktopPonaPlayerPanel() {
                                 {(language.data.app.guilds.player.tabs as Record<string, string>).fetching_lyrics || 'Loading lyrics...'}
                               </span>
                             </div>
+                          ) : currentTrack.lyrics.error || !currentTrack.lyrics.lyrics || currentTrack.lyrics.lyrics.length === 0 ? (
+                            <div className='text-center py-16 flex flex-col justify-center items-center gap-3 text-[hsl(var(--pona-app-music-accent-color-800))] dark:text-[hsl(var(--pona-app-music-accent-color-500))]'>
+                              <AnimateIcon animate loop loopDelay={1200}>
+                                <Bot size={48} />
+                              </AnimateIcon>
+                              <strong>
+                                {language.data.app.guilds.player.tabs.no_lyrics_available || 'No lyrics available'}
+                              </strong>
+                            </div>
                           ) : currentTrack.lyrics.isTimestamp ? (
                             <LyricsDisplay
                               playerPosition={playerPos}
                               currentTrack={currentTrack as Track}
                               lyricsProvider={lyricsContainer}
                             />
-                          ) : currentTrack.lyrics.lyrics && currentTrack.lyrics.lyrics.length > 0 ? (
+                          ) : (
                             <div className='w-full text-center pb-[8vh]'>
                               {(currentTrack.lyrics.lyrics as string[]).map(
                                 (lyric, index) => (
@@ -334,10 +344,6 @@ export default function DesktopPonaPlayerPanel() {
                                   ).replace('[provider]', currentTrack.lyrics.source)}
                                 </div>
                               )}
-                            </div>
-                          ) : (
-                            <div className='text-center text-muted-foreground py-16'>
-                              {language.data.app.guilds.player.tabs.no_lyrics_available || 'No lyrics available'}
                             </div>
                           )}
                         </>
@@ -553,21 +559,21 @@ export function TrackQueue({
               <Button
                 variant='ghost'
                 size='icon'
-                className='absolute z-10 top-0 left-0 w-full h-full opacity-100'
+                className='absolute z-10 top-0 left-0 w-full h-full opacity-100 backdrop-blur-[1px]'
                 onClick={(e) => {
                   e.stopPropagation();
                   socket?.emit('pause');
                 }}
               >
                 <AnimateIcon animate loop>
-                  <AudioLines className='text-[hsl(var(--pona-app-music-accent-color-500))] size-4' />
+                  <AudioLines className='text-[hsl(var(--pona-app-music-accent-color-200))] dark:text-[hsl(var(--pona-app-music-accent-color-500))] size-4' />
                 </AnimateIcon>
               </Button>
             ) : (
               <Button
                 variant='ghost'
                 size='icon'
-                className='absolute z-20 top-0 left-0 w-full h-full group-hover:opacity-100 opacity-0 pointer-events-auto'
+                className='absolute z-20 top-0 left-0 w-full h-full group-hover:opacity-100 opacity-0 pointer-events-auto backdrop-blur-[2px]'
                 onPointerDown={(e) => e.stopPropagation()}
                 onClick={(e) => {
                   e.stopPropagation();
@@ -576,7 +582,7 @@ export function TrackQueue({
                     socket?.emit('skipto', queueIndex);
                 }}
               >
-                <PlayIcon className='text-white size-5' weight='fill' />
+                <PlayIcon className='text-[hsl(var(--pona-app-music-accent-color-500))] size-5' weight='fill' />
               </Button>
             )}
           </div>
@@ -586,15 +592,15 @@ export function TrackQueue({
           >
             {!isLoading ? (
               <>
-                <h1 className='max-w-full text-[hsl(var(--pona-app-music-accent-color-500))] text-sm truncate font-medium'>
+                <h1 className='max-w-full text-[hsl(var(--pona-app-music-accent-color-800))] dark:text-[hsl(var(--pona-app-music-accent-color-500))] text-sm truncate font-medium'>
                   {track.title}
                 </h1>
                 {track.artist ? (
-                  <div className='max-w-full text-xs text-[hsl(var(--pona-app-music-accent-color-500))]/60 truncate'>
+                  <div className='max-w-full text-xs text-[hsl(var(--pona-app-music-accent-color-800))]/60 dark:text-[hsl(var(--pona-app-music-accent-color-500))]/60 truncate'>
                     {combineArtistName(track.artist, true, router, {
-                      className: 'text-[hsl(var(--pona-app-music-accent-color-500))]/60! text-xs',
+                      className: 'text-[hsl(var(--pona-app-music-accent-color-800))]/60! dark:text-[hsl(var(--pona-app-music-accent-color-500))]/60! text-xs',
                     })}{' '}
-                    <span className='text-[hsl(var(--pona-app-music-accent-color-500))]/60 text-xs'>
+                    <span className='text-[hsl(var(--pona-app-music-accent-color-800))]/60 dark:text-[hsl(var(--pona-app-music-accent-color-500))]/60 text-xs'>
                       (
                       {track.requester?.displayName ||
                         '@' + track.requester?.username}
@@ -602,7 +608,7 @@ export function TrackQueue({
                     </span>
                   </div>
                 ) : (
-                  <span className='max-w-full text-xs text-[hsl(var(--pona-app-music-accent-color-500))]/60 truncate'>
+                  <span className='max-w-full text-xs text-[hsl(var(--pona-app-music-accent-color-800))]/60 dark:text-[hsl(var(--pona-app-music-accent-color-500))]/60 truncate'>
                     {track.author} (
                     {track.requester?.displayName ||
                       '@' + track.requester?.username}

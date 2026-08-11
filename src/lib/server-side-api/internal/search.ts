@@ -124,7 +124,7 @@ export default async function fetchSearchResult(
           tokenType,
           tokenKey,
           track.title,
-          track.artists[0].name,
+          track.artists?.[0]?.name || "",
           topResult[0].videoId
         )
 

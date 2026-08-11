@@ -85,8 +85,8 @@ export const PlayerActions = memo(function PlayerActions({
                   className={cn(
                     'size-4',
                     repeatMode !== 'none'
-                      ? 'text-[hsl(var(--pona-app-music-accent-color-500))]'
-                      : 'text-[hsl(var(--pona-app-music-accent-color-500)/0.24)]'
+                      ? 'text-[hsl(var(--pona-app-music-accent-color-800))] dark:text-[hsl(var(--pona-app-music-accent-color-500))]'
+                      : 'text-[hsl(var(--pona-app-music-accent-color-800)/0.24)] dark:text-[hsl(var(--pona-app-music-accent-color-500)/0.24)]'
                   )}
                 />
               </Button>
@@ -139,7 +139,7 @@ export const PlayerActions = memo(function PlayerActions({
                 size='icon'
                 className='rounded-lg size-10 scale-110 max-md:hidden'
               >
-                <AudioLines className='size-4 text-[hsl(var(--pona-app-music-accent-color-500))]' />
+                <AudioLines className='size-4 text-[hsl(var(--pona-app-music-accent-color-800))] dark:text-[hsl(var(--pona-app-music-accent-color-500))]' />
               </Button>
             </AnimateIcon>
           }
@@ -162,8 +162,8 @@ export const PlayerActions = memo(function PlayerActions({
         className='rounded-lg size-10 scale-110 max-md:hidden'
         onClick={togglePopup}
       >
-        <CaretUpIcon className={`absolute text-[hsl(var(--pona-app-music-accent-color-500))] ${playerPopup ? 'opacity-0 -translate-y-6' : ''}`} />
-        <CaretDownIcon className={`absolute text-[hsl(var(--pona-app-music-accent-color-500))] ${!playerPopup ? 'opacity-0 translate-y-6' : ''}`} />
+        <CaretUpIcon className={`absolute text-[hsl(var(--pona-app-music-accent-color-800))] dark:text-[hsl(var(--pona-app-music-accent-color-500))] ${playerPopup ? 'opacity-0 -translate-y-6' : ''}`} />
+        <CaretDownIcon className={`absolute text-[hsl(var(--pona-app-music-accent-color-800))] dark:text-[hsl(var(--pona-app-music-accent-color-500))] ${!playerPopup ? 'opacity-0 translate-y-6' : ''}`} />
       </Button>
     </div>
   );
