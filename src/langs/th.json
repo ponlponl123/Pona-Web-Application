@@ -491,7 +491,11 @@
           "related": "ที่เกี่ยวข้อง",
           "open_queue": "แสดงเพิ่มเติม",
           "now_playing": "กำลังเล่นอยู่",
-          "playing_next": "เล่นถัดไป"
+          "playing_next": "เล่นถัดไป",
+          "lyrics_provided_by": "เนื้อเพลงจัดทำโดย [provider]",
+          "no_lyrics_available": "ไม่มีเนื้อเพลง",
+          "sync_lyrics": "ซิงค์เนื้อเพลง",
+          "fetching_lyrics": "กำลังโหลดเนื้อเพลง..."
         },
         "related": {
           "videoId_not_provided": "รถประจำทางไม่มาสักที...",

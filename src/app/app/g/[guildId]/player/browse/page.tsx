@@ -15,7 +15,7 @@ function Page() {
       style={{ height: 'calc(96vh - 4rem)' }}
     >
       <Coffee size={56} weight='fill' />
-      <h1 className='text-2xl max-w-screen-md text-center'>
+      <h1 className='text-2xl max-w-3xl text-center'>
         {language.data.app.guilds.player.dev}
       </h1>
       <Link href='/app/updates'>

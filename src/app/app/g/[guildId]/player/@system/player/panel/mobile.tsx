@@ -18,6 +18,7 @@ import {
   RepeatIcon,
   RepeatOnceIcon,
   SpeakerSimpleHighIcon,
+  SpinnerIcon,
 } from '@phosphor-icons/react/dist/ssr';
 
 import LyricsDisplay from '@/components/music/lyricsDisplay';
@@ -405,12 +406,6 @@ export default function MobilePonaPlayerPanel({
                     </TabsTrigger>
                     <TabsTrigger
                       value='lyrics'
-                      disabled={
-                        !(
-                          currentTrack.lyrics &&
-                          currentTrack.lyrics.lyrics?.length > 0
-                        )
-                      }
                       className='rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent'
                     >
                       {language.data.app.guilds.player.tabs.lyrics}
@@ -568,26 +563,48 @@ export default function MobilePonaPlayerPanel({
                     className='flex-1 overflow-y-auto pt-4 pr-2 scrollbar-hide'
                     ref={setLyricsContainer}
                   >
-                    {lyricsContainer &&
-                      (currentTrack.lyrics?.isTimestamp ? (
-                        <LyricsDisplay
-                          playerPosition={playback}
-                          currentTrack={currentTrack as Track}
-                          lyricsProvider={lyricsContainer}
-                        />
-                      ) : (
-                        currentTrack.lyrics?.lyrics &&
-                        currentTrack.lyrics.lyrics.length > 0 &&
-                        (currentTrack.lyrics.lyrics as string[]).map(
-                          (lyric, index) => (
-                            <div key={index} className='flex items-center gap-2'>
-                              <span className='text-2xl my-6 text-[hsl(var(--pona-app-music-accent-color-500))] font-medium'>
-                                {lyric}
-                              </span>
-                            </div>
-                          )
-                        )
-                      ))}
+                    {lyricsContainer && (
+                      <>
+                        {!currentTrack.lyrics ? (
+                          <div className='flex flex-col items-center justify-center py-20 gap-3 text-muted-foreground'>
+                            <SpinnerIcon className='size-8 animate-spin text-[hsl(var(--pona-app-music-accent-color-500))]' />
+                            <span className='text-sm font-medium'>
+                              {(language.data.app.guilds.player.tabs as Record<string, string>).fetching_lyrics || 'Loading lyrics...'}
+                            </span>
+                          </div>
+                        ) : currentTrack.lyrics?.isTimestamp ? (
+                          <LyricsDisplay
+                            playerPosition={playback}
+                            currentTrack={currentTrack as Track}
+                            lyricsProvider={lyricsContainer}
+                          />
+                        ) : currentTrack.lyrics?.lyrics && currentTrack.lyrics.lyrics.length > 0 ? (
+                          <div className='w-full text-center pb-[8vh]'>
+                            {(currentTrack.lyrics.lyrics as string[]).map(
+                              (lyric, index) => (
+                                <div key={index} className='flex items-center justify-center gap-2'>
+                                  <span className='text-2xl my-6 text-[hsl(var(--pona-app-music-accent-color-500))] font-medium'>
+                                    {lyric}
+                                  </span>
+                                </div>
+                              )
+                            )}
+                            {currentTrack.lyrics?.source && (
+                              <div className='mt-12 mb-4 text-xs text-[hsl(var(--pona-app-music-accent-color-500)/0.5)] font-semibold tracking-wider uppercase text-center'>
+                                {(
+                                  language.data.app.guilds.player.tabs.lyrics_provided_by ||
+                                  'Lyrics provided by [provider]'
+                                ).replace('[provider]', currentTrack.lyrics.source)}
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          <div className='text-center text-muted-foreground py-16'>
+                            {language.data.app.guilds.player.tabs.no_lyrics_available || 'No lyrics available'}
+                          </div>
+                        )}
+                      </>
+                    )}
                   </TabsContent>
                   <TabsContent
                     value='related'

@@ -232,7 +232,7 @@ export function Page() {
   );
 
   return (
-    <div className='w-full max-w-screen-md mx-auto mt-24 gap-4 flex flex-col items-center justify-center text-center pb-[16vh]'>
+    <div className='w-full max-w-3xl mx-auto mt-24 gap-4 flex flex-col items-center justify-center text-center pb-[16vh]'>
       <div className='w-full flex gap-5'>
         <div className='flex flex-col items-start justify-center w-full'>
           <h1 className='text-5xl flex gap-4 items-center font-bold'>
@@ -266,9 +266,9 @@ export function Page() {
 
       <div className='w-full gap-4 flex flex-col items-center justify-center text-center'>
         {!loading &&
-        searchResult &&
-        (!filter || filter === 'all') &&
-        Object.keys(searchResult).length > 0 ? (
+          searchResult &&
+          (!filter || filter === 'all') &&
+          Object.keys(searchResult).length > 0 ? (
           Object.keys(searchResult).map(
             (category) =>
               searchResult[category] &&

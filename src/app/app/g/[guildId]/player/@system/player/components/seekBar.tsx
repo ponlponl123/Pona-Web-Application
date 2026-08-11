@@ -44,10 +44,13 @@ export const PlayerSeekBar = memo(function PlayerSeekBar({
         aria-label='PlayerSeekBar'
         className='absolute inset-0 w-full h-full opacity-0 cursor-pointer z-30'
       />
-      <div className='w-full h-1 bg-[hsl(var(--pona-app-music-accent-color-500))]/20 rounded-full overflow-hidden relative'>
+      <div className='w-full h-1 rounded-full overflow-hidden relative flex flex-row'>
         <div
-          className='h-full bg-[hsl(var(--pona-app-music-accent-color-500))] transition-all duration-1000 ease-linear transform-gpu'
+          className='h-full bg-[hsl(var(--pona-app-music-accent-color-500))] transition-all duration-1000 ease-linear transform-gpu rounded-full'
           style={{ width: `${progressPercent}%` }}
+        />
+        <div
+          className='h-full bg-[hsl(var(--pona-app-music-accent-color-500))]/20 transition-all duration-1000 ease-linear transform-gpu min-w-0 flex-1 ml-0.5 rounded-full'
         />
       </div>
     </div>

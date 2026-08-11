@@ -22,7 +22,6 @@ import SocketConnecting from './@system/socket-connecting';
 
 import DesktopPonaPlayer, { MobilePonaPlayer } from './@system/player';
 import DesktopPonaPlayerPanel from './@system/player/panel/desktop';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import CustomScrollArea from '@/components/ui/custom/scroll-area';
 
 export default function Providers({ children }: { children: React.ReactNode }) {

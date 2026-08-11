@@ -30,10 +30,10 @@ import {
   PersonSimpleIcon,
   PictureInPictureIcon,
   PlayIcon,
+  SpinnerIcon,
   TrashIcon,
 } from '@phosphor-icons/react/dist/ssr';
 
-import Equalizing from '@/components/equalizing';
 import LyricsDisplay from '@/components/music/lyricsDisplay';
 import { combineArtistName } from '@/components/music/searchResult/track';
 import { Button } from '@/components/ui/button';
@@ -63,7 +63,7 @@ import {
 } from '@/store/musicAtoms';
 import { isFullscreenModeAtom, playerPopupAtom } from '@/store/uiAtoms';
 import { Track, UnresolvedTrack } from '@/types/ponaPlayer';
-import { cn, msToTime } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 import Related from './related';
 import CustomScrollArea from '@/components/ui/custom/scroll-area';
 import { Tabs, TabsContent, TabsContents, TabsList, TabsTrigger } from '@/components/animate-ui/components/animate/tabs';
@@ -203,7 +203,7 @@ export default function DesktopPonaPlayerPanel() {
                   className='w-full h-full object-cover select-none rounded-2xl shadow-xl'
                   id='pona-music-artwork'
                 />
-                <div className='absolute top-0 left-0 z-14 w-full h-full bg-gradient-to-t to-transparent rounded-2xl [html.light_&]:from-white/40 [html.dark_&]:from-black/40 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity' />
+                <div className='absolute top-0 left-0 z-14 w-full h-full bg-linear-to-t to-transparent rounded-2xl [html.light_&]:from-white/40 [html.dark_&]:from-black/40 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity' />
               </div>
             </motion.div>
             <div
@@ -211,21 +211,15 @@ export default function DesktopPonaPlayerPanel() {
               id='pona-music-queue'
             >
               <Tabs defaultValue='next' className='w-lg h-full flex flex-col'>
-                <TabsList className='w-lg max-w-lg justify-start rounded-none bg-transparent p-0 gap-4'>
+                <TabsList className='w-lg max-w-lg justify-start rounded-none bg-transparent p-0 gap-4' highlightClassname='border-none!'>
                   <TabsTrigger
                     value='next'
-                    className='rounded-none data-[state=active]:bg-transparent data-[state=active]:text-[hsl(var(--pona-app-music-accent-color-500))] relative'
+                    className='rounded-none data-[state=active]:bg-transparent data-[state=active]:text-[hsl(var(--pona-app-music-accent-color-500))]'
                   >
                     {language.data.app.guilds.player.tabs.next}
                   </TabsTrigger>
                   <TabsTrigger
                     value='lyrics'
-                    disabled={
-                      !(
-                        currentTrack?.lyrics &&
-                        currentTrack?.lyrics?.lyrics?.length > 0
-                      )
-                    }
                     className='rounded-none data-[state=active]:bg-transparent data-[state=active]:text-[hsl(var(--pona-app-music-accent-color-500))]'
                   >
                     {language.data.app.guilds.player.tabs.lyrics}
@@ -250,7 +244,7 @@ export default function DesktopPonaPlayerPanel() {
                       <div className='flex flex-col gap-3 px-3 py-1'>
                         {currentTrack && (
                           <div className='flex flex-col gap-1.5'>
-                            <span className='text-xs font-semibold text-muted-foreground uppercase tracking-wider px-2'>
+                            <span className='text-xs font-semibold text-[hsl(var(--pona-app-music-accent-color-500)/0.48)] uppercase tracking-wider px-2'>
                               {language.data.app.guilds.player.tabs.now_playing}
                             </span>
                             <TrackQueue
@@ -263,7 +257,7 @@ export default function DesktopPonaPlayerPanel() {
 
                         {playingNextQueue.length > 0 && (
                           <div className='flex flex-col gap-1.5 mt-2'>
-                            <span className='text-xs font-semibold text-muted-foreground uppercase tracking-wider px-2'>
+                            <span className='text-xs font-semibold text-[hsl(var(--pona-app-music-accent-color-500)/0.48)] uppercase tracking-wider px-2'>
                               {language.data.app.guilds.player.tabs.playing_next}
                             </span>
                             <DndContext
@@ -306,26 +300,48 @@ export default function DesktopPonaPlayerPanel() {
                       }}
                       ref={setLyricsContainer}
                     >
-                      {lyricsContainer &&
-                        (currentTrack?.lyrics?.isTimestamp ? (
-                          <LyricsDisplay
-                            playerPosition={playerPos}
-                            currentTrack={currentTrack as Track}
-                            lyricsProvider={lyricsContainer}
-                          />
-                        ) : (
-                          currentTrack?.lyrics?.lyrics &&
-                          currentTrack?.lyrics?.lyrics?.length > 0 &&
-                          (currentTrack?.lyrics?.lyrics as string[]).map(
-                            (lyric, index) => (
-                              <div key={index} className='flex items-center gap-2'>
-                                <span className='text-2xl my-4 text-[hsl(var(--pona-app-music-accent-color-500))] font-medium'>
-                                  {lyric}
-                                </span>
-                              </div>
-                            )
-                          )
-                        ))}
+                      {lyricsContainer && (
+                        <>
+                          {!currentTrack?.lyrics ? (
+                            <div className='flex flex-col items-center justify-center py-20 gap-3 text-muted-foreground'>
+                              <SpinnerIcon className='size-8 animate-spin text-[hsl(var(--pona-app-music-accent-color-500))]' />
+                              <span className='text-sm font-medium'>
+                                {(language.data.app.guilds.player.tabs as Record<string, string>).fetching_lyrics || 'Loading lyrics...'}
+                              </span>
+                            </div>
+                          ) : currentTrack.lyrics.isTimestamp ? (
+                            <LyricsDisplay
+                              playerPosition={playerPos}
+                              currentTrack={currentTrack as Track}
+                              lyricsProvider={lyricsContainer}
+                            />
+                          ) : currentTrack.lyrics.lyrics && currentTrack.lyrics.lyrics.length > 0 ? (
+                            <div className='w-full text-center pb-[8vh]'>
+                              {(currentTrack.lyrics.lyrics as string[]).map(
+                                (lyric, index) => (
+                                  <div key={index} className='flex items-center justify-center gap-2'>
+                                    <span className='text-2xl my-4 text-[hsl(var(--pona-app-music-accent-color-800))] dark:text-[hsl(var(--pona-app-music-accent-color-500))] font-medium'>
+                                      {lyric}
+                                    </span>
+                                  </div>
+                                )
+                              )}
+                              {currentTrack.lyrics.source && (
+                                <div className='mt-12 mb-4 text-xs text-[hsl(var(--pona-app-music-accent-color-500)/0.5)] font-semibold tracking-wider uppercase text-center'>
+                                  {(
+                                    language.data.app.guilds.player.tabs.lyrics_provided_by ||
+                                    'Lyrics provided by [provider]'
+                                  ).replace('[provider]', currentTrack.lyrics.source)}
+                                </div>
+                              )}
+                            </div>
+                          ) : (
+                            <div className='text-center text-muted-foreground py-16'>
+                              {language.data.app.guilds.player.tabs.no_lyrics_available || 'No lyrics available'}
+                            </div>
+                          )}
+                        </>
+                      )}
                     </CustomScrollArea>
                   </TabsContent>
                   <TabsContent value='related'

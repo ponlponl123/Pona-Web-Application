@@ -11,8 +11,6 @@ import {
   UserCheck,
   SortAscending,
   Clock,
-  MagnifyingGlass,
-  X,
   MusicNotes,
   Flame,
 } from '@phosphor-icons/react/dist/ssr';

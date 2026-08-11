@@ -53,7 +53,7 @@ export function Providers({
             ) : (
               <PageAnimatePresence>{children}</PageAnimatePresence>
             )}
-            <Toaster />
+            <Toaster position="top-center" />
             <SettingModal />
             <FeedbackModal />
           </ClickSpark>

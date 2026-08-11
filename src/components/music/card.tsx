@@ -59,16 +59,18 @@ function MusicCard({ track, className }: MusicCardProps) {
         <h1 className='w-full text-lg whitespace-nowrap overflow-hidden text-ellipsis text-start font-medium'>
           {track?.title}
         </h1>
-        {track?.artist && track?.artist.length > 0 ? (
-          combineArtistName(track?.artist, true, router, {
-            className:
-              'opacity-60 hover:opacity-100 text-start min-w-0 w-full max-w-full block flex-1 whitespace-nowrap overflow-hidden text-ellipsis !no-underline transition-opacity',
-          })
-        ) : (
-          <span className='w-full text-xs text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis text-start'>
-            {track?.author ? track.author.replace(/\s*-\s*Topic\s*$/i, '').trim() : ''}
-          </span>
-        )}
+        <div className='flex gap-y-0.5 gap-x-1 min-w-0 flex-1 w-full max-w-full'>
+          {track?.artist && track?.artist.length > 0 ? (
+            combineArtistName(track?.artist, true, router, {
+              className:
+                'opacity-60 hover:opacity-100 text-start block w-max min-w-0 max-w-full whitespace-nowrap overflow-hidden text-ellipsis !no-underline transition-opacity',
+            })
+          ) : (
+            <span className='w-full text-xs text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis text-start'>
+              {track?.author ? track.author.replace(/\s*-\s*Topic\s*$/i, '').trim() : ''}
+            </span>
+          )}
+        </div>
       </div>
     </div>
   );

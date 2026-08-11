@@ -487,7 +487,11 @@
           "related": "Related",
           "open_queue": "Show More",
           "now_playing": "Now Playing",
-          "playing_next": "Playing Next"
+          "playing_next": "Playing Next",
+          "lyrics_provided_by": "Lyrics provided by [provider]",
+          "no_lyrics_available": "No lyrics available",
+          "sync_lyrics": "Sync lyrics",
+          "fetching_lyrics": "Loading lyrics..."
         },
         "related": {
           "videoId_not_provided": "The bus never comes...",
