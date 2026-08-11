@@ -1,5 +1,5 @@
 "use server"
-import { EndpointHTTP } from "../endpoint"
+import { EndpointHTTP, fetchWithForwardHeaders } from "../endpoint"
 import { ArtistFull as ArtistFullv1 } from "@/types/youtube/ytmusic"
 import { ArtistFull, ProfileFull } from "@/types/youtube/ytmusic-api"
 
@@ -25,7 +25,7 @@ export async function IsSubscribed(
     const endpoint = new URL(`${EndpointHTTP}/v1/channel/subscribe`)
     endpoint.searchParams.append("c", channelId)
 
-    const response = await fetch(endpoint.toString(), {
+    const response = await fetchWithForwardHeaders(endpoint.toString(), {
       method: "GET",
       headers: { Authorization: `${tokenType} ${tokenKey}` },
       signal: AbortSignal.timeout(10000),
@@ -47,7 +47,7 @@ export default async function subscribe(
     const endpoint = new URL(`${EndpointHTTP}/v1/channel/subscribe`)
     endpoint.searchParams.append("c", channelId)
 
-    const response = await fetch(endpoint.toString(), {
+    const response = await fetchWithForwardHeaders(endpoint.toString(), {
       method: "POST",
       headers: { Authorization: `${tokenType} ${tokenKey}` },
       signal: AbortSignal.timeout(10000),
@@ -68,7 +68,7 @@ export async function fetchSubscribedChannels(
     const endpoint = new URL(`${EndpointHTTP}/v1/channel/subscribe/s`)
     if (lim) endpoint.searchParams.append("limit", String(lim))
 
-    const response = await fetch(endpoint.toString(), {
+    const response = await fetchWithForwardHeaders(endpoint.toString(), {
       method: "GET",
       headers: { Authorization: `${tokenType} ${tokenKey}` },
       signal: AbortSignal.timeout(10000),
@@ -94,7 +94,7 @@ export async function unsubscribe(
     const endpoint = new URL(`${EndpointHTTP}/v1/channel/subscribe`)
     endpoint.searchParams.append("c", channelId)
 
-    const response = await fetch(endpoint.toString(), {
+    const response = await fetchWithForwardHeaders(endpoint.toString(), {
       method: "DELETE",
       headers: { Authorization: `${tokenType} ${tokenKey}` },
       signal: AbortSignal.timeout(10000),

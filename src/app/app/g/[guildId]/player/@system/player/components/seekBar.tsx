@@ -46,7 +46,7 @@ export const PlayerSeekBar = memo(function PlayerSeekBar({
       />
       <div className='w-full h-1 bg-[hsl(var(--pona-app-music-accent-color-500))]/20 rounded-full overflow-hidden relative'>
         <div
-          className='h-full bg-[hsl(var(--pona-app-music-accent-color-500))] transition-all duration-300 ease-linear transform-gpu'
+          className='h-full bg-[hsl(var(--pona-app-music-accent-color-500))] transition-all duration-1000 ease-linear transform-gpu'
           style={{ width: `${progressPercent}%` }}
         />
       </div>

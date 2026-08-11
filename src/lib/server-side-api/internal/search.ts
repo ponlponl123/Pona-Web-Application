@@ -1,5 +1,5 @@
 "use server"
-import { EndpointHTTP } from "../endpoint"
+import { EndpointHTTP, fetchWithForwardHeaders } from "../endpoint"
 import {
   ArtistFull as ArtistFullv1,
   PlaylistFull as PlaylistFullv1,
@@ -65,7 +65,7 @@ async function safeFetch<T>(
   tokenKey: string
 ): Promise<T | false> {
   try {
-    const response = await fetch(url.toString(), {
+    const response = await fetchWithForwardHeaders(url.toString(), {
       method: "GET",
       headers: { Authorization: `${tokenType} ${tokenKey}` },
       signal: AbortSignal.timeout(15000),
@@ -99,7 +99,7 @@ export default async function fetchSearchResult(
     if (filter) endpoint.searchParams.append("filter", filter)
     endpoint.searchParams.append("q", search)
 
-    const response = await fetch(endpoint.toString(), {
+    const response = await fetchWithForwardHeaders(endpoint.toString(), {
       method: "GET",
       headers: { Authorization: `${tokenType} ${tokenKey}` },
       signal: AbortSignal.timeout(20000),

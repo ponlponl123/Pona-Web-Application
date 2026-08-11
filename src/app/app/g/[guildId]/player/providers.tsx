@@ -94,7 +94,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       <div
         id='app-panel'
         ref={musicAppContent}
-        className='relative h-screen scrollbar-hide -mb-6 pb-12 select-none'
+        className='relative h-screen scrollbar-hide -mb-6 select-none'
       >
         <CustomScrollArea
           className="h-full border-0 outline-0"

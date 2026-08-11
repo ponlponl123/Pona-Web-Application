@@ -76,7 +76,7 @@ const PageArtistCard = React.memo(function PageArtistCard({
                 src={thumbnail}
                 alt={name}
                 fill
-                className='object-cover group-hover:scale-105 transition-transform duration-300 rounded-full'
+                className='object-cover group-hover:scale-105 transition-transform duration-300 rounded-full select-none pointer-events-none'
                 sizes='(max-width: 640px) 30vw, (max-width: 1024px) 20vw, 12vw'
                 unoptimized
               />

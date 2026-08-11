@@ -1,6 +1,6 @@
 "use server"
 import { Track } from "@/types/ponaPlayer"
-import { EndpointHTTP } from "../endpoint"
+import { EndpointHTTP, fetchWithForwardHeaders } from "../endpoint"
 
 export interface History {
   id: number
@@ -56,7 +56,7 @@ export default async function fetchHistory(
       endpoint.searchParams.append("q", query.trim())
     }
 
-    const response = await fetch(endpoint.toString(), {
+    const response = await fetchWithForwardHeaders(endpoint.toString(), {
       method: "GET",
       headers: {
         Authorization: `${tokenType} ${tokenKey}`,
@@ -84,7 +84,7 @@ export async function fetchHistoryStats(
   try {
     const endpoint = new URL(`${EndpointHTTP}/v1/music/history/stats`)
 
-    const response = await fetch(endpoint.toString(), {
+    const response = await fetchWithForwardHeaders(endpoint.toString(), {
       method: "GET",
       headers: {
         Authorization: `${tokenType} ${tokenKey}`,
@@ -112,7 +112,7 @@ export async function fetchSearchHistory(
   try {
     const endpoint = new URL(`${EndpointHTTP}/v1/music/history/search`)
 
-    const response = await fetch(endpoint.toString(), {
+    const response = await fetchWithForwardHeaders(endpoint.toString(), {
       method: "GET",
       headers: {
         Authorization: `${tokenType} ${tokenKey}`,
