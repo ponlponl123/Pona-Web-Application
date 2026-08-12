@@ -50,7 +50,7 @@ const LyricsDisplay: React.FC<LyricsDisplayProps> = ({
   playerPosition,
   lyricsProvider,
   isPlaying = true,
-  playbackLatencyMs = 1110,
+  playbackLatencyMs = 1000,
 }) => {
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const [autoScrollEnabled, setAutoScrollEnabled] = useState<boolean>(true);

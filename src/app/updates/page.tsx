@@ -133,6 +133,10 @@ function Page() {
                 >
                   {notegroup.versions.map(
                     (note: PatchNoteVersion, nindex: number) => {
+                      const transitionKey =
+                        notegroup.tag.toLowerCase() +
+                        "-" +
+                        note.version.replace(".md", "").replace(/\./g, "-")
                       return (
                         <motion.div
                           key={`note-version-button-wrapper` + nindex}
@@ -163,12 +167,7 @@ function Page() {
                                   className="relative aspect-video w-full overflow-hidden rounded-2xl bg-foreground/10"
                                   style={{
                                     viewTransitionName:
-                                      "banner-" +
-                                      notegroup.tag +
-                                      "-" +
-                                      note.version
-                                        .replace(".md", "")
-                                        .replace(/\./g, "-"),
+                                      "banner-" + transitionKey,
                                   }}
                                 >
                                   {note.banner ? (
@@ -189,19 +188,14 @@ function Page() {
                                     </div>
                                   )}
                                 </div>
-                                <div
-                                  className="flex items-center justify-start gap-2 px-2"
-                                  style={{
-                                    viewTransitionName:
-                                      "metadata-" +
-                                      notegroup.tag +
-                                      "-" +
-                                      note.version
-                                        .replace(".md", "")
-                                        .replace(/\./g, "-"),
-                                  }}
-                                >
-                                  <h1 className="text-start text-xs">
+                                <div className="flex items-center justify-start gap-2 px-2">
+                                  <h1
+                                    className="text-start text-xs"
+                                    style={{
+                                      viewTransitionName:
+                                        "date-" + transitionKey,
+                                    }}
+                                  >
                                     {/* {language.data.app.updates.version}{" "}
                                     {note.version.replace(".md", "")} */}
                                     {new Date(note.date).toLocaleDateString(
@@ -218,6 +212,10 @@ function Page() {
                                   </span>
                                   <Badge
                                     key={`note-tag-chip` + index}
+                                    style={{
+                                      viewTransitionName:
+                                        "tag-" + transitionKey,
+                                    }}
                                     className={cn(
                                       "rounded-full text-xs",
                                       notegroup.tag.toLowerCase() ===
@@ -242,13 +240,7 @@ function Page() {
                                 <h1
                                   className="line-clamp-2 w-full px-2 text-start text-xl wrap-break-word whitespace-break-spaces"
                                   style={{
-                                    viewTransitionName:
-                                      "title-" +
-                                      notegroup.tag +
-                                      "-" +
-                                      note.version
-                                        .replace(".md", "")
-                                        .replace(/\./g, "-"),
+                                    viewTransitionName: "title-" + transitionKey,
                                   }}
                                 >
                                   {note.title}
@@ -271,6 +263,10 @@ function Page() {
                                   </span>{" "}
                                   <Badge
                                     key={`note-tag-chip` + index}
+                                    style={{
+                                      viewTransitionName:
+                                        "author-" + transitionKey,
+                                    }}
                                     className={cn(
                                       "text-foregroun rounded-full bg-foreground/10 py-3 pl-1 text-xs"
                                     )}

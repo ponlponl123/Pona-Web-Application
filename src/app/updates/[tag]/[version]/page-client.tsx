@@ -79,7 +79,7 @@ function PatchNote({
         <div
           className="flex items-center gap-2"
           style={{
-            viewTransitionName: "metadata-" + safeTag + "-" + normalizedVersion,
+            viewTransitionName: "date-" + safeTag + "-" + normalizedVersion,
           }}
         >
           <h1 className="text-start text-xs">
@@ -91,6 +91,9 @@ function PatchNote({
           </h1>
           <span className="text-xs text-foreground/20">•</span>
           <Badge
+            style={{
+              viewTransitionName: "tag-" + safeTag + "-" + normalizedVersion,
+            }}
             className={cn(
               "rounded-full text-xs",
               safeTag.toLowerCase() === "pre-release"
@@ -148,6 +151,10 @@ function PatchNote({
             data-smooth-interaction="true"
           >
             <Badge
+              style={{
+                viewTransitionName:
+                  "author-" + safeTag + "-" + normalizedVersion,
+              }}
               className={cn(
                 "text-foregroun rounded-full bg-foreground/10 py-3 pl-1 text-xs"
               )}

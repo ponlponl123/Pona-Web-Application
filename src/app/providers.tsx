@@ -32,6 +32,7 @@ export function Providers({
   initialLang?: languageKeys
 }) {
   const pathname = usePathname() || ""
+  const isUpdatesRoute = pathname.startsWith("/updates")
   const { isPointerClickSpark } =
     useThemeContext()
 
@@ -47,10 +48,14 @@ export function Providers({
             sparkCount={isPointerClickSpark ? 8 : 0}
             duration={isPointerClickSpark ? 400 : 0}
           >
-            {pathname.startsWith("/app") || pathname.startsWith("/updates") ? (
+            {pathname.startsWith("/app") || isUpdatesRoute ? (
               <AnimatePresence mode={"popLayout"}>
                 <motion.div className="min-h-screen">
-                  <ViewTransition>{children}</ViewTransition>
+                  {isUpdatesRoute ? (
+                    <ViewTransition>{children}</ViewTransition>
+                  ) : (
+                    children
+                  )}
                 </motion.div>
               </AnimatePresence>
             ) : (
