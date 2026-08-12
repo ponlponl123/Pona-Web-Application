@@ -114,7 +114,7 @@ export default function UserAccountDropdown({
           <motion.button
             key="button"
             layout={!minimize}
-            layoutId={minimize ? undefined : "user-action"}
+            // layoutId={minimize ? undefined : "user-action"}
             className={cn(
               btnClassname,
               "absolute top-0 left-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus focus-visible:outline-solid",
@@ -159,7 +159,7 @@ export default function UserAccountDropdown({
               key="modal"
               ref={popupRef}
               layout="position"
-              layoutId="user-action"
+              // layoutId="user-action"
               className="absolute top-16 right-0 z-1001 w-max max-w-64 rounded-xl bg-card p-1 md:right-4"
               style={{ scrollbarWidth: "thin" }}
               onClick={(e) => e.stopPropagation()}
