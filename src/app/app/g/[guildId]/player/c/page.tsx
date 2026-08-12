@@ -182,7 +182,7 @@ function Page() {
             artistThumbnails={artistThumbnails}
           />
 
-          <div className='w-full z-4 p-8 max-lg:p-0 flex flex-col max-lg:gap-12 lg:gap-24 items-center justify-start pb-[24vh] -mt-12'>
+          <div className='w-full z-4 p-8 max-lg:p-0 flex flex-col max-lg:gap-12 lg:gap-24 items-center justify-start pb-[24vh] -mt-12 mb-32'>
             <ArtistTopSongs
               channelDetail={channelDetail}
               channelDetailv1={channelDetailv1}

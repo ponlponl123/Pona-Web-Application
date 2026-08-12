@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils"
 import { useAtom } from "jotai"
 import { useAppStore } from "@/store/coreStore"
 import { isLanguageModalOpenAtom } from "@/store/uiAtoms"
+import { AutoHeight } from "../animate-ui/primitives/effects/auto-height"
 
 function LanguageSelectorModal() {
   const language = useAppStore((state) => state.language)
@@ -72,7 +73,6 @@ function LanguageSelectorModal() {
       layoutId="language-selector-modal"
       className={cn(
         "min-h-72 max-w-2xl",
-        isInputFocus && "h-screen",
         isLanguageModalOpen && "duration-0!"
       )}
     >
@@ -118,70 +118,73 @@ function LanguageSelectorModal() {
             }}
           />
         </motion.div>
-        <div
-          className={cn(
-            "px-6 pb-2",
-            AvailableLangs.length > 0
-              ? "grid grid-cols-2 gap-2 max-sm:grid-cols-1"
-              : "w-full"
-          )}
-        >
-          {AvailableLangs.length > 0 ? (
-            AvailableLangs.map((lang, i) => (
-              <motion.div
-                initial={{ opacity: 0, y: 6, filter: "blur(3px)" }}
-                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                exit={{ opacity: 0, y: 6, filter: "blur(3px)" }}
-                transition={{
-                  delay: 0.4 + i * 0.05,
-                  duration: 0.25,
-                  ease: "easeOut",
-                }}
-                key={"lang-select-" + i}
-              >
-                <Button
-                  variant={language.key === lang.key ? "default" : "ghost"}
-                  data-smooth-interaction="true"
-                  className={cn(
-                    "flex w-full justify-start gap-3 rounded-xl border-2 border-transparent px-4 py-6 not-dark:hover:bg-foreground/5",
-                    language.key === lang.key &&
-                      "border-foreground/40 bg-foreground/10 text-foreground"
-                  )}
-                  onClick={() => {
-                    setLanguage(lang.key)
-                    closeModal()
+        <AutoHeight>
+          <div
+            className={cn(
+              "px-6 pb-2",
+              AvailableLangs.length > 0
+                ? "grid grid-cols-2 gap-2 max-sm:grid-cols-1 items-start justify-start content-start"
+                : "w-full",
+              isInputFocus && AvailableLangs.length > 0 && "min-h-[calc(100vh-340px)]",
+            )}
+          >
+            {AvailableLangs.length > 0 ? (
+              AvailableLangs.map((lang, i) => (
+                <motion.div
+                  initial={{ opacity: 0, y: 6, filter: "blur(3px)" }}
+                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                  exit={{ opacity: 0, y: 6, filter: "blur(3px)" }}
+                  transition={{
+                    delay: 0.4 + i * 0.05,
+                    duration: 0.25,
+                    ease: "easeOut",
                   }}
+                  key={"lang-select-" + i}
                 >
-                  <Avatar className={"h-6 w-6"}>
-                    <AvatarImage
-                      src={"https://flagcdn.com/" + lang.country + ".svg"}
-                      alt={lang.label}
-                    />
-                    <AvatarFallback>{lang.key.toUpperCase()}</AvatarFallback>
-                  </Avatar>
-                  {lang.label}
-                  {lang.looking_for_translator && (
-                    <Badge
-                      variant={"secondary"}
-                      className="rounded-full bg-amber-400/20 text-amber-400"
-                    >
-                      <HandWavingIcon size={32} weight="fill" />
-                      {
-                        language.data.modal["language-selector"]
-                          .looking_for_translator
-                      }
-                    </Badge>
-                  )}
-                </Button>
-              </motion.div>
-            ))
-          ) : (
-            <div className="flex w-full flex-col items-center justify-center gap-2 p-6">
-              <SmileySadIcon size={32} />
-              <h1>{language.data.modal["language-selector"].not_found}</h1>
-            </div>
-          )}
-        </div>
+                  <Button
+                    variant={language.key === lang.key ? "default" : "ghost"}
+                    data-smooth-interaction="true"
+                    className={cn(
+                      "flex w-full justify-start gap-3 rounded-xl border-2 border-transparent px-4 py-6 not-dark:hover:bg-foreground/5",
+                      language.key === lang.key &&
+                      "border-foreground/40 bg-foreground/10 text-foreground"
+                    )}
+                    onClick={() => {
+                      setLanguage(lang.key)
+                      closeModal()
+                    }}
+                  >
+                    <Avatar className={"h-6 w-6"}>
+                      <AvatarImage
+                        src={"https://flagcdn.com/" + lang.country + ".svg"}
+                        alt={lang.label}
+                      />
+                      <AvatarFallback>{lang.key.toUpperCase()}</AvatarFallback>
+                    </Avatar>
+                    {lang.label}
+                    {lang.looking_for_translator && (
+                      <Badge
+                        variant={"secondary"}
+                        className="rounded-full bg-amber-400/20 text-amber-400"
+                      >
+                        <HandWavingIcon size={32} weight="fill" />
+                        {
+                          language.data.modal["language-selector"]
+                            .looking_for_translator
+                        }
+                      </Badge>
+                    )}
+                  </Button>
+                </motion.div>
+              ))
+            ) : (
+              <div className="flex w-full flex-col items-center justify-center gap-2 p-6">
+                <SmileySadIcon size={32} />
+                <h1>{language.data.modal["language-selector"].not_found}</h1>
+              </div>
+            )}
+          </div>
+        </AutoHeight>
       </Modal.Body>
       <Modal.Footer className="m-0">
         <Button

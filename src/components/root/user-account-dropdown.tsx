@@ -12,7 +12,7 @@ import {
 import { AnimatePresence, LayoutGroup } from "motion/react"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 import { ScrollArea, ScrollBar } from "../ui/scroll-area"
-import React, { useState, useRef } from "react"
+import React, { useState, useRef, useEffect } from "react"
 import { motion } from "motion/react"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
@@ -40,6 +40,8 @@ export default function UserAccountDropdown({
   const language = useAppStore((state) => state.language)
   const isMobile = useMediaQuery("(max-width: 760px)")
   const popupRef = useRef<HTMLDivElement>(null)
+  const contentRef = useRef<HTMLDivElement>(null)
+  const [contentHeight, setContentHeight] = useState(0)
 
   const cooldownRef = useRef<NodeJS.Timeout | null>(null)
 
@@ -78,6 +80,16 @@ export default function UserAccountDropdown({
 
   React.useEffect(() => {
     if (isActive && popupRef.current) popupRef.current.focus()
+  }, [isActive])
+
+  React.useEffect(() => {
+    if (isActive && contentRef.current) {
+      const resizeObserver = new ResizeObserver(() => {
+        setContentHeight(contentRef.current?.scrollHeight || 0)
+      })
+      resizeObserver.observe(contentRef.current)
+      return () => resizeObserver.disconnect()
+    }
   }, [isActive])
 
   return (
@@ -146,18 +158,32 @@ export default function UserAccountDropdown({
             <motion.div
               key="modal"
               ref={popupRef}
-              layout
+              layout="position"
               layoutId="user-action"
-              className="absolute top-16 right-0 z-1001 w-max max-w-64 overflow-hidden rounded-xl bg-card p-1 md:right-4"
+              className="absolute top-16 right-0 z-1001 w-max max-w-64 rounded-xl bg-card p-1 md:right-4"
               style={{ scrollbarWidth: "thin" }}
               onClick={(e) => e.stopPropagation()}
               transition={layoutTransition}
-              initial={false}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
               onKeyDown={(e) => {
                 if (e.key === "Escape") setIsActive(false)
               }}
             >
-              <div className="overflow-hidden overscroll-y-auto">
+              <motion.div
+                initial={{ height: 0 }}
+                animate={{ height: contentHeight || "auto" }}
+                exit={{ height: 0 }}
+                transition={{
+                  type: "spring",
+                  stiffness: 300,
+                  damping: 30,
+                  mass: 0.8,
+                }}
+                className="overflow-hidden"
+              >
+                <div ref={contentRef} className="overscroll-y-auto">
                 <motion.div
                   className={cn(
                     "mb-0.5 flex w-full items-center justify-start gap-3 rounded-lg px-3 py-1 select-none hover:bg-foreground/5 not-dark:hover:bg-foreground/10",
@@ -333,6 +359,7 @@ export default function UserAccountDropdown({
                   )
                 })}
               </div>
+            </motion.div>
             </motion.div>
           )}
         </LayoutGroup>
