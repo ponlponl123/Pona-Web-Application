@@ -24,17 +24,11 @@ interface LyricsDisplayProps {
 const LyricItem = React.memo(({
   lyrics,
   index,
-  isActive,
-  isNearActive,
-  isPast,
   onClick,
   className,
 }: {
   lyrics: TimestampLyrics;
   index: number;
-  isActive: boolean;
-  isNearActive: boolean;
-  isPast: boolean;
   onClick: () => void;
   className: string;
 }) => (
@@ -56,19 +50,19 @@ const LyricsDisplay: React.FC<LyricsDisplayProps> = ({
   playerPosition,
   lyricsProvider,
   isPlaying = true,
-  playbackLatencyMs = 1280,
+  playbackLatencyMs = 1110,
 }) => {
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const [autoScrollEnabled, setAutoScrollEnabled] = useState<boolean>(true);
   const [accuratePosition, setAccuratePosition] = useState<number>(playerPosition);
   const deferredActiveIndex = useDeferredValue(activeIndex);
-  
+
   const isProgrammaticScrollRef = useRef<boolean>(false);
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const lyricsContainerRef = useRef<HTMLElement>(lyricsProvider);
   const millisecondCounterRef = useRef<NodeJS.Timeout | null>(null);
   const lastServerPositionRef = useRef<number>(playerPosition);
-  const lastCounterTimeRef = useRef<number>(Date.now());
+  const lastCounterTimeRef = useRef<number | null>(null);
   const activeLyricElementRef = useRef<HTMLElement | null>(null);
   const lastEmittedIndexRef = useRef<number>(-1);
   const HYSTERESIS_MS = 100; // 100ms buffer to prevent bouncing at boundaries
@@ -126,9 +120,13 @@ const LyricsDisplay: React.FC<LyricsDisplayProps> = ({
 
   // Millisecond counter for accurate position tracking between server updates
   useEffect(() => {
+    const now = Date.now();
+
     lastServerPositionRef.current = playerPosition;
+    // This sync intentionally updates the live clock state from the prop-driven playback position.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setAccuratePosition(playerPosition);
-    lastCounterTimeRef.current = Date.now();
+    lastCounterTimeRef.current = now;
 
     // Destroy existing counter
     if (millisecondCounterRef.current) {
@@ -140,7 +138,11 @@ const LyricsDisplay: React.FC<LyricsDisplayProps> = ({
     if (!isPlaying) return;
 
     millisecondCounterRef.current = setInterval(() => {
-      const elapsedMs = Date.now() - lastCounterTimeRef.current;
+      const previousTime = lastCounterTimeRef.current ?? Date.now();
+      const now = Date.now();
+      const elapsedMs = now - previousTime;
+
+      lastCounterTimeRef.current = now;
       const newPosition = lastServerPositionRef.current + elapsedMs;
       setAccuratePosition(newPosition);
     }, 100); // Update every 100ms for smooth tracking
@@ -181,9 +183,11 @@ const LyricsDisplay: React.FC<LyricsDisplayProps> = ({
     if (lyricsArray.length === 0) return;
 
     const newIndex = findActiveLyricIndex(accuratePosition);
-    
+
     // Only update if there's a genuine change (not just noise)
     if (newIndex !== -1 && newIndex !== activeIndex) {
+      // The lyric index is derived from the live playback clock, so this sync is intentional.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setActiveIndex(newIndex);
       lastEmittedIndexRef.current = newIndex;
     }
@@ -205,7 +209,7 @@ const LyricsDisplay: React.FC<LyricsDisplayProps> = ({
       if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
 
       const scrollTop = activeLyric.offsetTop - container.clientHeight / 2 + activeLyric.clientHeight / 2;
-      
+
       container.scrollTo({
         top: scrollTop,
         behavior: smooth ? 'smooth' : 'auto',
@@ -236,6 +240,10 @@ const LyricsDisplay: React.FC<LyricsDisplayProps> = ({
     setAutoScrollEnabled(true);
   }, [socket]);
 
+  const lyricsProvidedText = (
+    language.data.app.guilds.player.tabs.lyrics_provided_by || 'Lyrics provided by [provider]'
+  ).replace('[provider]', currentTrack?.lyrics?.source || '');
+
   if (!currentTrack?.lyrics || !currentTrack?.lyrics.isTimestamp || currentTrack.lyrics.error || !lyricsArray.length) {
     return (
       <div className='text-center py-8'>
@@ -258,7 +266,7 @@ const LyricsDisplay: React.FC<LyricsDisplayProps> = ({
     const conditions = {
       'text-3xl text-[hsl(var(--pona-app-music-accent-color-800))]! dark:text-[hsl(var(--pona-app-music-accent-color-500))]! font-bold [html.dark_&]:brightness-150 [html.light_&]:brightness-50':
         isActive,
-      'text-xl text-[hsl(var(--pona-app-music-accent-color-800))]! dark:text-[hsl(var(--pona-app-music-accent-color-500)/0.4)]! [html.light_&]:brightness-90 [html.dark_&]:brightness-125':
+      'text-xl text-[hsl(var(--pona-app-music-accent-color-800))]! dark:text-[hsl(var(--pona-app-music-accent-color-800))]! dark:text-[hsl(var(--pona-app-music-accent-color-500)/0.4)]! [html.light_&]:brightness-90 [html.dark_&]:brightness-125':
         isNearActive,
       'text-base text-[hsl(var(--pona-app-music-accent-color-800))]! dark:text-[hsl(var(--pona-app-music-accent-color-500)/0.48)]!':
         isPast,
@@ -268,13 +276,6 @@ const LyricsDisplay: React.FC<LyricsDisplayProps> = ({
 
     return clsx(baseClasses, conditions);
   };
-
-  const lyricsProvidedText = useMemo(
-    () => (language.data.app.guilds.player.tabs.lyrics_provided_by || 'Lyrics provided by [provider]')
-      .replace('[provider]', currentTrack?.lyrics?.source || ''),
-    [language.data.app.guilds.player.tabs.lyrics_provided_by, currentTrack?.lyrics?.source]
-  );
-
   return (
     <div className='w-full text-center pb-[12vh] relative'>
       {lyricsArray.map((lyrics, index) => (
@@ -282,9 +283,6 @@ const LyricsDisplay: React.FC<LyricsDisplayProps> = ({
           key={index}
           lyrics={lyrics}
           index={index}
-          isActive={index === deferredActiveIndex}
-          isNearActive={index === deferredActiveIndex + 1 || index === deferredActiveIndex - 1}
-          isPast={index < deferredActiveIndex}
           onClick={() => handleLineClick(lyrics.seconds)}
           className={getLyricsClassName(index)}
         />
