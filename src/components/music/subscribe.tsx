@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import { getCookie } from 'cookies-next';
 import { HeartBreakIcon, IconProps, type Icon } from '@phosphor-icons/react';
-import { clsx } from 'clsx';
 
 import { useAppStore } from '@/store/coreStore';
 import { useMusicCacheStore } from '@/store/musicCacheStore';
@@ -17,6 +16,7 @@ import {
 } from '@/components/animate-ui/components/radix/dialog';
 
 import { ThumbnailFull } from '@/types/youtube/ytmusic-api';
+import { cn } from '@/lib/utils';
 
 interface SubscribeButtonProps extends React.HTMLAttributes<HTMLDivElement> {
   channelId: string;
@@ -70,7 +70,7 @@ function SubscribeButton({
         artistName={artistName}
         artistThumbnails={artistThumbnails}
         isSubscribed={isSubscribed}
-        className={clsx('group', triggerClassName)}
+        className={cn('group', triggerClassName)}
         noUnsubscribe={unsubscribeConfirmation}
         preset={preset}
         onPress={() => {
@@ -86,7 +86,7 @@ function SubscribeButton({
       >
         {children ?? (
           <div
-            className={clsx(
+            className={cn(
               'flex flex-row gap-2 items-center justify-center',
               isSubscribed && 'text-background'
             )}

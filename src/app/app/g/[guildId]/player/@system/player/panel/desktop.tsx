@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { AnimatePresence, HTMLMotionProps, motion } from 'framer-motion';
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { toast } from 'sonner';
 import {
   closestCenter,
@@ -73,6 +73,16 @@ import { Bot } from '@/components/animate-ui/icons/bot';
 
 
 export default function DesktopPonaPlayerPanel() {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const searchParamsString = searchParams ? searchParams.toString() : '';
+  const setPlayerPopup = useSetAtom(playerPopupAtom);
+
+  useEffect(() => {
+    setPlayerPopup(false);
+    document.body.classList.remove('pona-player-focused');
+  }, [pathname, setPlayerPopup]);
+
   const language = useAppStore((state) => state.language);
   const userSetting = useAppStore((state) => state.userSetting);
 
@@ -135,9 +145,10 @@ export default function DesktopPonaPlayerPanel() {
               (userSetting.transparency
                 ? ' to-playground-background/100'
                 : ' [html.light_&]:from-[hsl(var(--pona-app-music-accent-color-200))]! [html.light_&]:to-[hsl(var(--pona-app-music-accent-color-50))]! [html.dark_&]:to-[hsl(var(--pona-app-music-accent-color-800))]! [html.dark_&]:from-[hsl(var(--pona-app-music-accent-color-400))]!'),
+              'disable-default-transition'
             )
           }
-          id='pona=player-panel'
+          id='pona-player-panel'
           transition={{ duration: 0.12 }}
           initial={{ opacity: 0, pointerEvents: 'none', translateY: 32 }}
           animate={{ opacity: 1, pointerEvents: 'auto', translateY: 0 }}

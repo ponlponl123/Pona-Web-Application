@@ -132,9 +132,9 @@ function PlayButton<T extends 'song' | 'playlist' = 'song'>({
           size='icon'
           disabled={loading}
           className={cn(
-            'absolute top-0 left-0 w-full h-full z-10 rounded-xl group-hover:opacity-100 opacity-0 transition-opacity bg-black/40 text-white hover:bg-black/60 cursor-pointer backdrop-blur-xs!' +
+            'absolute top-0 left-0 w-full h-full z-10 rounded-xl group-hover:opacity-100 opacity-0 bg-black/40 text-white hover:bg-black/60 cursor-pointer backdrop-blur-xs apply-soft-transition',
+            classNames?.playpause,
             className,
-            classNames?.playpause
           )}
           onClick={() => {
             if (socket && socket.connected && isSameVC) {

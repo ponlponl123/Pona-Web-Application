@@ -45,12 +45,12 @@ function Providers({ children }: { children: React.ReactNode }) {
       ) : !userInfo ? (
         <RedirectOauth />
       ) : (
-        <main className="app flex bg-background">
+        <main className="app flex bg-background w-screen overflow-x-hidden">
           <Sidebar canCollapsed={true} userInfo={userInfo} />
           <main
             ref={appContent}
             id="app-content"
-            className="scrollbar-hide w-full overflow-hidden bg-(--color-playground-background) max-md:h-[calc(100vh+1rem)] max-md:rounded-b-xl md:h-screen md:rounded-l-xl"
+            className="scrollbar-hide w-full max-w-[100vw] flex-1 min-w-0 overflow-hidden bg-(--color-playground-background) max-md:h-[calc(100vh+1rem)] max-md:rounded-b-xl md:h-screen md:rounded-l-xl"
           >
             {
               pathname.includes("/player") ? content :

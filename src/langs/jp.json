@@ -527,10 +527,31 @@
             "title": "履歴がありません",
             "description": "まだPona！ミュージックを試したことがありませんか？それなら、ここで最初の好きな曲を聴いてみましょう！",
             "get_started": "好きな曲を検索してみましょう！"
-          }
+          },
+          "mixes_for_you": "あなたへのミックス",
+          "curated_for_you": "厳選プレイリスト",
+          "new_daily_track": "今日のニュートラック",
+          "mv_for_you": "あなたへのミュージックビデオ",
+          "albums_for_you": "あなたへのアルバム",
+          "forgotten_favorites": "忘れていたお気に入り",
+          "trending_for_you": "あなたへのトレンド",
+          "heard_in_shorts": "Shortsで聴いた曲",
+          "new_releases": "新着",
+          "top_songs": "人気曲",
+          "trending": "急上昇",
+          "new_albums_singles": "新着アルバム＆シングル"
         },
         "browse": {
-          "title": "ブラウズ"
+          "title": "ブラウズ",
+          "mood_genre": "ムード＆ジャンル",
+          "charts": "チャート",
+          "top_songs": "人気曲",
+          "trending_artists": "急上昇アーティスト",
+          "hot_playlists": "人気プレイリスト",
+          "new_releases": "新着リリース",
+          "explore": "音楽を探索",
+          "coming_soon": "この機能は近日公開予定です。",
+          "coming_soon_desc": "できるだけ早くお届けできるよう準備を進めています。"
         },
         "playlist": {
           "title": "プレイリスト",

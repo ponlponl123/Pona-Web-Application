@@ -523,10 +523,31 @@
             "title": "There are no history",
             "description": "Haven't tried Pona! Music yet? Then start listening to your first favorite songs here!",
             "get_started": "Let's search my favorite songs!"
-          }
+          },
+          "mixes_for_you": "Mixes for You",
+          "curated_for_you": "Curated for You",
+          "new_daily_track": "New Daily Track",
+          "mv_for_you": "Music Videos for You",
+          "albums_for_you": "Albums for You",
+          "forgotten_favorites": "Forgotten Favorites",
+          "trending_for_you": "Trending for You",
+          "heard_in_shorts": "Heard in Shorts",
+          "new_releases": "New Releases",
+          "top_songs": "Top Songs",
+          "trending": "Trending",
+          "new_albums_singles": "New Albums & Singles"
         },
         "browse": {
-          "title": "Browse"
+          "title": "Browse",
+          "mood_genre": "Moods & Genres",
+          "charts": "Charts",
+          "top_songs": "Top Songs",
+          "trending_artists": "Trending Artists",
+          "hot_playlists": "Hot Playlists",
+          "new_releases": "New Releases",
+          "explore": "Explore",
+          "coming_soon": "This feature is coming soon.",
+          "coming_soon_desc": "We are working hard to bring it to you as soon as possible."
         },
         "playlist": {
           "title": "Playlist",

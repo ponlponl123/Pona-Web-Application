@@ -6,6 +6,7 @@ import { useMediaQuery } from 'react-responsive';
 import { useAtomValue } from 'jotai';
 import { MusicNoteSimple } from '@phosphor-icons/react/dist/ssr';
 
+import { usePathname, useSearchParams } from 'next/navigation';
 import PageAnimatePresence from '@/components/HOC/PageAnimatePresence';
 import PlayerNav from '@/components/mobile/playerNav';
 
@@ -25,6 +26,10 @@ import DesktopPonaPlayerPanel from './@system/player/panel/desktop';
 import CustomScrollArea from '@/components/ui/custom/scroll-area';
 
 export default function Providers({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const searchParamsString = searchParams ? searchParams.toString() : '';
+
   const { guild } = useDiscordGuildInfo();
   const { userInfo } = useDiscordUserInfo();
   const { isConnected, socket } = useSocket();
@@ -64,6 +69,14 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   const showMobilePlayer = isTabletOrMobile || isMobile;
 
   const musicAppContent = useRef<HTMLDivElement>(null);
+  const musicAppScrollingArea = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (musicAppScrollingArea.current) {
+      musicAppScrollingArea.current.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [pathname, searchParamsString]);
 
   useEffect(() => {
     const element = musicAppContent.current;
@@ -96,9 +109,10 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         className='relative h-screen scrollbar-hide -mb-6 select-none'
       >
         <CustomScrollArea
+          ref={musicAppScrollingArea}
           className="h-full border-0 outline-0"
           classNames={{
-            viewport: "relative rounded-none",
+            viewport: "relative rounded-none w-full overflow-x-hidden",
           }}
         >
           <div className='absolute w-full h-screen top-0 left-0 z-1 opacity-40 overflow-hidden pointer-events-none mask-b-from-0%'>
@@ -147,7 +161,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         </CustomScrollArea>
       </div>
       {isSameVC && (
-        <>
+        <div className='disable-default-transition'>
           {showMobilePlayer ? (
             <MobilePonaPlayer />
           ) : (
@@ -156,7 +170,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
               <DesktopPonaPlayer />
             </>
           )}
-        </>
+        </div>
       )}
       {isMobile && <PlayerNav />}
     </>

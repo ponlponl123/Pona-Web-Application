@@ -6,22 +6,19 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { getCookie } from 'cookies-next';
 import { motion } from 'framer-motion';
 import {
-  FlyingSaucer,
-  HeartIcon,
+  FlyingSaucerIcon,
   MusicNoteSimpleIcon,
   PlayIcon,
-  ShareFat,
 } from '@phosphor-icons/react/dist/ssr';
 
 import PlayButton from '@/components/music/button/play';
 import { combineArtistName } from '@/components/music/searchResult/track';
 import TrackList from '@/components/music/searchResult/trackList';
-import { Button } from '@/components/ui/button';
-import { Spinner } from '@/components/ui/spinner';
 import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo';
 import { useAppStore } from '@/store/coreStore';
 import { PlaylistFull as PlaylistFullv1 } from '@/types/youtube/ytmusic';
 import { AlbumFull, AlbumTrack, PlaylistFull } from '@/types/youtube/ytmusic-api';
+import { PlaylistSkeleton } from '@/components/music/skeleton';
 import {
   getAlbum,
   getChannel,
@@ -40,6 +37,13 @@ function Page() {
   const searchParams = useSearchParams();
   const playlist_id = searchParams && searchParams.get('list');
 
+  const [prevPlaylistId, setPrevPlaylistId] = React.useState(playlist_id);
+  if (playlist_id !== prevPlaylistId) {
+    setPrevPlaylistId(playlist_id);
+    setLoading(true);
+    setPlaylist(null);
+  }
+
   const trackCount =
     (playlist &&
       (typeof playlist === 'object' &&
@@ -49,10 +53,10 @@ function Page() {
         : 0)) ||
     0;
 
-  const durationHumanReadable =
-    playlist && 'duration' in playlist && playlist.duration
-      ? playlist.duration
-      : null;
+  // const durationHumanReadable =
+  //   playlist && 'duration' in playlist && playlist.duration
+  //     ? playlist.duration
+  //     : null;
 
   const year = playlist && 'year' in playlist ? playlist.year : null;
 
@@ -160,12 +164,9 @@ function Page() {
 
   return (
     <div className='flex flex-col gap-4 items-center justify-center w-full'>
-      {loading && (
-        <div className='absolute top-0 left-0 w-full z-10 flex justify-center py-2'>
-          <Spinner className='size-6' />
-        </div>
-      )}
-      {!loading && playlist ? (
+      {loading ? (
+        <PlaylistSkeleton />
+      ) : playlist ? (
         <>
           <motion.div
             initial={{ opacity: 0 }}
@@ -173,7 +174,7 @@ function Page() {
             exit={{ opacity: 0 }}
             transition={{ delay: 1 }}
             key={'playlist-backdrop'}
-            className='absolute w-full h-[64vh] top-0 left-0 z-1 bg-playground-background pointer-events-none'
+            className='absolute w-full h-[64vh] top-0 left-0 z-1 bg-playground-background pointer-events-none overflow-hidden'
           >
             <div className='absolute top-0 left-0 w-full h-full bg-[hsl(var(--pona-app-background))] -z-10 scale-200' />
             {playlist?.thumbnails && playlist.thumbnails.length > 0 && (
@@ -218,9 +219,9 @@ function Page() {
                   unoptimized
                   className='object-cover w-full aspect-square rounded-3xl shadow-lg pointer-events-none select-none'
                 />
-                <h1 className='text-center text-3xl w-full mt-3 font-bold'>{title}</h1>
+                <h1 className='max-lg:text-center text-3xl w-full mt-3 font-bold'>{title}</h1>
                 {year && (
-                  <div className='flex items-center justify-center mx-auto gap-1 -mt-2 mb-2'>
+                  <div className='flex items-center max-lg:justify-center max-lg:mx-auto gap-1 -mt-2 mb-2'>
                     <span className='text-foreground/40 whitespace-nowrap'>
                       {language.data.app.guilds.player.playlist.created}
                     </span>
@@ -230,7 +231,7 @@ function Page() {
                   </div>
                 )}
                 {trackCount > 0 && (
-                  <div className='flex items-center justify-center mx-auto gap-1 px-3 py-1 bg-foreground/10 rounded-full '>
+                  <div className='flex items-center max-lg:justify-center max-lg:mx-auto gap-1 px-3 py-1 bg-foreground/10 rounded-full '>
                     <MusicNoteSimpleIcon weight='bold' />
                     <span className='text-center text-foreground/40 w-full'>
                       {language.data.app.guilds.player.playlist.track_count.replace(
@@ -240,16 +241,7 @@ function Page() {
                     </span>
                   </div>
                 )}
-                <div className='flex flex-row items-center justify-center gap-6 mt-3 w-full'>
-                  <Button
-                    variant='outline'
-                    size='icon'
-                    disabled
-                    className='rounded-full'
-                    title={language.data.app.guilds.player.playlist.actions.favorite}
-                  >
-                    <HeartIcon weight='fill' />
-                  </Button>
+                <div className='flex flex-row items-center max-lg:justify-center gap-6 mt-1.5 w-full h-max'>
                   <PlayButton
                     type='playlist'
                     detail={{
@@ -276,17 +268,10 @@ function Page() {
                       })),
                     }}
                     className='relative top-[unset] left-[unset] opacity-100 rounded-full bg-primary w-max h-max p-5'
+
                   >
                     <PlayIcon weight='fill' size={20} />
                   </PlayButton>
-                  <Button
-                    variant='outline'
-                    size='lg'
-                    className='rounded-full gap-2 font-bold'
-                  >
-                    <ShareFat className='size-5' />
-                    Share
-                  </Button>
                 </div>
               </div>
             )}
@@ -360,7 +345,7 @@ function Page() {
         !loading &&
         !playlist && (
           <div className='w-full min-h-[36vh] flex flex-col gap-4 items-center justify-center'>
-            <FlyingSaucer weight='fill' size={74} />
+            <FlyingSaucerIcon weight='fill' size={74} />
             <h1 className='text-lg tracking-wider'>
               {language.data.app.guilds.player.search.notfound}
             </h1>

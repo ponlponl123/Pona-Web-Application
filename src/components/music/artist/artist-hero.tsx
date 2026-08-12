@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import SubscribeButton from '@/components/music/subscribe';
 import { ThumbnailFull } from '@/types/youtube/ytmusic-api';
 import ImageWithSkeleton from '@/components/ui/custom/image';
+import { cn } from '@/lib/utils';
 
 export interface ArtistHeroProps {
   highResArtworkProxyURI: string;
@@ -22,6 +23,7 @@ export function ArtistHero({
   channelId,
   artistThumbnails,
 }: ArtistHeroProps) {
+  const [isBannerLoaded, setIsBannerLoaded] = React.useState(false);
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -39,9 +41,13 @@ export function ArtistHero({
         <ImageWithSkeleton
           src={highResArtworkProxyURI}
           alt={artistName || 'Artist hero image'}
+          onLoad={() => setIsBannerLoaded(true)}
           priority
           unoptimized
-          className='absolute mask-b-from-60% top-0 left-0 w-full h-full max-h-full object-cover rounded-none opacity-100'
+          className={cn(
+            'absolute mask-b-from-60% top-0 left-0 w-full h-full max-h-full object-cover rounded-none transition-all duration-1000',
+            !isBannerLoaded && 'opacity-0'
+          )}
         />
       ) : null}
       <div className='flex flex-col -translate-x-1/2 w-full h-full absolute top-0 left-1/2 items-start justify-end z-20 px-36 max-lg:px-12 py-8 gap-4'>

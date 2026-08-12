@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useAtom, useAtomValue } from 'jotai';
 import { CaretDownIcon, CaretUpIcon } from '@phosphor-icons/react/dist/ssr';
@@ -30,6 +30,8 @@ export { PlayerSeekBar, PlayerTrackInfo, PlayerControls, PlayerActions };
 export default function PonaPlayer({ isMobileOverride }: { isMobileOverride?: boolean }) {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const searchParamsString = searchParams ? searchParams.toString() : '';
   const language = useAppStore((state) => state.language);
   const userSetting = useAppStore((state) => state.userSetting);
   const isMobileStore = useAppStore((state) => state.isMobile);
@@ -54,7 +56,7 @@ export default function PonaPlayer({ isMobileOverride }: { isMobileOverride?: bo
   useEffect(() => {
     setPlayerPopup(false);
     document.body.classList.remove('pona-player-focused');
-  }, [pathname, setPlayerPopup]);
+  }, [pathname, setPlayerPopup, searchParamsString]);
 
   useEffect(() => {
     if (!currentTrack) {
@@ -64,7 +66,7 @@ export default function PonaPlayer({ isMobileOverride }: { isMobileOverride?: bo
     if (!playerPopup || !currentTrack) {
       document.body.classList.remove('pona-player-focused');
     }
-  }, [currentTrack, playerPopup, setPlayerPopup]);
+  }, [currentTrack, playerPopup, (setPlayerPopup || "")]);
 
   const handleSeek = useCallback(
     (val: number) => {
@@ -104,24 +106,23 @@ export default function PonaPlayer({ isMobileOverride }: { isMobileOverride?: bo
     [isMobile, setPlayerPopup]
   );
 
-  const artworkUrl = useMemo(
-    () => currentTrack?.proxyArtworkUrl || '/static/Ponlponl123 (1459).png',
-    [currentTrack?.proxyArtworkUrl]
-  );
+  const artworkUrl = (currentTrack?.proxyThumbnail
+    ? currentTrack.proxyArtworkUrl
+    : currentTrack?.thumbnail) || '/static/Ponlponl123 (1459).png';
 
   if (isMobile) {
     return (
-      <AnimatePresence>
+      <AnimatePresence initial={false}>
         {currentTrack && (
           <motion.div
-            id='pona=player-wrapper'
+            id='pona-player-wrapper'
             initial={{ opacity: 0, pointerEvents: 'none', translateY: 32 }}
             animate={{ opacity: 1, pointerEvents: 'auto', translateY: 0 }}
             exit={{ opacity: 0, pointerEvents: 'none', translateY: 32 }}
             transition={{ type: 'spring', stiffness: 400, damping: 30 }}
             className={
               cn(
-                `absolute overflow-hidden z-50 transform-gpu [html.light_&]:bg-[hsl(var(--pona-app-music-accent-color-100))] [html.dark_&]:bg-[hsl(var(--pona-app-music-accent-color-900))] apply-soft-transition`,
+                `absolute overflow-hidden z-50 transform-gpu [html.light_&]:bg-[hsl(var(--pona-app-music-accent-color-100))] [html.dark_&]:bg-[hsl(var(--pona-app-music-accent-color-900))] apply-soft-transition disable-default-transition`,
                 userSetting.transparency ? ' backdrop-blur-md' : '',
                 playerPopup ?
                   'w-full h-screen rounded-none bottom-4 left-0' : `h-16 rounded-lg ${isMobileStore ? 'bottom-[5.2rem]' : 'bottom-6'} left-2 w-[calc(100%-1rem)]`
@@ -214,10 +215,10 @@ export default function PonaPlayer({ isMobileOverride }: { isMobileOverride?: bo
   }
 
   return (
-    <AnimatePresence>
+    <AnimatePresence initial={false}>
       {currentTrack && (
         <motion.div
-          id='pona=player-wrapper'
+          id='pona-player-wrapper'
           initial={{ opacity: 0, pointerEvents: 'none', translateY: 32 }}
           animate={{ opacity: 1, pointerEvents: 'auto', translateY: 0 }}
           exit={{ opacity: 0, pointerEvents: 'none', translateY: 32 }}
@@ -230,7 +231,7 @@ export default function PonaPlayer({ isMobileOverride }: { isMobileOverride?: bo
               (userSetting.transparency
                 ? ' in-[.dark]:bg-[hsl(var(--pona-app-music-accent-color-800)/.32)] backdrop-blur-2xl in-[.light]:bg-[hsl(var(--pona-app-music-accent-color-100)/.86)]'
                 : ' in-[.dark]:bg-[hsl(var(--pona-app-music-accent-color-800))] in-[.light]:bg-[hsl(var(--pona-app-music-accent-color-100))]'),
-              "w-[calc(100%-1rem)]"
+              "w-[calc(100%-1rem)] disable-default-transition"
             )
           }
         >

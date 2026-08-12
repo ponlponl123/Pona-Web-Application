@@ -3,7 +3,7 @@
 import React from 'react';
 import { useSearchParams } from 'next/navigation';
 import { getCookie } from 'cookies-next';
-import { FlyingSaucer } from '@phosphor-icons/react/dist/ssr';
+import { FlyingSaucerIcon } from '@phosphor-icons/react/dist/ssr';
 
 import { ArtistHero } from '@/components/music/artist/artist-hero';
 import { ArtistTopSongs } from '@/components/music/artist/artist-top-songs';
@@ -12,7 +12,7 @@ import { ArtistSinglesCarousel } from '@/components/music/artist/artist-singles-
 import { ArtistAlbumsCarousel } from '@/components/music/artist/artist-albums-carousel';
 import { ArtistSimilarCarousel } from '@/components/music/artist/artist-similar-carousel';
 
-import { Spinner } from '@/components/ui/spinner';
+import { ChannelSkeleton } from '@/components/music/skeleton';
 import { parseV1ChannelData } from '@/lib/artist';
 import { resolveThumbnailUrl } from '@/lib/image';
 import { getChannel } from '@/lib/server-side-api/internal/search';
@@ -24,7 +24,7 @@ function Page() {
   const language = useAppStore((state) => state.language);
   const searchParams = useSearchParams();
   const [loading, setLoading] = React.useState<boolean>(true);
-  const [ready, setReady] = React.useState<boolean>(true);
+  const [ready, setReady] = React.useState<boolean>(false);
   const [channelDetailv1, setChannelDetailv1] = React.useState<
     ArtistFullv1 | null | false
   >(null);
@@ -38,6 +38,17 @@ function Page() {
     React.useState<string>('');
 
   const channelId = searchParams ? searchParams.get('c') : '';
+
+  const [prevChannelId, setPrevChannelId] = React.useState(channelId);
+  if (channelId !== prevChannelId) {
+    setPrevChannelId(channelId);
+    setLoading(true);
+    setReady(false);
+    setChannelDetail(null);
+    setChannelDetailv1(null);
+    setProfileDetail(null);
+    setHighResArtworkProxyURI('');
+  }
 
   React.useEffect(() => {
     const exit = (provider: ArtistFull | null | false) => {
@@ -57,6 +68,7 @@ function Page() {
       )
         return exit(false);
       setLoading(true);
+      setReady(false);
       setProfileDetail(null);
       setChannelDetail(null);
       setChannelDetailv1(null);
@@ -148,21 +160,17 @@ function Page() {
 
   return (
     <div className='flex flex-col gap-4 items-start justify-start w-full'>
-      {loading && (
-        <div className='absolute top-0 left-0 w-full z-10 flex justify-center py-2'>
-          <Spinner className='size-6' />
-        </div>
-      )}
-      {!loading && !hasContent && (
+      {loading || !ready ? (
+        <ChannelSkeleton />
+      ) : !hasContent ? (
         <div className='w-full min-h-[36vh] flex flex-col gap-4 items-center justify-center'>
-          <FlyingSaucer weight='fill' size={74} />
+          <FlyingSaucerIcon weight='fill' size={74} />
           <h1 className='text-lg tracking-wider'>
             {language.data.app.guilds.player.search.notfound}
           </h1>
           <h4 className='text-sm tracking-wider'>＼（〇_ｏ）／</h4>
         </div>
-      )}
-      {ready && hasContent && (
+      ) : (
         <>
           <div className='absolute z-1 bg-playground-background w-[calc(100%+6rem)] h-full top-0 left-0 -translate-x-12 -translate-y-16 max-lg:-translate-y-24'></div>
 

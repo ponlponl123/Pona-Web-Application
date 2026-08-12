@@ -62,11 +62,11 @@ export default async function subscribe(
 export async function fetchSubscribedChannels(
   tokenType: string,
   tokenKey: string,
-  lim?: number
+  lim?: number | string
 ): Promise<false | SubscribedChannelsResult[]> {
   try {
     const endpoint = new URL(`${EndpointHTTP}/v1/channel/subscribe/s`)
-    if (lim) endpoint.searchParams.append("limit", String(lim))
+    if (lim !== undefined) endpoint.searchParams.append("limit", String(lim))
 
     const response = await fetchWithForwardHeaders(endpoint.toString(), {
       method: "GET",

@@ -464,7 +464,7 @@ export function TrackSearchResult({
                 <>
                   <span>•</span>
                   <Link
-                    href={`/app/g/${guild?.id}/player/playlist?list=${item.album.id || item.album.browseId}`}
+                    href={`/app/g/${guild?.id}/player/playlist?list=${item.album.id || item.album.browseId}${(item.album.id || item.album.browseId)?.endsWith("abm") ? "" : "abm"}`}
                     className={cn('text-muted-foreground truncate', classNames?.artistLink)}
                   >
                     {item.album.name || item.album.title}

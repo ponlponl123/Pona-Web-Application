@@ -82,7 +82,13 @@ export interface VideoCardProps {
 }
 
 export function VideoCard({ video, className }: VideoCardProps) {
+  const router = useRouter();
   const thumbnail = resolveThumbnailUrl(video);
+  const formattedArtists = (video.artists || []).map((a) => ({
+    name: a.name,
+    id: a.id || (a as { browseId?: string }).browseId || null,
+  }));
+
   return (
     <div className={cn('music-card w-64 min-w-64', className)} aria-label={video?.title}>
       <div className='flex flex-col items-start justify-start gap-3 w-full'>
@@ -112,9 +118,11 @@ export function VideoCard({ video, className }: VideoCardProps) {
         <h1 className='w-full text-lg whitespace-nowrap overflow-hidden text-ellipsis text-start font-medium'>
           {video?.title}
         </h1>
-        <span className='w-full text-xs text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis text-start'>
-          {combineArtistName(video.artists || [])}
-        </span>
+        <div className='w-full text-xs text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis text-start'>
+          {combineArtistName(formattedArtists, true, router, {
+            className: 'hover:underline text-muted-foreground',
+          })}
+        </div>
       </div>
     </div>
   );
@@ -130,18 +138,23 @@ export function AlbumCard({ album, className }: AlbumCardProps) {
   const { guild } = useDiscordGuildInfo();
   const href = guild?.id ? `/app/g/${guild.id}/player/playlist?list=${album.browseId}abm` : '#';
   const thumbnail = resolveThumbnailUrl(album);
+  const formattedArtists = (album.artists || []).map((a) => ({
+    name: a.name,
+    id: a.id || (a as { browseId?: string }).browseId || null,
+  }));
 
   return (
-    <Button
-      variant='ghost'
-      className={cn('min-h-max min-w-max w-max h-max p-4 rounded-[2rem] hover:bg-muted/50 cursor-pointer', className)}
-      onClick={() => {
-        if (href && href !== '#') router.push(href);
-      }}
+    <div
+      className={cn('min-h-max min-w-max w-max h-max p-4 rounded-[2rem] hover:bg-muted/50 transition-colors', className)}
     >
       <div className='music-card w-48' aria-label={album?.title}>
         <div className='flex flex-col items-start justify-start gap-3 w-full'>
-          <div className='overflow-hidden aspect-square w-full group rounded-3xl relative bg-muted'>
+          <div
+            className='overflow-hidden aspect-square w-full group rounded-3xl relative bg-muted cursor-pointer'
+            onClick={() => {
+              if (href && href !== '#') router.push(href);
+            }}
+          >
             {thumbnail ? (
               <Image
                 className='object-cover w-full h-full group-hover:scale-110 transition-transform duration-300'
@@ -155,16 +168,23 @@ export function AlbumCard({ album, className }: AlbumCardProps) {
             )}
           </div>
           <div className='flex flex-col p-2 max-w-full text-left'>
-            <h1 className='w-full text-lg whitespace-nowrap overflow-hidden text-ellipsis text-start font-medium'>
+            <h1
+              className='w-full text-lg whitespace-nowrap overflow-hidden text-ellipsis text-start font-medium cursor-pointer hover:underline'
+              onClick={() => {
+                if (href && href !== '#') router.push(href);
+              }}
+            >
               {album?.title}
             </h1>
-            <span className='w-full text-xs text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis text-start'>
-              {combineArtistName(album?.artists || [])}
-            </span>
+            <div className='w-full text-xs text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis text-start'>
+              {combineArtistName(formattedArtists, true, router, {
+                className: 'hover:underline text-muted-foreground',
+              })}
+            </div>
           </div>
         </div>
       </div>
-    </Button>
+    </div>
   );
 }
 
@@ -178,18 +198,22 @@ export function PlaylistCard({ playlist, className }: PlaylistCardProps) {
   const { guild } = useDiscordGuildInfo();
   const href = guild?.id ? `/app/g/${guild.id}/player/playlist?list=${playlist.playlistId}` : '#';
   const thumbnail = resolveThumbnailUrl(playlist);
+  const artistItem = playlist.artist
+    ? [{ name: playlist.artist.name, id: playlist.artist.artistId || null }]
+    : [];
 
   return (
-    <Button
-      variant='ghost'
-      className={cn('min-h-max min-w-max w-max h-max p-4 rounded-[2rem] hover:bg-muted/50 cursor-pointer', className)}
-      onClick={() => {
-        if (href && href !== '#') router.push(href);
-      }}
+    <div
+      className={cn('min-h-max min-w-max w-max h-max p-4 rounded-[2rem] hover:bg-muted/50 transition-colors', className)}
     >
       <div className='music-card w-48' aria-label={playlist?.name}>
         <div className='flex flex-col items-start justify-start gap-3 w-full'>
-          <div className='overflow-hidden aspect-square w-full group rounded-3xl relative bg-muted'>
+          <div
+            className='overflow-hidden aspect-square w-full group rounded-3xl relative bg-muted cursor-pointer'
+            onClick={() => {
+              if (href && href !== '#') router.push(href);
+            }}
+          >
             {thumbnail ? (
               <Image
                 className='object-cover w-full h-full group-hover:scale-110 transition-transform duration-300'
@@ -203,16 +227,23 @@ export function PlaylistCard({ playlist, className }: PlaylistCardProps) {
             )}
           </div>
           <div className='flex flex-col p-2 max-w-full text-left'>
-            <h1 className='w-full text-lg whitespace-nowrap overflow-hidden text-ellipsis text-start font-medium'>
+            <h1
+              className='w-full text-lg whitespace-nowrap overflow-hidden text-ellipsis text-start font-medium cursor-pointer hover:underline'
+              onClick={() => {
+                if (href && href !== '#') router.push(href);
+              }}
+            >
               {playlist?.name}
             </h1>
-            <span className='w-full text-xs text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis text-start'>
-              {playlist?.artist?.name}
-            </span>
+            <div className='w-full text-xs text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis text-start'>
+              {combineArtistName(artistItem, true, router, {
+                className: 'hover:underline text-muted-foreground',
+              })}
+            </div>
           </div>
         </div>
       </div>
-    </Button>
+    </div>
   );
 }
 

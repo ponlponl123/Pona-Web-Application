@@ -2,22 +2,25 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useSearchParams, useRouter, useParams } from 'next/navigation';
 import { getCookie } from 'cookies-next';
 import { motion } from 'framer-motion';
 import {
   FlyingSaucer,
   MagnifyingGlass,
+  PlayIcon,
 } from '@phosphor-icons/react/dist/ssr';
 
 import PlayButton from '@/components/music/button/play';
 import Track, { combineArtistName, extractArtistsFromItem } from '@/components/music/searchResult/track';
 import SubscribeButton from '@/components/music/subscribe';
 import { Button } from '@/components/ui/button';
-import { Spinner } from '@/components/ui/spinner';
 import { useAppStore } from '@/store/coreStore';
 import { SearchResult as HTTP_SearchResult, TrackResultItem } from '@/types/youtube/ytmusic-api';
 import fetchSearchResult from '@/lib/server-side-api/internal/search';
+import { SearchResultSkeleton } from '@/components/music/skeleton';
+import { cn } from '@/lib/utils';
+import Link from 'next/link';
 
 const ORDERED_KEYS = [
   'Top result',
@@ -38,62 +41,83 @@ interface TopResultCardProps {
 
 function TopResultCard({ track }: TopResultCardProps) {
   const router = useRouter();
+  const params = useParams();
+  const guildId = typeof params?.guildId === 'string' ? params.guildId : '';
   const trackTitle = track.title || track.name || '';
   const isArtist = track.resultType === 'artist';
   const finalArtists = extractArtistsFromItem(track as unknown as Record<string, unknown>);
 
   return (
-    <div className='relative w-full rounded-3xl p-6 bg-card border border-border shadow-md overflow-hidden text-card-foreground flex flex-col gap-4 items-start'>
+    <div className={cn(
+      'relative group/result-card w-full rounded-3xl p-4 backdrop-blur-lg bg-card/10 overflow-hidden text-card-foreground flex flex-col gap-4 items-start z-10',
+    )}>
+      {
+        isArtist && <Link href={`/app/g/${guildId}/player/c?c=${track.artists?.[0]?.id}`} className='absolute top-0 left-0 size-full' />
+      }
       <div className='flex gap-4 items-center w-full'>
-        {track.thumbnails?.[0]?.url && (
-          <Image
-            src={`/api/proxy/image?r=${encodeURIComponent(track.thumbnails[0].url)}`}
-            alt={trackTitle}
-            width={96}
-            height={96}
-            unoptimized
-            className={
-              isArtist
-                ? 'w-24 h-24 rounded-full object-cover pointer-events-none select-none'
-                : 'w-24 h-24 rounded-2xl object-cover pointer-events-none select-none'
-            }
-          />
-        )}
-        <div className='flex flex-col items-start flex-1 min-w-0'>
-          <h3 className='text-2xl font-bold truncate w-full text-start'>
-            {trackTitle}
-          </h3>
-          <div className='text-sm text-muted-foreground flex gap-1 items-center'>
-            {finalArtists.length > 0 ? (
-              <>
-                {combineArtistName(finalArtists, true, router)}
-                <span>•</span>
-              </>
-            ) : null}
-            <span className='capitalize'>{track.resultType || 'Result'}</span>
+        <div className={cn(
+          "relative size-24 object-cover pointer-events-none select-none overflow-hidden",
+          isArtist
+            ? 'rounded-full'
+            : 'rounded-2xl'
+        )}>
+          {track.thumbnails?.[0]?.url && (
+            <Image
+              src={`/api/proxy/image?r=${encodeURIComponent(track.thumbnails[0].url)}`}
+              alt={trackTitle}
+              width={256}
+              height={256}
+              unoptimized
+              className={"size-full"}
+            />
+          )}
+          {!isArtist && track.videoId && (
+            <div className='group-hover/result-card:opacity-100 opacity-0 size-full rounded-2xl absolute inset-0 flex items-center justify-center bg-black/20 backdrop-blur-[2px] duration-200 cursor-pointer z-10'>
+              <PlayIcon weight='fill' className='text-default-foreground' size={32} />
+            </div>
+          )}
+        </div>
+        <div className='flex gap-8 items-center flex-1 min-w-0'>
+          <div className='flex flex-col items-start flex-1 min-w-0'>
+            <h3 className='text-3xl font-bold truncate w-full text-start'>
+              {trackTitle || combineArtistName(finalArtists)}
+            </h3>
+            <div className='text-sm text-muted-foreground flex gap-1 items-center z-20'>
+              {!isArtist && finalArtists.length > 0 ? (
+                <>
+                  {combineArtistName(finalArtists, true, router)}
+                  <span>•</span>
+                </>
+              ) : null}
+              <span className='capitalize'>{track.resultType || 'Result'}</span>
+            </div>
+            <div className='flex gap-3 items-center justify-end w-full mt-2'>
+              {!isArtist && track.videoId && (
+                <PlayButton
+                  detail={{
+                    author: combineArtistName(finalArtists),
+                    identifier: track.videoId,
+                    sourceName: 'youtube music',
+                    resultType: track.resultType || 'song',
+                    title: trackTitle,
+                    uri: `https://music.youtube.com/watch?v=${track.videoId}`,
+                  }}
+                />
+              )}
+            </div>
+          </div>
+          <div className='ml-auto z-10'>
+            {isArtist && (track.artists?.[0]?.id) && (
+              <SubscribeButton
+                channelId={track.artists[0].id}
+                artistName={track.artists[0].name}
+                className='text-sm'
+                triggerClassName='bg-secondary/10! rounded-full font-bold py-2 px-4'
+                preset='minimal'
+              />
+            )}
           </div>
         </div>
-      </div>
-      <div className='flex gap-3 items-center justify-end w-full mt-2'>
-        {!isArtist && track.videoId && (
-          <PlayButton
-            detail={{
-              author: combineArtistName(finalArtists),
-              identifier: track.videoId,
-              sourceName: 'youtube music',
-              resultType: track.resultType || 'song',
-              title: trackTitle,
-              uri: `https://music.youtube.com/watch?v=${track.videoId}`,
-            }}
-          />
-        )}
-        {isArtist && track.artists?.[0]?.id && (
-          <SubscribeButton
-            channelId={track.artists[0].id}
-            artistName={track.artists[0].name}
-            preset='minimal'
-          />
-        )}
       </div>
     </div>
   );
@@ -119,6 +143,16 @@ export function Page() {
   } | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [filter, setFilter] = useState<string>('all');
+
+  const [prevSearch, setPrevSearch] = useState<string | null>(null);
+  const [prevFilter, setPrevFilter] = useState<string>('all');
+
+  if (search !== prevSearch || filter !== prevFilter) {
+    setPrevSearch(search);
+    setPrevFilter(filter);
+    setLoading(true);
+    setSearchResult(null);
+  }
 
   const filterNormalize = useMemo(() => {
     if (filter === 'playlists') return 'Community playlists';
@@ -245,7 +279,6 @@ export function Page() {
             {categories.map((cat) => (
               <Button
                 key={cat.key}
-                disabled={loading}
                 variant={filter === cat.key ? 'default' : 'outline'}
                 size='sm'
                 className='rounded-full whitespace-nowrap'
@@ -257,8 +290,8 @@ export function Page() {
           </div>
 
           {loading && (
-            <div className='w-full py-12 flex justify-center items-center'>
-              <Spinner className='size-8' />
+            <div className='w-full py-4'>
+              <SearchResultSkeleton />
             </div>
           )}
         </div>

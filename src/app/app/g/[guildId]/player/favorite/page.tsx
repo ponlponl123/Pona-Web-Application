@@ -131,7 +131,7 @@ function Page() {
   const [loading, setLoading] = useState<boolean>(true);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [sortBy, setSortBy] = useState<'recent' | 'name'>('recent');
-  const [visibleCount, setVisibleCount] = useState<number>(24);
+  const [visibleCount, setVisibleCount] = useState<number>(32);
   const [, startTransition] = useTransition();
   const observerRef = useRef<HTMLDivElement | null>(null);
 
@@ -151,7 +151,7 @@ function Page() {
       }
 
       const [channelsRes, statsRes] = await Promise.all([
-        fetchSubscribedChannels(tokenType, token),
+        fetchSubscribedChannels(tokenType, token, 'all'),
         fetchHistoryStats(tokenType, token),
       ]);
 
@@ -165,21 +165,6 @@ function Page() {
     return () => {
       isMounted = false;
     };
-  }, []);
-
-  useEffect(() => {
-    const target = observerRef.current;
-    if (!target) return;
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisibleCount((prev) => prev + 24);
-        }
-      },
-      { rootMargin: '300px' },
-    );
-    io.observe(target);
-    return () => io.disconnect();
   }, []);
 
   const parsedArtists = useMemo(() => {
@@ -212,6 +197,23 @@ function Page() {
     () => filteredArtists.slice(0, visibleCount),
     [filteredArtists, visibleCount],
   );
+
+  useEffect(() => {
+    if (loading) return;
+    const target = observerRef.current;
+    if (!target) return;
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisibleCount((prev) => prev + 24);
+        }
+      },
+      { rootMargin: '400px' },
+    );
+    io.observe(target);
+    return () => io.disconnect();
+  }, [loading, visibleCount, filteredArtists.length]);
 
   const enrichedTopArtists = useMemo(() => {
     if (!stats?.topArtists || !Array.isArray(stats.topArtists)) return [];

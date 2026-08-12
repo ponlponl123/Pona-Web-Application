@@ -2,11 +2,49 @@ import { create } from "zustand"
 import { getCookie } from "cookies-next"
 import { IsSubscribed, SubscribedChannelsResult } from "@/lib/server-side-api/internal/channel"
 import { SongRelated, WatchPlaylist } from "@/types/youtube/ytmusic-api"
+import type { HomeFeedResult, ExploreResult, ChartsResult } from "@/lib/server-side-api/internal/browse"
 
 export interface RelatedInfo {
   videoId: string
   watch_playlist?: WatchPlaylist
   related?: SongRelated
+}
+
+export interface FeedCacheEntry<T> {
+  data: T
+  fetchedAt: number
+}
+
+const FEED_STALE_MS = 5 * 60 * 1000
+
+function isStale(fetchedAt: number | null | undefined): boolean {
+  if (!fetchedAt) return true
+  return Date.now() - fetchedAt > FEED_STALE_MS
+}
+
+function readSessionCache<T>(key: string): FeedCacheEntry<T> | null {
+  if (typeof window === "undefined") return null
+  try {
+    const raw = sessionStorage.getItem(key)
+    if (!raw) return null
+    return JSON.parse(raw) as FeedCacheEntry<T>
+  } catch {
+    return null
+  }
+}
+
+function writeSessionCache<T>(key: string, entry: FeedCacheEntry<T>): void {
+  if (typeof window === "undefined") return
+  try {
+    sessionStorage.setItem(key, JSON.stringify(entry))
+  } catch {
+  }
+}
+
+const SESSION_KEYS = {
+  homeFeed: "pona:feed:home",
+  explore: "pona:feed:explore",
+  charts: "pona:feed:charts",
 }
 
 interface MusicCacheState {
@@ -15,12 +53,26 @@ interface MusicCacheState {
   relatedInfoCache: Record<string, RelatedInfo>
   subscribedChannels: SubscribedChannelsResult[] | null
 
+  homeFeed: FeedCacheEntry<HomeFeedResult> | null
+  explore: FeedCacheEntry<ExploreResult> | null
+  charts: FeedCacheEntry<ChartsResult> | null
+
   getSubscribeState: (channelId: string) => Promise<boolean>
   setSubscribedChannels: (channels: SubscribedChannelsResult[]) => void
   addSubscribedChannel: (channel: SubscribedChannelsResult) => void
   removeSubscribedChannel: (channelId: string) => void
   setFavoriteState: (videoId: string, state: boolean) => void
   setRelatedInfo: (videoId: string, info: Omit<RelatedInfo, "videoId">) => void
+
+  setHomeFeed: (data: HomeFeedResult) => void
+  setExplore: (data: ExploreResult) => void
+  setCharts: (data: ChartsResult) => void
+
+  isHomeFeedStale: () => boolean
+  isExploreStale: () => boolean
+  isChartsStale: () => boolean
+
+  hydrateFromSession: () => void
 }
 
 export const useMusicCacheStore = create<MusicCacheState>((set, get) => ({
@@ -28,6 +80,10 @@ export const useMusicCacheStore = create<MusicCacheState>((set, get) => ({
   favoriteCache: {},
   relatedInfoCache: {},
   subscribedChannels: null,
+
+  homeFeed: null,
+  explore: null,
+  charts: null,
 
   getSubscribeState: async (channelId: string) => {
     const cache = get().subscribeCache
@@ -108,4 +164,37 @@ export const useMusicCacheStore = create<MusicCacheState>((set, get) => ({
         [videoId]: { videoId, ...info },
       },
     })),
+
+  setHomeFeed: (data: HomeFeedResult) => {
+    const entry: FeedCacheEntry<HomeFeedResult> = { data, fetchedAt: Date.now() }
+    writeSessionCache(SESSION_KEYS.homeFeed, entry)
+    set({ homeFeed: entry })
+  },
+
+  setExplore: (data: ExploreResult) => {
+    const entry: FeedCacheEntry<ExploreResult> = { data, fetchedAt: Date.now() }
+    writeSessionCache(SESSION_KEYS.explore, entry)
+    set({ explore: entry })
+  },
+
+  setCharts: (data: ChartsResult) => {
+    const entry: FeedCacheEntry<ChartsResult> = { data, fetchedAt: Date.now() }
+    writeSessionCache(SESSION_KEYS.charts, entry)
+    set({ charts: entry })
+  },
+
+  isHomeFeedStale: () => isStale(get().homeFeed?.fetchedAt),
+  isExploreStale: () => isStale(get().explore?.fetchedAt),
+  isChartsStale: () => isStale(get().charts?.fetchedAt),
+
+  hydrateFromSession: () => {
+    const homeFeed = readSessionCache<HomeFeedResult>(SESSION_KEYS.homeFeed)
+    const explore = readSessionCache<ExploreResult>(SESSION_KEYS.explore)
+    const charts = readSessionCache<ChartsResult>(SESSION_KEYS.charts)
+    set({
+      homeFeed: homeFeed ?? null,
+      explore: explore ?? null,
+      charts: charts ?? null,
+    })
+  },
 }))
