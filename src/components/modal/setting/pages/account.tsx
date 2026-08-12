@@ -34,7 +34,7 @@ function Account() {
                   ? `https://cdn.discordapp.com/banners/${userInfo.id}/${userInfo.banner}.${userInfo.banner.startsWith("a_") ? "gif" : "png"}?size=1024`
                   : ""
               }
-              className="h-48 w-full rounded-4xl bg-primary object-cover object-center"
+              className="h-48 w-full rounded-4xl bg-primary object-cover object-center select-none pointer-events-none"
               width="100%"
               height="12rem"
               classNames={{

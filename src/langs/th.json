@@ -483,7 +483,8 @@
           "add_to_my_playlist": "เพิ่มไปยังเพลย์ลิสต์ของฉัน",
           "goto_artist": "ไปที่ศิลปิน",
           "goto_album": "ไปที่อัลบั้ม",
-          "rm_from_queue": "นำออกจากคิว"
+          "rm_from_queue": "นำออกจากคิว",
+          "move_to_queue": "ย้ายไปคิว"
         },
         "tabs": {
           "next": "ถัดไป",
@@ -495,7 +496,12 @@
           "lyrics_provided_by": "เนื้อเพลงจัดทำโดย [provider]",
           "no_lyrics_available": "ไม่มีเนื้อเพลง",
           "sync_lyrics": "ซิงค์เนื้อเพลง",
-          "fetching_lyrics": "กำลังโหลดเนื้อเพลง..."
+          "fetching_lyrics": "กำลังโหลดเนื้อเพลง...",
+          "pnpt_toggle_label": "ต่อเพลงอัตโนมัติ",
+          "pnpt_toggle_description": "เพิ่มเพลงแนะนำโดยอัตโนมัติเมื่อคิวเพลงใกล้หมด",
+          "pnpt_queue_title": "ถัดไป (อัตโนมัติ)",
+          "pnpt_auto_badge": "อัตโนมัติ",
+          "pnpt_queue_repeat_incompatible": "การต่อเพลงอัตโนมัติไม่รองรับโหมดวนซ้ำคิว"
         },
         "related": {
           "videoId_not_provided": "รถประจำทางไม่มาสักที...",
@@ -868,6 +874,13 @@
           "disabled": {
             "title": "ปิดใช้งาน",
             "description": "ปิดเอฟเฟกต์โปร่งแสงทั้งหมด เพื่อประสิทธิภาพสูงสุดและประหยัดแบตเตอรี่"
+          }
+        },
+        "pointer": {
+          "title": "ตัวบ่งชี้",
+          "click_spark": {
+            "title": "ประกายไฟ",
+            "description": "ตัวบอกชี้เมื่อคลิก เพิ่มความสนุกสนานในการใช้งาน"
           }
         },
         "time_format": {

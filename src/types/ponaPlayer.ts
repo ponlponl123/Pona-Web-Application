@@ -48,6 +48,7 @@ export interface Track {
   thumbnail: string
   requester: User | ClientUser
   accentColor?: string
+  _isPNPT?: boolean
 }
 
 export interface HTTP_PonaFetchState {
@@ -98,6 +99,7 @@ export interface HTTP_PonaCommonState {
   volume: number
   paused: boolean
   isAutoplay: boolean
+  isPNPTEnabled?: boolean
   voiceChannel: string
 }
 
@@ -110,6 +112,7 @@ export interface HTTP_PonaCommonStateWithTracks {
   pona: HTTP_PonaCommonState
   current: Track | UnresolvedTrack | null
   queue: Queue
+  queuePNPT?: Queue
 }
 
 export interface TimestampLyrics {

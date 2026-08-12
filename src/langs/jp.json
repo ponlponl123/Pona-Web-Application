@@ -483,7 +483,8 @@
           "add_to_my_playlist": "プレイリストに追加",
           "goto_artist": "アーティストに移動",
           "goto_album": "アルバムに移動",
-          "rm_from_queue": "キューから削除"
+          "rm_from_queue": "キューから削除",
+          "move_to_queue": "キューに移動"
         },
         "tabs": {
           "next": "次へ",
@@ -495,7 +496,12 @@
           "lyrics_provided_by": "歌詞提供: [provider]",
           "no_lyrics_available": "歌詞が見つかりません",
           "sync_lyrics": "歌詞を同期",
-          "fetching_lyrics": "歌詞を読み込み中..."
+          "fetching_lyrics": "歌詞を読み込み中...",
+          "pnpt_toggle_label": "自動再生",
+          "pnpt_toggle_description": "キューが少なくなったとき、おすすめの曲を自動追加します。",
+          "pnpt_queue_title": "次の候補（自動）",
+          "pnpt_auto_badge": "自動",
+          "pnpt_queue_repeat_incompatible": "自動再生はキューリピートと同時に使用できません。"
         },
         "related": {
           "videoId_not_provided": "バスは全然来ない…",
@@ -868,6 +874,13 @@
           "disabled": {
             "title": "無効",
             "description": "透過効果をオフにして、パフォーマンスとバッテリー持ちを最優先します。"
+          }
+        },
+        "pointer": {
+          "title": "ポインター",
+          "click_spark": {
+            "title": "Click Spark",
+            "description": "クリック時にスパークエフェクトを表示し、操作を楽しくします。"
           }
         },
         "time_format": {

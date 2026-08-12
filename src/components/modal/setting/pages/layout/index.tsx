@@ -5,6 +5,7 @@ import Player from "./player"
 import Transparency from "./transparency"
 import BlurEffect from "./blur-effect"
 import { useAppStore } from "@/store/coreStore"
+import Pointer from "./pointer"
 
 function Developer() {
   const language = useAppStore((state) => state.language)
@@ -32,6 +33,7 @@ function Developer() {
       <Player />
       <Transparency />
       <BlurEffect />
+      <Pointer />
       <div className="my-12" />
     </>
   )

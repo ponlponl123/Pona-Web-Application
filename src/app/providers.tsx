@@ -12,6 +12,7 @@ import { languageKeys } from "@/lib/i18n"
 import { useEffect, ViewTransition } from "react"
 import ClickSpark from "@/components/ClickSpark"
 import { AppStoreProvider, useAppStore } from "@/store/coreStore"
+import { useThemeContext } from "@/components/theme-provider"
 
 function ClientInit() {
   const initClientSettings = useAppStore((state) => state.initClientSettings)
@@ -31,6 +32,8 @@ export function Providers({
   initialLang?: languageKeys
 }) {
   const pathname = usePathname() || ""
+  const { isPointerClickSpark } =
+    useThemeContext()
 
   return (
     <AppStoreProvider isMobile={isMobile} initialLang={initialLang}>
@@ -39,10 +42,10 @@ export function Providers({
         <DiscordGuildInfoProvider>
           <ClickSpark
             sparkColor="#fff"
-            sparkSize={10}
-            sparkRadius={15}
-            sparkCount={8}
-            duration={400}
+            sparkSize={isPointerClickSpark ? 10 : 0}
+            sparkRadius={isPointerClickSpark ? 15 : 0}
+            sparkCount={isPointerClickSpark ? 8 : 0}
+            duration={isPointerClickSpark ? 400 : 0}
           >
             {pathname.startsWith("/app") || pathname.startsWith("/updates") ? (
               <AnimatePresence mode={"popLayout"}>

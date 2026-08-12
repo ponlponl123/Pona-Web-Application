@@ -479,7 +479,8 @@
           "add_to_my_playlist": "Add to my playlist",
           "goto_artist": "Go to artist",
           "goto_album": "Go to album",
-          "rm_from_queue": "Remove from queue"
+          "rm_from_queue": "Remove from queue",
+          "move_to_queue": "Move to Queue"
         },
         "tabs": {
           "next": "Next",
@@ -491,7 +492,12 @@
           "lyrics_provided_by": "Lyrics provided by [provider]",
           "no_lyrics_available": "No lyrics available",
           "sync_lyrics": "Sync lyrics",
-          "fetching_lyrics": "Loading lyrics..."
+          "fetching_lyrics": "Loading lyrics...",
+          "pnpt_toggle_label": "Auto-continue",
+          "pnpt_toggle_description": "Automatically add recommended tracks when the queue is nearly empty.",
+          "pnpt_queue_title": "Up Next (Auto)",
+          "pnpt_auto_badge": "Auto",
+          "pnpt_queue_repeat_incompatible": "Auto-continue is not compatible with Queue Repeat mode."
         },
         "related": {
           "videoId_not_provided": "The bus never comes...",
@@ -864,6 +870,13 @@
           "disabled": {
             "title": "Disabled",
             "description": "Turn off all transparency effects to maximize performance and battery life."
+          }
+        },
+        "pointer": {
+          "title": "Pointer",
+          "click_spark": {
+            "title": "Click Spark",
+            "description": "Pointer trail and click spark effect for a fun interaction."
           }
         },
         "time_format": {

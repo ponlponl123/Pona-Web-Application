@@ -11,12 +11,14 @@ interface ThemeContextType {
   isAppNightThemeDark: boolean
   isAmoled: boolean
   isCurrentlyDark: boolean
+  isPointerClickSpark: boolean
   setAppTheme: React.Dispatch<React.SetStateAction<string>>
   setDayTheme: React.Dispatch<React.SetStateAction<string>>
   setNightTheme: React.Dispatch<React.SetStateAction<string>>
   setIsAppDayThemeDark: React.Dispatch<React.SetStateAction<boolean>>
   setIsAppNightThemeDark: React.Dispatch<React.SetStateAction<boolean>>
   setAmoled: React.Dispatch<React.SetStateAction<boolean>>
+  setIsPointerClickSpark: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const ThemeContext = React.createContext<ThemeContextType>({
@@ -27,12 +29,14 @@ const ThemeContext = React.createContext<ThemeContextType>({
   isAppNightThemeDark: false,
   isAmoled: false,
   isCurrentlyDark: false,
-  setAppTheme: () => {},
-  setDayTheme: () => {},
-  setNightTheme: () => {},
-  setIsAppDayThemeDark: () => {},
-  setIsAppNightThemeDark: () => {},
-  setAmoled: () => {},
+  isPointerClickSpark: true,
+  setAppTheme: () => { },
+  setDayTheme: () => { },
+  setNightTheme: () => { },
+  setIsAppDayThemeDark: () => { },
+  setIsAppNightThemeDark: () => { },
+  setAmoled: () => { },
+  setIsPointerClickSpark: () => { },
 })
 
 function appDarkToggle(isDark: boolean) {
@@ -114,6 +118,9 @@ function ThemeProvider({
     () => getLocalStorageValue("is-amoled", false) as boolean
   )
   const [isCurrentlyDark, setIsCurrentlyDark] = React.useState<boolean>(false)
+  const [isPointerClickSpark, setIsPointerClickSpark] = React.useState<boolean>(
+    () => getLocalStorageValue("is-pointer-click-spark", true) as boolean
+  )
 
   React.useEffect(() => {
     if (typeof window !== "undefined") {
@@ -129,6 +136,7 @@ function ThemeProvider({
         isAppNightThemeDark.toString()
       )
       localStorage.setItem("is-amoled", isAmoled.toString())
+      localStorage.setItem("is-pointer-click-spark", isPointerClickSpark.toString())
     }
   }, [
     appTheme,
@@ -137,6 +145,7 @@ function ThemeProvider({
     isAppDayThemeDark,
     isAppNightThemeDark,
     isAmoled,
+    isPointerClickSpark,
   ])
 
   React.useEffect(() => {
@@ -178,12 +187,14 @@ function ThemeProvider({
         isAppNightThemeDark,
         isAmoled,
         isCurrentlyDark,
+        isPointerClickSpark,
         setAppTheme,
         setDayTheme,
         setNightTheme,
         setIsAppDayThemeDark,
         setIsAppNightThemeDark,
         setAmoled,
+        setIsPointerClickSpark,
       }}
     >
       {children}

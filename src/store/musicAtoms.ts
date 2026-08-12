@@ -11,3 +11,6 @@ export const queueAtom = atom<{ queue: Queue | null; updating: boolean }>({
   queue: null,
   updating: false,
 })
+
+export const pnptQueueAtom = atom<Queue>([])
+export const isPNPTEnabledAtom = atom<boolean>(true)

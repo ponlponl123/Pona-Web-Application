@@ -30,6 +30,7 @@ import {
   PersonSimpleIcon,
   PictureInPictureIcon,
   PlayIcon,
+  PlusIcon,
   SpinnerIcon,
   TrashIcon,
 } from '@phosphor-icons/react/dist/ssr';
@@ -65,6 +66,7 @@ import { isFullscreenModeAtom, playerPopupAtom } from '@/store/uiAtoms';
 import { Track, UnresolvedTrack } from '@/types/ponaPlayer';
 import { cn } from '@/lib/utils';
 import Related from './related';
+import PNPTQueueSection from '@/components/player/pnptQueue';
 import CustomScrollArea from '@/components/ui/custom/scroll-area';
 import { Tabs, TabsContent, TabsContents, TabsList, TabsTrigger } from '@/components/animate-ui/components/animate/tabs';
 import { AnimateIcon } from '@/components/animate-ui/icons/icon';
@@ -298,6 +300,8 @@ export default function DesktopPonaPlayerPanel() {
                             </DndContext>
                           </div>
                         )}
+
+                        <PNPTQueueSection />
                       </div>
                     </CustomScrollArea>
                   </TabsContent>
@@ -448,6 +452,33 @@ export function TrackQueueContextFunction({
         <HeartIcon className='size-4 mr-2' />
         {language.data.app.guilds.player.context_menu.add_to_favorite}
       </ContextMenuItem>
+      {track._isPNPT && (
+        <ContextMenuItem
+          onClick={() => {
+            toast.promise(
+              new Promise<void>((resolve, reject) => {
+                socket?.emit('move_pnpt_to_queue', track.uniqueId, (error: unknown) => {
+                  if (error && (error as { status?: string }).status !== 'ok') {
+                    reject(error);
+                  } else {
+                    resolve();
+                  }
+                });
+              }),
+              {
+                loading: (language.data.app.guilds.player.toast?.rm_track?.loading || 'Moving...')
+                  .replace('[track_name]', track.title)
+                  .replace('[artist]', String(track.author)),
+                success: (language.data.app.guilds.player.context_menu?.move_to_queue || 'ย้ายไปคิว') + `: ${track.title}`,
+                error: 'Error moving track to queue',
+              }
+            );
+          }}
+        >
+          <PlusIcon className='size-4 mr-2' />
+          {language.data.app.guilds.player.context_menu?.move_to_queue || 'ย้ายไปคิว'}
+        </ContextMenuItem>
+      )}
       {ponaCommonState?.current?.uniqueId !== track.uniqueId && (
         <ContextMenuItem
           onClick={() => {
@@ -613,16 +644,18 @@ export function TrackQueue({
                     })}{' '}
                     <span className='text-[hsl(var(--pona-app-music-accent-color-800))]/60 dark:text-[hsl(var(--pona-app-music-accent-color-500))]/60 text-xs'>
                       (
-                      {track.requester?.displayName ||
-                        '@' + track.requester?.username}
+                      {track._isPNPT || (!track.requester?.displayName && !track.requester?.username)
+                        ? ((language.data.app.guilds.player.tabs as Record<string, string>)?.pnpt_auto_badge || 'อัตโนมัติ')
+                        : (track.requester?.displayName || '@' + track.requester?.username)}
                       )
                     </span>
                   </div>
                 ) : (
                   <span className='max-w-full text-xs text-[hsl(var(--pona-app-music-accent-color-800))]/60 dark:text-[hsl(var(--pona-app-music-accent-color-500))]/60 truncate'>
                     {track.author} (
-                    {track.requester?.displayName ||
-                      '@' + track.requester?.username}
+                    {track._isPNPT || (!track.requester?.displayName && !track.requester?.username)
+                      ? ((language.data.app.guilds.player.tabs as Record<string, string>)?.pnpt_auto_badge || 'อัตโนมัติ')
+                      : (track.requester?.displayName || '@' + track.requester?.username)}
                     )
                   </span>
                 )}
@@ -656,6 +689,40 @@ export function TrackQueue({
                       .add_to_favorite
                   }
                 </DropdownMenuItem>
+                {track._isPNPT && (
+                  <DropdownMenuItem
+                    onClick={() => {
+                      toast.promise(
+                        new Promise<void>((resolve, reject) => {
+                          socket?.emit(
+                            'move_pnpt_to_queue',
+                            track.uniqueId,
+                            (error: unknown) => {
+                              if (
+                                error &&
+                                (error as { status?: string }).status !== 'ok'
+                              ) {
+                                reject(error);
+                              } else {
+                                resolve();
+                              }
+                            }
+                          );
+                        }),
+                        {
+                          loading: (language.data.app.guilds.player.toast?.rm_track?.loading || 'Moving...')
+                            .replace('[track_name]', track.title)
+                            .replace('[artist]', String(track.author)),
+                          success: (language.data.app.guilds.player.context_menu?.move_to_queue || 'ย้ายไปคิว') + `: ${track.title}`,
+                          error: 'Error moving track to queue',
+                        }
+                      );
+                    }}
+                  >
+                    <PlusIcon className='size-4 mr-2' />
+                    {language.data.app.guilds.player.context_menu?.move_to_queue || 'ย้ายไปคิว'}
+                  </DropdownMenuItem>
+                )}
                 {ponaCommonState?.current?.uniqueId !== track.uniqueId && (
                   <DropdownMenuItem
                     onClick={() => {

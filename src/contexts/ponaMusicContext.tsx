@@ -3,16 +3,16 @@ import React, {
   createContext,
   useContext,
   useEffect,
-  useRef,
   useState,
 } from "react"
-import { Manager, Socket } from "socket.io-client"
+import { Socket } from "socket.io-client"
 import { useAtomValue, useSetAtom } from "jotai"
-import { usePathname } from "next/navigation"
 import { getCookie } from "cookies-next"
 
 import {
+  isPNPTEnabledAtom,
   playbackAtom,
+  pnptQueueAtom,
   ponaCommonStateAtom,
   queueAtom,
 } from "@/store/musicAtoms"
@@ -43,11 +43,12 @@ export const PonaMusicProvider = ({
   children: React.ReactNode
 }) => {
   const { guild } = useDiscordGuildInfo()
-  const pathname = usePathname() || ""
 
   const setPlayback = useSetAtom(playbackAtom)
   const setPonaCommonState = useSetAtom(ponaCommonStateAtom)
   const setQueue = useSetAtom(queueAtom)
+  const setIsPNPTEnabled = useSetAtom(isPNPTEnabledAtom)
+  const setPNPTQueue = useSetAtom(pnptQueueAtom)
   const setIsMemberInVC = useSetAtom(isMemberInVCAtom)
   const setIsSameVC = useSetAtom(isSameVCAtom)
 
@@ -113,6 +114,8 @@ export const PonaMusicProvider = ({
         document.body.removeAttribute("playing")
         setPonaCommonState(null)
         setQueue({ queue: [], updating: false })
+        setPNPTQueue([])
+        setIsPNPTEnabled(true)
         setIsSameVC(false)
         return
       }
@@ -131,6 +134,8 @@ export const PonaMusicProvider = ({
           document.body.removeAttribute("playing")
           setPonaCommonState(null)
           setQueue({ queue: [], updating: false })
+          setPNPTQueue([])
+          setIsPNPTEnabled(true)
           setIsSameVC(false)
           return
         }
@@ -144,12 +149,19 @@ export const PonaMusicProvider = ({
             return proxyArtwork(track)
           })
         }
+        if (decodedState.queuePNPT && decodedState.queuePNPT.length > 0) {
+          decodedState.queuePNPT = decodedState.queuePNPT.map((track) => {
+            return proxyArtwork(track)
+          })
+        }
 
         setPonaCommonState(decodedState)
         setQueue({
           queue: decodedState.queue || [],
           updating: false,
         })
+        setPNPTQueue(decodedState.queuePNPT || [])
+        setIsPNPTEnabled(decodedState.pona.isPNPTEnabled ?? true)
       } catch (err) {
         console.error("Error decoding pona state update:", err)
       }
@@ -158,12 +170,15 @@ export const PonaMusicProvider = ({
     iosocket.on("handshake", async (ponaState: string) => {
       const decodedPonaState = JSON.parse(
         Buffer.from(ponaState, "base64").toString("utf-8")
-      ) as {
-        pona?: HTTP_PonaCommonStateWithTracks | null
-        isMemberInVC?: VoiceBasedChannel | null
+      ) as (HTTP_PonaCommonStateWithTracks & { isMemberInVC?: VoiceBasedChannel | null }) | null
+      if (decodedPonaState?.isMemberInVC) {
+        setIsMemberInVC(decodedPonaState.isMemberInVC)
       }
-      setIsMemberInVC(decodedPonaState.isMemberInVC || null)
-      handlePonaStateUpdate(decodedPonaState.pona || null)
+      // Pass the entire state object to handlePonaStateUpdate, excluding isMemberInVC
+      const stateWithoutMember = decodedPonaState && Object.keys(decodedPonaState).some(k => k !== 'isMemberInVC')
+        ? { ...decodedPonaState, isMemberInVC: undefined }
+        : null
+      handlePonaStateUpdate(stateWithoutMember)
     })
 
     iosocket.on("state_updated", (pona: string | null) => {
@@ -280,6 +295,34 @@ export const PonaMusicProvider = ({
       setQueue((prev) => {
         return { ...prev, updating: true }
       })
+    })
+
+    iosocket.on("pnpt_updated", (payload: string | { enabled: boolean }) => {
+      try {
+        const decoded =
+          typeof payload === "string"
+            ? (JSON.parse(Buffer.from(payload, "base64").toString("utf-8")) as {
+              enabled: boolean
+            })
+            : payload
+        setIsPNPTEnabled(decoded.enabled)
+      } catch (err) {
+        console.error("Error decoding pnpt_updated:", err)
+      }
+    })
+
+    iosocket.on("pnpt_queue_updated", (queueStr: string) => {
+      try {
+        let decodedQueue = JSON.parse(
+          Buffer.from(queueStr, "base64").toString("utf-8")
+        ) as Queue
+        if (decodedQueue && decodedQueue.length > 0) {
+          decodedQueue = decodedQueue.map((track) => proxyArtwork(track))
+        }
+        setPNPTQueue(decodedQueue)
+      } catch (err) {
+        console.error("Error decoding pnpt_queue_updated:", err)
+      }
     })
 
     iosocket.on("member_state_updated", (memberVoiceState: string) => {

@@ -102,6 +102,10 @@ function SettingModalSidebar() {
               name: language.data.app.setting.layout.blur.title,
               target: "blur-effect",
             },
+            {
+              name: language.data.app.setting.layout.pointer.title,
+              target: "layout-pointer",
+            },
           ],
         },
         {
@@ -248,7 +252,7 @@ function SettingModalSidebar() {
               className={cn(
                 "apply- mb-2 flex w-full flex-col items-center justify-center gap-2 rounded-2xl p-3 select-none",
                 !userInfo &&
-                  "border-2 border-dashed border-foreground/10 bg-foreground/5 not-dark:bg-foreground/10 hover:bg-foreground/10 not-dark:hover:bg-foreground/5"
+                "border-2 border-dashed border-foreground/10 bg-foreground/5 not-dark:bg-foreground/10 hover:bg-foreground/10 not-dark:hover:bg-foreground/5"
               )}
               onClick={() => setIsSettingModalOpen(false)}
               data-smooth-interaction="true"
@@ -313,7 +317,7 @@ function SettingModalSidebar() {
                     transition={{
                       delay:
                         PreCalcCategoryDelays[categoryIndex].linkDelays[
-                          linkIndex
+                        linkIndex
                         ],
                       duration: 0.25,
                       ease: "easeOut",
@@ -324,7 +328,7 @@ function SettingModalSidebar() {
                       "not-hover:text-foreground/60",
                       "hover:bg-foreground/10 active:bg-foreground/10 dark:hover:bg-foreground/5",
                       SelectedPageKey === link.target &&
-                        "bg-foreground/10 text-foreground dark:text-foreground"
+                      "bg-foreground/10 text-foreground dark:text-foreground"
                     )}
                     onClick={() => setSelectedPage(link.target)}
                   >
@@ -338,7 +342,7 @@ function SettingModalSidebar() {
                     transition={{
                       delay:
                         PreCalcCategoryDelays[categoryIndex].linkDelays[
-                          linkIndex
+                        linkIndex
                         ],
                       duration: 0.25,
                       ease: "easeOut",
@@ -432,7 +436,7 @@ function SettingModalSidebar() {
                                   "relative flex w-full items-center justify-start gap-2 rounded-md px-2 py-1 text-start text-sm text-foreground/40",
                                   "hover:text-foreground/80",
                                   lookingAt?.includes(tos.target) &&
-                                    "text-foreground"
+                                  "text-foreground"
                                 )}
                                 data-smooth-interaction="true"
                                 onClick={() => scrollTo(tos.target)}
