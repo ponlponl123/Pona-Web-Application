@@ -18,6 +18,8 @@ import { Track, UnresolvedTrack } from '@/types/ponaPlayer';
 import { Language } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import { useAppStore } from '@/store/coreStore';
+import { AnimateIcon } from '@/components/animate-ui/icons/icon';
+import { SquareArrowOutUpRightIcon } from '@/components/animate-ui/icons/square-arrow-out-up-right';
 
 export const PlayerTrackInfo = memo(function PlayerTrackInfo({
   currentTrack,
@@ -77,13 +79,15 @@ export const PlayerTrackInfo = memo(function PlayerTrackInfo({
             {currentTrack ? currentTrack.title : 'Music Name'}
           </h1>
           {currentTrack?.uri && (
-            <Link
-              href={currentTrack.uri}
-              className='text-xs text-[hsl(var(--pona-app-music-accent-color-800))] dark:text-[hsl(var(--pona-app-music-accent-color-500))] hover:underline'
-              target='_blank'
-            >
-              ↗
-            </Link>
+            <AnimateIcon animateOnHover>
+              <Link
+                href={currentTrack.uri}
+                className='size-3 text-[hsl(var(--pona-app-music-accent-color-800))] dark:text-[hsl(var(--pona-app-music-accent-color-500))] hover:underline'
+                target='_blank'
+              >
+                <SquareArrowOutUpRightIcon size={12} />
+              </Link>
+            </AnimateIcon>
           )}
         </div>
         <div className='w-full flex flex-row gap-1 items-center justify-start'>
