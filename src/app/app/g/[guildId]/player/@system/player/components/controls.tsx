@@ -14,6 +14,8 @@ import { Button } from '@/components/ui/button';
 import { msToTime } from '@/lib/utils';
 import { Language } from '@/lib/i18n';
 
+import { emitWithTimeout } from '@/lib/promiseWithTimeout';
+
 export const PlayerControls = memo(function PlayerControls({
   socket,
   language,
@@ -36,7 +38,7 @@ export const PlayerControls = memo(function PlayerControls({
   const handlePlay = useCallback(() => socket?.emit('play'), [socket]);
   const handlePrevious = useCallback(() => {
     toast.promise(
-      new Promise<void>((resolve, reject) => {
+      emitWithTimeout((resolve, reject) => {
         socket?.emit('previous', (error: unknown) => {
           if (error && (error as { status?: string }).status !== 'ok') {
             reject(error);
@@ -55,7 +57,7 @@ export const PlayerControls = memo(function PlayerControls({
 
   const handleNext = useCallback(() => {
     toast.promise(
-      new Promise<void>((resolve, reject) => {
+      emitWithTimeout((resolve, reject) => {
         socket?.emit('next', (error: unknown) => {
           if (error && (error as { status?: string }).status !== 'ok') {
             reject(error);

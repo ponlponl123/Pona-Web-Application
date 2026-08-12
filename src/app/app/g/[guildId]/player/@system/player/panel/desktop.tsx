@@ -38,6 +38,7 @@ import {
 import LyricsDisplay from '@/components/music/lyricsDisplay';
 import { combineArtistName } from '@/components/music/searchResult/track';
 import { Button } from '@/components/ui/button';
+import { emitWithTimeout } from '@/lib/promiseWithTimeout';
 import {
   ContextMenu,
   ContextMenuContent,
@@ -456,7 +457,7 @@ export function TrackQueueContextFunction({
         <ContextMenuItem
           onClick={() => {
             toast.promise(
-              new Promise<void>((resolve, reject) => {
+              emitWithTimeout((resolve, reject) => {
                 socket?.emit('move_pnpt_to_queue', track.uniqueId, (error: unknown) => {
                   if (error && (error as { status?: string }).status !== 'ok') {
                     reject(error);
@@ -483,7 +484,7 @@ export function TrackQueueContextFunction({
         <ContextMenuItem
           onClick={() => {
             toast.promise(
-              new Promise<void>((resolve, reject) => {
+              emitWithTimeout((resolve, reject) => {
                 socket?.emit('rm', track.uniqueId, (error: unknown) => {
                   if (error && (error as { status?: string }).status !== 'ok') {
                     reject(error);
@@ -693,7 +694,7 @@ export function TrackQueue({
                   <DropdownMenuItem
                     onClick={() => {
                       toast.promise(
-                        new Promise<void>((resolve, reject) => {
+                        emitWithTimeout((resolve, reject) => {
                           socket?.emit(
                             'move_pnpt_to_queue',
                             track.uniqueId,
@@ -727,7 +728,7 @@ export function TrackQueue({
                   <DropdownMenuItem
                     onClick={() => {
                       toast.promise(
-                        new Promise<void>((resolve, reject) => {
+                        emitWithTimeout((resolve, reject) => {
                           socket?.emit(
                             'rm',
                             track.uniqueId,

@@ -4,13 +4,14 @@ import { useTheme } from "next-themes"
 import { Toaster as Sonner, type ToasterProps } from "sonner"
 import { CheckCircleIcon, InfoIcon, WarningIcon, XCircleIcon, SpinnerIcon } from "@phosphor-icons/react"
 
-const Toaster = ({ position = "top-center", ...props }: ToasterProps) => {
+const Toaster = ({ position = "top-center", duration = 3000, ...props }: ToasterProps) => {
   const { theme = "system" } = useTheme()
 
   return (
     <Sonner
       theme={theme as ToasterProps["theme"]}
       position={position}
+      duration={duration}
       className="toaster group"
       icons={{
         success: (

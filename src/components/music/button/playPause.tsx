@@ -9,6 +9,8 @@ import { ponaCommonStateAtom } from '@/store/musicAtoms';
 import { useAppStore } from '@/store/coreStore';
 import { Button } from '@/components/ui/button';
 
+import { emitWithTimeout } from '@/lib/promiseWithTimeout';
+
 function PlayPauseButton({
   className,
   iconSize = 32,
@@ -30,7 +32,7 @@ function PlayPauseButton({
       onClick={() => {
         const action = isPaused ? 'play' : 'pause';
         toast.promise(
-          new Promise<void>((resolve, reject) => {
+          emitWithTimeout((resolve, reject) => {
             socket?.emit(action, (error: unknown) => {
               if (error && (error as { status?: string }).status !== 'ok') {
                 reject(error);

@@ -29,6 +29,7 @@ import {
 import { AnimateIcon } from '@/components/animate-ui/icons/icon';
 import { Plus } from '@/components/animate-ui/icons/plus';
 import { cn } from '@/lib/utils';
+import { emitWithTimeout } from '@/lib/promiseWithTimeout';
 export type { PlayButtonClassNames, PlayButtonProps, PlayDetail, PlaylistDetail };
 
 
@@ -57,7 +58,7 @@ function PlayButton<T extends 'song' | 'playlist' = 'song'>({
     if (socket && socket.connected && isSameVC) {
       setLoading(true);
       toast.promise(
-        new Promise<void>(async (resolve, reject) => {
+        emitWithTimeout(async (resolve, reject) => {
           const oauth_type = getCookie('LOGIN_TYPE_');
           const oauth_token = getCookie('LOGIN_');
           if (type === 'playlist') {

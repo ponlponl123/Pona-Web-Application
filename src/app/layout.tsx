@@ -72,7 +72,7 @@ export default function RootLayout({
       lang="en"
       suppressHydrationWarning
       className={cn(
-        "antialiased",
+        "antialiased scrollbar-gutter-stable",
         fontSans.variable,
         fontPonlponl123Article.variable,
         fontSNsanafonMaruJ30.variable,
