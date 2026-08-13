@@ -6,9 +6,6 @@ import { useAtomValue, useSetAtom } from 'jotai';
 import { VoiceBasedChannel } from 'discord.js';
 import {
   IslandIcon,
-  SpeakerHighIcon,
-  SignInIcon,
-  RadioIcon,
   CaretRightIcon,
 } from '@phosphor-icons/react/dist/ssr';
 

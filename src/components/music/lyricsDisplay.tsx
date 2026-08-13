@@ -60,7 +60,7 @@ const LyricItem = React.memo(
         aria-current={isActive ? "true" : undefined}
         className={cn(
           className,
-          "group relative overflow-visible rounded-lg px-3 py-1.5",
+          "group relative overflow-visible rounded-lg px-3 py-1.5 animation-disabled apply-long-soft-transition duration-1000",
           isActive && "scale-[1.015]"
         )}
         style={{ contentVisibility: "auto" }}
@@ -69,7 +69,7 @@ const LyricItem = React.memo(
           <span
             key={`lyrics-highlight-${index}`}
             aria-hidden="true"
-            className="pointer-events-none absolute inset-0 max-w-full px-3 py-1.5 text-start whitespace-pre-wrap wrap-break-word tracking-[1.019]"
+            className="pointer-events-none absolute inset-0 max-w-full px-3 py-1.5 text-start whitespace-pre-wrap wrap-break-word tracking-[1.019] animation-disabled apply-long-soft-transition duration-1000"
           >
             {characters.map((character, characterIndex) => (
                 <motion.span
@@ -96,7 +96,7 @@ const LyricItem = React.memo(
               ))}
           </span>
         )}
-        <span className={cn("tracking-[1.019]", isActive ? "opacity-35" : "opacity-100")}>
+        <span className={cn("tracking-[1.019] animation-disabled apply-long-soft-transition duration-1000", isActive ? "opacity-35" : "opacity-100")}>
           {lyrics.lyrics}
         </span>
       </div>
