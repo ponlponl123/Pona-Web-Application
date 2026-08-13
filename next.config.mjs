@@ -1,8 +1,20 @@
 import pkg from "./package.json" with { type: "json" }
 
+const allowedServerActionOrigins = (
+  process.env.NEXT_SERVER_ACTIONS_ALLOWED_ORIGINS ?? ""
+)
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean)
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: "standalone",
+  experimental: {
+    serverActions: {
+      allowedOrigins: allowedServerActionOrigins,
+    },
+  },
   env: {
     NEXT_PUBLIC_APP_VERSION: pkg.version,
     NEXT_PUBLIC_DISCORD_CLIENT_ID: process.env["NEXT_PUBLIC_DISCORD_CLIENT_ID"],
