@@ -29,6 +29,8 @@ import { AnimateIcon } from '@/components/animate-ui/icons/icon';
 import { PartyPopper } from '@/components/animate-ui/icons/party-popper';
 import { AudioLines } from '@/components/animate-ui/icons/audio-lines';
 import clsx from 'clsx';
+import { AutoHeight } from '@/components/animate-ui/primitives/effects/auto-height';
+import CustomScrollArea from '@/components/ui/custom/scroll-area';
 
 interface VoiceChannelUserItem {
   id?: string;
@@ -197,8 +199,9 @@ export default function LetsPonaJoin() {
           </p>
         </div>
 
-        <div className='w-full max-h-72 px-1 py-1 overflow-y-auto scrollbar-hide'>
-          {isMemberInVC ? (
+        <CustomScrollArea className='w-full max-h-72 px-1 py-1 overflow-y-auto scrollbar-hide'>
+          <AutoHeight>
+            {isMemberInVC ? (
             <JoinVoiceChannelButton voiceChannel={isMemberInVC} />
           ) : (
             <div className='flex flex-col gap-3 items-center justify-center py-6 px-4 text-center rounded-2xl bg-muted/20 border border-border/40'>
@@ -221,7 +224,8 @@ export default function LetsPonaJoin() {
               </div>
             </div>
           )}
-        </div>
+          </AutoHeight>
+        </CustomScrollArea>
       </motion.div>
     </motion.div>
   );
