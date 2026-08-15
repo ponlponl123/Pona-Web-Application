@@ -4,7 +4,7 @@ import React from 'react';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { getCookie } from 'cookies-next';
-import { motion } from 'framer-motion';
+import { motion, type Variants, useReducedMotion } from 'framer-motion';
 import {
   FlyingSaucerIcon,
   MusicNoteSimpleIcon,
@@ -26,8 +26,23 @@ import {
   getPlaylistv1,
 } from '@/lib/server-side-api/internal/search';
 
+const pageContainer: Variants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.08, delayChildren: 0.06 } },
+};
+
+const pageItem: Variants = {
+  hidden: { opacity: 0, filter: 'blur(2px)' },
+  visible: {
+    opacity: 1,
+    filter: 'blur(0px)',
+    transition: { duration: 0.36, ease: 'easeOut' },
+  },
+};
+
 function Page() {
   const language = useAppStore((state) => state.language);
+  const prefersReducedMotion = useReducedMotion();
   const { guild } = useDiscordGuildInfo();
   const [loading, setLoading] = React.useState<boolean>(true);
   const [playlist, setPlaylist] = React.useState<
@@ -193,9 +208,14 @@ function Page() {
             )}
             <div className='absolute top-0 left-0 w-full h-full bg-linear-to-b from-transparent to-[hsl(var(--pona-app-background))] z-10' />
           </motion.div>
-          <div className='w-full z-4 p-8 flex max-lg:flex-col max-lg:gap-12 lg:gap-24 max-lg:items-center items-start lg:justify-center pb-[24vh]'>
+          <motion.div
+            variants={prefersReducedMotion ? undefined : pageContainer}
+            initial={prefersReducedMotion ? false : 'hidden'}
+            animate='visible'
+            className='w-full z-4 p-8 flex max-lg:flex-col max-lg:gap-12 lg:gap-24 max-lg:items-center items-start lg:justify-center pb-[24vh]'
+          >
             {playlist?.thumbnails && playlist.thumbnails.length > 0 && (
-              <div className='w-full max-w-xs lg:sticky lg:top-24 flex flex-col gap-2 justify-center items-start'>
+              <motion.div variants={prefersReducedMotion ? undefined : pageItem} className='w-full max-w-xs lg:sticky lg:top-24 flex flex-col gap-2 justify-center items-start'>
                 <h3 className='text-center w-full'>
                   {(playlist as AlbumFull)?.artists ? (
                     <span className='cursor-pointer text-foreground hover:underline font-medium'>
@@ -273,21 +293,22 @@ function Page() {
                     <PlayIcon weight='fill' size={20} />
                   </PlayButton>
                 </div>
-              </div>
+              </motion.div>
             )}
 
-            <div
+            <motion.div
+              variants={prefersReducedMotion ? undefined : pageContainer}
               className={`w-full ${playlist?.thumbnails && playlist.thumbnails.length > 0 ? 'max-w-lg' : 'max-w-7xl'} flex flex-col gap-4 justify-start items-center`}
             >
               {playlist &&
                 (playlist as PlaylistFull)?.tracks &&
                 (playlist as PlaylistFull).tracks.length > 0
                 ? (playlist as PlaylistFull)?.tracks?.map((video, index: number) => (
-                  <TrackList
-                    showThumbnail={true}
-                    index={index + 1}
-                    key={index}
-                    data={
+                  <motion.div variants={!prefersReducedMotion && index < 12 ? pageItem : undefined} key={index} className='w-full'>
+                    <TrackList
+                      showThumbnail={true}
+                      index={index + 1}
+                      data={
                       {
                         title: video?.title,
                         artists: video.artists,
@@ -296,8 +317,9 @@ function Page() {
                         videoId: video?.videoId,
                         duration_seconds: video?.duration_seconds,
                       } as unknown as AlbumTrack
-                    }
-                  />
+                      }
+                    />
+                  </motion.div>
                 ))
                 : playlist &&
                   (playlist as AlbumFull)?.tracks &&
@@ -306,21 +328,22 @@ function Page() {
                     playlist?.type === 'Single' ||
                     playlist?.type === 'EP')
                   ? (playlist as AlbumFull)?.tracks?.map((song, index: number) => (
-                    <TrackList
-                      index={index + 1}
-                      key={index}
-                      data={{
+                    <motion.div variants={!prefersReducedMotion && index < 12 ? pageItem : undefined} key={index} className='w-full'>
+                      <TrackList
+                        index={index + 1}
+                        data={{
                         ...song,
                         resultType: 'need-to-fetch' as 'song',
-                      }}
-                    />
+                        }}
+                      />
+                    </motion.div>
                   ))
                   : (playlist as PlaylistFullv1)?.videos?.map(
                     (video, index: number) => (
-                      <TrackList
-                        index={index + 1}
-                        key={index}
-                        data={
+                      <motion.div variants={!prefersReducedMotion && index < 12 ? pageItem : undefined} key={index} className='w-full'>
+                        <TrackList
+                          index={index + 1}
+                          data={
                           {
                             title: video?.name,
                             artists: [
@@ -334,12 +357,13 @@ function Page() {
                             videoId: video?.videoId,
                             duration_seconds: video?.duration,
                           } as AlbumTrack
-                        }
-                      />
+                          }
+                        />
+                      </motion.div>
                     )
                   )}
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </>
       ) : (
         !loading &&

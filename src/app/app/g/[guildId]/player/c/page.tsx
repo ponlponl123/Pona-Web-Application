@@ -3,6 +3,7 @@
 import React from 'react';
 import { useSearchParams } from 'next/navigation';
 import { getCookie } from 'cookies-next';
+import { motion, type Variants, useReducedMotion } from 'framer-motion';
 import { FlyingSaucerIcon } from '@phosphor-icons/react/dist/ssr';
 
 import { ArtistHero } from '@/components/music/artist/artist-hero';
@@ -20,8 +21,23 @@ import { useAppStore } from '@/store/coreStore';
 import { ArtistFull as ArtistFullv1 } from '@/types/youtube/ytmusic';
 import { ArtistFull, ProfileFull, ThumbnailFull } from '@/types/youtube/ytmusic-api';
 
+const pageContainer: Variants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.1, delayChildren: 0.06 } },
+};
+
+const pageItem: Variants = {
+  hidden: { opacity: 0, filter: 'blur(2px)' },
+  visible: {
+    opacity: 1,
+    filter: 'blur(0px)',
+    transition: { duration: 0.36, ease: 'easeOut' },
+  },
+};
+
 function Page() {
   const language = useAppStore((state) => state.language);
+  const prefersReducedMotion = useReducedMotion();
   const searchParams = useSearchParams();
   const [loading, setLoading] = React.useState<boolean>(true);
   const [ready, setReady] = React.useState<boolean>(false);
@@ -171,55 +187,67 @@ function Page() {
           <h4 className='text-sm tracking-wider'>＼（〇_ｏ）／</h4>
         </div>
       ) : (
-        <>
-          <div className='absolute z-1 bg-playground-background w-[calc(100%+6rem)] h-full top-0 left-0 -translate-x-12 -translate-y-16 max-lg:-translate-y-24'></div>
+        <motion.div variants={prefersReducedMotion ? undefined : pageContainer} initial={prefersReducedMotion ? false : 'hidden'} animate='visible' className='w-full'>
+          <div className='absolute z-1 bg-playground-background w-[calc(100%+6rem)] h-full top-0 left-0 -translate-x-12 -translate-y-16 max-lg:-translate-y-24 pointer-events-none'></div>
 
-          <ArtistHero
-            highResArtworkProxyURI={highResArtworkProxyURI}
-            artistName={artistName}
-            artistDescription={artistDescription}
-            channelId={channelId || ''}
-            artistThumbnails={artistThumbnails}
-          />
-
-          <div className='w-full z-4 p-8 max-lg:p-0 flex flex-col max-lg:gap-12 lg:gap-24 items-center justify-start pb-[24vh] -mt-12 mb-32'>
-            <ArtistTopSongs
-              channelDetail={channelDetail}
-              channelDetailv1={channelDetailv1}
+          <motion.div variants={prefersReducedMotion ? undefined : pageItem}>
+            <ArtistHero
+              highResArtworkProxyURI={highResArtworkProxyURI}
+              artistName={artistName}
+              artistDescription={artistDescription}
               channelId={channelId || ''}
-              artistName={artistName}
+              artistThumbnails={artistThumbnails}
             />
+          </motion.div>
 
-            <ArtistVideosCarousel
-              channelDetail={channelDetail}
-              channelDetailv1={channelDetailv1}
-              profileDetail={profileDetail}
-              channelId={channelId || ''}
-              artistName={artistName}
-            />
+          <motion.div variants={prefersReducedMotion ? undefined : pageContainer} className='w-full z-4 p-8 max-lg:p-0 flex flex-col max-lg:gap-12 lg:gap-24 items-center justify-start pb-[24vh] -mt-12 mb-32'>
+            <motion.div variants={prefersReducedMotion ? undefined : pageItem} className='w-full'>
+              <ArtistTopSongs
+                channelDetail={channelDetail}
+                channelDetailv1={channelDetailv1}
+                channelId={channelId || ''}
+                artistName={artistName}
+              />
+            </motion.div>
 
-            <ArtistSinglesCarousel
-              channelDetail={channelDetail}
-              channelDetailv1={channelDetailv1}
-              channelId={channelId || ''}
-              artistName={artistName}
-            />
+            <motion.div variants={prefersReducedMotion ? undefined : pageItem} className='w-full'>
+              <ArtistVideosCarousel
+                channelDetail={channelDetail}
+                channelDetailv1={channelDetailv1}
+                profileDetail={profileDetail}
+                channelId={channelId || ''}
+                artistName={artistName}
+              />
+            </motion.div>
 
-            <ArtistAlbumsCarousel
-              channelDetail={channelDetail}
-              channelDetailv1={channelDetailv1}
-              profileDetail={profileDetail}
-              channelId={channelId || ''}
-              artistName={artistName}
-            />
+            <motion.div variants={prefersReducedMotion ? undefined : pageItem} className='w-full'>
+              <ArtistSinglesCarousel
+                channelDetail={channelDetail}
+                channelDetailv1={channelDetailv1}
+                channelId={channelId || ''}
+                artistName={artistName}
+              />
+            </motion.div>
 
-            <ArtistSimilarCarousel
-              channelDetail={channelDetail}
-              channelDetailv1={channelDetailv1}
-              artistName={artistName}
-            />
-          </div>
-        </>
+            <motion.div variants={prefersReducedMotion ? undefined : pageItem} className='w-full'>
+              <ArtistAlbumsCarousel
+                channelDetail={channelDetail}
+                channelDetailv1={channelDetailv1}
+                profileDetail={profileDetail}
+                channelId={channelId || ''}
+                artistName={artistName}
+              />
+            </motion.div>
+
+            <motion.div variants={prefersReducedMotion ? undefined : pageItem} className='w-full'>
+              <ArtistSimilarCarousel
+                channelDetail={channelDetail}
+                channelDetailv1={channelDetailv1}
+                artistName={artistName}
+              />
+            </motion.div>
+          </motion.div>
+        </motion.div>
       )}
     </div>
   );

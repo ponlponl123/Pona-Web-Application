@@ -20,7 +20,6 @@ import { SearchResult as HTTP_SearchResult, TrackResultItem } from '@/types/yout
 import fetchSearchResult from '@/lib/server-side-api/internal/search';
 import { SearchResultSkeleton } from '@/components/music/skeleton';
 import { cn } from '@/lib/utils';
-import Link from 'next/link';
 
 const ORDERED_KEYS = [
   'Top result',
@@ -44,16 +43,34 @@ function TopResultCard({ track }: TopResultCardProps) {
   const params = useParams();
   const guildId = typeof params?.guildId === 'string' ? params.guildId : '';
   const trackTitle = track.title || track.name || '';
-  const isArtist = track.resultType === 'artist';
-  const finalArtists = extractArtistsFromItem(track as unknown as Record<string, unknown>);
+  const type = track.resultType?.toLowerCase();
+  const isArtist = type === 'artist';
+  const trackRecord = track as unknown as Record<string, unknown>;
+  const finalArtists = extractArtistsFromItem(trackRecord);
+  const browseId = [track.browseId, trackRecord.playlistId, trackRecord.albumId, trackRecord.id]
+    .find((id): id is string => typeof id === 'string');
+  const targetUrl = isArtist && track.artists?.[0]?.id
+    ? `/app/g/${guildId}/player/c?c=${track.artists[0].id}`
+    : (type === 'album' || type === 'single') && browseId
+      ? `/app/g/${guildId}/player/playlist?list=${browseId.endsWith('abm') ? browseId : `${browseId}abm`}`
+      : type === 'playlist' && browseId
+        ? `/app/g/${guildId}/player/playlist?list=${browseId}`
+        : null;
+
+  function handleClick(event: React.MouseEvent<HTMLDivElement>) {
+    if (targetUrl && !(event.target as HTMLElement).closest('a, button')) {
+      router.push(targetUrl);
+    }
+  }
 
   return (
-    <div className={cn(
-      'relative group/result-card w-full rounded-3xl p-4 backdrop-blur-lg bg-card/10 overflow-hidden text-card-foreground flex flex-col gap-4 items-start z-10',
-    )}>
-      {
-        isArtist && <Link href={`/app/g/${guildId}/player/c?c=${track.artists?.[0]?.id}`} className='absolute top-0 left-0 size-full' />
-      }
+    <div
+      onClick={handleClick}
+      className={cn(
+        'relative group/result-card w-full rounded-3xl p-4 backdrop-blur-lg bg-card/10 overflow-hidden text-card-foreground flex flex-col gap-4 items-start z-10',
+        targetUrl && 'cursor-pointer',
+      )}
+    >
       <div className='flex gap-4 items-center w-full'>
         <div className={cn(
           "relative size-24 object-cover pointer-events-none select-none overflow-hidden",

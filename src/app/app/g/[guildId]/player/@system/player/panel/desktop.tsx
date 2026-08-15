@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 import Image from 'next/image';
 import { useParams, usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { AnimatePresence, HTMLMotionProps, motion } from 'framer-motion';
@@ -10,6 +11,8 @@ import {
   closestCenter,
   DndContext,
   DragEndEvent,
+  DragOverlay,
+  DragStartEvent,
   KeyboardSensor,
   PointerSensor,
   useSensor,
@@ -100,15 +103,38 @@ export default function DesktopPonaPlayerPanel() {
   const videoId = currentTrack?.identifier;
   const [lyricsContainer, setLyricsContainer] = useState<HTMLDivElement | null>(null);
   const playerPos = playback;
+  const [activeQueueTrack, setActiveQueueTrack] = useState<Track | UnresolvedTrack | null>(null);
+
+  const playingNextQueue = useMemo(() => {
+    const queue = ponaTrackQueue?.queue;
+    const currentUniqueId = currentTrack?.uniqueId;
+    if (!queue) return [];
+    return queue.filter((track) => track.uniqueId !== currentUniqueId);
+  }, [ponaTrackQueue, currentTrack]);
 
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 5,
+      },
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
 
+  function handleDragStart(event: DragStartEvent) {
+    const { active } = event;
+    const track = playingNextQueue.find(
+      (t, idx) => (t.uniqueId || `track-${idx + 1}`) === active.id
+    );
+    if (track) {
+      setActiveQueueTrack(track);
+    }
+  }
+
   function handleDragEnd(event: DragEndEvent) {
+    setActiveQueueTrack(null);
     if (!ponaTrackQueue) return;
     const { active, over } = event;
     if (over && active.id !== over.id) {
@@ -129,12 +155,9 @@ export default function DesktopPonaPlayerPanel() {
     }
   }
 
-  const playingNextQueue = useMemo(() => {
-    const queue = ponaTrackQueue?.queue;
-    const currentUniqueId = currentTrack?.uniqueId;
-    if (!queue) return [];
-    return queue.filter((track) => track.uniqueId !== currentUniqueId);
-  }, [ponaTrackQueue, currentTrack]);
+  function handleDragCancel() {
+    setActiveQueueTrack(null);
+  }
 
   return (
     <AnimatePresence>
@@ -265,11 +288,34 @@ export default function DesktopPonaPlayerPanel() {
                             <span className='text-xs font-semibold text-[hsl(var(--pona-app-music-accent-color-500)/0.48)] uppercase tracking-wider px-2'>
                               {language.data.app.guilds.player.tabs.now_playing}
                             </span>
-                            <TrackQueue
-                              active={true}
-                              index={0}
-                              track={currentTrack}
-                            />
+                            <AnimatePresence mode='popLayout'>
+                              <TrackQueue
+                                key={currentTrack.uniqueId || 'now-playing'}
+                                active={true}
+                                index={0}
+                                track={currentTrack}
+                                params={{
+                                  layout: 'position',
+                                  initial: { opacity: 0, y: 12, scale: 0.98 },
+                                  animate: { opacity: 1, y: 0, scale: 1 },
+                                  exit: {
+                                    opacity: 0,
+                                    y: -10,
+                                    scale: 0.96,
+                                    filter: 'blur(4px)',
+                                    transition: { duration: 0.2 },
+                                  },
+                                  transition: {
+                                    type: 'spring',
+                                    stiffness: 400,
+                                    damping: 32,
+                                    mass: 0.6,
+                                  },
+                                  whileHover: { scale: 1.008, transition: { duration: 0.15 } },
+                                  whileTap: { scale: 0.985 },
+                                }}
+                              />
+                            </AnimatePresence>
                           </div>
                         )}
 
@@ -281,13 +327,14 @@ export default function DesktopPonaPlayerPanel() {
                             <DndContext
                               sensors={sensors}
                               collisionDetection={closestCenter}
+                              onDragStart={handleDragStart}
                               onDragEnd={handleDragEnd}
+                              onDragCancel={handleDragCancel}
                               autoScroll
                             >
                               <SortableContext
                                 items={playingNextQueue
-                                  .filter((track: Track | UnresolvedTrack) => track.uniqueId !== undefined)
-                                  .map((track: Track | UnresolvedTrack) => track.uniqueId as string)}
+                                  .map((track: Track | UnresolvedTrack, idx: number) => track.uniqueId || `track-${idx + 1}`)}
                                 strategy={verticalListSortingStrategy}
                               >
                                 {playingNextQueue.map((track: Track | UnresolvedTrack, targetIdx: number) => (
@@ -301,6 +348,7 @@ export default function DesktopPonaPlayerPanel() {
                                   />
                                 ))}
                               </SortableContext>
+                              <TrackDragOverlay track={activeQueueTrack} />
                             </DndContext>
                           </div>
                         )}
@@ -398,21 +446,25 @@ export function DraggableTrack({
   track,
   active,
   isLoading,
+  showPNPTBadge,
 }: {
   index: number;
   queueIndex?: number;
   track: Track | UnresolvedTrack;
   active: boolean;
   isLoading?: boolean;
+  showPNPTBadge?: boolean;
 }) {
-  const { attributes, listeners, setNodeRef, transform, transition } =
+  const trackId = track.uniqueId || `${showPNPTBadge ? 'pnpt' : 'track'}-${index}`;
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({
-      id: (track.uniqueId as string) || index,
+      id: trackId,
     });
 
-  const style = {
+  const style: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
-    transition,
+    transition: transition || undefined,
+    opacity: isDragging ? 0.35 : 1,
   };
 
   return (
@@ -423,20 +475,72 @@ export function DraggableTrack({
       ref={setNodeRef}
       track={track}
       isLoading={isLoading}
+      showPNPTBadge={showPNPTBadge}
       params={{
-        layout: true,
-        initial: false,
-        whileTap: {
-          outline: '2px hsl(var(--pona-app-music-accent-color-500)) solid',
-          userSelect: 'none',
-          zIndex: 24,
-        },
         style,
+        whileHover: isDragging ? undefined : { scale: 1.008, transition: { duration: 0.15 } },
+        whileTap: isDragging ? undefined : { scale: 0.985 },
         ...attributes,
         ...listeners,
       }}
-      key={index}
+      key={trackId}
     />
+  );
+}
+
+export function TrackDragPreview({
+  track,
+  showPNPTBadge,
+}: {
+  track: Track | UnresolvedTrack;
+  showPNPTBadge?: boolean;
+}) {
+  return (
+    <div className='flex size-full box-border items-center gap-4 rounded-xl bg-[hsl(var(--pona-app-music-accent-color-100))] p-1 pl-2 shadow-2xl ring-2 ring-[hsl(var(--pona-app-music-accent-color-500))] opacity-95 dark:bg-[hsl(var(--pona-app-music-accent-color-900))]'>
+      <div className='size-10 shrink-0 overflow-hidden rounded-lg'>
+        <Image
+          src={track.proxyArtworkUrl || track.artworkUrl || (track.identifier ? `/api/proxy/watch?v=${track.identifier}&s=md` : '/static/Ponlponl123 (1459).png')}
+          alt=''
+          height={40}
+          width={40}
+          unoptimized
+          className='size-10 object-cover'
+        />
+      </div>
+      <div className='min-w-0 flex-1'>
+        <p className='truncate text-sm font-medium text-[hsl(var(--pona-app-music-accent-color-800))] dark:text-[hsl(var(--pona-app-music-accent-color-500))]'>
+          {track.title}
+        </p>
+        <p className='truncate text-xs text-[hsl(var(--pona-app-music-accent-color-800))]/60 dark:text-[hsl(var(--pona-app-music-accent-color-500))]/60'>
+          {track.author}
+        </p>
+      </div>
+      {showPNPTBadge && <span className='mr-2 text-[10px] font-semibold text-[hsl(var(--pona-app-music-accent-color-500))]'>Auto</span>}
+    </div>
+  );
+}
+
+export function TrackDragOverlay({
+  track,
+  showPNPTBadge,
+}: {
+  track: Track | UnresolvedTrack | null;
+  showPNPTBadge?: boolean;
+}) {
+  if (typeof document === 'undefined') return null;
+
+  return createPortal(
+    <DragOverlay
+      adjustScale={false}
+      zIndex={1000}
+      dropAnimation={{
+        duration: 200,
+        easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)',
+      }}
+    >
+      {track ? <TrackDragPreview track={track} showPNPTBadge={showPNPTBadge} /> : null}
+    </DragOverlay>,
+    document.body,
   );
 }
 
@@ -539,6 +643,7 @@ export function TrackQueue({
   track,
   active,
   isLoading,
+  showPNPTBadge,
   ref,
   params,
 }: {
@@ -547,6 +652,7 @@ export function TrackQueue({
   track: Track | UnresolvedTrack;
   active: boolean;
   isLoading?: boolean;
+  showPNPTBadge?: boolean;
   ref?: React.Ref<HTMLDivElement>;
   params?: HTMLMotionProps<'div'>;
 }) {
@@ -563,14 +669,19 @@ export function TrackQueue({
       <ContextMenuTrigger>
         <motion.div
           ref={ref}
-          className={`w-full p-1 pl-2 flex gap-4 items-center rounded-xl group ${active
+          className={`w-full p-1 pl-2 flex gap-4 items-center rounded-xl group relative transition-colors ${active
             ? 'in-[.light]:bg-[hsl(var(--pona-app-music-accent-color-100))] in-[.dark]:bg-[hsl(var(--pona-app-music-accent-color-900)/.64)] active'
-            : ''
+            : 'hover:bg-[hsl(var(--pona-app-music-accent-color-500)/0.06)]'
             } ${isLoading ? 'pointer-events-none' : ''}`}
-          key={index}
+          key={track.uniqueId || index}
           {...params}
         >
-          <div className='flex-[0 1 auto] size-10 select-none relative overflow-hidden rounded-lg'>
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            transition={{ duration: 0.15 }}
+            className='flex-[0 1 auto] size-10 select-none relative overflow-hidden rounded-lg'
+          >
             {!isLoading ? (
               <Image
                 src={
@@ -632,7 +743,7 @@ export function TrackQueue({
                 <PlayIcon className='text-[hsl(var(--pona-app-music-accent-color-500))] size-5' weight='fill' />
               </Button>
             )}
-          </div>
+          </motion.div>
           <div
             className={`w-0 min-w-0 flex-1 ${isLoading ? 'flex flex-col gap-1' : ''
               }`}
@@ -672,6 +783,12 @@ export function TrackQueue({
               </>
             )}
           </div>
+
+          {showPNPTBadge && (
+            <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-[hsl(var(--pona-app-music-accent-color-500)/0.15)] text-[hsl(var(--pona-app-music-accent-color-500))] select-none">
+              {(language.data.app.guilds.player.tabs as Record<string, string>)?.pnpt_auto_badge || 'Auto'}
+            </span>
+          )}
 
           <div
             className={`flex-[0 1 auto] ml-auto relative w-12 h-12 flex items-center justify-center ${isLoading ? 'opacity-0 pointer-events-none' : ''
