@@ -265,6 +265,7 @@ export default function HeaderSearch({
                                   setSearchValue(searchValue)
                                   addToSearchHistory(searchValue)
                                 }}
+                                data-smooth-interaction="true"
                                 value={searchValue}
                                 variant="ghost"
                                 size="lg"
@@ -306,6 +307,7 @@ export default function HeaderSearch({
                                   onFocus={() => {
                                     setSearchValue(value)
                                   }}
+                                  data-smooth-interaction="true"
                                   value={value}
                                   variant="ghost"
                                   size="lg"
@@ -345,6 +347,7 @@ export default function HeaderSearch({
                                     setSearchValue(value)
                                     addToSearchHistory(value)
                                   }}
+                                  data-smooth-interaction="true"
                                   onFocus={() => {
                                     setSearchValue(value)
                                   }}

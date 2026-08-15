@@ -231,9 +231,11 @@ export function SubscribeButtonTrigger({
 
   return (
     <Button
+      size={"lg"}
       data-active={isSubscribed}
       variant={buttonVariant}
       className={presetClassName}
+      data-smooth-interaction="true"
       onClick={async (e) => {
         if (!accessToken || !accessTokenType) {
           if (onPress) onPress(e);

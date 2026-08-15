@@ -96,7 +96,7 @@ export default function PNPTQueueSection() {
     <div className="flex flex-col gap-2 mt-4 pt-3 border-t border-[hsl(var(--pona-app-music-accent-color-500)/0.12)]">
       <div className="flex items-center justify-between px-2 py-1 select-none">
         <div className="flex items-center gap-2">
-          <SparkleIcon className="size-4 text-[hsl(var(--pona-app-music-accent-color-500))]" />
+          <SparkleIcon weight='bold' className="size-4 text-[hsl(var(--pona-app-music-accent-color-500))]" />
           <span className="text-xs font-semibold text-[hsl(var(--pona-app-music-accent-color-500))] tracking-wider">
             {tabsLang.pnpt_toggle_label || 'Auto-continue'}
           </span>
@@ -131,6 +131,7 @@ export default function PNPTQueueSection() {
           disabled={isQueueRepeat}
           onCheckedChange={handleToggle}
           aria-label={tabsLang.pnpt_toggle_label || 'Auto-continue'}
+          data-smooth-interaction="true"
         />
       </div>
 

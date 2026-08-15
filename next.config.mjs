@@ -46,11 +46,14 @@ const nextConfig = {
   },
   async rewrites() {
     const host = process.env.PONA_APPLICATION_ENDPOINT_HOST
-    const port = process.env.NEXT_PUBLIC_PONA_APPLICATION_WS_ENDPOINT_PORT
+    const port =
+      process.env.PONA_APPLICATION_WEBSOCKET_PORT ??
+      process.env.NEXT_PUBLIC_PONA_APPLICATION_WS_ENDPOINT_PORT ??
+      String(Number(process.env.PONA_APPLICATION_ENDPOINT_PORT) + 1)
     return [
       {
         source: "/socket.io/:path*",
-        destination: `http://${host}:${port}/socket.io//:path*`,
+        destination: `http://${host}:${port}/socket.io/:path*`,
       },
     ]
   },

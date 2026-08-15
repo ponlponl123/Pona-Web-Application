@@ -337,10 +337,11 @@ function Page() {
                     }}
                   >
                     <Button
-                      variant='outline'
+                      variant='ghost'
                       size='sm'
-                      className='h-8 text-xs rounded-md border-border/60 gap-1'
+                      className='h-8 text-xs rounded-lg gap-1'
                       disabled={currentPage <= 1}
+                      data-smooth-interaction="true"
                       onClick={() => handlePageChange(currentPage - 1)}
                     >
                       <CaretLeftIcon size={14} />
@@ -357,10 +358,11 @@ function Page() {
                     }}
                   >
                     <Button
-                      variant='outline'
+                      variant='ghost'
                       size='sm'
-                      className='h-8 text-xs rounded-md border-border/60 gap-1'
+                      className='h-8 text-xs rounded-lg gap-1'
                       disabled={currentPage >= pagination.totalPages}
+                      data-smooth-interaction="true"
                       onClick={() => handlePageChange(currentPage + 1)}
                     >
                       {language.data.app.guilds.player.history.pagination?.next || 'Next'}
@@ -390,6 +392,7 @@ function Page() {
               variant='outline'
               size='sm'
               className='rounded-md border-border/60 text-xs mt-1'
+              data-smooth-interaction="true"
               onClick={() => setSearchQuery('')}
             >
               {language.data.app.guilds.player.history.no_results?.clear_search || 'Clear Search'}
@@ -413,6 +416,7 @@ function Page() {
               variant='outline'
               size='sm'
               className='rounded-md border-border/60 text-xs mt-2'
+              data-smooth-interaction="true"
               onClick={() => {
                 if (guild?.id) router.push(`/app/g/${guild.id}/player/search`);
               }}

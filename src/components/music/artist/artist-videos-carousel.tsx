@@ -76,6 +76,7 @@ export function ArtistVideosCarousel({
               variant='outline'
               size='sm'
               className='font-bold rounded-full'
+              data-smooth-interaction="true"
               onClick={async () => {
                 if (!channelId) return;
                 setFetchingVideos(true);
@@ -106,6 +107,7 @@ export function ArtistVideosCarousel({
                 size='icon'
                 className='rounded-full size-8 embla__button embla__button--prev border-2 border-foreground/10 bg-foreground/10 disabled:opacity-30'
                 type='button'
+                data-smooth-interaction="true"
               >
                 <CaretLeft className='size-4' />
               </Button>
@@ -117,6 +119,7 @@ export function ArtistVideosCarousel({
                 size='icon'
                 className='rounded-full size-8 embla__button embla__button--next border-2 border-foreground/10 bg-foreground/10 disabled:opacity-30'
                 type='button'
+                data-smooth-interaction="true"
               >
                 <CaretRight className='size-4' />
               </Button>

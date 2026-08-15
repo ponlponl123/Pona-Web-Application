@@ -138,6 +138,7 @@ export const PlayerActions = memo(function PlayerActions({
                 variant='ghost'
                 size='icon'
                 className='rounded-lg size-10 scale-110 max-md:hidden'
+                data-smooth-interaction="true"
               >
                 <AudioLines className='size-4 text-[hsl(var(--pona-app-music-accent-color-800))] dark:text-[hsl(var(--pona-app-music-accent-color-500))]' />
               </Button>
@@ -160,6 +161,7 @@ export const PlayerActions = memo(function PlayerActions({
         variant='ghost'
         size='icon'
         className='rounded-lg size-10 scale-110 max-md:hidden'
+        data-smooth-interaction="true"
         onClick={togglePopup}
       >
         <CaretUpIcon className={`absolute text-[hsl(var(--pona-app-music-accent-color-800))] dark:text-[hsl(var(--pona-app-music-accent-color-500))] ${playerPopup ? 'opacity-0 -translate-y-6' : ''}`} />

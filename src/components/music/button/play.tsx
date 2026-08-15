@@ -137,6 +137,7 @@ function PlayButton<T extends 'song' | 'playlist' = 'song'>({
             classNames?.playpause,
             className,
           )}
+          data-smooth-interaction="true"
           onClick={() => {
             if (socket && socket.connected && isSameVC) {
               const isPlaylist =

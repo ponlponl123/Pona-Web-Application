@@ -431,6 +431,7 @@ const LyricsDisplay: React.FC<LyricsDisplayProps> = ({
             <Button
               onClick={handleResumeAutoScroll}
               size="sm"
+              data-smooth-interaction="true"
               className="flex items-center gap-2 rounded-full border-2 border-[hsl(var(--pona-app-music-accent-color-500)/0.24)] bg-[hsl(var(--pona-app-music-accent-color-200)/0.64)] p-4 text-[hsl(var(--pona-app-music-accent-color-800))] shadow-xl dark:bg-[hsl(var(--pona-app-music-accent-color-800)/0.64)] dark:text-[hsl(var(--pona-app-music-accent-color-500))]"
             >
               <ArrowsDownUpIcon className="size-4 animate-pulse" />

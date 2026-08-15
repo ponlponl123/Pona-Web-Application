@@ -83,6 +83,7 @@ export function ArtistSinglesCarousel({
                 size='icon'
                 className='rounded-full size-8 embla__button embla__button--prev border-2 border-foreground/10 bg-foreground/10 disabled:opacity-30'
                 type='button'
+                data-smooth-interaction="true"
               >
                 <CaretLeft className='size-4' />
               </Button>
@@ -94,6 +95,7 @@ export function ArtistSinglesCarousel({
                 size='icon'
                 className='rounded-full size-8 embla__button embla__button--next border-2 border-foreground/10 bg-foreground/10 disabled:opacity-30'
                 type='button'
+                data-smooth-interaction="true"
               >
                 <CaretRight className='size-4' />
               </Button>
@@ -127,6 +129,7 @@ export function ArtistSinglesCarousel({
                   variant='outline'
                   size='sm'
                   className='font-bold rounded-full'
+                  data-smooth-interaction="true"
                 >
                   {language.data.app.guilds.player.artist.showmore}
                 </Button>
@@ -140,6 +143,7 @@ export function ArtistSinglesCarousel({
                 size='icon'
                 className='rounded-full size-8 embla__button embla__button--prev border-2 border-foreground/10 bg-foreground/10 disabled:opacity-30'
                 type='button'
+                data-smooth-interaction="true"
               >
                 <CaretLeft className='size-4' />
               </Button>
@@ -151,6 +155,7 @@ export function ArtistSinglesCarousel({
                 size='icon'
                 className='rounded-full size-8 embla__button embla__button--next border-2 border-foreground/10 bg-foreground/10 disabled:opacity-30'
                 type='button'
+                data-smooth-interaction="true"
               >
                 <CaretRight className='size-4' />
               </Button>

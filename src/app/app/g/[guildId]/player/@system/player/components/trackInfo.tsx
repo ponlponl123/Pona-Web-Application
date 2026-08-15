@@ -84,6 +84,7 @@ export const PlayerTrackInfo = memo(function PlayerTrackInfo({
                 href={currentTrack.uri}
                 className='size-3 text-[hsl(var(--pona-app-music-accent-color-800))] dark:text-[hsl(var(--pona-app-music-accent-color-500))] hover:underline'
                 target='_blank'
+                data-smooth-interaction="true"
               >
                 <SquareArrowOutUpRightIcon size={12} />
               </Link>

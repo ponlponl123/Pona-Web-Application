@@ -113,6 +113,7 @@ export function ArtistTopSongs({
                   variant='outline'
                   size='sm'
                   className='font-bold rounded-full'
+                  data-smooth-interaction="true"
                 >
                   {language.data.app.guilds.player.artist.showmore}
                 </Button>

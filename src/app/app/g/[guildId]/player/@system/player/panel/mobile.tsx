@@ -581,6 +581,7 @@ export default function MobilePonaPlayerPanel({
                             playerPosition={playback}
                             currentTrack={currentTrack as Track}
                             lyricsProvider={lyricsContainer}
+                            isPlaying={!ponaCommonState?.pona.paused}
                           />
                         ) : (
                           <div className='w-full text-center pb-[8vh]'>

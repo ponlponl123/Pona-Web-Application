@@ -67,6 +67,7 @@ export function HomeFeedSection<T>({
                 type='button'
                 variant='ghost'
                 size='icon'
+                data-smooth-interaction="true"
               >
                 <CaretLeftIcon />
               </Button>
@@ -78,6 +79,7 @@ export function HomeFeedSection<T>({
                 type='button'
                 variant='ghost'
                 size='icon'
+                data-smooth-interaction="true"
               >
                 <CaretRightIcon />
               </Button>

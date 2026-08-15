@@ -54,6 +54,7 @@ function MusicCard({ track, className }: MusicCardProps) {
               title: track?.title || '',
               uri: track?.uri || '',
             }}
+            className='rounded-3xl'
           />
         </div>
         <h1 className='w-full text-lg whitespace-nowrap overflow-hidden text-ellipsis text-start font-medium'>
@@ -120,7 +121,7 @@ export function VideoCard({ video, className }: VideoCardProps) {
         </h1>
         <div className='w-full text-xs text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis text-start'>
           {combineArtistName(formattedArtists, true, router, {
-            className: 'hover:underline text-muted-foreground',
+            className: 'text-muted-foreground',
           })}
         </div>
       </div>
@@ -169,7 +170,7 @@ export function AlbumCard({ album, className }: AlbumCardProps) {
           </div>
           <div className='flex flex-col p-2 max-w-full text-left'>
             <h1
-              className='w-full text-lg whitespace-nowrap overflow-hidden text-ellipsis text-start font-medium cursor-pointer hover:underline'
+              className='w-full text-lg whitespace-nowrap overflow-hidden text-ellipsis text-start font-medium cursor-pointer'
               onClick={() => {
                 if (href && href !== '#') router.push(href);
               }}
@@ -178,7 +179,7 @@ export function AlbumCard({ album, className }: AlbumCardProps) {
             </h1>
             <div className='w-full text-xs text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis text-start'>
               {combineArtistName(formattedArtists, true, router, {
-                className: 'hover:underline text-muted-foreground',
+                className: 'text-muted-foreground',
               })}
             </div>
           </div>
@@ -228,7 +229,7 @@ export function PlaylistCard({ playlist, className }: PlaylistCardProps) {
           </div>
           <div className='flex flex-col p-2 max-w-full text-left'>
             <h1
-              className='w-full text-lg whitespace-nowrap overflow-hidden text-ellipsis text-start font-medium cursor-pointer hover:underline'
+              className='w-full text-lg whitespace-nowrap overflow-hidden text-ellipsis text-start font-medium cursor-pointer'
               onClick={() => {
                 if (href && href !== '#') router.push(href);
               }}
@@ -237,7 +238,7 @@ export function PlaylistCard({ playlist, className }: PlaylistCardProps) {
             </h1>
             <div className='w-full text-xs text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis text-start'>
               {combineArtistName(artistItem, true, router, {
-                className: 'hover:underline text-muted-foreground',
+                className: 'text-muted-foreground',
               })}
             </div>
           </div>
@@ -265,6 +266,7 @@ export function ArtistCard({ artist, guildId, className }: ArtistCardProps) {
       <Button
         variant='ghost'
         className={cn('min-h-max min-w-max w-max h-max p-4 rounded-[2rem] hover:bg-muted/50 cursor-pointer group-hover:scale-[1.02] transition-transform duration-200', className)}
+        data-smooth-interaction="true"
       >
         <div className='music-card w-48' aria-label={artist?.name}>
           <div className='flex flex-col items-center justify-center gap-3 w-full'>

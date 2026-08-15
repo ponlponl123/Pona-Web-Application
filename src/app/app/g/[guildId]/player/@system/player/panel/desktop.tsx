@@ -229,18 +229,21 @@ export default function DesktopPonaPlayerPanel() {
                 <TabsList className='w-lg max-w-lg justify-start rounded-none bg-transparent p-0 gap-4' highlightClassname='border-none!'>
                   <TabsTrigger
                     value='next'
+                    data-smooth-interaction="true"
                     className='rounded-none data-[state=active]:bg-transparent data-[state=active]:text-[hsl(var(--pona-app-music-accent-color-500))]'
                   >
                     {language.data.app.guilds.player.tabs.next}
                   </TabsTrigger>
                   <TabsTrigger
                     value='lyrics'
+                    data-smooth-interaction="true"
                     className='rounded-none data-[state=active]:bg-transparent data-[state=active]:text-[hsl(var(--pona-app-music-accent-color-500))]'
                   >
                     {language.data.app.guilds.player.tabs.lyrics}
                   </TabsTrigger>
                   <TabsTrigger
                     value='related'
+                    data-smooth-interaction="true"
                     className='rounded-none data-[state=active]:bg-transparent data-[state=active]:text-[hsl(var(--pona-app-music-accent-color-500))]'
                   >
                     {language.data.app.guilds.player.tabs.related}
@@ -340,6 +343,7 @@ export default function DesktopPonaPlayerPanel() {
                               playerPosition={playerPos}
                               currentTrack={currentTrack as Track}
                               lyricsProvider={lyricsContainer}
+                              isPlaying={!ponaCommonState?.pona.paused}
                             />
                           ) : (
                             <div className='w-full text-center pb-[8vh]'>

@@ -1,7 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
-import clsx from 'clsx';
 
 import {
   ArtistDetailed,
@@ -13,6 +12,7 @@ import {
   AlbumDetailed,
 } from '@/types/youtube/ytmusic';
 import { SubscribedChannelsResult } from '@/lib/server-side-api/internal/channel';
+import { cn } from './utils';
 
 export interface CombineArtistNameOptions {
   className?: string;
@@ -74,7 +74,8 @@ export function combineArtistName(
                   router.push(href);
                 }
               }}
-              className={clsx('cursor-pointer hover:underline text-foreground', options?.className)}
+              data-smooth-interaction="true"
+              className={cn('cursor-pointer text-foreground', options?.className)}
             >
               {cleanName}
             </Link>

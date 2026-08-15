@@ -217,7 +217,7 @@ function Header() {
                     size="small"
                     variant="primary"
                     effect="confetti"
-                    className="max-md:hidden z-10"
+                    className="max-md:hidden z-50"
                     onClick={() => {
                       setNavOpened(false)
                     }}

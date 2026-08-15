@@ -48,12 +48,9 @@ import {
   settingLayoutIdAtom,
 } from "@/store/uiAtoms"
 import { ponaCommonStateAtom } from "@/store/musicAtoms"
-
-const variants = {
-  hidden: { opacity: 0, x: -12, y: 0 },
-  enter: { opacity: 1, x: 0, y: 0 },
-  exit: { opacity: 0, x: 12, y: 0 },
-}
+import { PanelLeftOpenIcon } from "../animate-ui/icons/panel-left-open"
+import { PanelLeftCloseIcon } from "../animate-ui/icons/panel-left-close"
+import { AnimateIcon } from "../animate-ui/icons/icon"
 
 interface SidebarProps {
   userInfo: UserInfo
@@ -166,14 +163,14 @@ function Sidebar({
   return (
     <main
       className={cn(
-        `scrollbar disable-default-transition apply-long-soft-transition duration-700! max-md:h-full`,
+        `disable-default-transition apply-long-soft-transition scrollbar duration-700! max-md:h-full`,
         !nav
           ? cn(
-            isCollapsed
-              ? "w-12 max-w-12 min-w-12 p-1"
-              : "w-48 max-w-48 min-w-48 p-2",
-            `relative flex h-screen flex-col gap-2 pt-20 max-md:hidden`
-          )
+              isCollapsed
+                ? "w-12 max-w-12 min-w-12 p-1"
+                : "w-48 max-w-48 min-w-48 p-2",
+              `relative flex h-screen flex-col gap-2 pt-20 max-md:hidden`
+            )
           : "flex w-full flex-col gap-2 md:hidden"
       )}
     >
@@ -259,7 +256,7 @@ function Sidebar({
                           <TooltipTrigger
                             delay={300}
                             render={
-                              <h1 className="min-w-0 flex-1 overflow-hidden text-start text-sm overflow-ellipsis whitespace-nowrap max-md:pl-1" />
+                              <h1 className="min-w-0 flex-1 overflow-hidden text-start text-sm text-ellipsis whitespace-nowrap max-md:pl-1" />
                             }
                           >
                             {guild.name}
@@ -293,7 +290,7 @@ function Sidebar({
                       href: `/app/g/${guild.id}/player/history`,
                       name: language.data.app.guilds.player.history.title,
                       icon: ClockCounterClockwiseIcon,
-                      delay: 0.20,
+                      delay: 0.2,
                     },
                     {
                       href: `/app/g/${guild.id}/player/playlists`,
@@ -356,7 +353,7 @@ function Sidebar({
                           <TooltipTrigger
                             delay={300}
                             render={
-                              <h1 className="min-w-0 flex-1 overflow-hidden text-start text-sm overflow-ellipsis whitespace-nowrap max-md:pl-1" />
+                              <h1 className="min-w-0 flex-1 overflow-hidden text-start text-sm text-ellipsis whitespace-nowrap max-md:pl-1" />
                             }
                           >
                             {guild.name}
@@ -428,7 +425,7 @@ function Sidebar({
                             {section.title}
                             <CaretDownIcon
                               weight="bold"
-                              className="size-3 group-data-open/collapsible:rotate-180 transition-transform duration-200"
+                              className="size-3 transition-transform duration-200 group-data-open/collapsible:rotate-180"
                             />
                           </div>
                         </CollapsibleTrigger>
@@ -499,87 +496,81 @@ function Sidebar({
 
       {!nav && <div className="mt-auto"></div>}
 
-      <div
-        className={clsx(
-          "flex gap-0.5!",
-          !sidebarCollapsed ? "flex-row!" : "flex-col"
-        )}
-      >
-        <AnimatePresence mode="wait">
-          <motion.main
-            variants={variants}
-            initial="hidden"
-            exit="exit"
-            animate="enter"
-            transition={{ type: "tween", duration: 0.12 }}
-            key={"Bottom-Menu" + sidebarCollapsed}
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.div
+          key={"bottom-menu-" + sidebarCollapsed}
+          initial={{ opacity: 0, filter: "blur(6px)" }}
+          animate={{ opacity: 1, filter: "blur(0px)" }}
+          exit={{ opacity: 0, filter: "blur(6px)" }}
+          transition={{ duration: 0.16 }}
+          className={clsx(
+            "flex gap-0.5!",
+            !sidebarCollapsed ? "flex-row!" : "flex-col"
+          )}
+        >
+          <motion.div
+            className="w-full"
+            layoutId={
+              "setting-modal-by-app-sidebar-iscollapsed-" + sidebarCollapsed
+            }
           >
-            <motion.div
-              layoutId={
-                "setting-modal-by-app-sidebar-iscollapsed-" + sidebarCollapsed
-              }
-            >
-              <ActivationLink
-                className={cn("w-full", isSettingModalOpen && "invisible")}
-                iconOnly={canCollapsed && sidebarCollapsed}
-                onClick={() => {
-                  ; (setSettingLayoutId(
-                    "setting-modal-by-app-sidebar-iscollapsed-" +
+            <ActivationLink
+              className={cn("w-full hover:*:first:rotate-15 *:apply-long-soft-transition *:duration-1000", isSettingModalOpen && "invisible")}
+              iconOnly={canCollapsed && sidebarCollapsed}
+              onClick={() => {
+                setSettingLayoutId(
+                  "setting-modal-by-app-sidebar-iscollapsed-" +
                     sidebarCollapsed
-                  ),
-                    setIsSettingModalOpen(true),
-                    setNavActive?.(false))
-                }}
-                icon={GearIcon}
-              >
-                {language.data.app.setting.name}
-              </ActivationLink>
-            </motion.div>
-          </motion.main>
-        </AnimatePresence>
-
-        {canCollapsed && (
-          <Tooltip>
-            <TooltipTrigger
-              render={
-                <Button
-                  className={cn(
-                    "flex items-center justify-center! rounded-lg bg-transparent hover:bg-foreground/10 dark:hover:bg-foreground/5",
-                    sidebarCollapsed && "size-10"
-                  )}
-                  size="icon-lg"
-                  onClick={() => {
-                    setSidebarCollapsed((prev) => {
-                      const newState = !prev
-                      if (onCollapsed) onCollapsed(newState)
-                      return newState
-                    })
-                    setUserSetting({
-                      ...userSetting,
-                      isSidebarCollapsed: !sidebarCollapsed,
-                    })
-                  }}
-                  data-smooth-interaction="true"
-                />
-              }
+                )
+                setIsSettingModalOpen(true)
+                setNavActive?.(false)
+              }}
+              icon={GearIcon}
             >
-              <CaretLineLeftIcon
-                className={clsx(
-                  "block",
-                  sidebarCollapsed
-                    ? "rotate-180 text-foreground"
-                    : "rotate-0 text-foreground"
-                )}
-                size={16}
-                weight="bold"
-              />
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Collapse sidebar</p>
-            </TooltipContent>
-          </Tooltip>
-        )}
-      </div>
+              {language.data.app.setting.name}
+            </ActivationLink>
+          </motion.div>
+
+          {canCollapsed && (
+            <Tooltip>
+              <AnimateIcon animateOnHover>
+                <TooltipTrigger
+                  render={
+                    <Button
+                      className={cn(
+                        "flex items-center justify-center! rounded-lg bg-transparent hover:bg-foreground/10 dark:hover:bg-foreground/5",
+                        sidebarCollapsed && "size-10"
+                      )}
+                      size="icon-lg"
+                      onClick={() => {
+                        setSidebarCollapsed((prev) => {
+                          const newState = !prev
+                          if (onCollapsed) onCollapsed(newState)
+                          return newState
+                        })
+                        setUserSetting({
+                          ...userSetting,
+                          isSidebarCollapsed: !sidebarCollapsed,
+                        })
+                      }}
+                      data-smooth-interaction="true"
+                    />
+                  }
+                >
+                  {sidebarCollapsed ? (
+                    <PanelLeftOpenIcon />
+                  ) : (
+                    <PanelLeftCloseIcon />
+                  )}
+                </TooltipTrigger>
+              </AnimateIcon>
+              <TooltipContent>
+                <p>Collapse sidebar</p>
+              </TooltipContent>
+            </Tooltip>
+          )}
+        </motion.div>
+      </AnimatePresence>
     </main>
   )
 }

@@ -171,6 +171,7 @@ const CarouselButtons = memo(
         size='icon'
         className='rounded-full size-8 embla__button embla__button--prev border-2 border-foreground/10 bg-foreground/10 disabled:opacity-30'
         type='button'
+        data-smooth-interaction="true"
       >
         <CaretLeftIcon className='size-4' />
       </Button>
@@ -182,6 +183,7 @@ const CarouselButtons = memo(
         size='icon'
         className='rounded-full size-8 embla__button embla__button--next border-2 border-foreground/10 bg-foreground/10 disabled:opacity-30'
         type='button'
+        data-smooth-interaction="true"
       >
         <CaretRightIcon className='size-4' />
       </Button>

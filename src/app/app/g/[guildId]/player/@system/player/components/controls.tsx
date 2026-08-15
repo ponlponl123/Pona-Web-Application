@@ -109,6 +109,7 @@ export const PlayerControls = memo(function PlayerControls({
         variant='ghost'
         size='icon'
         className='rounded-full size-10 scale-110 max-lg:scale-100 max-md:hidden'
+        data-smooth-interaction="true"
         onClick={handlePrevious}
       >
         <CaretLineLeftIcon weight='fill' className='size-5 text-[hsl(var(--pona-app-music-accent-color-800))] dark:text-[hsl(var(--pona-app-music-accent-color-500))]' />
@@ -118,6 +119,7 @@ export const PlayerControls = memo(function PlayerControls({
           variant='ghost'
           size='icon'
           className='rounded-full size-12 scale-125 max-lg:scale-100'
+          data-smooth-interaction="true"
           onClick={handlePause}
         >
           <PauseIcon weight='fill' className='size-6 text-[hsl(var(--pona-app-music-accent-color-800))] dark:text-[hsl(var(--pona-app-music-accent-color-500))]' />
@@ -127,6 +129,7 @@ export const PlayerControls = memo(function PlayerControls({
           variant='ghost'
           size='icon'
           className='rounded-full size-12 scale-125 max-lg:scale-100'
+          data-smooth-interaction="true"
           onClick={handlePlay}
         >
           <PlayIcon weight='fill' className='size-6 text-[hsl(var(--pona-app-music-accent-color-800))] dark:text-[hsl(var(--pona-app-music-accent-color-500))]' />
@@ -136,6 +139,7 @@ export const PlayerControls = memo(function PlayerControls({
         variant='ghost'
         size='icon'
         className='rounded-full size-10 scale-110 max-lg:scale-100 max-md:hidden'
+        data-smooth-interaction="true"
         onClick={handleNext}
       >
         <CaretLineRightIcon weight='fill' className='size-5 text-[hsl(var(--pona-app-music-accent-color-800))] dark:text-[hsl(var(--pona-app-music-accent-color-500))]' />
