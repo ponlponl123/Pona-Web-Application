@@ -3,6 +3,7 @@
 import React, { memo, useCallback } from 'react';
 import { toast } from 'sonner';
 import { Socket } from 'socket.io-client';
+import { motion } from 'framer-motion';
 import {
   CaretLineLeftIcon,
   CaretLineRightIcon,
@@ -76,7 +77,10 @@ export const PlayerControls = memo(function PlayerControls({
 
   if (isMobile) {
     return (
-      <div className='flex items-center justify-center gap-4 w-16'>
+      <motion.div
+        layoutId="pona-mobile-player-play-btn"
+        className='flex items-center justify-end gap-4 w-16'
+      >
         {!isPaused ? (
           <Button
             variant='ghost'
@@ -84,7 +88,7 @@ export const PlayerControls = memo(function PlayerControls({
             className='rounded-full size-10'
             onClick={handlePause}
           >
-            <PauseIcon weight='fill' className='size-5' />
+            <PauseIcon weight='fill' className='size-5 text-default-foreground' />
           </Button>
         ) : (
           <Button
@@ -93,10 +97,10 @@ export const PlayerControls = memo(function PlayerControls({
             className='rounded-full size-10'
             onClick={handlePlay}
           >
-            <PlayIcon weight='fill' className='size-5' />
+            <PlayIcon weight='fill' className='size-5 text-default-foreground' />
           </Button>
         )}
-      </div>
+      </motion.div>
     );
   }
 

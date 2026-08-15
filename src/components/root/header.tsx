@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from "react"
+import React from "react"
 import PonaIcon from "@/../public/static/flower.png"
 import MyButton from "@/components/ui/custom/button"
 import { useDiscordGuildInfo } from "@/contexts/discordGuildInfo"
@@ -53,17 +53,20 @@ function Header() {
     <motion.header
       className={cn(
         `nav-opened-${navOpened}`,
-        "pona-header flex h-20 w-full items-center justify-center gap-3 p-6 px-8 max-md:px-3",
+        "pona-header z-40 flex h-20 w-full items-center justify-center gap-3 p-6 px-8 max-md:px-3",
         isApp && "md:px-2",
         !isIndex && !isMusicApp && "max-md:backdrop-blur-md",
         !isIndex &&
         isMusicApp &&
-        "max-md:[body.pona-app-music-scrolled_&]:bg-playground-background/40 apply-soft-transition border-b-2 border-foreground/0 bg-transparent duration-1000! max-md:[body.pona-app-music-scrolled_&]:border-foreground/10 max-md:[body.pona-app-music-scrolled_&]:backdrop-blur-md",
+        "max-md:[body.pona-app-music-scrolled_&]:bg-playground-background/40 transition-[background-color,border-color] border-b-2 border-foreground/0 bg-transparent duration-500 max-md:[body.pona-app-music-scrolled_&]:border-foreground/10 max-md:[body.pona-app-music-scrolled_&]:backdrop-blur-md transform-gpu",
         !isIndex &&
         isMemberInVC &&
         isSameVC &&
-        "max-md:[body.pona-player-focused_&]:pointer-events-none max-md:[body.pona-player-focused_&]:opacity-0"
+        "max-md:[body.pona-player-focused_&]:pointer-events-none max-md:[body.pona-player-focused_&]:opacity-0 max-md:[opacity:calc(1-var(--player-drag-prog,0))]"
       )}
+      style={{
+        willChange: isMusicApp ? "opacity" : undefined,
+      }}
       initial={isIndex && { y: "-100%", opacity: 0 }}
       animate={isIndex && { y: 0, opacity: 1 }}
       transition={{ duration: 0.16, delay: 6 }}

@@ -18,6 +18,14 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/animate-ui/components/radix/dialog';
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerFooter,
+} from '@/components/ui/drawer';
+import { useMediaQuery } from '@heroui/react';
 import PlayPauseButton from './playPause';
 
 import {
@@ -47,6 +55,9 @@ function PlayButton<T extends 'song' | 'playlist' = 'song'>({
 }: PlayButtonProps<T>) {
   const { socket } = useSocket();
   const language = useAppStore((state) => state.language);
+  const isMobileStore = useAppStore((state) => state.isMobile);
+  const isSmallScreen = useMediaQuery('(max-width: 760px)');
+  const isMobile = isMobileStore || isSmallScreen;
   const isSameVC = useAtomValue(isSameVCAtom);
   const ponaCommonState = useAtomValue(ponaCommonStateAtom);
 
@@ -187,76 +198,163 @@ function PlayButton<T extends 'song' | 'playlist' = 'song'>({
         </Button>
       )}
 
-      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className='sm:max-w-xs' showCloseButton={false}>
-          <DialogHeader>
-            <DialogTitle className='flex items-center gap-2'>
-              <AnimateIcon animate>
-                <Plus className={"size-5"} />
-              </AnimateIcon>
-              {language.data.app.guilds.player.music_card.action.add_to_queue.title}
-            </DialogTitle>
-          </DialogHeader>
-          <div className='flex flex-col gap-1 py-2'>
-            <h1 className='font-medium text-foreground'>{detail.title}</h1>
-            <span className='text-xs text-muted-foreground'>{detail.author}</span>
-          </div>
-          <DialogFooter className='flex items-center gap-1 mt-2'>
-            <Button
-              variant='outline'
-              onClick={() => setIsModalOpen(false)}
-              className={"rounded-md"}
-            >
-              {language.data.app.guilds.player.music_card.action.add_to_queue.close}
-            </Button>
-            <Button
-              onClick={() => {
-                addToQueue();
-                setIsModalOpen(false);
-              }}
-              className={"rounded-md"}
-            >
-              {language.data.app.guilds.player.music_card.action.add_to_queue.add}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {isMobile ? (
+        <>
+          <Drawer
+            open={isModalOpen}
+            onOpenChange={setIsModalOpen}
+            modal
+            swipeDirection="down"
+          >
+            <DrawerContent className="rounded-t-3xl border-t border-border bg-background/95 backdrop-blur-xl">
+              <DrawerHeader className="pt-4 text-left">
+                <DrawerTitle className="flex items-center gap-2">
+                  <AnimateIcon animate>
+                    <Plus className="size-5" />
+                  </AnimateIcon>
+                  {language.data.app.guilds.player.music_card.action.add_to_queue.title}
+                </DrawerTitle>
+              </DrawerHeader>
+              <div className="flex flex-col gap-1 px-4 py-2">
+                <h1 className="font-medium text-foreground">{detail.title}</h1>
+                <span className="text-xs text-muted-foreground">{detail.author}</span>
+              </div>
+              <DrawerFooter className="flex flex-row items-center justify-end gap-2 p-4 pt-2">
+                <Button
+                  variant="outline"
+                  onClick={() => setIsModalOpen(false)}
+                  className="rounded-xl flex-1"
+                >
+                  {language.data.app.guilds.player.music_card.action.add_to_queue.close}
+                </Button>
+                <Button
+                  onClick={() => {
+                    addToQueue();
+                    setIsModalOpen(false);
+                  }}
+                  className="rounded-xl flex-1"
+                >
+                  {language.data.app.guilds.player.music_card.action.add_to_queue.add}
+                </Button>
+              </DrawerFooter>
+            </DrawerContent>
+          </Drawer>
 
-      <Dialog open={isDuplicateModalOpen} onOpenChange={setIsDuplicateModalOpen}>
-        <DialogContent className='sm:max-w-xs' showCloseButton={false}>
-          <DialogHeader>
-            <DialogTitle className='flex items-center gap-2'>
-              <AnimateIcon animate>
-                <Plus className={"size-5"} />
-              </AnimateIcon>
-              {language.data.app.guilds.player.music_card.action.add_duplicated_track_to_queue.title}
-            </DialogTitle>
-          </DialogHeader>
-          <div className='flex flex-col gap-1 py-2'>
-            <h1 className='font-medium text-foreground'>{detail.title}</h1>
-            <span className='text-xs text-muted-foreground'>{detail.author}</span>
-          </div>
-          <DialogFooter className='flex items-center gap-1 mt-2'>
-            <Button
-              variant='outline'
-              onClick={() => setIsDuplicateModalOpen(false)}
-              className={"rounded-md"}
-            >
-              {language.data.app.guilds.player.music_card.action.add_duplicated_track_to_queue.close}
-            </Button>
-            <Button
-              variant='destructive'
-              onClick={() => {
-                addToQueue();
-                setIsDuplicateModalOpen(false);
-              }}
-              className={"rounded-md"}
-            >
-              {language.data.app.guilds.player.music_card.action.add_duplicated_track_to_queue.add}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          <Drawer
+            open={isDuplicateModalOpen}
+            onOpenChange={setIsDuplicateModalOpen}
+            modal
+            swipeDirection="down"
+          >
+            <DrawerContent className="rounded-t-3xl border-t border-border bg-background/95 backdrop-blur-xl">
+              <DrawerHeader className="pt-4 text-left">
+                <DrawerTitle className="flex items-center gap-2">
+                  <AnimateIcon animate>
+                    <Plus className="size-5" />
+                  </AnimateIcon>
+                  {language.data.app.guilds.player.music_card.action.add_duplicated_track_to_queue.title}
+                </DrawerTitle>
+              </DrawerHeader>
+              <div className="flex flex-col gap-1 px-4 py-2">
+                <h1 className="font-medium text-foreground">{detail.title}</h1>
+                <span className="text-xs text-muted-foreground">{detail.author}</span>
+              </div>
+              <DrawerFooter className="flex flex-row items-center justify-end gap-2 p-4 pt-2">
+                <Button
+                  variant="outline"
+                  onClick={() => setIsDuplicateModalOpen(false)}
+                  className="rounded-xl flex-1"
+                >
+                  {language.data.app.guilds.player.music_card.action.add_duplicated_track_to_queue.close}
+                </Button>
+                <Button
+                  variant="destructive"
+                  onClick={() => {
+                    addToQueue();
+                    setIsDuplicateModalOpen(false);
+                  }}
+                  className="rounded-xl flex-1"
+                >
+                  {language.data.app.guilds.player.music_card.action.add_duplicated_track_to_queue.add}
+                </Button>
+              </DrawerFooter>
+            </DrawerContent>
+          </Drawer>
+        </>
+      ) : (
+        <>
+          <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+            <DialogContent className='sm:max-w-xs' showCloseButton={false}>
+              <DialogHeader>
+                <DialogTitle className='flex items-center gap-2'>
+                  <AnimateIcon animate>
+                    <Plus className={"size-5"} />
+                  </AnimateIcon>
+                  {language.data.app.guilds.player.music_card.action.add_to_queue.title}
+                </DialogTitle>
+              </DialogHeader>
+              <div className='flex flex-col gap-1 py-2'>
+                <h1 className='font-medium text-foreground'>{detail.title}</h1>
+                <span className='text-xs text-muted-foreground'>{detail.author}</span>
+              </div>
+              <DialogFooter className='flex items-center gap-1 mt-2'>
+                <Button
+                  variant='outline'
+                  onClick={() => setIsModalOpen(false)}
+                  className={"rounded-md"}
+                >
+                  {language.data.app.guilds.player.music_card.action.add_to_queue.close}
+                </Button>
+                <Button
+                  onClick={() => {
+                    addToQueue();
+                    setIsModalOpen(false);
+                  }}
+                  className={"rounded-md"}
+                >
+                  {language.data.app.guilds.player.music_card.action.add_to_queue.add}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          <Dialog open={isDuplicateModalOpen} onOpenChange={setIsDuplicateModalOpen}>
+            <DialogContent className='sm:max-w-xs' showCloseButton={false}>
+              <DialogHeader>
+                <DialogTitle className='flex items-center gap-2'>
+                  <AnimateIcon animate>
+                    <Plus className={"size-5"} />
+                  </AnimateIcon>
+                  {language.data.app.guilds.player.music_card.action.add_duplicated_track_to_queue.title}
+                </DialogTitle>
+              </DialogHeader>
+              <div className='flex flex-col gap-1 py-2'>
+                <h1 className='font-medium text-foreground'>{detail.title}</h1>
+                <span className='text-xs text-muted-foreground'>{detail.author}</span>
+              </div>
+              <DialogFooter className='flex items-center gap-1 mt-2'>
+                <Button
+                  variant='outline'
+                  onClick={() => setIsDuplicateModalOpen(false)}
+                  className={"rounded-md"}
+                >
+                  {language.data.app.guilds.player.music_card.action.add_duplicated_track_to_queue.close}
+                </Button>
+                <Button
+                  variant='destructive'
+                  onClick={() => {
+                    addToQueue();
+                    setIsDuplicateModalOpen(false);
+                  }}
+                  className={"rounded-md"}
+                >
+                  {language.data.app.guilds.player.music_card.action.add_duplicated_track_to_queue.add}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </>
+      )}
     </>
   );
 }

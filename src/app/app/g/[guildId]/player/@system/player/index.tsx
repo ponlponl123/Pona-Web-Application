@@ -1,13 +1,12 @@
 'use client';
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, useMotionValue, useMotionValueEvent, useTransform, animate } from 'framer-motion';
 import { useAtom, useAtomValue } from 'jotai';
-import { CaretDownIcon, CaretUpIcon } from '@phosphor-icons/react/dist/ssr';
+import { useMediaQuery } from 'react-responsive';
 
-import { Button } from '@/components/ui/button';
 import { useSocket } from '@/contexts/ponaMusicContext';
 import { useAppStore } from '@/store/coreStore';
 import { playbackAtom, ponaCommonStateAtom } from '@/store/musicAtoms';
@@ -35,13 +34,14 @@ export default function PonaPlayer({ isMobileOverride }: { isMobileOverride?: bo
   const language = useAppStore((state) => state.language);
   const userSetting = useAppStore((state) => state.userSetting);
   const isMobileStore = useAppStore((state) => state.isMobile);
+  const isSmallScreen = useMediaQuery({ maxWidth: 768 });
 
   const ponaCommonState = useAtomValue(ponaCommonStateAtom);
   const playback = useAtomValue(playbackAtom);
   const [playerPopup, setPlayerPopup] = useAtom(playerPopupAtom);
   const { socket } = useSocket();
 
-  const isMobile = isMobileOverride ?? isMobileStore;
+  const isMobile = isMobileOverride ?? (isMobileStore || isSmallScreen);
   const currentTrack = ponaCommonState?.current;
 
   const [sliderValue, setSliderValue] = useState<number>(playback);
@@ -66,7 +66,7 @@ export default function PonaPlayer({ isMobileOverride }: { isMobileOverride?: bo
     if (!playerPopup || !currentTrack) {
       document.body.classList.remove('pona-player-focused');
     }
-  }, [currentTrack, playerPopup, (setPlayerPopup || "")]);
+  }, [currentTrack, playerPopup, setPlayerPopup]);
 
   const handleSeek = useCallback(
     (val: number) => {
@@ -106,6 +106,89 @@ export default function PonaPlayer({ isMobileOverride }: { isMobileOverride?: bo
     [isMobile, setPlayerPopup]
   );
 
+  const [viewportH, setViewportH] = useState(800);
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    setViewportH(window.innerHeight);
+    const onResize = () => setViewportH(window.innerHeight);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
+  const dragProgress = useMotionValue(0);
+
+  useEffect(() => {
+    animate(dragProgress, playerPopup ? 1 : 0, {
+      type: 'spring',
+      stiffness: 340,
+      damping: 32,
+      restDelta: 0.005,
+    });
+  }, [playerPopup, dragProgress]);
+
+  const cardH = useTransform(dragProgress, [0, 1], [64, viewportH]);
+  const cardRadius = useTransform(dragProgress, [0, 1], [8, 0]);
+  const cardLeft = useTransform(dragProgress, [0, 1], [8, 0]);
+  const cardRight = useTransform(dragProgress, [0, 1], [8, 0]);
+  const cardBottom = useTransform(dragProgress, [0, 1], [isMobileStore ? 83.2 : 152, 80]);
+  const backdropOpacity = useTransform(dragProgress, [0.05, 0.8], [0, 1]);
+  const backdropVisibility = useTransform(dragProgress, (v) => (v < 0.05 ? 'hidden' : 'visible'));
+  const seekBarOpacity = useTransform(dragProgress, [0, 0.25], [1, 0]);
+  const seekBarVisibility = useTransform(dragProgress, (v) => (v > 0.3 ? 'hidden' : 'visible'));
+  const handleOpacity = useTransform(dragProgress, [0.5, 1], [0, 1]);
+
+  const headerElRef = useRef<HTMLElement | null>(null);
+  const navElRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (headerElRef.current) headerElRef.current.style.removeProperty('--player-drag-prog');
+      if (navElRef.current) navElRef.current.style.removeProperty('--player-drag-prog');
+    };
+  }, []);
+
+  useMotionValueEvent(dragProgress, 'change', (latest) => {
+    if (!headerElRef.current) headerElRef.current = document.querySelector<HTMLElement>('.pona-header');
+    if (!navElRef.current) navElRef.current = document.querySelector<HTMLElement>('#pona-player-nav');
+    const progStr = latest.toString();
+    if (headerElRef.current) headerElRef.current.style.setProperty('--player-drag-prog', progStr);
+    if (navElRef.current) navElRef.current.style.setProperty('--player-drag-prog', progStr);
+  });
+
+  const handleDismissPanel = useCallback(() => {
+    animate(dragProgress, 0, { type: 'spring', stiffness: 340, damping: 32, restDelta: 0.005 });
+    document.body.classList.remove('pona-player-focused');
+    setAfterState('none');
+    setBeforeState(trackFocus ? 'playerPanel' : 'queuePanel');
+    setTimeout(() => setPlayerPopup(false), 80);
+  }, [dragProgress, trackFocus, setPlayerPopup, setAfterState, setBeforeState]);
+
+  const handleMobileDrag = useCallback((_: unknown, info: { offset: { y: number } }) => {
+    if (!playerPopup) {
+      dragProgress.set(Math.min(1, Math.max(0, -info.offset.y) / 220));
+    } else {
+      dragProgress.set(Math.max(0, 1 - Math.max(0, info.offset.y) / 220));
+    }
+  }, [playerPopup, dragProgress]);
+
+  const handleMobileDragEnd = useCallback((_: unknown, info: { offset: { y: number }; velocity: { y: number } }) => {
+    const toExpand = !playerPopup
+      ? info.offset.y < -35 || info.velocity.y < -250
+      : !(info.offset.y > 45 || info.velocity.y > 250);
+
+    if (toExpand && !playerPopup) {
+      document.body.classList.add('pona-player-focused');
+      setAfterState('playerPanel');
+      setBeforeState('none');
+      setTrackFocus(true);
+      setPlayerPopup(true);
+    } else if (!toExpand && playerPopup) {
+      handleDismissPanel();
+    } else {
+      animate(dragProgress, playerPopup ? 1 : 0, { type: 'spring', stiffness: 340, damping: 32, restDelta: 0.005 });
+    }
+  }, [playerPopup, dragProgress, setPlayerPopup, setAfterState, setBeforeState, setTrackFocus, handleDismissPanel]);
+
   const artworkUrl = (currentTrack?.proxyThumbnail
     ? currentTrack.proxyArtworkUrl
     : currentTrack?.thumbnail) || '/static/Ponlponl123 (1459).png';
@@ -116,98 +199,97 @@ export default function PonaPlayer({ isMobileOverride }: { isMobileOverride?: bo
         {currentTrack && (
           <motion.div
             id='pona-player-wrapper'
-            initial={{ opacity: 0, pointerEvents: 'none', translateY: 32 }}
-            animate={{ opacity: 1, pointerEvents: 'auto', translateY: 0 }}
-            exit={{ opacity: 0, pointerEvents: 'none', translateY: 32 }}
-            transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-            className={
-              cn(
-                `absolute overflow-hidden z-50 transform-gpu [html.light_&]:bg-[hsl(var(--pona-app-music-accent-color-100))] [html.dark_&]:bg-[hsl(var(--pona-app-music-accent-color-900))] apply-soft-transition disable-default-transition`,
-                userSetting.transparency ? ' backdrop-blur-md' : '',
-                playerPopup ?
-                  'w-full h-screen rounded-none bottom-4 left-0' : `h-16 rounded-lg ${isMobileStore ? 'bottom-[5.2rem]' : 'bottom-6'} left-2 w-[calc(100%-1rem)]`
-              )
-            }
+            initial={{ opacity: 0, y: 32 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 32 }}
+            transition={{ type: 'spring', stiffness: 380, damping: 32 }}
+            drag={playerPopup && !trackFocus ? false : 'y'}
+            dragDirectionLock
+            dragConstraints={{ top: 0, bottom: 0 }}
+            dragElastic={0}
+            onDrag={handleMobileDrag}
+            onDragEnd={handleMobileDragEnd}
+            style={{
+              position: 'absolute',
+              height: cardH,
+              borderRadius: cardRadius,
+              bottom: cardBottom,
+              left: cardLeft,
+              right: cardRight,
+              zIndex: 50,
+              overflow: 'hidden',
+              willChange: 'height, bottom, left, right, border-radius',
+            }}
+            className={cn(
+              'transform-gpu bg-default [backface-visibility:hidden]',
+            )}
           >
-            <div className='absolute top-0 left-0 w-full h-full z-0 [body.pona-player-focused_&]:bg-none [html.light_&]:[body.pona-player-focused_&]:bg-[hsl(var(--pona-app-music-accent-color-500))] [html.dark_&]:[body.pona-player-focused_&]:bg-[hsl(var(--pona-app-music-accent-color-900))] rounded-lg' />
-
-            <PlayerSeekBar
-              sliderValue={sliderValue}
-              maxLength={maxLength}
-              setSliderValue={setSliderValue}
-              onSeek={handleSeek}
-              className={'absolute -top-1 z-20 left-0 w-full h-2 cursor-pointer group' + (playerPopup ? ' opacity-0 pointer-events-none' : '')}
+            <motion.div
+              style={{ opacity: dragProgress }}
+              className="absolute inset-0 z-0 bg-black pointer-events-none"
             />
 
-            <div
-              id='pona-player'
-              onClick={handleTogglePanel}
-              className='rounded-lg p-2 flex flex-row items-center justify-between gap-4 absolute overflow-hidden w-full h-full select-none cursor-pointer'
+            <motion.div
+              style={{ opacity: handleOpacity, pointerEvents: playerPopup ? 'auto' : 'none' }}
+              className='absolute top-2 left-1/2 -translate-x-1/2 z-30 flex items-center justify-center py-2 w-full cursor-grab active:cursor-grabbing'
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDismissPanel();
+              }}
             >
-              <div
-                className='absolute top-0 left-0 w-full h-full z-0 cursor-pointer'
-                onClick={handleTogglePanel}
-                id='pona-music-panel-trigger'
+              <div className='w-10 h-1.25 rounded-full bg-foreground/20 hover:bg-foreground/40 transition-colors' />
+            </motion.div>
+
+            <motion.div
+              style={{
+                opacity: backdropOpacity,
+                visibility: backdropVisibility,
+              }}
+              className="absolute inset-0 z-0 pointer-events-none overflow-hidden"
+            >
+              <Image
+                src={`/api/proxy/image?r=${encodeURIComponent(
+                  currentTrack?.proxyArtworkUrl || '/static/Ponlponl123 (1459).png'
+                )}&s=512&blur=24&saturation=96&contrast=16&brightness=24`}
+                alt={currentTrack ? currentTrack.title : 'Artwork'}
+                fill
+                unoptimized
+                className="h-full w-full object-cover opacity-40"
+                id="pona-music-artwork"
               />
+              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black" />
+            </motion.div>
 
-              <MobilePonaPlayerPanel
-                trackFocus={trackFocus}
-                setTrackFocus={setTrackFocus}
-                beforeState={beforeState}
-                setBeforeState={setBeforeState}
-                afterState={afterState}
-                setAfterState={setAfterState}
+            <motion.div
+              style={{
+                opacity: seekBarOpacity,
+                visibility: seekBarVisibility,
+                pointerEvents: playerPopup ? 'none' : 'auto',
+              }}
+              className='absolute bottom-0 z-20 left-0 w-full'
+              onClick={(e) => e.stopPropagation()}
+            >
+              <PlayerSeekBar
+                sliderValue={sliderValue}
+                maxLength={maxLength}
+                setSliderValue={setSliderValue}
+                onSeek={handleSeek}
+                isMobile
+                className='w-full h-0.5 cursor-pointer group'
               />
+            </motion.div>
 
-              <Button
-                variant='ghost'
-                size='icon'
-                className={`absolute right-4 top-4 z-30 rounded-lg ${playerPopup ? '' : 'opacity-0 pointer-events-none'}`}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  if (trackFocus) {
-                    document.body.classList.remove('pona-player-focused');
-                    setAfterState('none');
-                    setBeforeState('playerPanel');
-                    setTimeout(() => setPlayerPopup(false), 100);
-                  } else {
-                    setAfterState('playerPanel');
-                    setBeforeState('queuePanel');
-                    setTrackFocus(true);
-                  }
-                }}
-              >
-                <CaretUpIcon className={`absolute ${playerPopup ? 'opacity-0 -translate-y-6' : ''}`} />
-                <CaretDownIcon className={`absolute ${!playerPopup ? 'opacity-0 translate-y-6' : ''}`} />
-              </Button>
-
-              <div
-                className={
-                  (!trackFocus && playerPopup
-                    ? ' absolute w-[calc(100%-4rem)] top-4 left-4 z-20'
-                    : ' w-full z-10 ' + (playerPopup ? ' opacity-0 pointer-events-none' : '')) +
-                  ' flex flex-row justify-between items-center'
-                }
-              >
-                <PlayerTrackInfo
-                  currentTrack={currentTrack}
-                  router={router}
-                  language={language}
-                  isMobile
-                  onTogglePanel={handleTogglePanel}
-                />
-                <div onClick={(e) => e.stopPropagation()}>
-                  <PlayerControls
-                    socket={socket}
-                    language={language}
-                    isPaused={isPaused}
-                    playback={playback}
-                    maxLength={maxLength}
-                    isMobile
-                  />
-                </div>
-              </div>
-            </div>
+            <MobilePonaPlayerPanel
+              trackFocus={trackFocus}
+              setTrackFocus={setTrackFocus}
+              beforeState={beforeState}
+              setBeforeState={setBeforeState}
+              afterState={afterState}
+              setAfterState={setAfterState}
+              dragProgress={dragProgress}
+              onTogglePanel={handleTogglePanel}
+              onDismissPanel={handleDismissPanel}
+            />
           </motion.div>
         )}
       </AnimatePresence>

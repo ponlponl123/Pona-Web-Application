@@ -381,20 +381,20 @@ const LyricsDisplay: React.FC<LyricsDisplayProps> = ({
     const isPast = index < deferredActiveIndex
 
     const conditions = {
-      "text-3xl text-[hsl(var(--pona-app-music-accent-color-800))]! dark:text-[hsl(var(--pona-app-music-accent-color-500))]! font-bold [html.dark_&]:brightness-150 [html.light_&]:brightness-50":
+      "text-3xl text-default-foreground md:text-[hsl(var(--pona-app-music-accent-color-800))]! md:dark:text-[hsl(var(--pona-app-music-accent-color-500))]! font-bold [html.dark_&]:brightness-150 [html.light_&]:brightness-50":
         isActive,
-      "text-xl text-[hsl(var(--pona-app-music-accent-color-800))]! dark:text-[hsl(var(--pona-app-music-accent-color-800))]! dark:text-[hsl(var(--pona-app-music-accent-color-500)/0.4)]! [html.light_&]:brightness-90 [html.dark_&]:brightness-125":
+      "text-xl text-default-foreground/60 md:text-[hsl(var(--pona-app-music-accent-color-800))]! md:dark:text-[hsl(var(--pona-app-music-accent-color-800))]! md:dark:text-[hsl(var(--pona-app-music-accent-color-500)/0.4)]! [html.light_&]:brightness-90 [html.dark_&]:brightness-125":
         isNearActive,
-      "text-base text-[hsl(var(--pona-app-music-accent-color-800))]! dark:text-[hsl(var(--pona-app-music-accent-color-500)/0.48)]!":
+      "text-base text-default-foreground/30 md:text-[hsl(var(--pona-app-music-accent-color-800))]! md:dark:text-[hsl(var(--pona-app-music-accent-color-500)/0.48)]!":
         isPast,
-      "text-base text-[hsl(var(--pona-app-music-accent-color-800))]! dark:text-[hsl(var(--pona-app-music-accent-color-500)/0.16)]!":
+      "text-base text-default-foreground/10 md:text-[hsl(var(--pona-app-music-accent-color-800))]! md:dark:text-[hsl(var(--pona-app-music-accent-color-500)/0.16)]!":
         !isActive && !isNearActive && !isPast,
     }
 
     return clsx(baseClasses, conditions)
   }
   return (
-    <div className="relative w-full pb-[12vh] text-center">
+    <div className="relative w-full max-lg:p-4 max-lg:pb-[52vh] pb-[42vh] text-center">
       {lyricsArray.map((lyrics, index) => (
         <LyricItem
           key={index}

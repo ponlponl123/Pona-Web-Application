@@ -35,6 +35,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   const { isConnected, socket } = useSocket();
 
   const isMobile = useAppStore((state) => state.isMobile);
+  const isSmallScreen = useMediaQuery({maxWidth: 768});
   const language = useAppStore((state) => state.language);
   const userSetting = useAppStore((state) => state.userSetting);
 
@@ -65,8 +66,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     userInfo?.avatar,
   ]);
 
-  const isTabletOrMobile = useMediaQuery({ query: '(max-width: 768px)' });
-  const showMobilePlayer = isTabletOrMobile || isMobile;
+  const showMobilePlayer = isSmallScreen || isMobile;
 
   const musicAppContent = useRef<HTMLDivElement>(null);
   const musicAppScrollingArea = useRef<HTMLDivElement>(null);
@@ -163,7 +163,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       {isSameVC && (
         <div className='disable-default-transition'>
           {showMobilePlayer ? (
-            <MobilePonaPlayer />
+            <MobilePonaPlayer isMobileOverride={true} />
           ) : (
             <>
               <DesktopPonaPlayerPanel />
@@ -172,7 +172,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
           )}
         </div>
       )}
-      {isMobile && <PlayerNav />}
+      {showMobilePlayer && <PlayerNav />}
     </>
   );
 }

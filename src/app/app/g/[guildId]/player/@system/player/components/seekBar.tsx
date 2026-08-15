@@ -1,5 +1,6 @@
 'use client';
 
+import { cn } from '@/lib/utils';
 import React, { memo, useCallback } from 'react';
 
 export const PlayerSeekBar = memo(function PlayerSeekBar({
@@ -8,12 +9,14 @@ export const PlayerSeekBar = memo(function PlayerSeekBar({
   setSliderValue,
   onSeek,
   className,
+  isMobile = false,
 }: {
   sliderValue: number;
   maxLength: number;
   setSliderValue: (val: number) => void;
   onSeek: (val: number) => void;
   className?: string;
+  isMobile?: boolean;
 }) {
   const progressPercent = maxLength > 0 ? Math.min(100, Math.max(0, (sliderValue / maxLength) * 100)) : 0;
 
@@ -46,11 +49,19 @@ export const PlayerSeekBar = memo(function PlayerSeekBar({
       />
       <div className='w-full h-1 rounded-full overflow-hidden relative flex flex-row'>
         <div
-          className='h-full bg-[hsl(var(--pona-app-music-accent-color-800))] dark:bg-[hsl(var(--pona-app-music-accent-color-500))] transition-all duration-1000 ease-linear transform-gpu rounded-full'
+          className={
+            cn(
+              'h-full transition-all duration-1000 ease-linear transform-gpu rounded-full',
+              isMobile ? 'bg-default-foreground' : 'bg-[hsl(var(--pona-app-music-accent-color-800))] dark:bg-[hsl(var(--pona-app-music-accent-color-500))]'
+            )
+          }
           style={{ width: `${progressPercent}%` }}
         />
         <div
-          className='h-full bg-[hsl(var(--pona-app-music-accent-color-800))]/20 dark:bg-[hsl(var(--pona-app-music-accent-color-500))]/20 transition-all duration-1000 ease-linear transform-gpu min-w-0 flex-1 ml-0.5 rounded-full'
+          className={cn(
+            'h-full transition-all duration-1000 ease-linear transform-gpu min-w-0 flex-1 ml-0.5 rounded-full',
+            isMobile ? 'bg-default-foreground/10' : 'bg-[hsl(var(--pona-app-music-accent-color-800))]/30 dark:bg-[hsl(var(--pona-app-music-accent-color-500))]/30'
+          )}
         />
       </div>
     </div>
