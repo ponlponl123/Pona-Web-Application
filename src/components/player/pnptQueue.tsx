@@ -213,7 +213,7 @@ export default function PNPTQueueSection() {
                     <DraggableTrack
                       active={false}
                       index={idx + 1}
-                      queueIndex={idx}
+                      queueIndex={(ponaCommonState?.queue?.length || 0) + idx}
                       key={track.uniqueId || `pnpt-${idx}`}
                       track={track}
                       showPNPTBadge

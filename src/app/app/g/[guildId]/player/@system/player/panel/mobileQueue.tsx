@@ -677,8 +677,8 @@ const MobileQueueView = React.memo(function MobileQueueView({
                     <MobileDraggableTrack
                       key={track.uniqueId || `queue-item-${idx}`}
                       track={track}
-                      queueIndex={idx + 1}
-                      onPlay={() => handleSkipTo(idx + 1, track.title)}
+                      queueIndex={idx}
+                      onPlay={() => handleSkipTo(idx, track.title)}
                       onOpenAction={handleOpenAction}
                       onHandleStart={handleHandleStart}
                       onHandleEnd={handleHandleEnd}
@@ -727,8 +727,11 @@ const MobileQueueView = React.memo(function MobileQueueView({
                 )}
             </DndContext>
 
-            {pendingEnabled && !isQueueRepeat && pnptQueue && pnptQueue.length > 0 && (
-              <div className="mt-4 flex flex-col gap-2">
+            {pnptQueue && pnptQueue.length > 0 && (
+              <div className={cn(
+                "mt-4 flex flex-col gap-2",
+                (!pendingEnabled || isQueueRepeat) && "pointer-events-none blur-[2px] opacity-40"
+              )}>
                 <span className="text-xs font-bold text-default-foreground/40 tracking-wider px-4">
                   {(language.data.app.guilds.player.tabs as Record<string, string>)?.pnpt_title || 'เล่นอัตโนมัติ'}
                 </span>
@@ -751,8 +754,8 @@ const MobileQueueView = React.memo(function MobileQueueView({
                         <MobileDraggableTrack
                           key={track.uniqueId || `pnpt-${idx + 1}`}
                           track={{ ...track, _isPNPT: true }}
-                          queueIndex={playingNextQueue.length + idx + 1}
-                          onPlay={() => handleSkipTo(playingNextQueue.length + idx + 1, track.title)}
+                          queueIndex={playingNextQueue.length + idx}
+                          onPlay={() => handleSkipTo(playingNextQueue.length + idx, track.title)}
                           onOpenAction={handleOpenAction}
                           onHandleStart={handleHandleStart}
                           onHandleEnd={handleHandleEnd}
