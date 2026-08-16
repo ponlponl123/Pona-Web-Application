@@ -221,7 +221,7 @@ export default function PonaPlayer({ isMobileOverride }: { isMobileOverride?: bo
               willChange: 'height, bottom, left, right, border-radius',
             }}
             className={cn(
-              'transform-gpu bg-default [backface-visibility:hidden]',
+              'transform-gpu bg-default backface-hidden',
             )}
           >
             <motion.div
@@ -257,7 +257,7 @@ export default function PonaPlayer({ isMobileOverride }: { isMobileOverride?: bo
                 className="h-full w-full object-cover opacity-40"
                 id="pona-music-artwork"
               />
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black" />
+              <div className="absolute inset-0 bg-linear-to-b from-transparent via-transparent to-black" />
             </motion.div>
 
             <motion.div

@@ -204,10 +204,11 @@ function PlayButton<T extends 'song' | 'playlist' = 'song'>({
             open={isModalOpen}
             onOpenChange={setIsModalOpen}
             modal
+            showSwipeHandle
             swipeDirection="down"
           >
-            <DrawerContent className="rounded-t-3xl border-t border-border bg-background/95 backdrop-blur-xl">
-              <DrawerHeader className="pt-4 text-left">
+            <DrawerContent className="border-none bg-overlay backdrop-blur-xl">
+              <DrawerHeader className="py-4 mb-2 border-b border-default-foreground/10">
                 <DrawerTitle className="flex items-center gap-2">
                   <AnimateIcon animate>
                     <Plus className="size-5" />

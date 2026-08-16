@@ -22,6 +22,7 @@ import {
   Drawer,
   DrawerContent,
   DrawerHeader,
+  DrawerSwipeHandle,
   DrawerTitle,
 } from "@/components/ui/drawer"
 
@@ -31,6 +32,8 @@ import { playbackAtom, ponaCommonStateAtom } from "@/store/musicAtoms"
 import { playerPopupAtom } from "@/store/uiAtoms"
 import { cn, msToTime } from "@/lib/utils"
 import { MobilePonaPlayerPanelAnimationState, PlayerSeekBar, PlayerControls } from "../index"
+import { toast } from "sonner"
+import { emitWithTimeout } from "@/lib/promiseWithTimeout"
 
 export default function MobilePonaPlayerPanel({
   trackFocus,
@@ -103,10 +106,26 @@ export default function MobilePonaPlayerPanel({
   const titleX = useTransform(progress, [0, 1], [64, 24])
   const titleY = useTransform(progress, [0, 1], [11, fullTitleY])
   const titleScale = useTransform(progress, [0, 1], [1, 1.45])
+  const titleWidth = useTransform(
+    progress,
+    [0, 1],
+    [
+      Math.max(0, dimensions.width - 176),
+      Math.max(0, (dimensions.width - 52) / 1.45),
+    ]
+  )
 
   const artistX = useTransform(progress, [0, 1], [64, 24])
   const artistY = useTransform(progress, [0, 1], [33, fullArtistY])
   const artistScale = useTransform(progress, [0, 1], [1, 1.15])
+  const artistWidth = useTransform(
+    progress,
+    [0, 1],
+    [
+      Math.max(0, dimensions.width - 176),
+      Math.max(0, (dimensions.width - 52) / 1.15),
+    ]
+  )
 
   const fullControlsOpacity = useTransform(progress, [0.35, 0.85], [0, 1])
   const fullControlsVisibility = useTransform(progress, (v) => v < 0.15 ? 'hidden' : 'visible')
@@ -142,31 +161,68 @@ export default function MobilePonaPlayerPanel({
     [socket]
   )
 
-  const handlePrevious = useCallback(() => socket?.emit("previous"), [socket])
   const handlePause = useCallback(() => socket?.emit("pause"), [socket])
   const handlePlay = useCallback(() => socket?.emit("play"), [socket])
-  const handleNext = useCallback(() => socket?.emit("next"), [socket])
-  const handleOpenEqualizer = useCallback(
-    () => setIsEqualizerModalOpen(true),
-    []
-  )
-  const handleOpenRepeat = useCallback(() => setIsRepeatModalOpen(true), [])
+  const handlePrevious = useCallback(() => {
+    toast.promise(
+      emitWithTimeout((resolve, reject) => {
+        socket?.emit("previous", (error: unknown) => {
+          if (error && (error as { status?: string }).status !== "ok") {
+            reject(error)
+          } else {
+            resolve()
+          }
+        })
+      }),
+      {
+        loading:
+          language.data.app.guilds.player.toast["previous"]?.loading ||
+          "Loading...",
+        success:
+          language.data.app.guilds.player.toast["previous"]?.success || "Done",
+        error:
+          language.data.app.guilds.player.toast["previous"]?.error || "Error",
+      }
+    )
+  }, [socket, language])
+
+  const handleNext = useCallback(() => {
+    toast.promise(
+      emitWithTimeout((resolve, reject) => {
+        socket?.emit("next", (error: unknown) => {
+          if (error && (error as { status?: string }).status !== "ok") {
+            reject(error)
+          } else {
+            resolve()
+          }
+        })
+      }),
+      {
+        loading:
+          language.data.app.guilds.player.toast["next"]?.loading ||
+          "Loading...",
+        success:
+          language.data.app.guilds.player.toast["next"]?.success || "Done",
+        error: language.data.app.guilds.player.toast["next"]?.error || "Error",
+      }
+    )
+  }, [socket, language])
+
+  const handleOpenRepeat = useCallback(() => {
+    setIsRepeatModalOpen(true)
+  }, [])
+
+  const handleOpenEqualizer = useCallback(() => {
+    setIsEqualizerModalOpen(true)
+  }, [])
 
   return (
     <>
       {currentTrack && (
         <div
-          className={cn(
-            "absolute inset-0 z-20 overflow-hidden select-none",
-            !trackFocus ? "pointer-events-none" : ""
-          )}
+          className="relative size-full overflow-hidden"
+          onClick={onTogglePanel}
         >
-          <div
-            className="absolute inset-0 z-0 cursor-pointer"
-            onClick={playerPopup ? onDismissPanel : onTogglePanel}
-            id="pona-music-panel-trigger"
-          />
-
           <motion.div
             style={{
               position: "absolute",
@@ -177,14 +233,12 @@ export default function MobilePonaPlayerPanel({
               width: fullArtworkSize,
               height: fullArtworkSize,
               scale: artworkScale,
-              transformOrigin: "top left",
               borderRadius: artworkRadius,
-              opacity: trackFocus ? 1 : 0,
-              pointerEvents: "none",
-              zIndex: 25,
+              transformOrigin: "top left",
+              zIndex: 20,
               willChange: "transform",
             }}
-            className="overflow-hidden shadow-xl transform-gpu"
+            className="overflow-hidden shadow-2xl bg-overlay transform-gpu cursor-pointer pointer-events-none"
           >
             <Image
               src={
@@ -195,7 +249,7 @@ export default function MobilePonaPlayerPanel({
               alt={currentTrack.title || "Artwork"}
               fill
               unoptimized
-              className="size-full object-cover"
+              className="size-full object-cover pointer-events-none"
               id="pona-music-artwork"
             />
           </motion.div>
@@ -207,7 +261,7 @@ export default function MobilePonaPlayerPanel({
               left: 0,
               x: titleX,
               y: titleY,
-              width: dimensions.width - 48,
+              width: titleWidth,
               scale: titleScale,
               transformOrigin: "left center",
               opacity: trackFocus ? 1 : 0,
@@ -215,9 +269,9 @@ export default function MobilePonaPlayerPanel({
               zIndex: 25,
               willChange: "transform",
             }}
-            className="overflow-hidden text-ellipsis whitespace-nowrap select-none transform-gpu"
+            className="overflow-hidden text-ellipsis whitespace-nowrap select-none transform-gpu grow min-w-0"
           >
-            <h1 className="text-base font-bold text-default-foreground overflow-hidden text-ellipsis whitespace-nowrap">
+            <h1 className="text-base font-bold text-default-foreground overflow-hidden text-ellipsis whitespace-nowrap w-full">
               {currentTrack.title}
             </h1>
           </motion.div>
@@ -229,7 +283,7 @@ export default function MobilePonaPlayerPanel({
               left: 0,
               x: artistX,
               y: artistY,
-              width: dimensions.width - 48,
+              width: artistWidth,
               scale: artistScale,
               transformOrigin: "left center",
               opacity: trackFocus ? 1 : 0,
@@ -237,18 +291,20 @@ export default function MobilePonaPlayerPanel({
               zIndex: 25,
               willChange: "transform",
             }}
-            className="overflow-hidden text-ellipsis whitespace-nowrap select-none transform-gpu"
+            className="overflow-hidden text-ellipsis whitespace-nowrap select-none transform-gpu grow min-w-0"
           >
-            {currentTrack.artist ? (
-              combineArtistName(currentTrack.artist, true, router, {
-                className:
-                  "text-xs text-default-foreground/60 hover:underline cursor-pointer",
-              })
-            ) : (
-              <span className="text-xs text-default-foreground/60">
-                {currentTrack.cleanAuthor || currentTrack.author || ""}
-              </span>
-            )}
+            <p className="text-xs text-default-foreground/60 overflow-hidden text-ellipsis whitespace-nowrap w-full">
+              {currentTrack.artist ? (
+                combineArtistName(currentTrack.artist, true, router, {
+                  className:
+                    "text-xs text-default-foreground/60 hover:underline cursor-pointer",
+                })
+              ) : (
+                <span>
+                  {currentTrack.cleanAuthor || currentTrack.author || ""}
+                </span>
+              )}
+            </p>
           </motion.div>
 
           <motion.div
@@ -389,23 +445,25 @@ export default function MobilePonaPlayerPanel({
         open={isRepeatModalOpen}
         onOpenChange={setIsRepeatModalOpen}
         modal
+        showSwipeHandle
         swipeDirection="down"
       >
-        <DrawerContent className="rounded-t-3xl border-t border-border bg-background/95 backdrop-blur-xl">
-          <DrawerHeader className="pt-4">
+        <DrawerContent className="border-none bg-overlay backdrop-blur-xl">
+          <DrawerHeader className="py-4 mb-2 border-b border-default-foreground/10">
             <DrawerTitle>
               {language.data.app.guilds.player.repeat.title}
             </DrawerTitle>
           </DrawerHeader>
-          <div className="flex flex-col gap-2 p-4 pb-6">
+          <div className="flex flex-col pb-6">
             <Button
               variant={
                 !ponaCommonState?.pona.repeat.track &&
                   !ponaCommonState?.pona.repeat.queue
-                  ? "default"
-                  : "outline"
+                  ? "outline"
+                  : "ghost"
               }
-              className="justify-start"
+              size={"lg"}
+              className="justify-start p-3 h-max border-0"
               onClick={() => {
                 socket?.emit("repeat", "none")
                 setIsRepeatModalOpen(false)
@@ -416,9 +474,11 @@ export default function MobilePonaPlayerPanel({
             </Button>
             <Button
               variant={
-                ponaCommonState?.pona.repeat.track ? "default" : "outline"
+                ponaCommonState?.pona.repeat.track ? "outline"
+                  : "ghost"
               }
-              className="justify-start"
+              size={"lg"}
+              className="justify-start p-3 h-max border-0"
               onClick={() => {
                 socket?.emit("repeat", "track")
                 setIsRepeatModalOpen(false)
@@ -429,9 +489,11 @@ export default function MobilePonaPlayerPanel({
             </Button>
             <Button
               variant={
-                ponaCommonState?.pona.repeat.queue ? "default" : "outline"
+                ponaCommonState?.pona.repeat.queue ? "outline"
+                  : "ghost"
               }
-              className="justify-start"
+              size={"lg"}
+              className="justify-start p-3 h-max border-0"
               onClick={() => {
                 socket?.emit("repeat", "queue")
                 setIsRepeatModalOpen(false)
@@ -448,10 +510,11 @@ export default function MobilePonaPlayerPanel({
         open={isEqualizerModalOpen}
         onOpenChange={setIsEqualizerModalOpen}
         modal
+        showSwipeHandle
         swipeDirection="down"
       >
-        <DrawerContent className="rounded-t-3xl border-t border-border bg-background/95 backdrop-blur-xl">
-          <DrawerHeader className="pt-4">
+        <DrawerContent className="border-none bg-overlay backdrop-blur-xl">
+          <DrawerHeader className="py-4 mb-2 border-b border-default-foreground/10">
             <DrawerTitle>
               {language.data.app.guilds.player.equalizer.title}
             </DrawerTitle>

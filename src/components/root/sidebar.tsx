@@ -3,12 +3,10 @@ import { useDiscordGuildInfo } from "@/contexts/discordGuildInfo"
 import { UserInfo } from "@/lib/server-side-api/discord/fetchUser"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import {
   BroadcastIcon,
   CaretDownIcon,
   CaretLeftIcon,
-  CaretLineLeftIcon,
   ChartPieSliceIcon,
   ChatCircleIcon,
   ClockCounterClockwiseIcon,
@@ -30,7 +28,7 @@ import {
 import clsx from "clsx"
 import { cn } from "@/lib/utils"
 import { useState, useEffect, useMemo } from "react"
-import { usePathname, useRouter } from "next/navigation"
+import { usePathname } from "next/navigation"
 import { AnimatePresence, motion } from "motion/react"
 import ActivationLink from "@/components/activationLink"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip"
@@ -43,11 +41,9 @@ import CustomScrollArea from "../ui/custom/scroll-area"
 import { useAppStore } from "@/store/coreStore"
 import { useAtomValue, useSetAtom } from "jotai"
 import {
-  isSameVCAtom,
   isSettingModalOpenAtom,
   settingLayoutIdAtom,
 } from "@/store/uiAtoms"
-import { ponaCommonStateAtom } from "@/store/musicAtoms"
 import { PanelLeftOpenIcon } from "../animate-ui/icons/panel-left-open"
 import { PanelLeftCloseIcon } from "../animate-ui/icons/panel-left-close"
 import { AnimateIcon } from "../animate-ui/icons/icon"
@@ -70,13 +66,10 @@ function Sidebar({
   setNavActive,
 }: SidebarProps) {
   const pathname = usePathname() || ""
-  const router = useRouter()
   const { guild } = useDiscordGuildInfo()
   const language = useAppStore((state) => state.language)
   const userSetting = useAppStore((state) => state.userSetting)
   const setUserSetting = useAppStore((state) => state.setUserSetting)
-  const ponaCommonState = useAtomValue(ponaCommonStateAtom)
-  const isSameVC = useAtomValue(isSameVCAtom)
   const isSettingModalOpen = useAtomValue(isSettingModalOpenAtom)
   const setIsSettingModalOpen = useSetAtom(isSettingModalOpenAtom)
   const setSettingLayoutId = useSetAtom(settingLayoutIdAtom)
@@ -166,11 +159,11 @@ function Sidebar({
         `disable-default-transition apply-long-soft-transition scrollbar duration-700! max-md:h-full`,
         !nav
           ? cn(
-              isCollapsed
-                ? "w-12 max-w-12 min-w-12 p-1"
-                : "w-48 max-w-48 min-w-48 p-2",
-              `relative flex h-screen flex-col gap-2 pt-20 max-md:hidden`
-            )
+            isCollapsed
+              ? "w-12 max-w-12 min-w-12 p-1"
+              : "w-48 max-w-48 min-w-48 p-2",
+            `relative flex h-screen flex-col gap-2 pt-20 max-md:hidden`
+          )
           : "flex w-full flex-col gap-2 md:hidden"
       )}
     >
@@ -520,7 +513,7 @@ function Sidebar({
               onClick={() => {
                 setSettingLayoutId(
                   "setting-modal-by-app-sidebar-iscollapsed-" +
-                    sidebarCollapsed
+                  sidebarCollapsed
                 )
                 setIsSettingModalOpen(true)
                 setNavActive?.(false)

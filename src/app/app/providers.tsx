@@ -25,12 +25,18 @@ function Providers({ children }: { children: React.ReactNode }) {
     }
   }, [appContent])
 
+  const isPlayerRoute = pathname.includes("/player")
+
   const content = <div className="relative min-h-screen">
     <div className="pointer-events-none absolute top-0 left-0 z-0 h-full w-full bg-[radial-gradient(var(--foreground)_1px,transparent_1px)] bg-size-[16px_16px] opacity-6 dark:opacity-5" />
     <div className="relative z-10 pb-6">
-      <PageAnimatePresence customKey={pathname} mode="wait">
-        {children}
-      </PageAnimatePresence>
+      {isPlayerRoute ? (
+        children
+      ) : (
+        <PageAnimatePresence customKey={pathname} mode="wait">
+          {children}
+        </PageAnimatePresence>
+      )}
     </div>
   </div>
 

@@ -148,7 +148,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
               !hasVoiceChannel ? (
                 <LetsPonaJoin />
               ) : isSameVC ? (
-                <PageAnimatePresence presenceAffectsLayout mode='popLayout'>
+                <PageAnimatePresence customKey={pathname} presenceAffectsLayout mode='wait'>
                   {children}
                 </PageAnimatePresence>
               ) : (

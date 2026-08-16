@@ -10,14 +10,25 @@ interface AnimationPresence extends AnimatePresenceProps {
   customKey?: string
 }
 
-const PageAnimatePresence = (props: AnimationPresence) => {
+const PageAnimatePresence = ({
+  children,
+  customKey,
+  mode = "wait",
+  ...props
+}: AnimationPresence) => {
   const pathnameFromHook = usePathname() || ""
-  const pathname = props.customKey || pathnameFromHook
+  const pathname = customKey || pathnameFromHook
 
   return (
-    <AnimatePresence mode={props.mode || "wait"} {...props}>
-      <motion.div key={pathname}>
-        <FrozenRoute>{props.children}</FrozenRoute>
+    <AnimatePresence mode={mode} {...props}>
+      <motion.div
+        key={pathname}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -10 }}
+        transition={{ duration: 0.2, ease: "easeInOut" }}
+      >
+        <FrozenRoute>{children}</FrozenRoute>
       </motion.div>
     </AnimatePresence>
   )

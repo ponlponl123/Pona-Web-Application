@@ -137,7 +137,7 @@ function Page() {
           initial={{ opacity: 0, filter: 'blur(2px)' }}
           animate={{ opacity: 1, filter: 'blur(0px)' }}
           transition={{ duration: 0.44, delay: 0.08, ease: 'easeOut' }}
-          className='w-full max-w-xs'
+          className='w-full md:max-w-xs'
         >
           <AnimateIcon className='w-full' animateOnHover>
             <Input

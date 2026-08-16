@@ -43,7 +43,7 @@ export default function HeaderSearch({
   const language = useAppStore((state) => state.language)
   const globalNavOpened = useAtomValue(navOpenedAtom)
 
-  const navOpened = propNavOpened ?? globalNavOpened
+  const navOpened = propNavOpened !== undefined ? propNavOpened : globalNavOpened
 
   const searchSuggestionRef = useRef<HTMLDivElement>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
@@ -133,7 +133,7 @@ export default function HeaderSearch({
             autoCapitalize="off"
             spellCheck={false}
             startContent={
-              <Search className="mr-1 size-4 max-md:absolute max-md:scale-75" />
+              <Search className="mr-1 size-4" />
             }
             placeholder={language.data.app.guilds.player.search.search_box}
             fontStyle={{
