@@ -501,7 +501,9 @@
           "pnpt_toggle_description": "เพิ่มเพลงแนะนำโดยอัตโนมัติเมื่อคิวเพลงใกล้หมด",
           "pnpt_queue_title": "ถัดไป (อัตโนมัติ)",
           "pnpt_auto_badge": "อัตโนมัติ",
-          "pnpt_queue_repeat_incompatible": "การต่อเพลงอัตโนมัติไม่รองรับโหมดวนซ้ำคิว"
+          "pnpt_queue_repeat_incompatible": "การต่อเพลงอัตโนมัติไม่รองรับโหมดวนซ้ำคิว",
+          "playing_from": "กำลังเล่นจาก",
+          "mix_prefix": "มิกซ์ "
         },
         "related": {
           "videoId_not_provided": "รถประจำทางไม่มาสักที...",

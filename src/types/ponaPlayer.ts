@@ -111,6 +111,7 @@ export interface PonaMusic_AccentColor {
 export interface HTTP_PonaCommonStateWithTracks {
   pona: HTTP_PonaCommonState
   current: Track | UnresolvedTrack | null
+  originTrack?: Track | UnresolvedTrack | null
   queue: Queue
   queuePNPT?: Queue
 }

@@ -1,10 +1,10 @@
 'use client';
 
-import React, { memo, useEffect, useMemo, useState } from 'react';
+import React, { memo, useEffect, useMemo } from 'react';
 import { getCookie } from 'cookies-next';
 import useEmblaCarousel from 'embla-carousel-react';
 import { motion } from 'framer-motion';
-import { useAtomValue } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import {
   CaretLeftIcon,
   CaretRightIcon,
@@ -18,7 +18,8 @@ import { Spinner } from '@/components/ui/spinner';
 import { getSongRelated } from '@/lib/server-side-api/internal/search';
 import { useAppStore } from '@/store/coreStore';
 import { ponaCommonStateAtom } from '@/store/musicAtoms';
-import { RelatedInfo, useMusicCacheStore } from '@/store/musicCacheStore';
+import { isQueueReorderingAtom } from '@/store/uiAtoms';
+import { useMusicCacheStore } from '@/store/musicCacheStore';
 import { usePrevNextButtons } from '@/lib/Embla/CarouselArrowButtons';
 import {
   ArtistRelated,
@@ -63,14 +64,14 @@ const TrackColumns = memo(({ tracks }: TrackColumnsProps) => {
             <Track
               key={`track-${item.videoId || i}-${j}`}
               classNames={{
-                title: 'text-[hsl(var(--pona-app-music-accent-color-800))] dark:text-[hsl(var(--pona-app-music-accent-color-500))]',
-                subtitle: 'text-[hsl(var(--pona-app-music-accent-color-800)/0.64)]! dark:text-[hsl(var(--pona-app-music-accent-color-500)/0.64)]!',
+                title: 'md:text-[hsl(var(--pona-app-music-accent-color-800))] md:dark:text-[hsl(var(--pona-app-music-accent-color-500))]',
+                subtitle: 'max-md:**:text-default-foreground/40! md:text-[hsl(var(--pona-app-music-accent-color-800)/0.64)]! md:dark:text-[hsl(var(--pona-app-music-accent-color-500)/0.64)]!',
                 playButton: {
                   playpause:
-                    'text-[hsl(var(--pona-app-music-accent-color-500))]',
+                    'md:text-[hsl(var(--pona-app-music-accent-color-500))]',
                 },
-                artistLink: "text-[hsl(var(--pona-app-music-accent-color-800)/0.75)]! dark:text-[hsl(var(--pona-app-music-accent-color-500)/0.75)]!",
-                duration: 'text-[hsl(var(--pona-app-music-accent-color-800)/0.64)] dark:text-[hsl(var(--pona-app-music-accent-color-500)/0.64)]',
+                artistLink: "max-md:text-default-foreground/40! md:text-[hsl(var(--pona-app-music-accent-color-800)/0.75)]! md:dark:text-[hsl(var(--pona-app-music-accent-color-500)/0.75)]!",
+                duration: 'max-md:text-default-foreground/40! md:text-[hsl(var(--pona-app-music-accent-color-800)/0.64)] md:dark:text-[hsl(var(--pona-app-music-accent-color-500)/0.64)]',
               }}
               result={songDetailedResult}
             />
@@ -140,7 +141,7 @@ const ArtistCards = memo(({ artists }: ArtistCardsProps) => {
               thumbnails: a.thumbnails || [],
               type: 'ARTIST',
             }}
-            className='**:text-[hsl(var(--pona-app-music-accent-color-700))]! **:dark:text-[hsl(var(--pona-app-music-accent-color-500))]!'
+            className='md:**:text-[hsl(var(--pona-app-music-accent-color-700))]! md:**:dark:text-[hsl(var(--pona-app-music-accent-color-500))]!'
           />
         );
       })}
@@ -195,11 +196,12 @@ CarouselButtons.displayName = 'CarouselButtons';
 const Related = memo(({ videoId }: { videoId?: string }) => {
   const language = useAppStore((state) => state.language);
   const ponaCommonState = useAtomValue(ponaCommonStateAtom);
+  const targetVideoId = videoId || ponaCommonState?.current?.identifier;
   const relatedInfoCache = useMusicCacheStore((state) => state.relatedInfoCache);
   const setRelatedInfo = useMusicCacheStore((state) => state.setRelatedInfo);
 
-  const currentCache = videoId ? relatedInfoCache[videoId] : undefined;
-  const [fetched, setFetched] = useState<boolean>(Boolean(currentCache));
+  const currentCache = targetVideoId ? relatedInfoCache[targetVideoId] : undefined;
+  const isLoading = Boolean(targetVideoId) && !currentCache;
 
   const watchPlaylistTracks = useMemo(
     () => currentCache?.watch_playlist?.tracks || [],
@@ -254,45 +256,96 @@ const Related = memo(({ videoId }: { videoId?: string }) => {
     onNextButtonClick: artistEmblaOnNextButtonClick,
   } = usePrevNextButtons(artistEmblaApi);
 
-  useEffect(() => {
-    if (!videoId || (fetched && currentCache)) return;
+  const setIsQueueReordering = useSetAtom(isQueueReorderingAtom);
 
-    const setFetchedCache = (value: Omit<RelatedInfo, 'videoId'> | null) => {
-      if (value === null)
-        setRelatedInfo(videoId, {
-          related: undefined,
-          watch_playlist: undefined,
-        });
-      else
-        setRelatedInfo(videoId, {
-          related: value.related,
-          watch_playlist: value.watch_playlist,
-        });
-      setFetched(true);
+  useEffect(() => {
+    const handlePointerDown = () => setIsQueueReordering(true);
+    const handlePointerUp = () => setIsQueueReordering(false);
+
+    const apis = [
+      recommendsEmblaApi,
+      watchPlaylistEmblaApi,
+      playlistEmblaApi,
+      artistEmblaApi,
+    ];
+
+    apis.forEach((api) => {
+      if (!api) return;
+      api.on('pointerDown', handlePointerDown);
+      api.on('pointerUp', handlePointerUp);
+    });
+
+    return () => {
+      apis.forEach((api) => {
+        if (!api) return;
+        api.off('pointerDown', handlePointerDown);
+        api.off('pointerUp', handlePointerUp);
+      });
+      setIsQueueReordering(false);
     };
+  }, [
+    recommendsEmblaApi,
+    watchPlaylistEmblaApi,
+    playlistEmblaApi,
+    artistEmblaApi,
+    setIsQueueReordering,
+  ]);
+
+  useEffect(() => {
+    if (!targetVideoId || currentCache) return;
+
+    let isMounted = true;
 
     const fetchRelated = async () => {
-      const accessToken = String(getCookie('LOGIN_'));
-      const accessTokenType = String(getCookie('LOGIN_TYPE_'));
-      if (!accessToken || accessTokenType === 'undefined')
-        return setFetchedCache(null);
-      const songRelated = await getSongRelated(
-        accessTokenType,
-        accessToken,
-        videoId
-      );
-      if (!songRelated) return setFetchedCache(null);
-      setFetchedCache({
-        related: songRelated.related,
-        watch_playlist: songRelated.watch_playlist,
-      });
+      try {
+        const accessToken = String(getCookie('LOGIN_'));
+        const accessTokenType = String(getCookie('LOGIN_TYPE_'));
+        if (!accessToken || accessTokenType === 'undefined') {
+          if (isMounted) {
+            setRelatedInfo(targetVideoId, {
+              related: undefined,
+              watch_playlist: undefined,
+            });
+          }
+          return;
+        }
+        const songRelated = await getSongRelated(
+          accessTokenType,
+          accessToken,
+          targetVideoId
+        );
+        if (isMounted) {
+          if (songRelated) {
+            setRelatedInfo(targetVideoId, {
+              related: songRelated.related,
+              watch_playlist: songRelated.watch_playlist,
+            });
+          } else {
+            setRelatedInfo(targetVideoId, {
+              related: undefined,
+              watch_playlist: undefined,
+            });
+          }
+        }
+      } catch {
+        if (isMounted) {
+          setRelatedInfo(targetVideoId, {
+            related: undefined,
+            watch_playlist: undefined,
+          });
+        }
+      }
     };
     fetchRelated();
-  }, [videoId, currentCache, fetched, setRelatedInfo]);
 
-  if (!videoId)
+    return () => {
+      isMounted = false;
+    };
+  }, [targetVideoId, currentCache, setRelatedInfo]);
+
+  if (!targetVideoId)
     return (
-      <div className='flex flex-col gap-4 items-center justify-center w-full h-full'>
+      <div className='flex flex-col gap-4 items-center justify-center w-full h-full py-16'>
         <GhostIcon
           size={56}
           weight='fill'
@@ -304,18 +357,29 @@ const Related = memo(({ videoId }: { videoId?: string }) => {
       </div>
     );
 
-  return fetched ? (
+  if (isLoading && !currentCache) {
+    return (
+      <div className='flex flex-col gap-4 items-center justify-center w-full h-full py-16'>
+        <Spinner className='text-[hsl(var(--pona-app-music-accent-color-800))] dark:text-[hsl(var(--pona-app-music-accent-color-500))]' />
+        <h1 className='text-2xl max-w-3xl text-center text-[hsl(var(--pona-app-music-accent-color-800)/0.64)] dark:text-[hsl(var(--pona-app-music-accent-color-500))/0.64]'>
+          {language.data.common.friendly_loading}
+        </h1>
+      </div>
+    );
+  }
+
+  return (
     <motion.div
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 8 }}
       transition={{ duration: 0.16 }}
-      className='flex flex-col gap-4 w-full mx-auto min-h-full py-2 px-6'
+      className='flex flex-col gap-4 w-full mx-auto min-h-full py-2 px-6 max-md:**:text-default-foreground'
     >
       {watchPlaylistTracks.length > 0 && (
         <>
           <div className='flex gap-4 items-center justify-between w-full p-1 -mt-2'>
-            <h1 className='text-3xl -mb-2 font-bold text-[hsl(var(--pona-app-music-accent-color-800)/0.64)] dark:text-[hsl(var(--pona-app-music-accent-color-500)/0.64)]'>
+            <h1 className='text-3xl -mb-2 font-bold md:text-[hsl(var(--pona-app-music-accent-color-800)/0.64)] md:dark:text-[hsl(var(--pona-app-music-accent-color-500)/0.64)]'>
               {language.data.app.guilds.player.related.play_continuously}
             </h1>
             <div className='flex-1' />
@@ -326,8 +390,16 @@ const Related = memo(({ videoId }: { videoId?: string }) => {
               nextDisabled={watchPlaylistEmblaNextBtnDisabled}
             />
           </div>
-          <div className='embla w-full max-w-none mx-0 my-0 z-10 relative'>
-            <div className='embla__viewport' ref={watchPlaylistEmblaRef}>
+          <div
+            className='embla w-full max-w-none mx-0 my-0 z-10 relative touch-pan-y'
+            onPointerDown={(e) => {
+              e.stopPropagation();
+              setIsQueueReordering(true);
+            }}
+            onPointerUp={() => setIsQueueReordering(false)}
+            onPointerCancel={() => setIsQueueReordering(false)}
+          >
+            <div className='embla__viewport touch-pan-y' ref={watchPlaylistEmblaRef}>
               <div className='embla__container gap-5 select-none flex-row w-full'>
                 <TrackColumns tracks={watchPlaylistTracks} />
               </div>
@@ -343,7 +415,7 @@ const Related = memo(({ videoId }: { videoId?: string }) => {
             toLangKey as keyof typeof language.data.app.guilds.player.related;
           const HeaderTitle = () => (
             <h1
-              className={`text-3xl ${index > 0 ? 'mt-4' : ''} -mb-2 font-bold text-[hsl(var(--pona-app-music-accent-color-800)/0.64)] dark:text-[hsl(var(--pona-app-music-accent-color-500)/0.64)]`}
+              className={`text-3xl ${index > 0 ? 'mt-4' : ''} -mb-2 font-bold md:text-[hsl(var(--pona-app-music-accent-color-800)/0.64)] md:dark:text-[hsl(var(--pona-app-music-accent-color-500)/0.64)]`}
             >
               {language.data.app.guilds.player.related[langKeyType]
                 ? language.data.app.guilds.player.related[langKeyType]
@@ -365,8 +437,16 @@ const Related = memo(({ videoId }: { videoId?: string }) => {
                     nextDisabled={recommendsEmblaNextBtnDisabled}
                   />
                 </div>
-                <div className='embla w-full max-w-none mx-0 my-0 z-10 relative'>
-                  <div className='embla__viewport' ref={recommendsEmblaRef}>
+                <div
+                  className='embla w-full max-w-none mx-0 my-0 z-10 relative touch-pan-y'
+                  onPointerDown={(e) => {
+                    e.stopPropagation();
+                    setIsQueueReordering(true);
+                  }}
+                  onPointerUp={() => setIsQueueReordering(false)}
+                  onPointerCancel={() => setIsQueueReordering(false)}
+                >
+                  <div className='embla__viewport touch-pan-y' ref={recommendsEmblaRef}>
                     <div className='embla__container gap-5 select-none flex-row w-full'>
                       <TrackColumns tracks={contents || []} />
                     </div>
@@ -390,8 +470,16 @@ const Related = memo(({ videoId }: { videoId?: string }) => {
                     nextDisabled={playlistEmblaNextBtnDisabled}
                   />
                 </div>
-                <div className='embla w-full max-w-none mx-0 mt-3 z-10 relative'>
-                  <div className='embla__viewport' ref={playlistEmblaRef}>
+                <div
+                  className='embla w-full max-w-none mx-0 mt-3 z-10 relative touch-pan-y'
+                  onPointerDown={(e) => {
+                    e.stopPropagation();
+                    setIsQueueReordering(true);
+                  }}
+                  onPointerUp={() => setIsQueueReordering(false)}
+                  onPointerCancel={() => setIsQueueReordering(false)}
+                >
+                  <div className='embla__viewport touch-pan-y' ref={playlistEmblaRef}>
                     <div className='embla__container gap-5 select-none'>
                       <PlaylistCards playlists={contents || []} />
                     </div>
@@ -415,8 +503,16 @@ const Related = memo(({ videoId }: { videoId?: string }) => {
                     nextDisabled={artistEmblaNextBtnDisabled}
                   />
                 </div>
-                <div className='embla w-full max-w-none mx-0 mt-3 z-10 relative'>
-                  <div className='embla__viewport' ref={artistEmblaRef}>
+                <div
+                  className='embla w-full max-w-none mx-0 mt-3 z-10 relative touch-pan-y'
+                  onPointerDown={(e) => {
+                    e.stopPropagation();
+                    setIsQueueReordering(true);
+                  }}
+                  onPointerUp={() => setIsQueueReordering(false)}
+                  onPointerCancel={() => setIsQueueReordering(false)}
+                >
+                  <div className='embla__viewport touch-pan-y' ref={artistEmblaRef}>
                     <div className='embla__container gap-5 select-none'>
                       <ArtistCards artists={contents || []} />
                     </div>
@@ -445,13 +541,6 @@ const Related = memo(({ videoId }: { videoId?: string }) => {
         })}
       <div className='h-[16vh]' />
     </motion.div>
-  ) : (
-    <div className='flex flex-col gap-4 items-center justify-center w-full h-full'>
-      <Spinner className='text-[hsl(var(--pona-app-music-accent-color-800))] dark:text-[hsl(var(--pona-app-music-accent-color-500))]' />
-      <h1 className='text-2xl max-w-3xl text-center text-[hsl(var(--pona-app-music-accent-color-800)/0.64)] dark:text-[hsl(var(--pona-app-music-accent-color-500))/0.64]'>
-        {language.data.common.friendly_loading}
-      </h1>
-    </div>
   );
 });
 

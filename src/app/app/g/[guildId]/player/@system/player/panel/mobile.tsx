@@ -16,15 +16,19 @@ import {
   CaretDownIcon,
   CaretLineLeftIcon,
   CaretLineRightIcon,
+  CaretRightIcon,
   DotsThreeVerticalIcon,
   EqualizerIcon,
   MusicNotesIcon,
   PauseIcon,
   PersonSimpleIcon,
   PlayIcon,
+  QuotesIcon,
   RepeatIcon,
   RepeatOnceIcon,
+  SpinnerIcon,
 } from "@phosphor-icons/react/dist/ssr"
+import { Bot } from "lucide-react"
 
 import { combineArtistName } from "@/components/music/searchResult/track"
 import { Button } from "@/components/ui/button"
@@ -40,6 +44,11 @@ import { useAppStore } from "@/store/coreStore"
 import { playbackAtom, ponaCommonStateAtom } from "@/store/musicAtoms"
 import { playerPopupAtom, isQueueReorderingAtom } from "@/store/uiAtoms"
 import { msToTime } from "@/lib/utils"
+import { AnimateIcon } from "@/components/animate-ui/icons/icon"
+import CustomScrollArea from "@/components/ui/custom/scroll-area"
+import LyricsDisplay from "@/components/music/lyricsDisplay"
+import Related from "./related"
+import { Track } from "@/types/ponaPlayer"
 import { MobilePonaPlayerPanelAnimationState, PlayerSeekBar, PlayerControls } from "../index"
 import MobileQueueView from "./mobileQueue"
 import { toast } from "sonner"
@@ -80,6 +89,11 @@ const MobilePonaPlayerPanel = React.memo(function MobilePonaPlayerPanel({
   const currentTrack = ponaCommonState?.current
 
   const [dimensions, setDimensions] = useState({ width: 480, height: 800 })
+  const [activeMobileTab, setActiveMobileTab] = useState<'queue' | 'lyrics' | 'related'>('queue')
+  const [lyricsContainer, setLyricsContainer] = useState<HTMLDivElement | null>(null)
+  const [isTrackActionDrawerOpen, setIsTrackActionDrawerOpen] = useState(false)
+  const [isRepeatModalOpen, setIsRepeatModalOpen] = useState(false)
+  const [isEqualizerDrawerOpen, setIsEqualizerDrawerOpen] = useState(false)
 
   useEffect(() => {
     if (typeof window === "undefined") return
@@ -97,9 +111,9 @@ const MobilePonaPlayerPanel = React.memo(function MobilePonaPlayerPanel({
   const fallbackProgress = useMotionValue(playerPopup ? 1 : 0)
   const progress = dragProgress || fallbackProgress
 
-  const maxArtworkByHeight = Math.max(160, dimensions.height - 388)
+  const maxArtworkByHeight = Math.max(160, dimensions.height - 410)
   const fullArtworkSize = Math.max(160, Math.min(dimensions.width - 48, maxArtworkByHeight))
-  const totalContentH = fullArtworkSize + 276
+  const totalContentH = fullArtworkSize + 308
   const startContentTop = Math.max(48, (dimensions.height - totalContentH) / 2)
   const fullArtworkTop = startContentTop
   const fullArtworkLeft = (dimensions.width - fullArtworkSize) / 2
@@ -128,14 +142,28 @@ const MobilePonaPlayerPanel = React.memo(function MobilePonaPlayerPanel({
     [
       fullArtworkTop + fullArtworkSize + 16,
       fullArtworkTop + fullArtworkSize + 16,
-      dimensions.width - 66,
+      dimensions.width - 48,
       -80,
     ]
   )
   const titleArtistOpacity = useTransform(progress, [0.35, 0.85, 1.5, 1.75, 2], [0, 1, 1, 0, 0])
   const titleArtistVisibility = useTransform(progress, (v) => v < 0.25 || v > 1.8 ? 'hidden' : 'visible')
 
-  const controlsTargetY15 = dimensions.width - fullArtworkTop - fullArtworkSize - 100
+  const actionsRowY = useTransform(
+    progress,
+    [0.35, 1, 1.25, 1.5, 2],
+    [
+      fullArtworkTop + fullArtworkSize + 76,
+      fullArtworkTop + fullArtworkSize + 76,
+      fullArtworkTop + fullArtworkSize + 56,
+      -80,
+      -80,
+    ]
+  )
+  const actionsRowOpacity = useTransform(progress, [0.75, 1, 1.15, 1.3], [0, 1, 0, 0])
+  const actionsRowVisibility = useTransform(progress, (v) => v < 0.7 || v > 1.2 ? 'hidden' : 'visible')
+
+  const controlsTargetY15 = dimensions.width - fullArtworkTop - fullArtworkSize - 120
   const controlsY = useTransform(progress, [0.35, 1, 1.5, 2], [24, 0, controlsTargetY15, controlsTargetY15 - 100])
   const controlsOpacity = useTransform(progress, [0.35, 0.85, 1.5, 1.75, 2], [0, 1, 1, 0, 0])
   const controlsVisibility = useTransform(progress, (v) => v < 0.25 || v > 1.8 ? 'hidden' : 'visible')
@@ -148,9 +176,6 @@ const MobilePonaPlayerPanel = React.memo(function MobilePonaPlayerPanel({
   const queueY = useTransform(progress, [1.0, 1.5, 2.0], [dimensions.height, queueMidY, 0])
   const queueOpacity = useTransform(progress, [1.05, 1.3, 2], [0, 1, 1])
   const queueVisibility = useTransform(progress, (v) => v < 1.05 ? 'hidden' : 'visible')
-
-  const [isRepeatModalOpen, setIsRepeatModalOpen] = useState(false)
-  const [isTrackActionDrawerOpen, setIsTrackActionDrawerOpen] = useState(false)
   const [sliderValue, setSliderValue] = useState<number>(playback)
 
   useEffect(() => {
@@ -239,7 +264,29 @@ const MobilePonaPlayerPanel = React.memo(function MobilePonaPlayerPanel({
     }
   }, [snapStage, progress])
 
+  const resetTabTimeoutRef = React.useRef<NodeJS.Timeout | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (resetTabTimeoutRef.current) {
+        clearTimeout(resetTabTimeoutRef.current)
+      }
+    }
+  }, [])
+
   const snapToStage = useCallback((target: 0 | 1 | 1.5 | 2) => {
+    if (resetTabTimeoutRef.current) {
+      clearTimeout(resetTabTimeoutRef.current)
+      resetTabTimeoutRef.current = null
+    }
+
+    if (target <= 1.0) {
+      // Delay resetting to 'queue' until the panel has fully slid down out of view (smooth exit)
+      resetTabTimeoutRef.current = setTimeout(() => {
+        setActiveMobileTab('queue')
+      }, 450)
+    }
+
     if (target === 0) {
       if (onDismissPanel) onDismissPanel()
       else if (setSnapStage) setSnapStage(0)
@@ -257,6 +304,7 @@ const MobilePonaPlayerPanel = React.memo(function MobilePonaPlayerPanel({
 
   const handleOpenQueueStep = useCallback((e?: React.MouseEvent) => {
     e?.stopPropagation()
+    setActiveMobileTab('queue')
     snapToStage(1.5)
   }, [snapToStage])
 
@@ -284,58 +332,106 @@ const MobilePonaPlayerPanel = React.memo(function MobilePonaPlayerPanel({
   const queueToMidDist = Math.max(150, dimensions.height - queueMidY)
   const queueToFullDist = Math.max(150, queueMidY)
 
-  const handlePanelDrag = useCallback((_: unknown, info: { offset: { y: number } }) => {
-    if (info.offset.y > 0) {
-      progress.set(Math.max(0, 1 - info.offset.y / dismissTravelDist))
-    } else {
-      progress.set(Math.min(1.5, 1 - (info.offset.y / (queueToMidDist * 2))))
-    }
-  }, [progress, dismissTravelDist, queueToMidDist])
-
-  const handlePanelDragEnd = useCallback((_: unknown, info: { offset: { y: number }; velocity: { y: number } }) => {
-    if (info.offset.y > 80 || info.velocity.y > 350) {
-      snapToStage(0)
-    } else if (info.offset.y < -45 || info.velocity.y < -200) {
-      snapToStage(1.5)
-    } else {
-      snapToStage(1)
-    }
-  }, [snapToStage])
-
-  const handleQueueHandleDrag = useCallback((_: unknown, info: { offset: { y: number } }) => {
-    const cur = progress.get()
-    if (snapStage === 1.5 || cur < 1.75) {
+  const handlePanelDrag = useCallback(
+    (_: unknown, info: { offset: { x: number; y: number } }) => {
+      if (isQueueReordering) return
+      if (Math.abs(info.offset.x) > 12 && Math.abs(info.offset.x) > Math.abs(info.offset.y)) {
+        return
+      }
       if (info.offset.y > 0) {
-        progress.set(Math.max(1, 1.5 - (info.offset.y / (queueToMidDist * 2))))
+        progress.set(Math.max(0, 1 - info.offset.y / dismissTravelDist))
       } else {
-        progress.set(Math.min(2, 1.5 - (info.offset.y / (queueToFullDist * 2))))
+        progress.set(Math.min(1.5, 1 - info.offset.y / (queueToMidDist * 2)))
       }
-    } else {
-      if (info.offset.y > 0) {
-        progress.set(Math.max(1, 2 - (info.offset.y / (queueToFullDist * 2))))
-      }
-    }
-  }, [progress, snapStage, queueToMidDist, queueToFullDist])
+    },
+    [isQueueReordering, progress, dismissTravelDist, queueToMidDist]
+  )
 
-  const handleQueueHandleDragEnd = useCallback((_: unknown, info: { offset: { y: number }; velocity: { y: number } }) => {
-    if (snapStage === 1.5) {
-      if (info.offset.y > 50 || info.velocity.y > 250) {
-        snapToStage(1)
+  const handlePanelDragEnd = useCallback(
+    (
+      _: unknown,
+      info: { offset: { x: number; y: number }; velocity: { x: number; y: number } }
+    ) => {
+      if (isQueueReordering) {
+        snapToStage(snapStage)
+        return
+      }
+      if (
+        Math.abs(info.offset.x) > 20 &&
+        Math.abs(info.offset.x) > Math.abs(info.offset.y) * 0.75
+      ) {
+        snapToStage(snapStage)
+        return
+      }
+      if (info.offset.y > 80 || info.velocity.y > 350) {
+        snapToStage(0)
       } else if (info.offset.y < -45 || info.velocity.y < -200) {
-        snapToStage(2)
-      } else {
         snapToStage(1.5)
-      }
-    } else {
-      if (info.offset.y > 160 || info.velocity.y > 600) {
+      } else {
         snapToStage(1)
-      } else if (info.offset.y > 50 || info.velocity.y > 250) {
-        snapToStage(1.5)
-      } else {
-        snapToStage(2)
       }
-    }
-  }, [snapStage, snapToStage])
+    },
+    [isQueueReordering, snapStage, snapToStage]
+  )
+
+  const handleQueueHandleDrag = useCallback(
+    (_: unknown, info: { offset: { x: number; y: number } }) => {
+      if (isQueueReordering) return
+      if (Math.abs(info.offset.x) > 12 && Math.abs(info.offset.x) > Math.abs(info.offset.y)) {
+        return
+      }
+      const cur = progress.get()
+      if (snapStage === 1.5 || cur < 1.75) {
+        if (info.offset.y > 0) {
+          progress.set(Math.max(1, 1.5 - info.offset.y / (queueToMidDist * 2)))
+        } else {
+          progress.set(Math.min(2, 1.5 - info.offset.y / (queueToFullDist * 2)))
+        }
+      } else {
+        if (info.offset.y > 0) {
+          progress.set(Math.max(1, 2 - info.offset.y / (queueToFullDist * 2)))
+        }
+      }
+    },
+    [isQueueReordering, progress, snapStage, queueToMidDist, queueToFullDist]
+  )
+
+  const handleQueueHandleDragEnd = useCallback(
+    (
+      _: unknown,
+      info: { offset: { x: number; y: number }; velocity: { x: number; y: number } }
+    ) => {
+      if (isQueueReordering) {
+        snapToStage(snapStage)
+        return
+      }
+      if (
+        Math.abs(info.offset.x) > 20 &&
+        Math.abs(info.offset.x) > Math.abs(info.offset.y) * 0.75
+      ) {
+        snapToStage(snapStage)
+        return
+      }
+      if (snapStage === 1.5) {
+        if (info.offset.y > 50 || info.velocity.y > 250) {
+          snapToStage(1)
+        } else if (info.offset.y < -45 || info.velocity.y < -200) {
+          snapToStage(2)
+        } else {
+          snapToStage(1.5)
+        }
+      } else {
+        if (info.offset.y > 160 || info.velocity.y > 600) {
+          snapToStage(1)
+        } else if (info.offset.y > 50 || info.velocity.y > 250) {
+          snapToStage(1.5)
+        } else {
+          snapToStage(2)
+        }
+      }
+    },
+    [isQueueReordering, snapStage, snapToStage]
+  )
 
   return (
     <>
@@ -482,9 +578,30 @@ const MobilePonaPlayerPanel = React.memo(function MobilePonaPlayerPanel({
             }}
             className="px-6 flex flex-col min-w-0 transform-gpu"
           >
-            <h1 className="text-xl font-bold text-default-foreground truncate drop-shadow-sm">
-              {currentTrack.title}
-            </h1>
+            <div
+              className="flex items-center gap-0.5 cursor-pointer group select-none"
+              onClick={(e) => {
+                e.stopPropagation()
+                setActiveMobileTab('related')
+                snapToStage(2)
+              }}
+            >
+              <h1 className="text-xl font-bold text-default-foreground truncate drop-shadow-sm">
+                {currentTrack.title}
+              </h1>
+              <Button
+                size={"icon-sm"}
+                variant={"ghost"}
+                className="text-default-foreground/60 hover:text-default-foreground rounded-lg shrink-0"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setActiveMobileTab('related')
+                  snapToStage(2)
+                }}
+              >
+                <CaretRightIcon weight="bold" size={12} />
+              </Button>
+            </div>
             <p className="text-sm text-default-foreground/75 truncate mt-0.5 drop-shadow-sm">
               {currentTrack.artist ? (
                 combineArtistName(currentTrack.artist, true, router, {
@@ -502,7 +619,39 @@ const MobilePonaPlayerPanel = React.memo(function MobilePonaPlayerPanel({
           <motion.div
             style={{
               position: "absolute",
-              top: fullArtworkTop + fullArtworkSize + 76,
+              top: 0,
+              left: 0,
+              right: 0,
+              y: actionsRowY,
+              opacity: actionsRowOpacity,
+              visibility: actionsRowVisibility,
+              pointerEvents: playerPopup && snapStage === 1 ? "auto" : "none",
+              zIndex: 30,
+              willChange: "transform, opacity",
+            }}
+            onPointerDown={(e) => e.stopPropagation()}
+            className="px-6 flex items-center gap-1.5 min-w-0 transform-gpu"
+          >
+            <Button
+              size="sm"
+              variant="ghost"
+              data-smooth-interaction="true"
+              className="text-default-foreground bg-default-foreground/10 hover:bg-default-foreground/15 rounded-full h-8 px-3 gap-1.5 text-xs font-semibold"
+              onClick={(e) => {
+                e.stopPropagation()
+                setActiveMobileTab('lyrics')
+                snapToStage(2)
+              }}
+            >
+              <QuotesIcon weight="bold" size={14} />
+              {(language.data.app.guilds.player.tabs as Record<string, string>)?.lyrics || "Lyrics"}
+            </Button>
+          </motion.div>
+
+          <motion.div
+            style={{
+              position: "absolute",
+              top: fullArtworkTop + fullArtworkSize + 116,
               left: 0,
               right: 0,
               opacity: controlsOpacity,
@@ -532,7 +681,7 @@ const MobilePonaPlayerPanel = React.memo(function MobilePonaPlayerPanel({
                 setSliderValue={setSliderValue}
                 onSeek={handleSeek}
                 isMobile
-                className="w-full mb-2.5 group"
+                className="w-full mb-2.5 h-2 relative top-0 left-0 flex items-center group"
               />
               <div className="mt-1 flex w-full flex-row items-center justify-between gap-2">
                 <span className="text-xs text-default-foreground/60">
@@ -555,10 +704,7 @@ const MobilePonaPlayerPanel = React.memo(function MobilePonaPlayerPanel({
                 data-smooth-interaction="true"
                 size="icon"
                 className="mr-auto rounded-lg"
-                onClick={() => {
-                  const el = document.getElementById("player-equalizer-trigger")
-                  if (el) el.click()
-                }}
+                onClick={() => setIsEqualizerDrawerOpen(true)}
               >
                 <EqualizerIcon weight="fill" className="size-5 text-default-foreground" />
               </Button>
@@ -655,13 +801,99 @@ const MobilePonaPlayerPanel = React.memo(function MobilePonaPlayerPanel({
               dragElastic={0}
               onDrag={handleQueueHandleDrag}
               onDragEnd={handleQueueHandleDragEnd}
-              className="w-full flex items-center justify-center py-2.5 cursor-grab active:cursor-grabbing touch-none select-none"
+              className="w-full absolute top-0 z-50 left-1/2 -translate-x-1/2 flex items-center justify-center py-2.5 cursor-grab active:cursor-grabbing touch-none select-none"
               onClick={handleCollapseStep}
             >
               <div className="w-12 h-1.25 rounded-full bg-default-foreground/25 hover:bg-default-foreground/45" />
             </motion.div>
 
-            <MobileQueueView className="flex-1 min-h-0" />
+            {activeMobileTab === 'queue' && (
+              <MobileQueueView className="flex-1 min-h-0" snapStage={snapStage} />
+            )}
+
+            {activeMobileTab === 'lyrics' && (
+              <CustomScrollArea
+                className="flex-1 min-h-0 border-0 outline-0"
+                classNames={{
+                  viewport: "relative rounded-none bg-linear-to-b from-default to-transparent",
+                }}
+                ref={setLyricsContainer}
+              >
+                <div className="w-full border-b border-default-foreground/10 p-4 pt-6 flex bg-default sticky top-0 z-40">
+                  <div className="w-full min-w-0 flex-1 pr-4">
+                    <span className="text-default-foreground text-xl font-bold truncate block">
+                      {language.data.app.guilds.player.tabs.lyrics}
+                    </span>
+                  </div>
+                </div>
+                <div className="w-full pt-4 pb-20 px-6 mask-t-from-90% mask-b-from-90%">
+                  {lyricsContainer && (
+                    <>
+                      {!currentTrack?.lyrics ? (
+                        <div className="flex flex-col items-center justify-center py-20 gap-3 text-muted-foreground">
+                          <SpinnerIcon className="size-8 animate-spin text-[hsl(var(--pona-app-music-accent-color-500))]" />
+                          <span className="text-sm font-medium">
+                            {(language.data.app.guilds.player.tabs as Record<string, string>)?.fetching_lyrics || 'Loading lyrics...'}
+                          </span>
+                        </div>
+                      ) : currentTrack.lyrics.error || !currentTrack.lyrics.lyrics || currentTrack.lyrics.lyrics.length === 0 ? (
+                        <div className="text-center py-16 flex flex-col justify-center items-center gap-3 text-[hsl(var(--pona-app-music-accent-color-800))] dark:text-[hsl(var(--pona-app-music-accent-color-500))]">
+                          <AnimateIcon animate loop loopDelay={1200}>
+                            <Bot size={48} />
+                          </AnimateIcon>
+                          <strong>
+                            {(language.data.app.guilds.player.tabs as Record<string, string>)?.no_lyrics_available || 'No lyrics available'}
+                          </strong>
+                        </div>
+                      ) : currentTrack.lyrics.isTimestamp ? (
+                        <LyricsDisplay
+                          playerPosition={playback}
+                          currentTrack={currentTrack as Track}
+                          lyricsProvider={lyricsContainer}
+                          isPlaying={!ponaCommonState?.pona.paused}
+                        />
+                      ) : (
+                        <div className="w-full text-center pb-16">
+                          {(currentTrack.lyrics.lyrics as string[]).map((lyric, index) => (
+                            <div key={index} className="flex items-center justify-center gap-2">
+                              <span className="text-xl my-3 text-[hsl(var(--pona-app-music-accent-color-800))] dark:text-[hsl(var(--pona-app-music-accent-color-500))] font-medium">
+                                {lyric}
+                              </span>
+                            </div>
+                          ))}
+                          {currentTrack.lyrics.source && (
+                            <div className="mt-8 mb-4 text-xs text-[hsl(var(--pona-app-music-accent-color-500)/0.5)] font-semibold tracking-wider uppercase text-center">
+                              {(
+                                (language.data.app.guilds.player.tabs as Record<string, string>)?.lyrics_provided_by ||
+                                'Lyrics provided by [provider]'
+                              ).replace('[provider]', currentTrack.lyrics.source)}
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
+              </CustomScrollArea>
+            )}
+
+            {activeMobileTab === 'related' && (
+              <CustomScrollArea
+                className="flex-1 min-h-0 border-0 outline-0"
+                classNames={{
+                  viewport: "pb-8 bg-linear-to-b from-default to-transparent",
+                }}
+              >
+                <div className="w-full border-b border-default-foreground/10 p-4 pt-6 flex bg-default sticky top-0 z-40">
+                  <div className="w-full min-w-0 flex-1 pr-4">
+                    <span className="text-default-foreground text-xl font-bold truncate block">
+                      {language.data.app.guilds.player.tabs.related}
+                    </span>
+                  </div>
+                </div>
+                <Related videoId={currentTrack?.identifier} />
+              </CustomScrollArea>
+            )}
           </motion.div>
         </motion.div>
       )}
@@ -673,8 +905,8 @@ const MobilePonaPlayerPanel = React.memo(function MobilePonaPlayerPanel({
         showSwipeHandle
         swipeDirection="down"
       >
-        <DrawerContent className="p-4 flex flex-col gap-4 max-w-lg mx-auto">
-          <DrawerHeader className="p-0 text-left flex items-center gap-3">
+        <DrawerContent className="border-none bg-overlay backdrop-blur-xl">
+          <DrawerHeader className="py-4 px-4 mb-2 border-b border-default-foreground/10 text-left flex items-center gap-3">
             {currentTrack && (
               <>
                 <div className="size-14 shrink-0 relative overflow-hidden rounded-xl bg-default/60">
@@ -703,11 +935,12 @@ const MobilePonaPlayerPanel = React.memo(function MobilePonaPlayerPanel({
           </DrawerHeader>
 
           {currentTrack && (
-            <div className="flex flex-col gap-1.5 pt-2 border-t border-default-foreground/10">
+            <div className="flex flex-col pb-6">
               {currentTrack.artist && currentTrack.artist[0] && (
                 <Button
                   variant="ghost"
-                  className="w-full justify-start gap-3 h-12 rounded-xl text-default-foreground"
+                  size="lg"
+                  className="justify-start p-3 h-max border-0 text-default-foreground gap-3"
                   onClick={() => {
                     const artistId = currentTrack.artist![0].id
                     setIsTrackActionDrawerOpen(false)
@@ -788,6 +1021,25 @@ const MobilePonaPlayerPanel = React.memo(function MobilePonaPlayerPanel({
               <RepeatOnceIcon className="mr-2 size-4" />
               {language.data.app.guilds.player.repeat.track}
             </Button>
+          </div>
+        </DrawerContent>
+      </Drawer>
+
+      <Drawer
+        open={isEqualizerDrawerOpen}
+        onOpenChange={setIsEqualizerDrawerOpen}
+        modal
+        showSwipeHandle
+        swipeDirection="down"
+      >
+        <DrawerContent className="border-none bg-overlay backdrop-blur-xl">
+          <DrawerHeader className="py-4 mb-2 border-b border-default-foreground/10">
+            <DrawerTitle>
+              {language.data.app.guilds.player.equalizer.title}
+            </DrawerTitle>
+          </DrawerHeader>
+          <div className="flex flex-col items-center justify-center p-6 text-center text-sm text-muted-foreground pb-8">
+            {language.data.extensions.comingsoon}
           </div>
         </DrawerContent>
       </Drawer>

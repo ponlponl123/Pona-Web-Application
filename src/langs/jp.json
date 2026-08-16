@@ -501,7 +501,9 @@
           "pnpt_toggle_description": "キューが少なくなったとき、おすすめの曲を自動追加します。",
           "pnpt_queue_title": "次の候補（自動）",
           "pnpt_auto_badge": "自動",
-          "pnpt_queue_repeat_incompatible": "自動再生はキューリピートと同時に使用できません。"
+          "pnpt_queue_repeat_incompatible": "自動再生はキューリピートと同時に使用できません。",
+          "playing_from": "再生元",
+          "mix_prefix": "ミックス - "
         },
         "related": {
           "videoId_not_provided": "バスは全然来ない…",

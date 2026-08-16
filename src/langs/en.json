@@ -497,7 +497,9 @@
           "pnpt_toggle_description": "Automatically add recommended tracks when the queue is nearly empty.",
           "pnpt_queue_title": "Up Next (Auto)",
           "pnpt_auto_badge": "Auto",
-          "pnpt_queue_repeat_incompatible": "Auto-continue is not compatible with Queue Repeat mode."
+          "pnpt_queue_repeat_incompatible": "Auto-continue is not compatible with Queue Repeat mode.",
+          "playing_from": "Playing from",
+          "mix_prefix": "My Mix - "
         },
         "related": {
           "videoId_not_provided": "The bus never comes...",

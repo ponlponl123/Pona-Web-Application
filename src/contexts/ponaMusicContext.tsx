@@ -11,6 +11,7 @@ import { getCookie } from "cookies-next"
 
 import {
   isPNPTEnabledAtom,
+  originTrackAtom,
   playbackAtom,
   pnptQueueAtom,
   ponaCommonStateAtom,
@@ -46,6 +47,7 @@ export const PonaMusicProvider = ({
 
   const setPlayback = useSetAtom(playbackAtom)
   const setPonaCommonState = useSetAtom(ponaCommonStateAtom)
+  const setOriginTrack = useSetAtom(originTrackAtom)
   const setQueue = useSetAtom(queueAtom)
   const setIsPNPTEnabled = useSetAtom(isPNPTEnabledAtom)
   const setPNPTQueue = useSetAtom(pnptQueueAtom)
@@ -113,6 +115,7 @@ export const PonaMusicProvider = ({
       if (!ponaStatePayload) {
         document.body.removeAttribute("playing")
         setPonaCommonState(null)
+        setOriginTrack(null)
         setQueue({ queue: [], updating: false })
         setPNPTQueue([])
         setIsPNPTEnabled(true)
@@ -133,6 +136,7 @@ export const PonaMusicProvider = ({
         if (!decodedState || !decodedState.pona || !decodedState.pona.voiceChannel) {
           document.body.removeAttribute("playing")
           setPonaCommonState(null)
+          setOriginTrack(null)
           setQueue({ queue: [], updating: false })
           setPNPTQueue([])
           setIsPNPTEnabled(true)
@@ -144,6 +148,17 @@ export const PonaMusicProvider = ({
           const newTrack = await makeTrack(decodedState.current)
           decodedState.current = newTrack
         }
+
+        if (decodedState.originTrack?.identifier) {
+          const originTrack = await makeTrack(decodedState.originTrack)
+          decodedState.originTrack = originTrack
+          setOriginTrack(originTrack)
+        } else if (decodedState.originTrack) {
+          setOriginTrack(decodedState.originTrack)
+        } else {
+          setOriginTrack(null)
+        }
+
         if (decodedState.queue && decodedState.queue.length > 0) {
           decodedState.queue = decodedState.queue.map((track) => {
             return proxyArtwork(track)
@@ -374,7 +389,10 @@ export const PonaMusicProvider = ({
     guild?.id,
     setPlayback,
     setPonaCommonState,
+    setOriginTrack,
     setQueue,
+    setPNPTQueue,
+    setIsPNPTEnabled,
     setIsMemberInVC,
     setIsSameVC,
   ])

@@ -29,8 +29,8 @@ import { CSS } from '@dnd-kit/utilities';
 import {
   DotsSixVerticalIcon,
   DotsThreeVerticalIcon,
+  FastForwardIcon,
   PersonSimpleIcon,
-  PlayIcon,
   PlusIcon,
   TrashIcon,
 } from '@phosphor-icons/react/dist/ssr';
@@ -47,6 +47,7 @@ import { useSocket } from '@/contexts/ponaMusicContext';
 import { useAppStore } from '@/store/coreStore';
 import {
   isPNPTEnabledAtom,
+  originTrackAtom,
   pnptQueueAtom,
   ponaCommonStateAtom,
   queueAtom,
@@ -58,6 +59,7 @@ import { AnimateIcon } from '@/components/animate-ui/icons/icon';
 import { AudioLines } from '@/components/animate-ui/icons/audio-lines';
 import CustomScrollArea from '@/components/ui/custom/scroll-area';
 import { cn } from '@/lib/utils';
+import { Switch } from '@/components/ui/switch';
 
 export const MobileDraggableTrack = React.memo(function MobileDraggableTrack({
   track,
@@ -228,21 +230,53 @@ export const MobileDraggableTrack = React.memo(function MobileDraggableTrack({
 
 const MobileQueueView = React.memo(function MobileQueueView({
   onScroll,
+  snapStage,
   className,
 }: {
   onScroll?: (e: React.UIEvent<HTMLDivElement>) => void;
+  snapStage?: number;
   className?: string;
 }) {
   const language = useAppStore((state) => state.language);
   const router = useRouter();
   const ponaCommonState = useAtomValue(ponaCommonStateAtom);
+  const originTrack = useAtomValue(originTrackAtom);
   const [ponaTrackQueue, setPonaTrackQueue] = useAtom(queueAtom);
-  const [isPNPTEnabled] = useAtom(isPNPTEnabledAtom);
-  const [pnptQueue] = useAtom(pnptQueueAtom);
+  const [isPNPTEnabled, setIsPNPTEnabled] = useAtom(isPNPTEnabledAtom);
+  const [pnptQueue, setPNPTQueue] = useAtom(pnptQueueAtom);
   const { socket } = useSocket();
 
+  const isQueueRepeat = ponaCommonState?.pona?.repeat?.queue || false;
   const currentTrack = ponaCommonState?.current;
   const isPaused = Boolean(ponaCommonState?.pona?.paused);
+
+  // Track local user override for instant UI response before WS confirmation
+  const [userToggledEnabled, setUserToggledEnabled] = useState<boolean | null>(null);
+  const pendingEnabled = userToggledEnabled !== null ? userToggledEnabled : isPNPTEnabled;
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleTogglePNPT = useCallback(
+    (checked: boolean) => {
+      if (isQueueRepeat) return;
+      setUserToggledEnabled(checked);
+
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+
+      debounceTimerRef.current = setTimeout(() => {
+        if (socket) {
+          socket.emit('pnpt_toggle', checked, (res: { status: string; enabled?: boolean }) => {
+            if (res?.status === 'ok' && typeof res.enabled === 'boolean') {
+              setIsPNPTEnabled(res.enabled);
+              setUserToggledEnabled(null);
+            }
+          });
+        }
+      }, 500);
+    },
+    [socket, isQueueRepeat, setIsPNPTEnabled]
+  );
 
   const playingNextQueue = useMemo(() => {
     const queue = ponaTrackQueue?.queue;
@@ -252,6 +286,7 @@ const MobileQueueView = React.memo(function MobileQueueView({
   }, [ponaTrackQueue, currentTrack]);
 
   const [activeDragTrack, setActiveDragTrack] = useState<Track | UnresolvedTrack | null>(null);
+  const [activeDragPnptTrack, setActiveDragPnptTrack] = useState<Track | UnresolvedTrack | null>(null);
   const [actionTrackData, setActionTrackData] = useState<{
     track: Track | UnresolvedTrack;
     queueIndex: number;
@@ -263,10 +298,10 @@ const MobileQueueView = React.memo(function MobileQueueView({
   }, [setIsQueueReordering]);
 
   const handleHandleEnd = useCallback(() => {
-    if (!activeDragTrack) {
+    if (!activeDragTrack && !activeDragPnptTrack) {
       setIsQueueReordering(false);
     }
-  }, [activeDragTrack, setIsQueueReordering]);
+  }, [activeDragTrack, activeDragPnptTrack, setIsQueueReordering]);
 
   const sensors = useSensors(
     useSensor(MouseSensor, {
@@ -323,6 +358,40 @@ const MobileQueueView = React.memo(function MobileQueueView({
       }
     },
     [ponaTrackQueue, setPonaTrackQueue, socket, setIsQueueReordering]
+  );
+
+  const handlePnptDragStart = useCallback(
+    (event: DragStartEvent) => {
+      setIsQueueReordering(true);
+      if (!pnptQueue) return;
+      const track = pnptQueue.find(
+        (t, idx) => (t.uniqueId || `pnpt-${idx + 1}`) === event.active.id
+      );
+      if (track) setActiveDragPnptTrack(track);
+    },
+    [pnptQueue, setIsQueueReordering]
+  );
+
+  const handlePnptDragEnd = useCallback(
+    (event: DragEndEvent) => {
+      setActiveDragPnptTrack(null);
+      setIsQueueReordering(false);
+      if (!pnptQueue) return;
+      const { active, over } = event;
+      if (over && active.id !== over.id) {
+        const oldIndex = pnptQueue.findIndex(
+          (track, idx) => (track.uniqueId || `pnpt-${idx + 1}`) === active.id
+        );
+        const newIndex = pnptQueue.findIndex(
+          (track, idx) => (track.uniqueId || `pnpt-${idx + 1}`) === over.id
+        );
+        if (oldIndex !== -1 && newIndex !== -1) {
+          setPNPTQueue(arrayMove(pnptQueue, oldIndex, newIndex));
+          socket?.emit('move_pnpt', oldIndex, newIndex);
+        }
+      }
+    },
+    [pnptQueue, setPNPTQueue, socket, setIsQueueReordering]
   );
 
   const handleSkipTo = useCallback(
@@ -467,182 +536,273 @@ const MobileQueueView = React.memo(function MobileQueueView({
     <div
       className={cn('size-full flex flex-col min-h-0', className)}
     >
+      <div className={cn(
+        "w-full border-b border-transparent p-4 pt-6 flex items-center sticky top-0 z-40",
+        snapStage === 2 ? "bg-default border-default-foreground/10" : ""
+      )}>
+        <div className="w-full min-w-0 flex-1 pr-4">
+          <p className="text-default-foreground/60 text-xs font-bold truncate block">
+            {(language.data.app.guilds.player.tabs as Record<string, string>)?.playing_from || 'กำลังเล่นจาก'}
+          </p>
+          <span className="text-default-foreground text-base font-bold truncate block">
+            {originTrack
+              ? `${(language.data.app.guilds.player.tabs as Record<string, string>)?.mix_prefix || 'มิกซ์ '}${originTrack.title}`
+              : currentTrack?.title || ''}
+          </span>
+        </div>
+        <div className='flex items-center gap-1.5 shrink-0'>
+          <span
+            className={cn(
+              'text-xs font-bold transition-colors select-none',
+              isQueueRepeat ? 'text-default-foreground/25' : 'text-default-foreground/60'
+            )}
+          >
+            {(language.data.app.guilds.player.tabs as Record<string, string>)?.pnpt_auto_badge || 'PNPT'}
+          </span>
+          <Switch
+            size="sm"
+            checked={!isQueueRepeat && pendingEnabled}
+            disabled={isQueueRepeat}
+            onCheckedChange={handleTogglePNPT}
+            data-smooth-interaction="true"
+            aria-label={(language.data.app.guilds.player.tabs as Record<string, string>)?.pnpt_toggle_label || 'Auto-continue'}
+          />
+        </div>
+      </div>
       <CustomScrollArea
         onScroll={onScroll}
         className="flex-1 min-h-0 border-0 outline-0"
-        classNames={{
-          viewport: 'pt-2 pb-24',
-        }}
       >
-        {currentTrack && (
-          <div className="mb-4 flex flex-col gap-1.5">
-            <span className="text-xs px-4 font-bold text-default-foreground/40 tracking-wider">
-              {language.data.app.guilds.player.tabs.now_playing}
-            </span>
-            <div
-              onClick={handleNowPlayingClick}
-              onContextMenu={(e) => {
-                e.preventDefault();
-                handleOpenAction(currentTrack, -1);
-              }}
-              onPointerDown={handleNowPlayingPointerDown}
-              onPointerMove={handleNowPlayingPointerMove}
-              onPointerUp={handleNowPlayingPointerUp}
-              onPointerCancel={handleNowPlayingPointerUp}
-              className="flex items-center gap-3 py-2 px-4 cursor-pointer active:bg-default/90 select-none group transform-gpu"
-            >
-              <div className="size-12 shrink-0 relative overflow-hidden rounded-sm bg-default/60">
-                <Image
-                  src={
-                    currentTrack.proxyArtworkUrl ||
-                    currentTrack.artworkUrl ||
-                    (currentTrack.identifier
-                      ? `/api/proxy/watch?v=${currentTrack.identifier}&s=md`
-                      : '/static/Ponlponl123 (1459).png')
-                  }
-                  alt={currentTrack.title}
-                  fill
-                  unoptimized
-                  className={cn(
-                    'object-cover',
-                    !isPaused && 'brightness-75 blur-[2px]'
-                  )}
-                />
-                {!isPaused && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/30">
-                    <AnimateIcon animate loop>
-                      <AudioLines className="size-5 text-white" />
-                    </AnimateIcon>
-                  </div>
-                )}
-              </div>
-
-              <div className="min-w-0 flex-1">
-                <h4 className="text-sm font-bold text-default-foreground truncate">
-                  {currentTrack.title}
-                </h4>
-                <p className="text-xs text-default-foreground/70 truncate">
-                  {currentTrack.artist ? (
-                    combineArtistName(currentTrack.artist, true, router, {
-                      className: 'text-xs text-default-foreground/70 hover:underline',
-                    })
-                  ) : (
-                    currentTrack.author || ''
-                  )}
-                </p>
-              </div>
-
-              <Button
-                variant="ghost"
-                size="icon"
-                className="size-9 rounded-full text-default-foreground/60 hover:text-default-foreground hover:bg-default-foreground/10 shrink-0"
-                onClick={(e) => {
-                  e.stopPropagation();
+        <div className={cn(
+          "pointer-events-none absolute top-0 left-0 w-full h-full bg-linear-to-b from-default to-transparent -z-10",
+          snapStage === 2 ? "opacity-100" : "opacity-0"
+        )} />
+        <div className='w-full pt-2 pb-24'>
+          {currentTrack && (
+            <div className="mb-4 flex flex-col gap-1.5">
+              <span className="text-xs px-4 font-bold text-default-foreground/40 tracking-wider">
+                {language.data.app.guilds.player.tabs.now_playing}
+              </span>
+              <div
+                onClick={handleNowPlayingClick}
+                onContextMenu={(e) => {
+                  e.preventDefault();
                   handleOpenAction(currentTrack, -1);
                 }}
+                onPointerDown={handleNowPlayingPointerDown}
+                onPointerMove={handleNowPlayingPointerMove}
+                onPointerUp={handleNowPlayingPointerUp}
+                onPointerCancel={handleNowPlayingPointerUp}
+                className="flex items-center gap-3 py-2 px-4 cursor-pointer active:bg-default/90 select-none group transform-gpu"
               >
-                <DotsThreeVerticalIcon weight="bold" className="size-5" />
-              </Button>
-            </div>
-          </div>
-        )}
-
-        <div className="flex flex-col gap-1.5">
-          <div className="flex items-center justify-between px-4 mb-1">
-            <span className="text-xs font-bold text-default-foreground/40 tracking-wider">
-              {language.data.app.guilds.player.tabs.next} ({playingNextQueue.length})
-            </span>
-          </div>
-
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
-            onDragCancel={() => {
-              setActiveDragTrack(null);
-              setIsQueueReordering(false);
-            }}
-          >
-            <SortableContext
-              items={playingNextQueue.map((t, idx) => t.uniqueId || `track-${idx + 1}`)}
-              strategy={verticalListSortingStrategy}
-            >
-              <div className="flex flex-col gap-2">
-                {playingNextQueue.map((track, idx) => (
-                  <MobileDraggableTrack
-                    key={track.uniqueId || `queue-item-${idx}`}
-                    track={track}
-                    queueIndex={idx + 1}
-                    onPlay={() => handleSkipTo(idx + 1, track.title)}
-                    onOpenAction={handleOpenAction}
-                    onHandleStart={handleHandleStart}
-                    onHandleEnd={handleHandleEnd}
+                <div className="size-12 shrink-0 relative overflow-hidden rounded-sm bg-default/60">
+                  <Image
+                    src={
+                      currentTrack.proxyArtworkUrl ||
+                      currentTrack.artworkUrl ||
+                      (currentTrack.identifier
+                        ? `/api/proxy/watch?v=${currentTrack.identifier}&s=md`
+                        : '/static/Ponlponl123 (1459).png')
+                    }
+                    alt={currentTrack.title}
+                    fill
+                    unoptimized
+                    className={cn(
+                      'object-cover',
+                      !isPaused && 'brightness-75 blur-[2px]'
+                    )}
                   />
-                ))}
-              </div>
-            </SortableContext>
+                  {!isPaused && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                      <AnimateIcon animate loop>
+                        <AudioLines className="size-5 text-white" />
+                      </AnimateIcon>
+                    </div>
+                  )}
+                </div>
 
-            {typeof document !== 'undefined' &&
-              createPortal(
-                <DragOverlay
-                  adjustScale={false}
-                  zIndex={1000}
-                  dropAnimation={{
-                    duration: 200,
-                    easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)',
+                <div className="min-w-0 flex-1">
+                  <h4 className="text-sm font-bold text-default-foreground truncate">
+                    {currentTrack.title}
+                  </h4>
+                  <p className="text-xs text-default-foreground/70 truncate">
+                    {currentTrack.artist ? (
+                      combineArtistName(currentTrack.artist, true, router, {
+                        className: 'text-xs text-default-foreground/70 hover:underline',
+                      })
+                    ) : (
+                      currentTrack.author || ''
+                    )}
+                  </p>
+                </div>
+
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="size-9 rounded-full text-default-foreground/60 hover:text-default-foreground hover:bg-default-foreground/10 shrink-0"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleOpenAction(currentTrack, -1);
                   }}
                 >
-                  {activeDragTrack ? (
-                    <div className="flex items-center gap-3 p-2 rounded-xl bg-default shadow-2xl border border-default-foreground/10 opacity-95 w-[calc(100vw-32px)] max-w-lg">
-                      <div className="size-11 shrink-0 relative overflow-hidden rounded-lg">
-                        <Image
-                          src={
-                            activeDragTrack.proxyArtworkUrl ||
-                            activeDragTrack.artworkUrl ||
-                            '/static/Ponlponl123 (1459).png'
-                          }
-                          alt={activeDragTrack.title}
-                          fill
-                          unoptimized
-                          className="object-cover"
-                        />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <h4 className="text-sm font-semibold text-default-foreground truncate">
-                          {activeDragTrack.title}
-                        </h4>
-                        <p className="text-xs text-default-foreground/60 truncate">
-                          {activeDragTrack.author || ''}
-                        </p>
-                      </div>
-                    </div>
-                  ) : null}
-                </DragOverlay>,
-                document.body
-              )}
-          </DndContext>
-
-          {isPNPTEnabled && pnptQueue && pnptQueue.length > 0 && (
-            <div className="mt-4 flex flex-col gap-2">
-              <span className="text-xs font-bold text-default-foreground/40 tracking-wider px-4">
-                {(language.data.app.guilds.player.tabs as Record<string, string>)?.pnpt_title || 'PNPT Recommendations'}
-              </span>
-              <div className="flex flex-col gap-2">
-                {pnptQueue.map((track, idx) => (
-                  <MobileDraggableTrack
-                    key={track.uniqueId || `pnpt-${idx}`}
-                    track={{ ...track, _isPNPT: true }}
-                    queueIndex={playingNextQueue.length + idx + 1}
-                    onPlay={() => handleSkipTo(playingNextQueue.length + idx + 1, track.title)}
-                    onOpenAction={handleOpenAction}
-                    onHandleStart={handleHandleStart}
-                    onHandleEnd={handleHandleEnd}
-                  />
-                ))}
+                  <DotsThreeVerticalIcon weight="bold" className="size-5" />
+                </Button>
               </div>
             </div>
           )}
+
+          <div className="flex flex-col gap-1.5">
+            <div className="flex items-center justify-between px-4 mb-1">
+              <span className="text-xs font-bold text-default-foreground/40 tracking-wider">
+                {language.data.app.guilds.player.tabs.next} ({playingNextQueue.length})
+              </span>
+            </div>
+
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragStart={handleDragStart}
+              onDragEnd={handleDragEnd}
+              onDragCancel={() => {
+                setActiveDragTrack(null);
+                setIsQueueReordering(false);
+              }}
+            >
+              <SortableContext
+                items={playingNextQueue.map((t, idx) => t.uniqueId || `track-${idx + 1}`)}
+                strategy={verticalListSortingStrategy}
+              >
+                <div className="flex flex-col gap-2">
+                  {playingNextQueue.map((track, idx) => (
+                    <MobileDraggableTrack
+                      key={track.uniqueId || `queue-item-${idx}`}
+                      track={track}
+                      queueIndex={idx + 1}
+                      onPlay={() => handleSkipTo(idx + 1, track.title)}
+                      onOpenAction={handleOpenAction}
+                      onHandleStart={handleHandleStart}
+                      onHandleEnd={handleHandleEnd}
+                    />
+                  ))}
+                </div>
+              </SortableContext>
+
+              {typeof document !== 'undefined' &&
+                createPortal(
+                  <DragOverlay
+                    adjustScale={false}
+                    zIndex={1000}
+                    dropAnimation={{
+                      duration: 200,
+                      easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)',
+                    }}
+                  >
+                    {activeDragTrack ? (
+                      <div className="flex items-center gap-3 p-2 rounded-xl bg-default shadow-2xl border border-default-foreground/10 opacity-95 w-[calc(100vw-32px)] max-w-lg">
+                        <div className="size-11 shrink-0 relative overflow-hidden rounded-lg">
+                          <Image
+                            src={
+                              activeDragTrack.proxyArtworkUrl ||
+                              activeDragTrack.artworkUrl ||
+                              '/static/Ponlponl123 (1459).png'
+                            }
+                            alt={activeDragTrack.title}
+                            fill
+                            unoptimized
+                            className="object-cover"
+                          />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <h4 className="text-sm font-semibold text-default-foreground truncate">
+                            {activeDragTrack.title}
+                          </h4>
+                          <p className="text-xs text-default-foreground/60 truncate">
+                            {activeDragTrack.author || ''}
+                          </p>
+                        </div>
+                      </div>
+                    ) : null}
+                  </DragOverlay>,
+                  document.body
+                )}
+            </DndContext>
+
+            {pendingEnabled && !isQueueRepeat && pnptQueue && pnptQueue.length > 0 && (
+              <div className="mt-4 flex flex-col gap-2">
+                <span className="text-xs font-bold text-default-foreground/40 tracking-wider px-4">
+                  {(language.data.app.guilds.player.tabs as Record<string, string>)?.pnpt_title || 'เล่นอัตโนมัติ'}
+                </span>
+                <DndContext
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  onDragStart={handlePnptDragStart}
+                  onDragEnd={handlePnptDragEnd}
+                  onDragCancel={() => {
+                    setActiveDragPnptTrack(null);
+                    setIsQueueReordering(false);
+                  }}
+                >
+                  <SortableContext
+                    items={pnptQueue.map((t, idx) => t.uniqueId || `pnpt-${idx + 1}`)}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    <div className="flex flex-col gap-2">
+                      {pnptQueue.map((track, idx) => (
+                        <MobileDraggableTrack
+                          key={track.uniqueId || `pnpt-${idx + 1}`}
+                          track={{ ...track, _isPNPT: true }}
+                          queueIndex={playingNextQueue.length + idx + 1}
+                          onPlay={() => handleSkipTo(playingNextQueue.length + idx + 1, track.title)}
+                          onOpenAction={handleOpenAction}
+                          onHandleStart={handleHandleStart}
+                          onHandleEnd={handleHandleEnd}
+                        />
+                      ))}
+                    </div>
+                  </SortableContext>
+
+                  {typeof document !== 'undefined' &&
+                    createPortal(
+                      <DragOverlay
+                        adjustScale={false}
+                        zIndex={1000}
+                        dropAnimation={{
+                          duration: 200,
+                          easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)',
+                        }}
+                      >
+                        {activeDragPnptTrack ? (
+                          <div className="flex items-center gap-3 p-2 rounded-xl bg-default shadow-2xl border border-default-foreground/10 opacity-95 w-[calc(100vw-32px)] max-w-lg">
+                            <div className="size-11 shrink-0 relative overflow-hidden rounded-lg">
+                              <Image
+                                src={
+                                  activeDragPnptTrack.proxyArtworkUrl ||
+                                  activeDragPnptTrack.artworkUrl ||
+                                  '/static/Ponlponl123 (1459).png'
+                                }
+                                alt={activeDragPnptTrack.title}
+                                fill
+                                unoptimized
+                                className="object-cover"
+                              />
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <h4 className="text-sm font-semibold text-default-foreground truncate">
+                                {activeDragPnptTrack.title}
+                              </h4>
+                              <p className="text-xs text-default-foreground/60 truncate">
+                                {activeDragPnptTrack.author || ''}
+                              </p>
+                            </div>
+                          </div>
+                        ) : null}
+                      </DragOverlay>,
+                      document.body
+                    )}
+                </DndContext>
+              </div>
+            )}
+          </div>
         </div>
       </CustomScrollArea>
 
@@ -655,9 +815,12 @@ const MobileQueueView = React.memo(function MobileQueueView({
             setActionTrackData(null);
           }
         }}
+        modal
+        showSwipeHandle
+        swipeDirection="down"
       >
-        <DrawerContent className="p-4 flex flex-col gap-4 max-w-lg mx-auto">
-          <DrawerHeader className="p-0 text-left flex items-center gap-3">
+        <DrawerContent className="border-none bg-overlay backdrop-blur-xl">
+          <DrawerHeader className="py-4 px-4 mb-2 border-b border-default-foreground/10 text-left flex items-center gap-3">
             {actionTrackData && (
               <>
                 <div className="size-14 shrink-0 relative overflow-hidden rounded-xl bg-default/60">
@@ -686,19 +849,20 @@ const MobileQueueView = React.memo(function MobileQueueView({
           </DrawerHeader>
 
           {actionTrackData && (
-            <div className="flex flex-col gap-1.5 pt-2 border-t border-default-foreground/10">
+            <div className="flex flex-col pb-6">
               {actionTrackData.queueIndex !== undefined && actionTrackData.queueIndex >= 0 && (
                 <Button
                   variant="ghost"
-                  className="w-full justify-start gap-3 h-12 rounded-xl text-default-foreground"
+                  size="lg"
+                  className="justify-start p-3 h-max border-0 text-default-foreground gap-3"
                   onClick={() => {
                     handleSkipTo(actionTrackData.queueIndex!);
                     setActionTrackData(null);
                   }}
                 >
-                  <PlayIcon weight="fill" className="size-5 text-[hsl(var(--pona-app-music-accent-color-500))]" />
+                  <FastForwardIcon weight="fill" className="size-5" />
                   <span className="font-medium">
-                    {language.data.app.guilds.player.toast?.play?.success || 'Play'}
+                    Skip to
                   </span>
                 </Button>
               )}
@@ -706,7 +870,8 @@ const MobileQueueView = React.memo(function MobileQueueView({
               {actionTrackData.track._isPNPT && (
                 <Button
                   variant="ghost"
-                  className="w-full justify-start gap-3 h-12 rounded-xl text-default-foreground"
+                  size="lg"
+                  className="justify-start p-3 h-max border-0 text-default-foreground gap-3"
                   onClick={() => handleMovePNPTToQueue(actionTrackData.track)}
                 >
                   <PlusIcon weight="bold" className="size-5" />
@@ -719,7 +884,8 @@ const MobileQueueView = React.memo(function MobileQueueView({
               {actionTrackData.track.artist && actionTrackData.track.artist[0] && (
                 <Button
                   variant="ghost"
-                  className="w-full justify-start gap-3 h-12 rounded-xl text-default-foreground"
+                  size="lg"
+                  className="justify-start p-3 h-max border-0 text-default-foreground gap-3"
                   onClick={() => {
                     const artistId = actionTrackData.track.artist![0].id;
                     setActionTrackData(null);
@@ -740,7 +906,8 @@ const MobileQueueView = React.memo(function MobileQueueView({
               {actionTrackData.queueIndex !== undefined && actionTrackData.queueIndex >= 0 && (
                 <Button
                   variant="ghost"
-                  className="w-full justify-start gap-3 h-12 rounded-xl text-danger hover:text-danger hover:bg-danger/10"
+                  size="lg"
+                  className="justify-start p-3 h-max border-0 text-danger hover:text-danger hover:bg-danger/10 gap-3"
                   onClick={() => handleRemoveTrack(actionTrackData.track)}
                 >
                   <TrashIcon weight="bold" className="size-5" />

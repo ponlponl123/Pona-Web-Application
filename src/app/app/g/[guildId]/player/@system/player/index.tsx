@@ -279,7 +279,7 @@ export default function PonaPlayer({ isMobileOverride }: { isMobileOverride?: bo
                 setSliderValue={setSliderValue}
                 onSeek={handleSeek}
                 isMobile
-                className='w-full h-0.5 cursor-pointer group'
+                className='w-full h-0.5 absolute bottom-0 left-0 top-[unset] cursor-pointer group'
               />
             </motion.div>
 
