@@ -196,14 +196,14 @@ function Page() {
               <Image
                 src={
                   `/api/proxy/image?r=` +
-                  encodeURIComponent(playlist.thumbnails[playlist.thumbnails.length - 1].url) + "&s=512&blur=16&saturation=96&contrast=12"
+                  encodeURIComponent(playlist.thumbnails[playlist.thumbnails.length - 1].url) + "&s=192&blur=12&saturation=96&contrast=12"
                 }
                 alt='backdrop'
                 fill
                 unoptimized
                 priority
                 sizes='100vw'
-                className='w-full h-[64vh] object-cover saturate-200 brightness-125 in-[.light]:brightness-200 opacity-40 max-w-full! mask-b-from-0% pointer-events-none select-none'
+                className='w-full h-[64vh] object-cover saturate-200 brightness-125 in-[.light]:brightness-200 opacity-40 max-w-full! mask-b-from-0% pointer-events-none select-none transform-gpu'
               />
             )}
             <div className='absolute top-0 left-0 w-full h-full bg-linear-to-b from-transparent to-[hsl(var(--pona-app-background))] z-10' />
@@ -231,13 +231,14 @@ function Page() {
                 <Image
                   src={
                     `/api/proxy/image?r=` +
-                    encodeURIComponent(playlist.thumbnails[playlist.thumbnails.length - 1].url)
+                    encodeURIComponent(playlist.thumbnails[playlist.thumbnails.length - 1].url) +
+                    '&s=384'
                   }
                   alt={title || ''}
                   width={320}
                   height={320}
                   unoptimized
-                  className='object-cover w-full aspect-square rounded-3xl shadow-lg pointer-events-none select-none'
+                  className='object-cover w-full aspect-square rounded-3xl shadow-lg pointer-events-none select-none transform-gpu'
                 />
                 <h1 className='max-lg:text-center text-3xl w-full mt-3 font-bold'>{title}</h1>
                 {year && (

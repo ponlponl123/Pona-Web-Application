@@ -255,10 +255,10 @@ function Page() {
         ) {
           thumbnail =
             rawThumb.startsWith("http") && !rawThumb.includes("/api/proxy")
-              ? `/api/proxy/image?r=${encodeURIComponent(rawThumb)}`
+              ? `/api/proxy/image?r=${encodeURIComponent(rawThumb)}&s=192`
               : rawThumb
         } else {
-          thumbnail = resolveThumbnailUrl({ thumbnails: [{ url: rawThumb }] })
+          thumbnail = resolveThumbnailUrl({ thumbnails: [{ url: rawThumb }] }, 192)
         }
       }
 

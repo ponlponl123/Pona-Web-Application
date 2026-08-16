@@ -31,7 +31,7 @@ function extractUrl(val: unknown): string | null {
   return null;
 }
 
-export function resolveThumbnailUrl(item: unknown): string | null {
+export function resolveThumbnailUrl(item: unknown, size?: number): string | null {
   if (!item || typeof item !== 'object') return null;
   const obj = item as Record<string, unknown>;
   const info = obj.info as Record<string, unknown> | undefined;
@@ -63,7 +63,6 @@ export function resolveThumbnailUrl(item: unknown): string | null {
 
   if (!rawUrl) return null;
 
-  // Fix protocol-relative URLs starting with // (common in YouTube/Google avatar URLs)
   if (rawUrl.startsWith('//')) {
     rawUrl = `https:${rawUrl}`;
   }
@@ -72,5 +71,5 @@ export function resolveThumbnailUrl(item: unknown): string | null {
     return rawUrl;
   }
 
-  return `/api/proxy/image?r=${encodeURIComponent(rawUrl)}`;
+  return `/api/proxy/image?r=${encodeURIComponent(rawUrl)}${size ? `&s=${size}` : ''}`;
 }

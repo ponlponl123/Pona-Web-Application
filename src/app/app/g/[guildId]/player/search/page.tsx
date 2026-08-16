@@ -86,7 +86,7 @@ function TopResultCard({ track }: TopResultCardProps) {
         )}>
           {track.thumbnails?.[0]?.url && (
             <Image
-              src={`/api/proxy/image?r=${encodeURIComponent(track.thumbnails[0].url)}`}
+              src={`/api/proxy/image?r=${encodeURIComponent(track.thumbnails[0].url)}&s=192`}
               alt={trackTitle}
               width={256}
               height={256}

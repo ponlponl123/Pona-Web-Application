@@ -299,12 +299,12 @@ function Page() {
       >
         {userSetting.transparency ? (
           <ImageWithSkeleton
-            src={`/api/proxy/image?r=${encodeURIComponent(backdropBg)}&s=512&blur=16&saturation=96&contrast=12`}
+            src={`/api/proxy/image?r=${encodeURIComponent(backdropBg)}&s=192&blur=12&saturation=96&contrast=12`}
             alt={guild?.name || "Guild Backdrop"}
             classNames={{
               wrapper: "w-full h-full absolute inset-0",
             }}
-            className="pointer-events-none h-full max-h-[48vh] w-full -translate-y-1 object-cover brightness-110 saturate-200"
+            className="pointer-events-none h-full max-h-[48vh] w-full -translate-y-1 object-cover brightness-110 saturate-200 transform-gpu"
           />
         ) : (
           <div className="h-96 w-full bg-linear-to-t from-transparent to-[hsl(var(--pona-app-music-accent-color-500))]" />
@@ -333,12 +333,12 @@ function Page() {
                       alt={guild.name || "Default Banner"}
                       src={
                         guild.iconURL
-                          ? `${guild.iconURL}?size=320`
+                          ? `/api/proxy/image?r=${encodeURIComponent(guild.iconURL)}&s=128&blur=16`
                           : "/static/app/default.png"
                       }
                       width={"100%"}
                       height={192}
-                      className="h-full w-full bg-primary object-cover blur-2xl"
+                      className="h-full w-full bg-primary object-cover transform-gpu"
                     />
                   </div>
                 )}

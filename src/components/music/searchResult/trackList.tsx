@@ -60,7 +60,7 @@ function TrackList({
       {showThumbnail && data.thumbnails && data.thumbnails.length > 0 && (
         <div className='flex flex-row gap-1 justify-center items-center w-12 h-12 min-w-12 max-w-12 max-h-12 relative shrink-0 rounded-lg overflow-hidden'>
           <Image
-            src={`/api/proxy/image?r=${encodeURIComponent(data.thumbnails[0].url)}`}
+            src={`/api/proxy/image?r=${encodeURIComponent(data.thumbnails[0].url)}&s=96`}
             alt={data.title}
             fill
             unoptimized

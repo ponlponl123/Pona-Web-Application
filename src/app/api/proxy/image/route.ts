@@ -130,7 +130,7 @@ export async function GET(req: NextRequest) {
     return new NextResponse(cached.buffer as unknown as BodyInit, {
       headers: {
         "Content-Type": cached.contentType,
-        "Cache-Control": "public, s-maxage=86400, stale-while-revalidate",
+        "Cache-Control": "public, max-age=604800, s-maxage=2592000, stale-while-revalidate=86400, immutable",
       },
     })
   }
@@ -155,9 +155,10 @@ export async function GET(req: NextRequest) {
     if (size || blur || brightness || contrast) {
       const transformOptions: TransformOptions = {}
 
-      if (size) {
+      const targetWidth = size ? parseInt(size, 10) : blur ? 160 : undefined
+      if (targetWidth) {
         transformOptions.resize = {
-          width: parseInt(size, 10),
+          width: targetWidth,
           fit: "cover",
         } as ResizeOptions
       }
@@ -180,7 +181,7 @@ export async function GET(req: NextRequest) {
     return new NextResponse(imageBuffer as unknown as BodyInit, {
       headers: {
         "Content-Type": contentType,
-        "Cache-Control": "public, s-maxage=86400, stale-while-revalidate",
+        "Cache-Control": "public, max-age=604800, s-maxage=2592000, stale-while-revalidate=86400, immutable",
       },
     })
   } catch (err) {

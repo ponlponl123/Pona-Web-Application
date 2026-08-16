@@ -3,7 +3,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import Image from 'next/image';
-import { useParams, usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useParams, usePathname, useRouter } from 'next/navigation';
 import { AnimatePresence, HTMLMotionProps, motion } from 'framer-motion';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { toast } from 'sonner';
@@ -80,8 +80,6 @@ import { Bot } from '@/components/animate-ui/icons/bot';
 
 export default function DesktopPonaPlayerPanel() {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const searchParamsString = searchParams ? searchParams.toString() : '';
   const setPlayerPopup = useSetAtom(playerPopupAtom);
 
   useEffect(() => {
@@ -185,11 +183,11 @@ export default function DesktopPonaPlayerPanel() {
               src={`/api/proxy/image?r=${encodeURIComponent(
                 currentTrack?.proxyArtworkUrl ||
                 '/static/Ponlponl123 (1459).png'
-              )}&s=512&blur=24&saturation=96&contrast=16&brightness=24`}
+              )}&s=160&blur=28&saturation=96&contrast=16&brightness=24`}
               alt={currentTrack ? currentTrack?.title : 'Backdrop'}
               fill
               unoptimized
-              className='absolute -z-10 scale-[2] w-full h-full top-0 left-0 object-cover [html.dark_&]:brightness-36 contrast-125 blur-3xl [html.light_&]:blur-[128px] [html.light_&]:contrast-75 [html.light_&]:brightness-140 [html.dark_&]:saturate-150'
+              className='absolute -z-10 scale-[2] w-full h-full top-0 left-0 object-cover [html.dark_&]:brightness-36 contrast-125 [html.light_&]:contrast-75 [html.light_&]:brightness-140 [html.dark_&]:saturate-150 transform-gpu'
             />
           )}
           <div

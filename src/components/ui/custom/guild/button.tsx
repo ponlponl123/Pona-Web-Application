@@ -25,12 +25,6 @@ export function GuildButton({
   const language = useAppStore((state) => state.language)
   const [loading, setLoading] = React.useState<boolean>(false)
 
-  const backdropBg = useMemo(() => {
-    if (guild?.bannerURL) return `${guild.bannerURL}?size=640`
-    if (guild?.iconURL) return `${guild.iconURL}?size=640`
-    return "/static/backdrop.png"
-  }, [guild])
-
   const formattedMemberCount = React.useMemo(() => {
     if (typeof guild.memberCount !== "number") return null
     return new Intl.NumberFormat().format(guild.memberCount)
@@ -69,12 +63,12 @@ export function GuildButton({
                 alt={guild.name || "Default Banner"}
                 src={
                   guild.iconURL
-                    ? `${guild.iconURL}?size=320`
+                    ? `/api/proxy/image?r=${encodeURIComponent(guild.iconURL)}&s=128&blur=16`
                     : "/static/app/default.png"
                 }
                 width={"100%"}
                 height={192}
-                className="h-full w-full bg-primary object-cover blur-2xl"
+                className="h-full w-full bg-primary object-cover transform-gpu"
               />
             </div>
           )}

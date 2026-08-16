@@ -21,8 +21,9 @@ import LetsPonaJoin from './@system/lets-pona-join';
 import NotInSameVC from './@system/not-in-same-vc';
 import SocketConnecting from './@system/socket-connecting';
 
+import dynamic from 'next/dynamic';
 import DesktopPonaPlayer, { MobilePonaPlayer } from './@system/player';
-import DesktopPonaPlayerPanel from './@system/player/panel/desktop';
+const DesktopPonaPlayerPanel = dynamic(() => import('./@system/player/panel/desktop'), { ssr: false });
 import CustomScrollArea from '@/components/ui/custom/scroll-area';
 
 export default function Providers({ children }: { children: React.ReactNode }) {
@@ -120,13 +121,13 @@ export default function Providers({ children }: { children: React.ReactNode }) {
               <Image
                 src={`/api/proxy/image?r=${encodeURIComponent(
                   backdropBg || '/static/backdrop.png'
-                )}&s=512&blur=16&saturation=96&contrast=12`}
+                )}&s=192&blur=12&saturation=96&contrast=12`}
                 alt={currentTrack ? currentTrack.title : guild?.name || ''}
                 fill
                 unoptimized
                 priority
                 sizes='100vw'
-                className='object-cover w-full h-screen pointer-events-none saturate-200 brightness-110 scale-200 select-none'
+                className='object-cover w-full h-screen pointer-events-none saturate-200 brightness-110 scale-200 select-none transform-gpu'
               />
             ) : (
               <div className='w-full h-96 bg-linear-to-t from-transparent to-[hsl(var(--pona-app-music-accent-color-500))]' />

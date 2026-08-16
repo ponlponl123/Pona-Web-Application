@@ -385,7 +385,7 @@ export function TrackSearchResult({
               (type === 'artist' || type === 'profile' || type === 'user') && 'rounded-full',
               classNames?.image
             )}
-            src={`/api/proxy/image?r=${encodeURIComponent(thumbnailUrl)}`}
+            src={`/api/proxy/image?r=${encodeURIComponent(thumbnailUrl)}&s=192`}
             alt={title}
             fill
             unoptimized

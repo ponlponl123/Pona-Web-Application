@@ -4,7 +4,7 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { toast } from 'sonner';
 import {
   closestCenter,
@@ -13,7 +13,8 @@ import {
   DragOverlay,
   DragStartEvent,
   KeyboardSensor,
-  PointerSensor,
+  MouseSensor,
+  TouchSensor,
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
@@ -50,6 +51,7 @@ import {
   ponaCommonStateAtom,
   queueAtom,
 } from '@/store/musicAtoms';
+import { isQueueReorderingAtom } from '@/store/uiAtoms';
 import { Track, UnresolvedTrack } from '@/types/ponaPlayer';
 import { emitWithTimeout } from '@/lib/promiseWithTimeout';
 import { AnimateIcon } from '@/components/animate-ui/icons/icon';
@@ -57,16 +59,20 @@ import { AudioLines } from '@/components/animate-ui/icons/audio-lines';
 import CustomScrollArea from '@/components/ui/custom/scroll-area';
 import { cn } from '@/lib/utils';
 
-export function MobileDraggableTrack({
+export const MobileDraggableTrack = React.memo(function MobileDraggableTrack({
   track,
   queueIndex,
   onPlay,
   onOpenAction,
+  onHandleStart,
+  onHandleEnd,
 }: {
   track: Track | UnresolvedTrack;
   queueIndex: number;
   onPlay: () => void;
   onOpenAction: (track: Track | UnresolvedTrack, queueIndex: number) => void;
+  onHandleStart?: () => void;
+  onHandleEnd?: () => void;
 }) {
   const language = useAppStore((state) => state.language);
   const router = useRouter();
@@ -82,19 +88,23 @@ export function MobileDraggableTrack({
     id: track.uniqueId || `track-${queueIndex}`,
   });
 
-  const style = {
+  const style: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.35 : 1,
+    contentVisibility: 'auto',
+    containIntrinsicSize: '0 56px',
   };
 
   const longPressTimerRef = useRef<NodeJS.Timeout | null>(null);
   const touchStartPosRef = useRef<{ x: number; y: number } | null>(null);
   const isLongPressedRef = useRef(false);
+  const isMovedRef = useRef(false);
 
   const handlePointerDown = (e: React.PointerEvent) => {
     const target = e.target as HTMLElement;
     if (target.closest('[data-drag-handle]')) return;
+    isMovedRef.current = false;
     isLongPressedRef.current = false;
     touchStartPosRef.current = { x: e.clientX, y: e.clientY };
     longPressTimerRef.current = setTimeout(() => {
@@ -114,7 +124,8 @@ export function MobileDraggableTrack({
     if (touchStartPosRef.current) {
       const dx = Math.abs(e.clientX - touchStartPosRef.current.x);
       const dy = Math.abs(e.clientY - touchStartPosRef.current.y);
-      if (dx > 8 || dy > 8) {
+      if (dx > 6 || dy > 6) {
+        isMovedRef.current = true;
         if (longPressTimerRef.current) clearTimeout(longPressTimerRef.current);
         longPressTimerRef.current = null;
       }
@@ -128,10 +139,11 @@ export function MobileDraggableTrack({
   };
 
   const handleClick = (e: React.MouseEvent) => {
-    if (isLongPressedRef.current) {
+    if (isLongPressedRef.current || isMovedRef.current) {
       e.preventDefault();
       e.stopPropagation();
       isLongPressedRef.current = false;
+      isMovedRef.current = false;
       return;
     }
     onPlay();
@@ -192,15 +204,29 @@ export function MobileDraggableTrack({
         {...listeners}
         data-drag-handle="true"
         className="p-2 cursor-grab active:cursor-grabbing text-default-foreground/40 hover:text-default-foreground touch-none select-none shrink-0"
+        onPointerDown={(e) => {
+          onHandleStart?.();
+          listeners?.onPointerDown?.(e);
+          e.stopPropagation();
+        }}
+        onPointerUp={() => onHandleEnd?.()}
+        onPointerCancel={() => onHandleEnd?.()}
+        onTouchStart={(e) => {
+          onHandleStart?.();
+          listeners?.onTouchStart?.(e);
+          e.stopPropagation();
+        }}
+        onTouchEnd={() => onHandleEnd?.()}
+        onTouchCancel={() => onHandleEnd?.()}
         onClick={(e) => e.stopPropagation()}
       >
         <DotsSixVerticalIcon weight="bold" className="size-5" />
       </div>
     </div>
   );
-}
+})
 
-export default function MobileQueueView({
+const MobileQueueView = React.memo(function MobileQueueView({
   onScroll,
   className,
 }: {
@@ -230,11 +256,28 @@ export default function MobileQueueView({
     track: Track | UnresolvedTrack;
     queueIndex: number;
   } | null>(null);
+  const setIsQueueReordering = useSetAtom(isQueueReorderingAtom);
+
+  const handleHandleStart = useCallback(() => {
+    setIsQueueReordering(true);
+  }, [setIsQueueReordering]);
+
+  const handleHandleEnd = useCallback(() => {
+    if (!activeDragTrack) {
+      setIsQueueReordering(false);
+    }
+  }, [activeDragTrack, setIsQueueReordering]);
 
   const sensors = useSensors(
-    useSensor(PointerSensor, {
+    useSensor(MouseSensor, {
       activationConstraint: {
         distance: 5,
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 0,
+        tolerance: 5,
       },
     }),
     useSensor(KeyboardSensor, {
@@ -244,17 +287,19 @@ export default function MobileQueueView({
 
   const handleDragStart = useCallback(
     (event: DragStartEvent) => {
+      setIsQueueReordering(true);
       const track = playingNextQueue.find(
         (t, idx) => (t.uniqueId || `track-${idx + 1}`) === event.active.id
       );
       if (track) setActiveDragTrack(track);
     },
-    [playingNextQueue]
+    [playingNextQueue, setIsQueueReordering]
   );
 
   const handleDragEnd = useCallback(
     (event: DragEndEvent) => {
       setActiveDragTrack(null);
+      setIsQueueReordering(false);
       if (!ponaTrackQueue) return;
       const { active, over } = event;
       if (over && active.id !== over.id) {
@@ -277,13 +322,8 @@ export default function MobileQueueView({
         });
       }
     },
-    [ponaTrackQueue, setPonaTrackQueue, socket]
+    [ponaTrackQueue, setPonaTrackQueue, socket, setIsQueueReordering]
   );
-
-  const handlePlayCurrent = useCallback(() => {
-    if (isPaused) socket?.emit('play');
-    else socket?.emit('pause');
-  }, [isPaused, socket]);
 
   const handleSkipTo = useCallback(
     (index: number, trackTitle?: string) => {
@@ -374,10 +414,12 @@ export default function MobileQueueView({
   const nowPlayingLongPressTimerRef = useRef<NodeJS.Timeout | null>(null);
   const nowPlayingTouchStartPosRef = useRef<{ x: number; y: number } | null>(null);
   const nowPlayingIsLongPressedRef = useRef(false);
+  const nowPlayingIsMovedRef = useRef(false);
 
   const handleNowPlayingPointerDown = (e: React.PointerEvent) => {
     const target = e.target as HTMLElement;
     if (target.closest('button')) return;
+    nowPlayingIsMovedRef.current = false;
     nowPlayingIsLongPressedRef.current = false;
     nowPlayingTouchStartPosRef.current = { x: e.clientX, y: e.clientY };
     nowPlayingLongPressTimerRef.current = setTimeout(() => {
@@ -397,7 +439,8 @@ export default function MobileQueueView({
     if (nowPlayingTouchStartPosRef.current) {
       const dx = Math.abs(e.clientX - nowPlayingTouchStartPosRef.current.x);
       const dy = Math.abs(e.clientY - nowPlayingTouchStartPosRef.current.y);
-      if (dx > 8 || dy > 8) {
+      if (dx > 6 || dy > 6) {
+        nowPlayingIsMovedRef.current = true;
         if (nowPlayingLongPressTimerRef.current) clearTimeout(nowPlayingLongPressTimerRef.current);
         nowPlayingLongPressTimerRef.current = null;
       }
@@ -411,10 +454,11 @@ export default function MobileQueueView({
   };
 
   const handleNowPlayingClick = (e: React.MouseEvent) => {
-    if (nowPlayingIsLongPressedRef.current) {
+    if (nowPlayingIsLongPressedRef.current || nowPlayingIsMovedRef.current) {
       e.preventDefault();
       e.stopPropagation();
       nowPlayingIsLongPressedRef.current = false;
+      nowPlayingIsMovedRef.current = false;
       return;
     }
   };
@@ -422,7 +466,6 @@ export default function MobileQueueView({
   return (
     <div
       className={cn('size-full flex flex-col min-h-0', className)}
-      onPointerDown={(e) => e.stopPropagation()}
     >
       <CustomScrollArea
         onScroll={onScroll}
@@ -448,7 +491,7 @@ export default function MobileQueueView({
               onPointerCancel={handleNowPlayingPointerUp}
               className="flex items-center gap-3 py-2 px-4 cursor-pointer active:bg-default/90 select-none group transform-gpu"
             >
-              <div className="size-12 shrink-0 relative overflow-hidden rounded-xl bg-default/60">
+              <div className="size-12 shrink-0 relative overflow-hidden rounded-sm bg-default/60">
                 <Image
                   src={
                     currentTrack.proxyArtworkUrl ||
@@ -516,7 +559,10 @@ export default function MobileQueueView({
             collisionDetection={closestCenter}
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
-            onDragCancel={() => setActiveDragTrack(null)}
+            onDragCancel={() => {
+              setActiveDragTrack(null);
+              setIsQueueReordering(false);
+            }}
           >
             <SortableContext
               items={playingNextQueue.map((t, idx) => t.uniqueId || `track-${idx + 1}`)}
@@ -530,6 +576,8 @@ export default function MobileQueueView({
                     queueIndex={idx + 1}
                     onPlay={() => handleSkipTo(idx + 1, track.title)}
                     onOpenAction={handleOpenAction}
+                    onHandleStart={handleHandleStart}
+                    onHandleEnd={handleHandleEnd}
                   />
                 ))}
               </div>
@@ -588,6 +636,8 @@ export default function MobileQueueView({
                     queueIndex={playingNextQueue.length + idx + 1}
                     onPlay={() => handleSkipTo(playingNextQueue.length + idx + 1, track.title)}
                     onOpenAction={handleOpenAction}
+                    onHandleStart={handleHandleStart}
+                    onHandleEnd={handleHandleEnd}
                   />
                 ))}
               </div>
@@ -705,4 +755,6 @@ export default function MobileQueueView({
       </Drawer>
     </div>
   );
-}
+});
+
+export default MobileQueueView;

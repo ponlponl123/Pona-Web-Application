@@ -150,7 +150,6 @@ export default function PonaPlayer({ isMobileOverride }: { isMobileOverride?: bo
   const backdropVisibility = useTransform(dragProgress, (v) => (v < 0.05 ? 'hidden' : 'visible'));
   const seekBarOpacity = useTransform(dragProgress, [0, 0.25], [1, 0]);
   const seekBarVisibility = useTransform(dragProgress, (v) => (v > 0.3 ? 'hidden' : 'visible'));
-  const handleOpacity = useTransform(dragProgress, [0.5, 1, 1.2], [0, 1, 0]);
 
   const headerElRef = useRef<HTMLElement | null>(null);
   const navElRef = useRef<HTMLElement | null>(null);
@@ -255,7 +254,7 @@ export default function PonaPlayer({ isMobileOverride }: { isMobileOverride?: bo
               <Image
                 src={`/api/proxy/image?r=${encodeURIComponent(
                   currentTrack?.proxyArtworkUrl || '/static/Ponlponl123 (1459).png'
-                )}&s=512&blur=24&saturation=96&contrast=16&brightness=24`}
+                )}&s=128&blur=16&saturation=96&contrast=16&brightness=24`}
                 alt={currentTrack ? currentTrack.title : 'Artwork'}
                 fill
                 unoptimized
@@ -328,7 +327,7 @@ export default function PonaPlayer({ isMobileOverride }: { isMobileOverride?: bo
             <Image
               src={`/api/proxy/image?r=${encodeURIComponent(
                 artworkUrl
-              )}&s=512&blur=32&saturation=96&contrast=12`}
+              )}&s=160&blur=20&saturation=96&contrast=12`}
               alt={currentTrack ? currentTrack.title : 'Thumbnail'}
               fill
               unoptimized

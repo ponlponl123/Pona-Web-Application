@@ -3,7 +3,6 @@
 import React, { memo, useCallback } from 'react';
 import { toast } from 'sonner';
 import { Socket } from 'socket.io-client';
-import { motion } from 'framer-motion';
 import {
   CaretLineLeftIcon,
   CaretLineRightIcon,

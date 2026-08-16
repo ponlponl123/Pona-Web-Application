@@ -73,8 +73,8 @@ function MoodTile({ mood, index }: MoodTileProps) {
           className='absolute w-1 h-full top-0 left-0'
           style={{ background: `linear-gradient(135deg, ${bgDark}, ${bgLight})` }} />
         <div
-          className='absolute size-40 rounded-full blur-3xl top-0 left-1/3 translate-1/3'
-          style={{ background: `linear-gradient(135deg, ${bgDark}, ${bgLight})` }} />
+          className='absolute inset-0 opacity-40 pointer-events-none'
+          style={{ background: `radial-gradient(circle at 70% 50%, ${bgLight} 0%, ${bgDark} 40%, transparent 75%)` }} />
         <div className='absolute inset-0 bg-black/10' />
         <div className='relative z-10 pl-3'>
           <span className='font-semibold text-base text-foreground drop-shadow-sm line-clamp-2'>

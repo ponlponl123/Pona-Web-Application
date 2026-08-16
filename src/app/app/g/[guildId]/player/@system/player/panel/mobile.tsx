@@ -38,14 +38,14 @@ import {
 import { useSocket } from "@/contexts/ponaMusicContext"
 import { useAppStore } from "@/store/coreStore"
 import { playbackAtom, ponaCommonStateAtom } from "@/store/musicAtoms"
-import { playerPopupAtom } from "@/store/uiAtoms"
+import { playerPopupAtom, isQueueReorderingAtom } from "@/store/uiAtoms"
 import { msToTime } from "@/lib/utils"
 import { MobilePonaPlayerPanelAnimationState, PlayerSeekBar, PlayerControls } from "../index"
 import MobileQueueView from "./mobileQueue"
 import { toast } from "sonner"
 import { emitWithTimeout } from "@/lib/promiseWithTimeout"
 
-export default function MobilePonaPlayerPanel({
+const MobilePonaPlayerPanel = React.memo(function MobilePonaPlayerPanel({
   dragProgress,
   snapStage = 0,
   setSnapStage,
@@ -62,16 +62,17 @@ export default function MobilePonaPlayerPanel({
   setAfterState?: React.Dispatch<
     React.SetStateAction<MobilePonaPlayerPanelAnimationState>
   >
-  dragProgress?: MotionValue<number>
-  snapStage?: number
+  dragProgress: MotionValue<number>
+  snapStage?: 0 | 1 | 1.5 | 2
   setSnapStage?: React.Dispatch<React.SetStateAction<0 | 1 | 1.5 | 2>>
-  onTogglePanel?: (e?: React.MouseEvent) => void
+  onTogglePanel?: () => void
   onDismissPanel?: () => void
 }) {
   const router = useRouter()
   const language = useAppStore((state) => state.language)
 
   const ponaCommonState = useAtomValue(ponaCommonStateAtom)
+  const isQueueReordering = useAtomValue(isQueueReorderingAtom)
   const playback = useAtomValue(playbackAtom)
   const [playerPopup, setPlayerPopup] = useAtom(playerPopupAtom)
   const { socket } = useSocket()
@@ -341,7 +342,7 @@ export default function MobilePonaPlayerPanel({
       {currentTrack && (
         <motion.div
           className="relative size-full overflow-hidden select-none"
-          drag={playerPopup ? "y" : false}
+          drag={playerPopup && !isQueueReordering ? "y" : false}
           dragDirectionLock
           dragConstraints={{ top: 0, bottom: 0 }}
           dragElastic={0}
@@ -366,7 +367,7 @@ export default function MobilePonaPlayerPanel({
               zIndex: 30,
               willChange: "transform, border-radius",
             }}
-            className="overflow-hidden shadow-2xl bg-overlay transform-gpu cursor-pointer touch-none"
+            className="overflow-hidden shadow-2xl bg-overlay transform-gpu touch-none"
             onClick={snapStage === 2 ? handleCollapseStep : (!playerPopup ? onTogglePanel : undefined)}
           >
             <Image
@@ -792,4 +793,6 @@ export default function MobilePonaPlayerPanel({
       </Drawer>
     </>
   )
-}
+})
+
+export default MobilePonaPlayerPanel

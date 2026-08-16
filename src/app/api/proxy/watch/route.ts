@@ -50,7 +50,7 @@ export async function GET(req: NextRequest) {
     return new NextResponse(cachedImage.data as unknown as BodyInit, {
       headers: {
         "Content-Type": cachedImage.contentType,
-        "Cache-Control": "public, s-maxage=86400, stale-while-revalidate",
+        "Cache-Control": "public, max-age=604800, s-maxage=2592000, stale-while-revalidate=86400, immutable",
       },
     })
   }
@@ -80,7 +80,7 @@ export async function GET(req: NextRequest) {
         return new NextResponse(uint8Array, {
           headers: {
             "Content-Type": contentType,
-            "Cache-Control": "public, s-maxage=86400, stale-while-revalidate",
+            "Cache-Control": "public, max-age=604800, s-maxage=2592000, stale-while-revalidate=86400, immutable",
             "X-Cache-Hit": "false",
           },
         })
