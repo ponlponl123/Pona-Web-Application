@@ -429,14 +429,19 @@ export default function MobilePonaPlayerPanel({
               </Button>
             </div>
 
-            <Button
-              variant="ghost"
-              data-smooth-interaction="true"
-              className="mt-4 mx-auto text-default-foreground hover:text-default-foreground hover:bg-default-foreground/10 rounded-xl"
-              onClick={() => setTrackFocus(false)}
-            >
-              {language.data.app.guilds.player.tabs.open_queue}
-            </Button>
+            <div className="flex flex-col items-center mt-4">
+              <div className="p-1.5">
+                <div className="w-16 h-1.25 rounded-full bg-default-foreground/20 hover:bg-default-foreground/40 cursor-grab active:cursor-grabbing" />
+              </div>
+              <Button
+                variant="ghost"
+                data-smooth-interaction="true"
+                className="mx-auto text-default-foreground hover:text-default-foreground hover:bg-default-foreground/10 rounded-xl"
+                onClick={() => setTrackFocus(false)}
+              >
+                {language.data.app.guilds.player.tabs.open_queue}
+              </Button>
+            </div>
           </motion.div>
         </div>
       )}

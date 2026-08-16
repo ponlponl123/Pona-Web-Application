@@ -230,17 +230,6 @@ export default function PonaPlayer({ isMobileOverride }: { isMobileOverride?: bo
             />
 
             <motion.div
-              style={{ opacity: handleOpacity, pointerEvents: playerPopup ? 'auto' : 'none' }}
-              className='absolute top-2 left-1/2 -translate-x-1/2 z-30 flex items-center justify-center py-2 w-full cursor-grab active:cursor-grabbing'
-              onClick={(e) => {
-                e.stopPropagation();
-                handleDismissPanel();
-              }}
-            >
-              <div className='w-10 h-1.25 rounded-full bg-foreground/20 hover:bg-foreground/40 transition-colors' />
-            </motion.div>
-
-            <motion.div
               style={{
                 opacity: backdropOpacity,
                 visibility: backdropVisibility,
