@@ -7,6 +7,7 @@ const CustomScrollArea = forwardRef<
   {
     children: React.ReactNode
     className?: string
+    onScroll?: React.UIEventHandler<HTMLDivElement>
     classNames?: {
       root?: string
       viewport?: string
@@ -15,11 +16,12 @@ const CustomScrollArea = forwardRef<
       render?: string
     }
   }
->(({ children, className, classNames }, forwardedRef) => {
+>(({ children, className, onScroll, classNames }, forwardedRef) => {
   return (
     <ScrollArea.Root className={cn(className, classNames?.root)}>
       <ScrollArea.Viewport
         ref={forwardedRef}
+        onScroll={onScroll}
         render={<div className={cn("overflow-auto", classNames?.render)} />}
         className={cn("h-full rounded-md", classNames?.viewport)}
       >

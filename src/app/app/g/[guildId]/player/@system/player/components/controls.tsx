@@ -77,8 +77,7 @@ export const PlayerControls = memo(function PlayerControls({
 
   if (isMobile) {
     return (
-      <motion.div
-        layoutId="pona-mobile-player-play-btn"
+      <div
         className='flex items-center justify-end gap-4 w-16'
       >
         {!isPaused ? (
@@ -100,7 +99,7 @@ export const PlayerControls = memo(function PlayerControls({
             <PlayIcon weight='fill' className='size-5 text-default-foreground' />
           </Button>
         )}
-      </motion.div>
+      </div>
     );
   }
 

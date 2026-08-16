@@ -78,34 +78,6 @@ export default function PonaPlayer({ isMobileOverride }: { isMobileOverride?: bo
   const maxLength = ponaCommonState?.pona.length || 100;
   const isPaused = Boolean(ponaCommonState?.pona.paused);
 
-  const handleTogglePanel = useCallback(
-    (e?: React.MouseEvent) => {
-      if (e) {
-        const target = e.target as HTMLElement;
-        if (target.closest('a') || target.closest('button') || target.closest('[role="slider"]')) return;
-        e.stopPropagation();
-      }
-      setPlayerPopup((value) => {
-        if (!value) {
-          document.body.classList.add('pona-player-focused');
-          if (isMobile) {
-            setAfterState('playerPanel');
-            setBeforeState('none');
-            setTrackFocus(true);
-          }
-        } else {
-          document.body.classList.remove('pona-player-focused');
-          if (isMobile) {
-            setAfterState('none');
-            setBeforeState('queuePanel');
-          }
-        }
-        return !value;
-      });
-    },
-    [isMobile, setPlayerPopup]
-  );
-
   const [viewportH, setViewportH] = useState(800);
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -115,27 +87,70 @@ export default function PonaPlayer({ isMobileOverride }: { isMobileOverride?: bo
     return () => window.removeEventListener('resize', onResize);
   }, []);
 
+  const [snapStage, setSnapStage] = useState<0 | 1 | 1.5 | 2>(0);
   const dragProgress = useMotionValue(0);
 
-  useEffect(() => {
-    animate(dragProgress, playerPopup ? 1 : 0, {
-      type: 'spring',
-      stiffness: 340,
-      damping: 32,
-      restDelta: 0.005,
-    });
-  }, [playerPopup, dragProgress]);
+  const handleTogglePanel = useCallback(
+    (e?: React.MouseEvent) => {
+      if (e) {
+        const target = e.target as HTMLElement;
+        if (target.closest('a') || target.closest('button') || target.closest('[role="slider"]')) return;
+        e.stopPropagation();
+      }
+      setPlayerPopup((value) => {
+        const next = !value;
+        if (next) {
+          document.body.classList.add('pona-player-focused');
+          if (isMobile) {
+            setSnapStage(1);
+            setAfterState('playerPanel');
+            setBeforeState('none');
+            setTrackFocus(true);
+          }
+        } else {
+          document.body.classList.remove('pona-player-focused');
+          if (isMobile) {
+            setSnapStage(0);
+            setAfterState('none');
+            setBeforeState('queuePanel');
+          }
+        }
+        return next;
+      });
+    },
+    [isMobile, setPlayerPopup, setAfterState, setBeforeState, setTrackFocus, setSnapStage]
+  );
 
-  const cardH = useTransform(dragProgress, [0, 1], [64, viewportH]);
-  const cardRadius = useTransform(dragProgress, [0, 1], [8, 0]);
-  const cardLeft = useTransform(dragProgress, [0, 1], [8, 0]);
-  const cardRight = useTransform(dragProgress, [0, 1], [8, 0]);
-  const cardBottom = useTransform(dragProgress, [0, 1], [isMobileStore ? 83.2 : 152, 80]);
-  const backdropOpacity = useTransform(dragProgress, [0.05, 0.8], [0, 1]);
+  useEffect(() => {
+    if (!playerPopup) {
+      setSnapStage(0);
+      animate(dragProgress, 0, {
+        type: 'spring',
+        stiffness: 380,
+        damping: 34,
+        restDelta: 0.002,
+      });
+    } else {
+      const target = snapStage === 0 ? 1 : snapStage;
+      animate(dragProgress, target, {
+        type: 'spring',
+        stiffness: 380,
+        damping: 34,
+        restDelta: 0.002,
+      });
+    }
+  }, [playerPopup, snapStage, dragProgress]);
+
+  const cardH = useTransform(dragProgress, [0, 1, 2], [64, viewportH, viewportH]);
+  const cardRadius = useTransform(dragProgress, [0, 1, 2], [12, 0, 0]);
+  const cardLeft = useTransform(dragProgress, [0, 1, 2], [8, 0, 0]);
+  const cardRight = useTransform(dragProgress, [0, 1, 2], [8, 0, 0]);
+  const cardBottom = useTransform(dragProgress, [0, 1, 2], [isMobileStore ? 83.2 : 152, 80, 80]);
+  const backdropOpacity = useTransform(dragProgress, [0.05, 0.8, 1.4, 2], [0, 1, 0.8, 0.4]);
   const backdropVisibility = useTransform(dragProgress, (v) => (v < 0.05 ? 'hidden' : 'visible'));
   const seekBarOpacity = useTransform(dragProgress, [0, 0.25], [1, 0]);
   const seekBarVisibility = useTransform(dragProgress, (v) => (v > 0.3 ? 'hidden' : 'visible'));
-  const handleOpacity = useTransform(dragProgress, [0.5, 1], [0, 1]);
+  const handleOpacity = useTransform(dragProgress, [0.5, 1, 1.2], [0, 1, 0]);
 
   const headerElRef = useRef<HTMLElement | null>(null);
   const navElRef = useRef<HTMLElement | null>(null);
@@ -150,44 +165,44 @@ export default function PonaPlayer({ isMobileOverride }: { isMobileOverride?: bo
   useMotionValueEvent(dragProgress, 'change', (latest) => {
     if (!headerElRef.current) headerElRef.current = document.querySelector<HTMLElement>('.pona-header');
     if (!navElRef.current) navElRef.current = document.querySelector<HTMLElement>('#pona-player-nav');
-    const progStr = latest.toString();
-    if (headerElRef.current) headerElRef.current.style.setProperty('--player-drag-prog', progStr);
-    if (navElRef.current) navElRef.current.style.setProperty('--player-drag-prog', progStr);
+    const clampedProg = Math.min(1, Math.max(0, latest)).toString();
+    if (headerElRef.current) headerElRef.current.style.setProperty('--player-drag-prog', clampedProg);
+    if (navElRef.current) navElRef.current.style.setProperty('--player-drag-prog', clampedProg);
   });
 
   const handleDismissPanel = useCallback(() => {
-    animate(dragProgress, 0, { type: 'spring', stiffness: 340, damping: 32, restDelta: 0.005 });
+    setSnapStage(0);
+    animate(dragProgress, 0, { type: 'spring', stiffness: 300, damping: 30, mass: 0.8, restDelta: 0.001 });
     document.body.classList.remove('pona-player-focused');
     setAfterState('none');
-    setBeforeState(trackFocus ? 'playerPanel' : 'queuePanel');
+    setBeforeState('playerPanel');
+    setTrackFocus(true);
     setTimeout(() => setPlayerPopup(false), 80);
-  }, [dragProgress, trackFocus, setPlayerPopup, setAfterState, setBeforeState]);
+  }, [dragProgress, setPlayerPopup, setAfterState, setBeforeState]);
 
-  const handleMobileDrag = useCallback((_: unknown, info: { offset: { y: number } }) => {
+  const miniTravelDist = Math.max(200, viewportH - 64);
+
+  const handleMiniDrag = useCallback((_: unknown, info: { offset: { y: number } }) => {
     if (!playerPopup) {
-      dragProgress.set(Math.min(1, Math.max(0, -info.offset.y) / 220));
-    } else {
-      dragProgress.set(Math.max(0, 1 - Math.max(0, info.offset.y) / 220));
+      dragProgress.set(Math.min(1, Math.max(0, -info.offset.y / miniTravelDist)));
     }
-  }, [playerPopup, dragProgress]);
+  }, [playerPopup, dragProgress, miniTravelDist]);
 
-  const handleMobileDragEnd = useCallback((_: unknown, info: { offset: { y: number }; velocity: { y: number } }) => {
-    const toExpand = !playerPopup
-      ? info.offset.y < -35 || info.velocity.y < -250
-      : !(info.offset.y > 45 || info.velocity.y > 250);
-
-    if (toExpand && !playerPopup) {
-      document.body.classList.add('pona-player-focused');
-      setAfterState('playerPanel');
-      setBeforeState('none');
-      setTrackFocus(true);
-      setPlayerPopup(true);
-    } else if (!toExpand && playerPopup) {
-      handleDismissPanel();
-    } else {
-      animate(dragProgress, playerPopup ? 1 : 0, { type: 'spring', stiffness: 340, damping: 32, restDelta: 0.005 });
+  const handleMiniDragEnd = useCallback((_: unknown, info: { offset: { y: number }; velocity: { y: number } }) => {
+    if (!playerPopup) {
+      const toExpand = info.offset.y < -45 || info.velocity.y < -250;
+      if (toExpand) {
+        document.body.classList.add('pona-player-focused');
+        setSnapStage(1);
+        setAfterState('playerPanel');
+        setBeforeState('none');
+        setTrackFocus(true);
+        setPlayerPopup(true);
+      } else {
+        animate(dragProgress, 0, { type: 'spring', stiffness: 300, damping: 30, mass: 0.8, restDelta: 0.001 });
+      }
     }
-  }, [playerPopup, dragProgress, setPlayerPopup, setAfterState, setBeforeState, setTrackFocus, handleDismissPanel]);
+  }, [playerPopup, dragProgress, setPlayerPopup, setAfterState, setBeforeState, setTrackFocus]);
 
   const artworkUrl = (currentTrack?.proxyThumbnail
     ? currentTrack.proxyArtworkUrl
@@ -202,13 +217,13 @@ export default function PonaPlayer({ isMobileOverride }: { isMobileOverride?: bo
             initial={{ opacity: 0, y: 32 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 32 }}
-            transition={{ type: 'spring', stiffness: 380, damping: 32 }}
-            drag={playerPopup && !trackFocus ? false : 'y'}
+            transition={{ type: 'spring', stiffness: 300, damping: 30, mass: 0.8 }}
+            drag={!playerPopup ? 'y' : false}
             dragDirectionLock
             dragConstraints={{ top: 0, bottom: 0 }}
             dragElastic={0}
-            onDrag={handleMobileDrag}
-            onDragEnd={handleMobileDragEnd}
+            onDrag={handleMiniDrag}
+            onDragEnd={handleMiniDragEnd}
             style={{
               position: 'absolute',
               height: cardH,
@@ -218,7 +233,8 @@ export default function PonaPlayer({ isMobileOverride }: { isMobileOverride?: bo
               right: cardRight,
               zIndex: 50,
               overflow: 'hidden',
-              willChange: 'height, bottom, left, right, border-radius',
+              contain: 'paint layout',
+              willChange: 'height, border-radius, bottom, left, right',
             }}
             className={cn(
               'transform-gpu bg-default backface-hidden',
@@ -276,6 +292,8 @@ export default function PonaPlayer({ isMobileOverride }: { isMobileOverride?: bo
               afterState={afterState}
               setAfterState={setAfterState}
               dragProgress={dragProgress}
+              snapStage={snapStage}
+              setSnapStage={setSnapStage}
               onTogglePanel={handleTogglePanel}
               onDismissPanel={handleDismissPanel}
             />
