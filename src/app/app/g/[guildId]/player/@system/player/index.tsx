@@ -18,6 +18,7 @@ import { PlayerControls } from './components/controls';
 import { PlayerActions } from './components/actions';
 import MobilePonaPlayerPanel from './panel/mobile';
 import { cn } from '@/lib/utils';
+import { useWakeLock } from '@/hooks/useWakeLock';
 
 export type MobilePonaPlayerPanelAnimationState =
   | 'none'
@@ -48,6 +49,8 @@ export default function PonaPlayer({ isMobileOverride }: { isMobileOverride?: bo
   const [beforeState, setBeforeState] = useState<'none' | 'playerPanel' | 'queuePanel'>('none');
   const [afterState, setAfterState] = useState<'none' | 'playerPanel' | 'queuePanel'>('none');
   const [trackFocus, setTrackFocus] = useState<boolean>(true);
+
+  useWakeLock(playerPopup);
 
   useEffect(() => {
     setSliderValue(playback);
@@ -149,7 +152,7 @@ export default function PonaPlayer({ isMobileOverride }: { isMobileOverride?: bo
   const cardRadius = useTransform(dragProgress, [0, 1, 2], [12, 0, 0]);
   const cardLeft = useTransform(dragProgress, [0, 1, 2], [8, 0, 0]);
   const cardRight = useTransform(dragProgress, [0, 1, 2], [8, 0, 0]);
-  const cardBottom = useTransform(dragProgress, [0, 1, 2], [isMobileStore ? 83.2 : 152, 0, 0]);
+  const cardBottom = useTransform(dragProgress, [0, 1, 2], [83.2, 0, 0]);
   const backdropOpacity = useTransform(dragProgress, [0.05, 0.8, 1.4, 2], [0, 1, 0.8, 0.4]);
   const backdropVisibility = useTransform(dragProgress, (v) => (v < 0.05 ? 'hidden' : 'visible'));
   const seekBarOpacity = useTransform(dragProgress, [0, 0.25], [1, 0]);
@@ -229,7 +232,7 @@ export default function PonaPlayer({ isMobileOverride }: { isMobileOverride?: bo
             onDrag={handleMiniDrag}
             onDragEnd={handleMiniDragEnd}
             style={{
-              position: 'fixed',
+              position: playerPopup ? 'fixed' : 'absolute',
               height: cardH,
               borderRadius: cardRadius,
               bottom: cardBottom,

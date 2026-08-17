@@ -159,6 +159,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
               <SocketConnecting />
             )}
           </main>
+          {showMobilePlayer && <PlayerNav />}
         </CustomScrollArea>
       </div>
       {isSameVC && (
@@ -173,7 +174,6 @@ export default function Providers({ children }: { children: React.ReactNode }) {
           )}
         </div>
       )}
-      {showMobilePlayer && <PlayerNav />}
     </>
   );
 }

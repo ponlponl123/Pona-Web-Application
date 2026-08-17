@@ -817,7 +817,7 @@ const MobilePonaPlayerPanel = React.memo(function MobilePonaPlayerPanel({
                     </span>
                   </div>
                 </div>
-                <div className="w-full pt-4 pb-20 px-6 mask-t-from-90% mask-b-from-90%">
+                <div className="w-full pt-8 pb-20 mask-t-from-90% mask-b-from-90%">
                   {lyricsContainer && (
                     <>
                       {!currentTrack?.lyrics ? (

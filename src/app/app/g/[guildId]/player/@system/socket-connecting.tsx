@@ -37,7 +37,7 @@ export default function SocketConnecting() {
 
   return (
     <motion.div
-      className='absolute w-full h-full top-0 left-0 flex flex-col gap-6 items-center justify-center bg-background/30 backdrop-blur-xl z-10 p-4 select-none'
+      className='relative min-h-[calc(100dvh-6rem)] w-full flex flex-col gap-6 items-center justify-center bg-background/30 backdrop-blur-xl z-10 p-4 select-none'
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.48 }}

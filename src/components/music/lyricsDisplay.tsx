@@ -61,7 +61,7 @@ const LyricItem = React.memo(
         className={cn(
           className,
           "group relative overflow-visible rounded-lg px-3 py-1.5 animation-disabled apply-long-soft-transition duration-1000",
-          isActive && "scale-[1.015]"
+          isActive && "md:scale-[1.015]"
         )}
         style={{ contentVisibility: "auto" }}
       >
@@ -377,9 +377,9 @@ const LyricsDisplay: React.FC<LyricsDisplayProps> = ({
     const isPast = index < deferredActiveIndex
 
     const conditions = {
-      "text-3xl text-default-foreground md:text-[hsl(var(--pona-app-music-accent-color-800))]! md:dark:text-[hsl(var(--pona-app-music-accent-color-500))]! font-bold [html.dark_&]:brightness-150 [html.light_&]:brightness-50":
+      "md:text-3xl text-default-foreground md:text-[hsl(var(--pona-app-music-accent-color-800))]! md:dark:text-[hsl(var(--pona-app-music-accent-color-500))]! font-bold [html.dark_&]:brightness-150 [html.light_&]:brightness-50":
         isActive,
-      "text-xl text-default-foreground/60 md:text-[hsl(var(--pona-app-music-accent-color-800))]! md:dark:text-[hsl(var(--pona-app-music-accent-color-800))]! md:dark:text-[hsl(var(--pona-app-music-accent-color-500)/0.4)]! [html.light_&]:brightness-90 [html.dark_&]:brightness-125":
+      "md:text-xl text-default-foreground/60 md:text-[hsl(var(--pona-app-music-accent-color-800))]! md:dark:text-[hsl(var(--pona-app-music-accent-color-800))]! md:dark:text-[hsl(var(--pona-app-music-accent-color-500)/0.4)]! [html.light_&]:brightness-90 [html.dark_&]:brightness-125":
         isNearActive,
       "text-base text-default-foreground/30 md:text-[hsl(var(--pona-app-music-accent-color-800))]! md:dark:text-[hsl(var(--pona-app-music-accent-color-500)/0.48)]!":
         isPast,
@@ -390,7 +390,7 @@ const LyricsDisplay: React.FC<LyricsDisplayProps> = ({
     return clsx(baseClasses, conditions)
   }
   return (
-    <div className="relative w-full max-lg:p-4 max-lg:pb-[52vh] pb-[42vh] text-center">
+    <div className="relative w-full max-lg:p-4 max-lg:pt-[12vh] max-lg:pb-[32vh] pb-[42vh] text-center">
       {lyricsArray.map((lyrics, index) => (
         <LyricItem
           key={index}

@@ -57,7 +57,7 @@ function PlayerNav() {
   return (
     <div
       id="pona-player-nav"
-      className='w-full h-20 fixed bottom-0 pb-4 left-0 bg-background/90 backdrop-blur-md border-t-2 border-foreground/10 flex flex-row items-center justify-around z-500 md:hidden [body.pona-player-focused_&]:pointer-events-none transform-gpu'
+      className='w-full h-20 sticky bottom-0 pb-4 left-0 bg-background/90 backdrop-blur-md border-t-2 border-foreground/10 flex flex-row items-center justify-around z-500 md:hidden [body.pona-player-focused_&]:pointer-events-none transform-gpu'
       style={{
         boxShadow: "0 24px 0 0 var(--background)",
         transform: "translateY(calc(var(--player-drag-prog, 0) * 100%))",
