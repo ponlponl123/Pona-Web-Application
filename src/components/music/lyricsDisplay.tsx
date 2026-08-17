@@ -72,28 +72,28 @@ const LyricItem = React.memo(
             className="pointer-events-none absolute inset-0 max-w-full px-3 py-1.5 text-start whitespace-pre-wrap wrap-break-word tracking-[1.019] animation-disabled apply-long-soft-transition duration-1000"
           >
             {characters.map((character, characterIndex) => (
-                <motion.span
-                  key={`${character}-${characterIndex}`}
-                  initial={{
-                    opacity: 0.15,
-                    filter: "blur(0.18em)",
-                    textShadow: "0 0 0 transparent",
-                  }}
-                  animate={{
-                    opacity: 1,
-                    filter: "blur(0)",
-                    textShadow:
-                      "0 0 0.1rem currentColor, 0 0 0.48rem currentColor",
-                  }}
-                  transition={{
-                    duration: characterDuration,
-                    delay: characterIndex * stagger,
-                  }}
-                  className="will-change-[opacity,filter,text-shadow]"
-                >
-                  {character}
-                </motion.span>
-              ))}
+              <motion.span
+                key={`${character}-${characterIndex}`}
+                initial={{
+                  opacity: 0.15,
+                  filter: "blur(0.18em)",
+                  textShadow: "0 0 0 transparent",
+                }}
+                animate={{
+                  opacity: 1,
+                  filter: "blur(0)",
+                  textShadow:
+                    "0 0 0.1rem currentColor, 0 0 0.48rem currentColor",
+                }}
+                transition={{
+                  duration: characterDuration,
+                  delay: characterIndex * stagger,
+                }}
+                className="will-change-[opacity,filter,text-shadow]"
+              >
+                {character}
+              </motion.span>
+            ))}
           </span>
         )}
         <span className={cn("tracking-[1.019] animation-disabled apply-long-soft-transition duration-1000", isActive ? "opacity-35" : "opacity-100")}>
@@ -170,8 +170,8 @@ const LyricsDisplay: React.FC<LyricsDisplayProps> = ({
           position >= currentSecMs &&
           (!nextSecMs ||
             position <
-              nextSecMs +
-                (mid === lastEmittedIndexRef.current ? HYSTERESIS_MS : 0))
+            nextSecMs +
+            (mid === lastEmittedIndexRef.current ? HYSTERESIS_MS : 0))
         ) {
           return mid
         }
@@ -297,7 +297,7 @@ const LyricsDisplay: React.FC<LyricsDisplayProps> = ({
       if (
         !activeLyricElementRef.current ||
         activeLyricElementRef.current.id !==
-          `lyrics-index-${deferredActiveIndex}`
+        `lyrics-index-${deferredActiveIndex}`
       ) {
         activeLyricElementRef.current = document.getElementById(
           `lyrics-index-${deferredActiveIndex}`
@@ -328,20 +328,17 @@ const LyricsDisplay: React.FC<LyricsDisplayProps> = ({
     [deferredActiveIndex]
   )
 
-  // Execute auto-scroll when activeIndex changes and auto-scroll is enabled
   useEffect(() => {
     if (autoScrollEnabled) {
       scrollToActiveLine(true)
     }
   }, [activeIndex, autoScrollEnabled, scrollToActiveLine])
 
-  // Resume auto-scroll button handler
   const handleResumeAutoScroll = useCallback(() => {
     setAutoScrollEnabled(true)
     scrollToActiveLine(true)
   }, [scrollToActiveLine])
 
-  // Click on any line to seek track position and sync auto-scroll
   const handleLineClick = useCallback(
     (seconds: number) => {
       socket?.emit("seek", Math.floor(seconds * 1000))
@@ -370,7 +367,6 @@ const LyricsDisplay: React.FC<LyricsDisplayProps> = ({
     )
   }
 
-  // Memoize className generation
   const getLyricsClassName = (index: number): string => {
     const baseClasses =
       "w-full h-max flex items-center text-start px-2.5 my-8 cursor-pointer disable-default-transition transition-all ease-out duration-400 tracking-wide select-none hover:opacity-90"
@@ -405,7 +401,7 @@ const LyricsDisplay: React.FC<LyricsDisplayProps> = ({
             250,
             ((lyricsArray[index + 1]?.seconds ?? lyrics.seconds + 2) -
               lyrics.seconds) *
-              1000
+            1000
           )}
           onSeek={handleLineClick}
           className={getLyricsClassName(index)}
@@ -418,7 +414,6 @@ const LyricsDisplay: React.FC<LyricsDisplayProps> = ({
         </div>
       )}
 
-      {/* Floating Auto-Scroll Resume Button */}
       <AnimatePresence>
         {!autoScrollEnabled && (
           <motion.div
@@ -432,7 +427,7 @@ const LyricsDisplay: React.FC<LyricsDisplayProps> = ({
               onClick={handleResumeAutoScroll}
               size="sm"
               data-smooth-interaction="true"
-              className="flex items-center gap-2 rounded-full border-2 border-[hsl(var(--pona-app-music-accent-color-500)/0.24)] bg-[hsl(var(--pona-app-music-accent-color-200)/0.64)] p-4 text-[hsl(var(--pona-app-music-accent-color-800))] shadow-xl dark:bg-[hsl(var(--pona-app-music-accent-color-800)/0.64)] dark:text-[hsl(var(--pona-app-music-accent-color-500))]"
+              className="flex items-center gap-2 rounded-full border-2 max-md:bg-default-foreground max-md:text-default md:border-[hsl(var(--pona-app-music-accent-color-500)/0.24)] md:bg-[hsl(var(--pona-app-music-accent-color-200)/0.64)] p-4 md:text-[hsl(var(--pona-app-music-accent-color-800))] shadow-xl md:dark:bg-[hsl(var(--pona-app-music-accent-color-800)/0.64)] md:dark:text-[hsl(var(--pona-app-music-accent-color-500))]"
             >
               <ArrowsDownUpIcon className="size-4 animate-pulse" />
               <span className="text-sm font-bold tracking-wide">

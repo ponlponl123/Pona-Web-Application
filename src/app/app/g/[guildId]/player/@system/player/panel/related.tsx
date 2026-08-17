@@ -260,7 +260,9 @@ const Related = memo(({ videoId }: { videoId?: string }) => {
 
   useEffect(() => {
     const handlePointerDown = () => setIsQueueReordering(true);
-    const handlePointerUp = () => setIsQueueReordering(false);
+    const handlePointerUp = () => {
+      setTimeout(() => setIsQueueReordering(false), 200);
+    };
 
     const apis = [
       recommendsEmblaApi,
@@ -374,12 +376,12 @@ const Related = memo(({ videoId }: { videoId?: string }) => {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 8 }}
       transition={{ duration: 0.16 }}
-      className='flex flex-col gap-4 w-full mx-auto min-h-full py-2 px-6 max-md:**:text-default-foreground'
+      className='flex flex-col gap-4 w-full mx-auto min-h-full max-md:py-6 max-md:px-3 md:py-2 md:px-6 max-md:**:text-default-foreground'
     >
       {watchPlaylistTracks.length > 0 && (
         <>
           <div className='flex gap-4 items-center justify-between w-full p-1 -mt-2'>
-            <h1 className='text-3xl -mb-2 font-bold md:text-[hsl(var(--pona-app-music-accent-color-800)/0.64)] md:dark:text-[hsl(var(--pona-app-music-accent-color-500)/0.64)]'>
+            <h1 className='text-xl max-md:text-default-foreground/40! md:text-3xl -mb-2 font-bold md:text-[hsl(var(--pona-app-music-accent-color-800)/0.64)] md:dark:text-[hsl(var(--pona-app-music-accent-color-500)/0.64)]'>
               {language.data.app.guilds.player.related.play_continuously}
             </h1>
             <div className='flex-1' />
@@ -415,7 +417,7 @@ const Related = memo(({ videoId }: { videoId?: string }) => {
             toLangKey as keyof typeof language.data.app.guilds.player.related;
           const HeaderTitle = () => (
             <h1
-              className={`text-3xl ${index > 0 ? 'mt-4' : ''} -mb-2 font-bold md:text-[hsl(var(--pona-app-music-accent-color-800)/0.64)] md:dark:text-[hsl(var(--pona-app-music-accent-color-500)/0.64)]`}
+              className={`text-xl max-md:text-default-foreground/40! md:text-3xl ${index > 0 ? 'mt-4' : ''} -mb-2 font-bold md:text-[hsl(var(--pona-app-music-accent-color-800)/0.64)] md:dark:text-[hsl(var(--pona-app-music-accent-color-500)/0.64)]`}
             >
               {language.data.app.guilds.player.related[langKeyType]
                 ? language.data.app.guilds.player.related[langKeyType]

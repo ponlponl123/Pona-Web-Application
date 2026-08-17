@@ -74,7 +74,7 @@ export default function Home() {
   }, [pathname])
 
   return (
-    <main className="relative mb-24 min-h-screen w-full">
+    <main className="relative mb-24 min-h-dvh w-full">
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -96,8 +96,8 @@ export default function Home() {
           className="main-bg-2 pointer-events-none absolute top-0 left-0 h-full w-full"
         />
       </motion.div>
-      <div className="relative flex min-h-screen items-center justify-center p-12 sm:p-20">
-        <main className="relative row-start-2 flex h-[calc(100vh-6rem)] w-full flex-col items-center gap-8 sm:h-[calc(100vh-10rem)]">
+      <div className="relative flex min-h-dvh items-center justify-center p-12 sm:p-20">
+        <main className="relative row-start-2 flex h-[calc(100dvh-6rem)] w-full flex-col items-center gap-8 sm:h-[calc(100dvh-10rem)]">
           <motion.span
             initial={{ opacity: 0, y: -24 }}
             animate={{ opacity: 1, y: 0 }}

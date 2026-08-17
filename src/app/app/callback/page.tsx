@@ -7,7 +7,7 @@ import { Spinner } from "@/components/ui/spinner"
 
 function Page() {
   return (
-    <div className="flex h-full min-h-screen w-full">
+    <div className="flex h-full min-h-dvh w-full">
       <div className="m-auto flex flex-col items-center gap-2 text-center">
         <Suspense fallback={<Spinner />}>
           <Authorize />

@@ -53,7 +53,7 @@ async function AppContent({ children }: { children: React.ReactNode }) {
   return (
     <Providers isMobile={mobileCheck} initialLang={langCookie}>
       <Header />
-      <main id="app" className="min-h-screen">
+      <main id="app" className="min-h-dvh">
         {children}
       </main>
       <Footer />
@@ -99,7 +99,7 @@ export default function RootLayout({
         <NextThemeProvider>
           <Suspense
             fallback={
-              <div className="flex min-h-screen animate-pulse items-center justify-center text-muted-foreground">
+              <div className="flex min-h-dvh animate-pulse items-center justify-center text-muted-foreground">
                 App is initializing...
               </div>
             }

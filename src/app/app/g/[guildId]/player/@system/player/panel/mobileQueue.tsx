@@ -298,10 +298,10 @@ const MobileQueueView = React.memo(function MobileQueueView({
   }, [setIsQueueReordering]);
 
   const handleHandleEnd = useCallback(() => {
-    if (!activeDragTrack && !activeDragPnptTrack) {
+    setTimeout(() => {
       setIsQueueReordering(false);
-    }
-  }, [activeDragTrack, activeDragPnptTrack, setIsQueueReordering]);
+    }, 200);
+  }, [setIsQueueReordering]);
 
   const sensors = useSensors(
     useSensor(MouseSensor, {
@@ -334,7 +334,7 @@ const MobileQueueView = React.memo(function MobileQueueView({
   const handleDragEnd = useCallback(
     (event: DragEndEvent) => {
       setActiveDragTrack(null);
-      setIsQueueReordering(false);
+      setTimeout(() => setIsQueueReordering(false), 200);
       if (!ponaTrackQueue) return;
       const { active, over } = event;
       if (over && active.id !== over.id) {
@@ -375,7 +375,7 @@ const MobileQueueView = React.memo(function MobileQueueView({
   const handlePnptDragEnd = useCallback(
     (event: DragEndEvent) => {
       setActiveDragPnptTrack(null);
-      setIsQueueReordering(false);
+      setTimeout(() => setIsQueueReordering(false), 200);
       if (!pnptQueue) return;
       const { active, over } = event;
       if (over && active.id !== over.id) {
@@ -665,7 +665,7 @@ const MobileQueueView = React.memo(function MobileQueueView({
               onDragEnd={handleDragEnd}
               onDragCancel={() => {
                 setActiveDragTrack(null);
-                setIsQueueReordering(false);
+                setTimeout(() => setIsQueueReordering(false), 200);
               }}
             >
               <SortableContext
@@ -742,7 +742,7 @@ const MobileQueueView = React.memo(function MobileQueueView({
                   onDragEnd={handlePnptDragEnd}
                   onDragCancel={() => {
                     setActiveDragPnptTrack(null);
-                    setIsQueueReordering(false);
+                    setTimeout(() => setIsQueueReordering(false), 200);
                   }}
                 >
                   <SortableContext

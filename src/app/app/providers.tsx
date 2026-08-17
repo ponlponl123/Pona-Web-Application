@@ -27,7 +27,7 @@ function Providers({ children }: { children: React.ReactNode }) {
 
   const isPlayerRoute = pathname.includes("/player")
 
-  const content = <div className="relative min-h-screen">
+  const content = <div className="relative min-h-dvh">
     <div className="pointer-events-none absolute top-0 left-0 z-0 h-full w-full bg-[radial-gradient(var(--foreground)_1px,transparent_1px)] bg-size-[16px_16px] opacity-6 dark:opacity-5" />
     <div className="relative z-10 pb-6">
       {isPlayerRoute ? (
@@ -45,7 +45,7 @@ function Providers({ children }: { children: React.ReactNode }) {
       {pathname.startsWith("/app/callback") ? (
         children
       ) : loading ? (
-        <div className="flex min-h-screen w-full items-center justify-center">
+        <div className="flex min-h-dvh w-full items-center justify-center">
           <Spinner />
         </div>
       ) : !userInfo ? (
@@ -56,7 +56,7 @@ function Providers({ children }: { children: React.ReactNode }) {
           <main
             ref={appContent}
             id="app-content"
-            className="scrollbar-hide w-full max-w-[100vw] flex-1 min-w-0 overflow-hidden bg-(--color-playground-background) max-md:h-[calc(100vh+1rem)] max-md:rounded-b-xl md:h-screen md:rounded-l-xl"
+            className="scrollbar-hide w-full max-w-[100vw] flex-1 min-w-0 overflow-hidden bg-(--color-playground-background) max-md:h-[calc(100dvh+1rem)] max-md:rounded-b-xl md:h-dvh md:rounded-l-xl"
           >
             {
               pathname.includes("/player") ? content :

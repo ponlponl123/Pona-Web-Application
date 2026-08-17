@@ -11,7 +11,7 @@ export default function MultiFactorAuthPage(): React.ReactElement {
   const language = useAppStore((state) => state.language)
 
   return (
-    <main id="app-panel" className="relative min-h-screen">
+    <main id="app-panel" className="relative min-h-dvh">
       <ComingSoon
         title={language?.data?.app?.guilds?.security?.message?.title || "Security Message"}
         backUrl={guildId ? `/app/g/${guildId}` : "/app"}

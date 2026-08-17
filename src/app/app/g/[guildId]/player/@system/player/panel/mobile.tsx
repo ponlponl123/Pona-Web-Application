@@ -256,9 +256,10 @@ const MobilePonaPlayerPanel = React.memo(function MobilePonaPlayerPanel({
     if (snapStage !== undefined) {
       animate(progress, snapStage, {
         type: "spring",
-        stiffness: 300,
-        damping: 30,
-        mass: 0.8,
+        bounce: 0,
+        stiffness: 400,
+        damping: 40,
+        mass: 1,
         restDelta: 0.001,
       })
     }
@@ -295,9 +296,10 @@ const MobilePonaPlayerPanel = React.memo(function MobilePonaPlayerPanel({
     if (setSnapStage) setSnapStage(target)
     animate(progress, target, {
       type: "spring",
-      stiffness: 300,
-      damping: 30,
-      mass: 0.8,
+      bounce: 0,
+      stiffness: 400,
+      damping: 40,
+      mass: 1,
       restDelta: 0.001,
     })
   }, [onDismissPanel, setSnapStage, progress])
@@ -442,6 +444,7 @@ const MobilePonaPlayerPanel = React.memo(function MobilePonaPlayerPanel({
           dragDirectionLock
           dragConstraints={{ top: 0, bottom: 0 }}
           dragElastic={0}
+          dragMomentum={false}
           onDrag={snapStage >= 1.5 ? handleQueueHandleDrag : handlePanelDrag}
           onDragEnd={snapStage >= 1.5 ? handleQueueHandleDragEnd : handlePanelDragEnd}
           onClick={!playerPopup ? onTogglePanel : undefined}
@@ -528,12 +531,6 @@ const MobilePonaPlayerPanel = React.memo(function MobilePonaPlayerPanel({
               pointerEvents: playerPopup && snapStage !== 2 ? "none" : "auto",
               zIndex: 35,
             }}
-            drag={snapStage === 2 ? "y" : false}
-            dragDirectionLock
-            dragConstraints={{ top: 0, bottom: 0 }}
-            dragElastic={0}
-            onDrag={handleQueueHandleDrag}
-            onDragEnd={handleQueueHandleDragEnd}
             className="flex items-center justify-between pr-2 transform-gpu cursor-pointer select-none"
             onClick={snapStage === 2 ? handleCollapseStep : (!playerPopup ? onTogglePanel : undefined)}
           >
@@ -794,18 +791,12 @@ const MobilePonaPlayerPanel = React.memo(function MobilePonaPlayerPanel({
             className="transform-gpu flex flex-col min-h-0 rounded-t-3xl overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            <motion.div
-              drag="y"
-              dragDirectionLock
-              dragConstraints={{ top: 0, bottom: 0 }}
-              dragElastic={0}
-              onDrag={handleQueueHandleDrag}
-              onDragEnd={handleQueueHandleDragEnd}
+            <div
               className="w-full absolute top-0 z-50 left-1/2 -translate-x-1/2 flex items-center justify-center py-2.5 cursor-grab active:cursor-grabbing touch-none select-none"
               onClick={handleCollapseStep}
             >
               <div className="w-12 h-1.25 rounded-full bg-default-foreground/25 hover:bg-default-foreground/45" />
-            </motion.div>
+            </div>
 
             {activeMobileTab === 'queue' && (
               <MobileQueueView className="flex-1 min-h-0" snapStage={snapStage} />

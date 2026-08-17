@@ -37,8 +37,8 @@ function Page() {
 
   return (
     <main id="app-panel">
-      <div className="h-screen max-h-96 min-h-36 w-full">
-        <div className="welcome-banner absolute top-0 left-0 h-screen max-h-96 min-h-36 w-full mask-linear-to-black" />
+      <div className="h-dvh max-h-96 min-h-36 w-full">
+        <div className="welcome-banner absolute top-0 left-0 h-dvh max-h-96 min-h-36 w-full mask-linear-to-black" />
       </div>
       <main
         id="app-workspace"

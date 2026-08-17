@@ -116,7 +116,7 @@ function Page(): React.ReactElement {
   }, [hours, language])
 
   return (
-    <main id="app-panel" className="relative min-h-screen pb-16">
+    <main id="app-panel" className="relative min-h-dvh pb-16">
       <div className="pointer-events-none absolute top-0 left-0 z-0 h-96 w-full overflow-hidden">
         <div
           className={cn(

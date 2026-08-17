@@ -76,7 +76,7 @@ function Page(): React.ReactElement {
   }, [guilds, searchQuery])
 
   return (
-    <main id="app-panel" className="relative min-h-screen pb-16">
+    <main id="app-panel" className="relative min-h-dvh pb-16">
       <main
         id="app-workspace"
         className="relative z-10 mx-auto w-full max-w-none px-4 pt-12 sm:px-6 lg:px-8"

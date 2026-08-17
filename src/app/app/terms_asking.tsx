@@ -16,7 +16,7 @@ function TermsAsking() {
   const language = useAppStore((state) => state.language)
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col items-start justify-center gap-3 py-24 text-center">
+    <div className="relative flex min-h-dvh w-full flex-col items-start justify-center gap-3 py-24 text-center">
       <div className="pointer-events-none absolute top-0 left-0 h-full w-full bg-[radial-gradient(var(--foreground)_1px,transparent_1px)] bg-size-[16px_16px] opacity-10 dark:opacity-5" />
       <motion.div
         initial={{ opacity: 0, y: 3, filter: "blur(6px)" }}

@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import Image from 'next/image';
 import { motion } from 'framer-motion';
 import SubscribeButton from '@/components/music/subscribe';
 import { ThumbnailFull } from '@/types/youtube/ytmusic-api';
@@ -34,7 +33,7 @@ export function ArtistHero({
         duration: 1,
       }}
       key={'artist-backdrop'}
-      className={`w-[calc(100%+6rem)] h-screen ${artistDescription ? 'max-h-[82vh]' : 'max-h-[64vh]'
+      className={`w-[calc(100%+6rem)] h-dvh ${artistDescription ? 'max-h-[82dvh]' : 'max-h-[64dvh]'
         } min-h-48 relative top-0 left-0 z-1 -translate-x-12 -translate-y-16 max-lg:-translate-y-24`}
     >
       {highResArtworkProxyURI ? (

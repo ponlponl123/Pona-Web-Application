@@ -50,7 +50,7 @@ export function Providers({
           >
             {pathname.startsWith("/app") || isUpdatesRoute ? (
               <AnimatePresence mode={"popLayout"}>
-                <motion.div className="min-h-screen">
+                <motion.div className="min-h-dvh">
                   {isUpdatesRoute ? (
                     <ViewTransition>{children}</ViewTransition>
                   ) : (

@@ -58,9 +58,9 @@ export default async function Page(props: GenerateMetadataProps) {
   const params = await props.params
 
   return (
-    <main className="min-h-screen w-full">
+    <main className="min-h-dvh w-full">
       <div className="pointer-events-none absolute top-0 left-0 z-0 h-full w-full bg-[radial-gradient(var(--foreground)_1px,transparent_1px)] bg-size-[16px_16px] opacity-6 dark:opacity-5" />
-      <div className="mb-20 flex min-h-screen grid-rows-[20px_1fr_20px] flex-col items-center gap-3 p-8 pb-20 sm:p-6 md:p-20">
+      <div className="mb-20 flex min-h-dvh grid-rows-[20px_1fr_20px] flex-col items-center gap-3 p-8 pb-20 sm:p-6 md:p-20">
         <div className="mt-6" />
         <Suspense fallback={<SuspenseFallback />}>
           <PatchNoteData tag={params.tag} version={params.version} />

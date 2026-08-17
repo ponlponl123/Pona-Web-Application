@@ -33,13 +33,13 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background tracking-wide text-foreground;
+    @apply bg-background tracking-wide text-foreground overscroll-y-contain;
     font-family:
       var(--font-ponlponl123-article), var(--font-sn-sanafon-maru-j30),
       sans-serif;
   }
   html {
-    @apply overflow-x-hidden font-mono;
+    @apply overflow-x-hidden font-mono overscroll-y-contain;
     scrollbar-width: thin;
     scrollbar-color: hsl(var(--primary)) hsl(var(--background));
     transition: none !important;

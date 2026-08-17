@@ -11,8 +11,8 @@ import Link from "next/link"
 function App_notReady() {
   const language = useAppStore((state) => state.language)
   return (
-    <main className="min-h-screen w-full">
-      <div className="grid min-h-screen grid-rows-[20px_1fr_20px] items-center justify-items-center gap-16 p-8 pb-20 sm:p-20">
+    <main className="min-h-dvh w-full">
+      <div className="grid min-h-dvh grid-rows-[20px_1fr_20px] items-center justify-items-center gap-16 p-8 pb-20 sm:p-20">
         <main className="row-start-2 flex w-full max-w-4xl flex-row items-center justify-center gap-10 max-sm:flex-col">
           <div className="flex flex-col items-center justify-center gap-3">
             <PersonSimpleRunIcon fontSize={96} />

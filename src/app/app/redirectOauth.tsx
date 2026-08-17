@@ -17,7 +17,7 @@ function RedirectOauth() {
   })
 
   return (
-    <div className="flex h-full min-h-screen w-full">
+    <div className="flex h-full min-h-dvh w-full">
       <div className="m-auto flex flex-col items-center gap-2 text-center">
         <CompassIcon size={48} />
         <strong className="text-3xl">{language.data.redirect.title}</strong>

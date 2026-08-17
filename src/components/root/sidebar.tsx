@@ -162,7 +162,7 @@ function Sidebar({
             isCollapsed
               ? "w-12 max-w-12 min-w-12 p-1"
               : "w-48 max-w-48 min-w-48 p-2",
-            `relative flex h-screen flex-col gap-2 pt-20 max-md:hidden`
+            `relative flex h-dvh flex-col gap-2 pt-20 max-md:hidden`
           )
           : "flex w-full flex-col gap-2 md:hidden"
       )}

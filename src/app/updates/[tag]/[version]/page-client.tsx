@@ -35,7 +35,7 @@ function PatchNote({
   const [isUpdateSubscribeOpen, setUpdateSubscribeOpen] = React.useState(false)
 
   return (
-    <article className="min-h-screen w-full max-w-3xl">
+    <article className="min-h-dvh w-full max-w-3xl">
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}

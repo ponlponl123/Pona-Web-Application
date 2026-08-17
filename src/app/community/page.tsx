@@ -62,7 +62,7 @@ function Page() {
   }, [])
 
   return (
-    <main className="relative min-h-screen w-full">
+    <main className="relative min-h-dvh w-full">
       <div className="absolute z-0 h-[48vh] max-h-96 min-h-24 w-full max-w-none! overflow-hidden opacity-60 blur-3xl">
         <Image
           src={"/static/community-backdrop.png"}
@@ -72,7 +72,7 @@ function Page() {
           className="w-full scale-[1.1] object-cover"
         />
       </div>
-      <div className="relative z-1 flex min-h-screen grid-rows-[20px_1fr_20px] flex-col items-center gap-8 p-8 pb-20 sm:p-20">
+      <div className="relative z-1 flex min-h-dvh grid-rows-[20px_1fr_20px] flex-col items-center gap-8 p-8 pb-20 sm:p-20">
         <div className="mt-12"></div>
         <main className="flex w-full max-w-5xl flex-col justify-start gap-10 pb-12">
           <div className="flex flex-row items-center justify-between">

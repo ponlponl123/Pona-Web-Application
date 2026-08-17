@@ -126,17 +126,21 @@ export default function PonaPlayer({ isMobileOverride }: { isMobileOverride?: bo
       setSnapStage(0);
       animate(dragProgress, 0, {
         type: 'spring',
-        stiffness: 380,
-        damping: 34,
-        restDelta: 0.002,
+        bounce: 0,
+        stiffness: 400,
+        damping: 40,
+        mass: 1,
+        restDelta: 0.001,
       });
     } else {
       const target = snapStage === 0 ? 1 : snapStage;
       animate(dragProgress, target, {
         type: 'spring',
-        stiffness: 380,
-        damping: 34,
-        restDelta: 0.002,
+        bounce: 0,
+        stiffness: 400,
+        damping: 40,
+        mass: 1,
+        restDelta: 0.001,
       });
     }
   }, [playerPopup, snapStage, dragProgress]);
@@ -145,7 +149,7 @@ export default function PonaPlayer({ isMobileOverride }: { isMobileOverride?: bo
   const cardRadius = useTransform(dragProgress, [0, 1, 2], [12, 0, 0]);
   const cardLeft = useTransform(dragProgress, [0, 1, 2], [8, 0, 0]);
   const cardRight = useTransform(dragProgress, [0, 1, 2], [8, 0, 0]);
-  const cardBottom = useTransform(dragProgress, [0, 1, 2], [isMobileStore ? 83.2 : 152, 80, 80]);
+  const cardBottom = useTransform(dragProgress, [0, 1, 2], [isMobileStore ? 83.2 : 152, 0, 0]);
   const backdropOpacity = useTransform(dragProgress, [0.05, 0.8, 1.4, 2], [0, 1, 0.8, 0.4]);
   const backdropVisibility = useTransform(dragProgress, (v) => (v < 0.05 ? 'hidden' : 'visible'));
   const seekBarOpacity = useTransform(dragProgress, [0, 0.25], [1, 0]);
@@ -171,7 +175,7 @@ export default function PonaPlayer({ isMobileOverride }: { isMobileOverride?: bo
 
   const handleDismissPanel = useCallback(() => {
     setSnapStage(0);
-    animate(dragProgress, 0, { type: 'spring', stiffness: 300, damping: 30, mass: 0.8, restDelta: 0.001 });
+    animate(dragProgress, 0, { type: 'spring', bounce: 0, stiffness: 400, damping: 40, mass: 1, restDelta: 0.001 });
     document.body.classList.remove('pona-player-focused');
     setAfterState('none');
     setBeforeState('playerPanel');
@@ -198,7 +202,7 @@ export default function PonaPlayer({ isMobileOverride }: { isMobileOverride?: bo
         setTrackFocus(true);
         setPlayerPopup(true);
       } else {
-        animate(dragProgress, 0, { type: 'spring', stiffness: 300, damping: 30, mass: 0.8, restDelta: 0.001 });
+        animate(dragProgress, 0, { type: 'spring', bounce: 0, stiffness: 400, damping: 40, mass: 1, restDelta: 0.001 });
       }
     }
   }, [playerPopup, dragProgress, setPlayerPopup, setAfterState, setBeforeState, setTrackFocus]);
@@ -216,27 +220,28 @@ export default function PonaPlayer({ isMobileOverride }: { isMobileOverride?: bo
             initial={{ opacity: 0, y: 32 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 32 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 30, mass: 0.8 }}
+            transition={{ type: 'spring', bounce: 0, stiffness: 400, damping: 40, mass: 1 }}
             drag={!playerPopup ? 'y' : false}
             dragDirectionLock
             dragConstraints={{ top: 0, bottom: 0 }}
             dragElastic={0}
+            dragMomentum={false}
             onDrag={handleMiniDrag}
             onDragEnd={handleMiniDragEnd}
             style={{
-              position: 'absolute',
+              position: 'fixed',
               height: cardH,
               borderRadius: cardRadius,
               bottom: cardBottom,
               left: cardLeft,
               right: cardRight,
-              zIndex: 50,
+              zIndex: 600,
               overflow: 'hidden',
               contain: 'paint layout',
               willChange: 'height, border-radius, bottom, left, right',
             }}
             className={cn(
-              'transform-gpu bg-default backface-hidden',
+              'transform-gpu bg-default backface-hidden touch-none overscroll-none',
             )}
           >
             <motion.div

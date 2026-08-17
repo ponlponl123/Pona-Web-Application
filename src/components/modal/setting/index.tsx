@@ -213,7 +213,7 @@ function SettingModal() {
       isOpen={isSettingModalOpen}
       setIsOpen={setIsSettingModalOpen}
       layoutId={settingLayoutId}
-      className="relative h-[calc(100vh-2rem)] max-w-4xl gap-0 max-md:h-screen max-md:max-h-none max-md:rounded-none lg:h-[calc(100vh-12rem)]"
+      className="relative h-[calc(100dvh-2rem)] max-w-4xl gap-0 max-md:h-dvh max-md:max-h-none max-md:rounded-none lg:h-[calc(100dvh-12rem)]"
       classNames={{
         root: "max-md:p-0",
       }}

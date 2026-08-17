@@ -12,8 +12,8 @@ import { useAppStore } from "@/store/coreStore"
 function NotFound() {
   const language = useAppStore((state) => state.language)
   return (
-    <main className="min-h-screen w-full">
-      <div className="grid min-h-screen grid-rows-[20px_1fr_20px] items-center justify-items-center gap-16 p-8 pb-20 sm:p-20">
+    <main className="min-h-dvh w-full">
+      <div className="grid min-h-dvh grid-rows-[20px_1fr_20px] items-center justify-items-center gap-16 p-8 pb-20 sm:p-20">
         <main className="row-start-2 flex w-full max-w-screen-sm flex-row items-center justify-center gap-10 max-sm:flex-col">
           <FishSimpleIcon fontSize={64} />
           <div className="flex max-w-3xl flex-col items-center gap-2 sm:items-start">

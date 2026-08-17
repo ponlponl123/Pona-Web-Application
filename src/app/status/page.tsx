@@ -111,9 +111,9 @@ function Status() {
   }, [])
 
   return (
-    <main className="-mb-8 min-h-screen w-full">
+    <main className="-mb-8 min-h-dvh w-full">
       <div className="pointer-events-none absolute top-0 left-0 z-0 h-full w-full bg-[radial-gradient(var(--foreground)_1px,transparent_1px)] bg-size-[16px_16px] opacity-6 dark:opacity-5" />
-      <div className="flex min-h-screen grid-rows-[20px_1fr_20px] flex-col items-center gap-8 p-8 pb-28 sm:p-20 sm:pb-32">
+      <div className="flex min-h-dvh grid-rows-[20px_1fr_20px] flex-col items-center gap-8 p-8 pb-28 sm:p-20 sm:pb-32">
         <div className="mt-16"></div>
         <main className="flex w-full max-w-5xl flex-col justify-start gap-10">
           <div className="flex flex-row items-center justify-between">

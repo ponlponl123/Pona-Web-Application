@@ -107,7 +107,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       <div
         id='app-panel'
         ref={musicAppContent}
-        className='relative h-screen scrollbar-hide -mb-6 select-none'
+        className='relative h-dvh scrollbar-hide -mb-6 select-none'
       >
         <CustomScrollArea
           ref={musicAppScrollingArea}
@@ -116,7 +116,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
             viewport: "relative rounded-none w-full overflow-x-hidden",
           }}
         >
-          <div className='absolute w-full h-screen top-0 left-0 z-1 opacity-40 overflow-hidden pointer-events-none mask-b-from-0%'>
+          <div className='absolute w-full h-dvh top-0 left-0 z-1 opacity-40 overflow-hidden pointer-events-none mask-b-from-0%'>
             {userSetting.transparency ? (
               <Image
                 src={`/api/proxy/image?r=${encodeURIComponent(
@@ -127,7 +127,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
                 unoptimized
                 priority
                 sizes='100vw'
-                className='object-cover w-full h-screen pointer-events-none saturate-200 brightness-110 scale-200 select-none transform-gpu'
+                className='object-cover w-full h-dvh pointer-events-none saturate-200 brightness-110 scale-200 select-none transform-gpu'
               />
             ) : (
               <div className='w-full h-96 bg-linear-to-t from-transparent to-[hsl(var(--pona-app-music-accent-color-500))]' />
@@ -135,7 +135,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
             <div className='absolute top-[unset] bottom-0 left-0 w-full h-2/4 bg-linear-to-b from-transparent to-playground-background z-10' />
           </div>
           <main
-            className='[body.pona-player-focused_&]:opacity-0 [body.pona-player-focused_&]:-translate-y-8 apply-soft-transition'
+            className='pb-36 max-md:pb-44 [body.pona-player-focused_&]:opacity-0 [body.pona-player-focused_&]:-translate-y-8 apply-soft-transition'
             id='app-workspace'
             style={{ maxWidth: 'unset' }}
           >

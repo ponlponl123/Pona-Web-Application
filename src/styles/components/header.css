@@ -28,7 +28,7 @@ header.pona-header {
   }
 
   header.pona-header nav {
-    @apply fixed top-0 left-0 flex h-screen w-screen flex-col bg-background p-6 pt-0;
+    @apply fixed top-0 left-0 flex h-dvh w-screen flex-col bg-background p-6 pt-0;
   }
 
   header.pona-header.nav-opened-true {
