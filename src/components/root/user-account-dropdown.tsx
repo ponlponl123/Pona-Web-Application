@@ -11,13 +11,12 @@ import {
 } from "@phosphor-icons/react"
 import { AnimatePresence, LayoutGroup } from "motion/react"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
-import { ScrollArea, ScrollBar } from "../ui/scroll-area"
-import React, { useState, useRef, useEffect } from "react"
+import React, { useState, useRef } from "react"
 import { motion } from "motion/react"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { useMediaQuery } from "@heroui/react"
-import { useAtomValue, useSetAtom } from "jotai"
+import { useSetAtom } from "jotai"
 import {
   isFeedbackModalOpenAtom,
   isSettingModalOpenAtom,
@@ -184,182 +183,182 @@ export default function UserAccountDropdown({
                 className="overflow-hidden"
               >
                 <div ref={contentRef} className="overscroll-y-auto">
-                <motion.div
-                  className={cn(
-                    "mb-0.5 flex w-full items-center justify-start gap-3 rounded-lg px-3 py-1 select-none hover:bg-foreground/5 not-dark:hover:bg-foreground/10",
-                    !userInfo && "bg-transparent! p-0"
-                  )}
-                  layout
-                  transition={layoutTransition}
-                >
-                  {userInfo ? (
-                    <>
-                      <motion.div
-                        layoutId="user-action-avatar"
-                        layout="position"
-                        transition={layoutTransition}
-                      >
-                        <Avatar className="h-8 w-8">
-                          <AvatarImage
-                            src={`https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}.png`}
-                          />
-                          <AvatarFallback>
-                            {userInfo.global_name.charAt(0).toUpperCase()}
-                          </AvatarFallback>
-                        </Avatar>
-                      </motion.div>
+                  <motion.div
+                    className={cn(
+                      "mb-0.5 flex w-full items-center justify-start gap-3 rounded-lg px-3 py-1 select-none hover:bg-foreground/5 not-dark:hover:bg-foreground/10",
+                      !userInfo && "bg-transparent! p-0"
+                    )}
+                    layout
+                    transition={layoutTransition}
+                  >
+                    {userInfo ? (
+                      <>
+                        <motion.div
+                          layoutId="user-action-avatar"
+                          layout="position"
+                          transition={layoutTransition}
+                        >
+                          <Avatar className="h-8 w-8">
+                            <AvatarImage
+                              src={`https://cdn.discordapp.com/avatars/${userInfo.id}/${userInfo.avatar}.png`}
+                            />
+                            <AvatarFallback>
+                              {userInfo.global_name.charAt(0).toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+                        </motion.div>
 
-                      <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{
-                          delay: 0.1,
-                          duration: 0.25,
-                          ease: "easeOut",
-                        }}
-                        className="flex flex-col items-start py-1"
-                      >
-                        <p className="text-xs leading-4 text-foreground/40">
-                          {language.data.header.account.signinas}
-                        </p>
-                        <motion.strong
-                          initial={{ opacity: 0, filter: "blur(3px)" }}
-                          animate={{ opacity: 1, filter: "blur(0px)" }}
-                          exit={{ opacity: 0, filter: "blur(3px)" }}
+                        <motion.div
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
                           transition={{
-                            delay: 0.15,
+                            delay: 0.1,
                             duration: 0.25,
                             ease: "easeOut",
                           }}
-                          className="leading-4 font-bold"
+                          className="flex flex-col items-start py-1"
                         >
-                          @{userInfo.username}
-                        </motion.strong>
-                      </motion.div>
-                    </>
-                  ) : (
-                    <Link href="/app" className="contents" tabIndex={-1}>
-                      <motion.button
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ delay: 0.16 }}
-                        className={cn(
-                          "apply- flex w-full flex-col items-center justify-center gap-2 rounded-lg p-3 select-none",
-                          !userInfo &&
-                          "border-2 border-dashed border-foreground/10 bg-foreground/5 not-dark:bg-foreground/10 hover:bg-foreground/10 not-dark:hover:bg-foreground/5"
-                        )}
-                        onClick={() => setIsActive(false)}
-                        data-smooth-interaction="true"
-                      >
-                        <LockSimpleIcon weight="bold" />
-                        <span className="text-foreground/40">
-                          {language.data.common.login_first}
-                        </span>
-                      </motion.button>
-                    </Link>
-                  )}
-                </motion.div>
-                {[
-                  userInfo && {
-                    icon: <ConfettiIcon weight="bold" className="size-4" />,
-                    label: language.data.header.account.playground,
-                    className: cn(),
-                    layoutId: undefined,
-                    href: "/app",
-                  },
-                  {
-                    icon: <LifebuoyIcon weight="bold" className="size-4" />,
-                    label: language.data.header.account.support,
-                    className: cn(),
-                    layoutId: undefined,
-                    href: "https://ponl.link/disgd",
-                  },
-                  {
-                    icon: <HandHeartIcon weight="bold" className="size-4" />,
-                    label: language.data.header.account.feedback,
-                    className: cn(),
-                    layoutId: "feedback-modal",
-                    onClick: () => setIsFeedbackModalOpen(true),
-                    href: null,
-                  },
-                  {
-                    icon: <GearSixIcon weight="bold" className="size-4" />,
-                    label: language.data.header.account.setting,
-                    className: cn(),
-                    layoutId: "setting-modal-by-account-dropdown",
-                    onClick: () => {
-                      ; (setSettingLayoutId("setting-modal-by-account-dropdown"),
-                        setIsSettingModalOpen(true))
-                    },
-                    href: null,
-                  },
-                  userInfo && {
-                    icon: <SignOutIcon weight="bold" className="size-4" />,
-                    label: language.data.header.account.logout,
-                    className: cn(
-                      "hover:bg-rose-400/10 hover:text-rose-400 active:bg-rose-400/10"
-                    ),
-                    layoutId: undefined,
-                    onClick: async () => {
-                      revokeUserAccessToken().then(() => {
-                        if (window.location.pathname.startsWith("/app")) {
-                          window.location.href = "/"
-                        } else {
-                          window.location.reload()
-                        }
-                      })
-                    },
-                    href: null,
-                  },
-                ].map((item, index) => {
-                  if (!item)
-                    return <React.Fragment key={index}></React.Fragment>
-                  const DropdownButton = () => (
-                    <motion.div
-                      initial={{ opacity: 0, filter: "blur(3px)" }}
-                      animate={{ opacity: 1, filter: "blur(0px)" }}
-                      exit={{ opacity: 0, filter: "blur(3px)" }}
-                      transition={{
-                        delay: 0.4 + index * 0.05,
-                        duration: 0.25,
-                        ease: "easeOut",
-                      }}
-                    >
-                      <motion.button
-                        layoutId={item.layoutId}
-                        layout="position"
-                        transition={layoutTransition}
-                        className={cn(dropdownBtnClassname, item.className)}
-                        onClick={() => {
-                          item.onClick && item.onClick()
-                          setIsActive(false)
-                        }}
-                        data-smooth-interaction="true"
-                      >
-                        {item.icon}
-                        <span className="text-sm">{item.label}</span>
-                      </motion.button>
-                    </motion.div>
-                  )
-                  if (item.href)
-                    return (
-                      <Link
-                        key={"account-dropdown-btn-" + index}
-                        href={item.href}
-                        tabIndex={-1}
-                      >
-                        <DropdownButton />
+                          <p className="text-xs leading-4 text-foreground/40">
+                            {language.data.header.account.signinas}
+                          </p>
+                          <motion.strong
+                            initial={{ opacity: 0, filter: "blur(3px)" }}
+                            animate={{ opacity: 1, filter: "blur(0px)" }}
+                            exit={{ opacity: 0, filter: "blur(3px)" }}
+                            transition={{
+                              delay: 0.15,
+                              duration: 0.25,
+                              ease: "easeOut",
+                            }}
+                            className="leading-4 font-bold"
+                          >
+                            @{userInfo.username}
+                          </motion.strong>
+                        </motion.div>
+                      </>
+                    ) : (
+                      <Link href="/app" className="contents" tabIndex={-1}>
+                        <motion.button
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ delay: 0.16 }}
+                          className={cn(
+                            "apply- flex w-full flex-col items-center justify-center gap-2 rounded-lg p-3 select-none",
+                            !userInfo &&
+                            "border-2 border-dashed border-foreground/10 bg-foreground/5 not-dark:bg-foreground/10 hover:bg-foreground/10 not-dark:hover:bg-foreground/5"
+                          )}
+                          onClick={() => setIsActive(false)}
+                          data-smooth-interaction="true"
+                        >
+                          <LockSimpleIcon weight="bold" />
+                          <span className="text-foreground/40">
+                            {language.data.common.login_first}
+                          </span>
+                        </motion.button>
                       </Link>
+                    )}
+                  </motion.div>
+                  {[
+                    userInfo && {
+                      icon: <ConfettiIcon weight="bold" className="size-4" />,
+                      label: language.data.header.account.playground,
+                      className: cn(),
+                      layoutId: undefined,
+                      href: "/app",
+                    },
+                    {
+                      icon: <LifebuoyIcon weight="bold" className="size-4" />,
+                      label: language.data.header.account.support,
+                      className: cn(),
+                      layoutId: undefined,
+                      href: "https://ponl.link/disgd",
+                    },
+                    {
+                      icon: <HandHeartIcon weight="bold" className="size-4" />,
+                      label: language.data.header.account.feedback,
+                      className: cn(),
+                      layoutId: "feedback-modal",
+                      onClick: () => setIsFeedbackModalOpen(true),
+                      href: null,
+                    },
+                    {
+                      icon: <GearSixIcon weight="bold" className="size-4" />,
+                      label: language.data.header.account.setting,
+                      className: cn(),
+                      layoutId: "setting-modal-by-account-dropdown",
+                      onClick: () => {
+                        ; (setSettingLayoutId("setting-modal-by-account-dropdown"),
+                          setIsSettingModalOpen(true))
+                      },
+                      href: null,
+                    },
+                    userInfo && {
+                      icon: <SignOutIcon weight="bold" className="size-4" />,
+                      label: language.data.header.account.logout,
+                      className: cn(
+                        "hover:bg-rose-400/10 hover:text-rose-400 active:bg-rose-400/10"
+                      ),
+                      layoutId: undefined,
+                      onClick: async () => {
+                        revokeUserAccessToken().then(() => {
+                          if (window.location.pathname.startsWith("/app")) {
+                            window.location.href = "/"
+                          } else {
+                            window.location.reload()
+                          }
+                        })
+                      },
+                      href: null,
+                    },
+                  ].map((item, index) => {
+                    if (!item)
+                      return <React.Fragment key={index}></React.Fragment>
+                    const DropdownButton = () => (
+                      <motion.div
+                        initial={{ opacity: 0, filter: "blur(3px)" }}
+                        animate={{ opacity: 1, filter: "blur(0px)" }}
+                        exit={{ opacity: 0, filter: "blur(3px)" }}
+                        transition={{
+                          delay: 0.4 + index * 0.05,
+                          duration: 0.25,
+                          ease: "easeOut",
+                        }}
+                      >
+                        <motion.button
+                          layoutId={item.layoutId}
+                          layout="position"
+                          transition={layoutTransition}
+                          className={cn(dropdownBtnClassname, item.className)}
+                          onClick={() => {
+                            item.onClick && item.onClick()
+                            setIsActive(false)
+                          }}
+                          data-smooth-interaction="true"
+                        >
+                          {item.icon}
+                          <span className="text-sm">{item.label}</span>
+                        </motion.button>
+                      </motion.div>
                     )
+                    if (item.href)
+                      return (
+                        <Link
+                          key={"account-dropdown-btn-" + index}
+                          href={item.href}
+                          tabIndex={-1}
+                        >
+                          <DropdownButton />
+                        </Link>
+                      )
 
-                  return (
-                    <DropdownButton key={"account-dropdown-btn-" + index} />
-                  )
-                })}
-              </div>
-            </motion.div>
+                    return (
+                      <DropdownButton key={"account-dropdown-btn-" + index} />
+                    )
+                  })}
+                </div>
+              </motion.div>
             </motion.div>
           )}
         </LayoutGroup>
@@ -375,7 +374,7 @@ export default function UserAccountDropdown({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            className="fixed inset-0 z-1000 flex items-center justify-center bg-black/10 p-2 backdrop-blur-[2px]"
+            className="fixed inset-0 w-dvw h-dvh z-1000 flex items-center justify-center bg-black/30 p-2 backdrop-blur-[2px]"
           />
         )}
       </AnimatePresence>
