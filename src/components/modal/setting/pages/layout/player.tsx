@@ -36,7 +36,7 @@ function Player() {
             {language.data.app.setting.layout.player.description}
           </p>
         </div>
-        <MusicNoteIcon weight="fill" className="size-6 translate-y-1.5" />
+        <MusicNoteIcon weight="fill" className="size-6 little-font:translate-y-1.5" />
       </div>
       <RadioGroup
         className="mx-auto mt-2 w-full max-w-lg"

@@ -105,13 +105,22 @@ function Page() {
             <div className="flex flex-col">
               {fonts_credits.map((font, index) => (
                 <div key={index} className="flex flex-col gap-2 p-4">
-                  <h4>
+                  <h4 className="text-sm opacity-60">
                     {font.title} · {font.name} ·{" "}
-                    <Link target="_blank" href={font.link}>
+                    <Link
+                      target="_blank"
+                      href={font.link}
+                      className="underline hover:text-primary"
+                    >
                       {font.author}
                     </Link>
                   </h4>
-                  <h1>{font.lorem}</h1>
+                  <h1
+                    className="text-lg leading-relaxed text-foreground/90"
+                    style={{ fontFamily: font.fontFamily }}
+                  >
+                    {font.lorem}
+                  </h1>
                 </div>
               ))}
             </div>

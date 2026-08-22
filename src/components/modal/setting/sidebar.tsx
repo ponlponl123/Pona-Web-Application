@@ -91,6 +91,10 @@ function SettingModalSidebar() {
               target: "amoled-black",
             },
             {
+              name: language.data.app.setting.layout.fonts.title,
+              target: "layout-fonts",
+            },
+            {
               name: language.data.app.setting.layout.player.title,
               target: "layout-player",
             },

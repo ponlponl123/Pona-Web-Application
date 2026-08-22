@@ -1,5 +1,5 @@
 import localFont from "next/font/local"
-import { Geist, JetBrains_Mono } from "next/font/google"
+import { Geist, JetBrains_Mono, Figtree, Mona_Sans, Noto_Sans_Thai_Looped, Pridi } from "next/font/google"
 import { cookies, headers } from "next/headers"
 import { Suspense } from "react"
 
@@ -13,7 +13,7 @@ import Footer from "@/components/root/footer"
 import { isValidLanguageKey } from "@/lib/i18n"
 import { NextThemeProvider } from "@/components/theme-provider"
 import LanguageSelectorModal from "@/components/modal/language-selector"
-import { isAmoledScript, themeScript } from "@/hooks/theme"
+import { fontScript, isAmoledScript, themeScript } from "@/hooks/theme"
 
 const fontSans = Geist({
   subsets: ["latin"],
@@ -28,6 +28,30 @@ const fontSNsanafonMaruJ30 = localFont({
   src: "../fonts/SNsanafonMaruJ30.ttf",
   variable: "--font-sn-sanafon-maru-j30",
   weight: "100 900",
+})
+const fontFigtree = Figtree({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-figtree",
+  display: "swap",
+})
+const fontMona = Mona_Sans({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-mona",
+  display: "swap",
+})
+const fontNotoSansThai = Noto_Sans_Thai_Looped({
+  subsets: ["thai"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-noto-sans-thai",
+  display: "swap",
+})
+const fontPridi = Pridi({
+  subsets: ["thai"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-pridi",
+  display: "swap",
 })
 
 const jetbrainsMono = JetBrains_Mono({
@@ -72,17 +96,23 @@ export default function RootLayout({
       lang="en"
       suppressHydrationWarning
       className={cn(
-        "antialiased scrollbar-gutter-stable",
+        "antialiased scrollbar-gutter-stable little-font",
         fontSans.variable,
         fontPonlponl123Article.variable,
         fontSNsanafonMaruJ30.variable,
+        fontFigtree.variable,
+        fontMona.variable,
+        fontNotoSansThai.variable,
+        fontPridi.variable,
         "font-sans",
         jetbrainsMono.variable
       )}
+      data-font="friendly"
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <script dangerouslySetInnerHTML={{ __html: isAmoledScript }} />
+        <script dangerouslySetInnerHTML={{ __html: fontScript }} />
       </head>
       <body>
         <NextTopLoader

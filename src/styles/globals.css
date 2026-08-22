@@ -6,6 +6,8 @@
 @plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));
+@custom-variant amoled (&:is(.amoled *));
+@custom-variant little-font (&:is(.little-font *));
 
 @source "../../node_modules/react-smooth-input/dist/**/*.{js,mjs}";
 
@@ -29,15 +31,34 @@
     transition: 0.26s cubic-bezier(0.165, 0.84, 0.44, 1);
   }
 
+  :root {
+    --font-friendly: var(--font-ponlponl123-article), var(--font-sn-sanafon-maru-j30), sans-serif;
+    --font-business: var(--font-mona), var(--font-pridi), var(--font-sn-sanafon-maru-j30), sans-serif;
+    --font-modern: var(--font-figtree), var(--font-noto-sans-thai), var(--font-sn-sanafon-maru-j30), sans-serif;
+    --font-app: var(--font-friendly);
+  }
+
+  html[data-font="friendly"] {
+    --font-app: var(--font-friendly);
+  }
+
+  html[data-font="business"] {
+    --font-app: var(--font-business);
+  }
+
+  html[data-font="modern"] {
+    --font-app: var(--font-modern);
+  }
+
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background tracking-wide text-foreground overscroll-y-contain;
-    font-family:
-      var(--font-ponlponl123-article), var(--font-sn-sanafon-maru-j30),
-      sans-serif;
+    font-family: var(--font-app);
   }
+
   html {
     @apply overflow-x-hidden font-mono overscroll-y-contain;
     scrollbar-width: thin;
@@ -45,10 +66,32 @@
     transition: none !important;
   }
 
+  html.little-font {
+    --font-scale: 1;
+  }
+
+  html:not(.little-font) {
+    --font-scale: 0.88;
+    --text-xs: calc(0.75rem * var(--font-scale));
+    --text-sm: calc(0.875rem * var(--font-scale));
+    --text-base: calc(1rem * var(--font-scale));
+    --text-lg: calc(1.125rem * var(--font-scale));
+    --text-xl: calc(1.25rem * var(--font-scale));
+    --text-2xl: calc(1.5rem * var(--font-scale));
+    --text-3xl: calc(1.875rem * var(--font-scale));
+    --text-4xl: calc(2.25rem * var(--font-scale));
+    --text-5xl: calc(3rem * var(--font-scale));
+    --text-6xl: calc(3.75rem * var(--font-scale));
+    --text-7xl: calc(4.5rem * var(--font-scale));
+    --text-8xl: calc(6rem * var(--font-scale));
+    --text-9xl: calc(8rem * var(--font-scale));
+  }
+
   html[data-disabled-scroll="true"],
   html[data-disabled-scroll="true"] body {
     @apply !overflow-hidden;
   }
+
   html[data-disabled-scroll="true"] {
     padding-right: var(--scrollbar-width);
   }

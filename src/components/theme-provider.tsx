@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { ThemeProvider as NextThemesProvider, useTheme } from "next-themes"
+import { AppFont } from "@/types/settings"
 
 interface ThemeContextType {
   appTheme: string
@@ -12,6 +13,7 @@ interface ThemeContextType {
   isAmoled: boolean
   isCurrentlyDark: boolean
   isPointerClickSpark: boolean
+  appFont: AppFont
   setAppTheme: React.Dispatch<React.SetStateAction<string>>
   setDayTheme: React.Dispatch<React.SetStateAction<string>>
   setNightTheme: React.Dispatch<React.SetStateAction<string>>
@@ -19,6 +21,7 @@ interface ThemeContextType {
   setIsAppNightThemeDark: React.Dispatch<React.SetStateAction<boolean>>
   setAmoled: React.Dispatch<React.SetStateAction<boolean>>
   setIsPointerClickSpark: React.Dispatch<React.SetStateAction<boolean>>
+  setAppFont: React.Dispatch<React.SetStateAction<AppFont>>
 }
 
 const ThemeContext = React.createContext<ThemeContextType>({
@@ -30,6 +33,7 @@ const ThemeContext = React.createContext<ThemeContextType>({
   isAmoled: false,
   isCurrentlyDark: false,
   isPointerClickSpark: true,
+  appFont: "friendly",
   setAppTheme: () => { },
   setDayTheme: () => { },
   setNightTheme: () => { },
@@ -37,6 +41,7 @@ const ThemeContext = React.createContext<ThemeContextType>({
   setIsAppNightThemeDark: () => { },
   setAmoled: () => { },
   setIsPointerClickSpark: () => { },
+  setAppFont: () => { },
 })
 
 function appDarkToggle(isDark: boolean) {
@@ -121,6 +126,9 @@ function ThemeProvider({
   const [isPointerClickSpark, setIsPointerClickSpark] = React.useState<boolean>(
     () => getLocalStorageValue("is-pointer-click-spark", true) as boolean
   )
+  const [appFont, setAppFont] = React.useState<AppFont>(
+    () => getLocalStorageValue("app-font", "friendly") as AppFont
+  )
 
   React.useEffect(() => {
     if (typeof window !== "undefined") {
@@ -137,6 +145,7 @@ function ThemeProvider({
       )
       localStorage.setItem("is-amoled", isAmoled.toString())
       localStorage.setItem("is-pointer-click-spark", isPointerClickSpark.toString())
+      localStorage.setItem("app-font", appFont)
     }
   }, [
     appTheme,
@@ -146,6 +155,7 @@ function ThemeProvider({
     isAppNightThemeDark,
     isAmoled,
     isPointerClickSpark,
+    appFont,
   ])
 
   React.useEffect(() => {
@@ -177,6 +187,17 @@ function ThemeProvider({
     }
   }, [isAmoled])
 
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      document.documentElement.setAttribute("data-font", appFont)
+      if (appFont === "friendly") {
+        document.documentElement.classList.add("little-font")
+      } else {
+        document.documentElement.classList.remove("little-font")
+      }
+    }
+  }, [appFont])
+
   return (
     <ThemeContext.Provider
       value={{
@@ -188,6 +209,7 @@ function ThemeProvider({
         isAmoled,
         isCurrentlyDark,
         isPointerClickSpark,
+        appFont,
         setAppTheme,
         setDayTheme,
         setNightTheme,
@@ -195,6 +217,7 @@ function ThemeProvider({
         setIsAppNightThemeDark,
         setAmoled,
         setIsPointerClickSpark,
+        setAppFont,
       }}
     >
       {children}

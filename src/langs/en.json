@@ -848,6 +848,26 @@
           "description": "Switch from dark gray to true black to save battery and enhance contrast on AMOLED displays.",
           "warning": "This feature requires Dark Theme to be active."
         },
+        "fonts": {
+          "title": "Typography",
+          "description": "Choose the application font style that best matches your vibe.",
+          "friendly": {
+            "title": "Friendly (OG)",
+            "description": "Ponlponl123 Article — Cozy, compact & playful original font."
+          },
+          "business": {
+            "title": "Business",
+            "description": "Mona Sans & Pridi — Clean, structured & professional typography."
+          },
+          "modern": {
+            "title": "Modern",
+            "description": "Figtree & Noto Sans Thai — Sleek, geometric & contemporary typography."
+          },
+          "preview": {
+            "en": "The quick brown fox jumps over the lazy dog.",
+            "th": "สบายตา น่ารัก เป็นกันเอง • 0123456789"
+          }
+        },
         "player": {
           "title": "Player Layout",
           "description": "Visual layout of the player.",

@@ -28,6 +28,12 @@ const nextConfig = {
       {
         pathname: '/api/proxy/image/**',
       },
+      {
+        pathname: '/static/**',
+      },
+      {
+        pathname: '/**',
+      },
     ],
     remotePatterns: [
       {

@@ -426,7 +426,7 @@ function Page() {
                   }
                   fontStyle={{
                     fontFamily:
-                      "var(--font-ponlponl123-article), var(--font-sn-sanafon-maru-j30), sans-serif",
+                      "var(--font-app), sans-serif",
                     fontWeight: "bold",
                     fontSize: "14px",
                     letterSpacing: "1px",

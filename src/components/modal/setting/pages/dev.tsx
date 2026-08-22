@@ -20,7 +20,7 @@ function Developer() {
             {language.data.app.setting.dev_mode.description}
           </p>
         </div>
-        <BugIcon weight="fill" className="size-12 translate-y-1.5" />
+        <BugIcon weight="fill" className="size-12 little-font:translate-y-1.5" />
       </div>
       <Alert className="mt-4 rounded-xl">
         <InfoIcon weight="fill" className="mt-0.5" />

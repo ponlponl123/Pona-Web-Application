@@ -137,7 +137,7 @@ function Page(): React.ReactElement {
                   placeholder={language.data.app.guilds.search_placeholder}
                   fontStyle={{
                     fontFamily:
-                      "var(--font-ponlponl123-article), var(--font-sn-sanafon-maru-j30), sans-serif",
+                      "var(--font-app), sans-serif",
                     fontWeight: "bold",
                     fontSize: "14px",
                     letterSpacing: "1px",

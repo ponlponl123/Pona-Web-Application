@@ -37,7 +37,7 @@ function LanguageAndTime() {
     if (debounceRef.current) {
       clearTimeout(debounceRef.current)
     }
-    debounceRef.current = setTimeout(() => {}, 300)
+    debounceRef.current = setTimeout(() => { }, 300)
 
     return () => {
       if (debounceRef.current) {
@@ -81,7 +81,7 @@ function LanguageAndTime() {
               {language.data.app.setting.language_time.time.description}
             </p>
           </div>
-          <ClockUserIcon weight="fill" className="size-12 translate-y-1.5" />
+          <ClockUserIcon weight="fill" className="size-12 little-font:translate-y-1.5" />
         </div>
 
         <RadioGroup
@@ -146,7 +146,7 @@ function LanguageAndTime() {
               {language.data.app.setting.language_time.language.description}
             </p>
           </div>
-          <GlobeStandIcon weight="fill" className="size-12 translate-y-1.5" />
+          <GlobeStandIcon weight="fill" className="size-12 little-font:translate-y-1.5" />
         </div>
         <Input
           type="text"
@@ -155,7 +155,7 @@ function LanguageAndTime() {
           placeholder={language.data.modal["language-selector"].filter}
           fontStyle={{
             fontFamily:
-              "var(--font-ponlponl123-article), var(--font-sn-sanafon-maru-j30), sans-serif",
+              "var(--font-app), sans-serif",
             fontWeight: "bold",
             fontSize: "14px",
             letterSpacing: "1px",
@@ -189,7 +189,7 @@ function LanguageAndTime() {
                   className={cn(
                     "flex w-full justify-start gap-3 rounded-xl border-2 border-transparent px-4 py-6 not-dark:hover:bg-foreground/5",
                     language.key === lang.key &&
-                      "border-foreground/40 bg-foreground/10 text-foreground"
+                    "border-foreground/40 bg-foreground/10 text-foreground"
                   )}
                   onClick={() => setLanguage(lang.key)}
                 >

@@ -89,7 +89,7 @@ function KeyBinds() {
             {language.data.app.setting.keybinds.description}
           </p>
         </div>
-        <KeyboardIcon weight="fill" className="size-12 translate-y-1.5" />
+        <KeyboardIcon weight="fill" className="size-12 little-font:translate-y-1.5" />
       </div>
       <Alert className="mt-4 rounded-xl">
         <InfoIcon weight="fill" className="mt-0.5" />

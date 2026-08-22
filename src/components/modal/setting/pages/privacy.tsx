@@ -38,7 +38,7 @@ function Privacy() {
               })}
           </p>
         </div>
-        <ShieldCheckIcon weight="fill" className="size-12 translate-y-1.5" />
+        <ShieldCheckIcon weight="fill" className="size-12 little-font:translate-y-1.5" />
       </div>
     </section>
   )

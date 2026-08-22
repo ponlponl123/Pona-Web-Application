@@ -68,7 +68,7 @@ function BlurEffect() {
           <Field orientation="horizontal">
             <FieldContent>
               <FieldTitle className="text-base">
-                <CubeIcon weight="fill" className="size-4 translate-y-0.5" />
+                <CubeIcon weight="fill" className="size-4 little-font:translate-y-0.5" />
                 {language.data.app.setting.layout.blur.acrylics.title}
               </FieldTitle>
               <FieldDescription>
@@ -92,7 +92,7 @@ function BlurEffect() {
           <Field orientation="horizontal">
             <FieldContent>
               <FieldTitle className="text-base">
-                <DropIcon weight="fill" className="size-4 translate-y-0.5" />
+                <DropIcon weight="fill" className="size-4 little-font:translate-y-0.5" />
                 {language.data.app.setting.layout.blur.blur.title}
               </FieldTitle>
               <FieldDescription>
@@ -118,7 +118,7 @@ function BlurEffect() {
               <FieldTitle className="text-base">
                 <DropSlashIcon
                   weight="fill"
-                  className="size-4 translate-y-0.5"
+                  className="size-4 little-font:translate-y-0.5"
                 />
                 {language.data.app.setting.layout.blur.disabled.title}
               </FieldTitle>

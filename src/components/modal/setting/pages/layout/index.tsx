@@ -1,6 +1,7 @@
 "use client"
 import { ShapesIcon } from "@phosphor-icons/react"
 import Theme from "./theme"
+import Fonts from "./fonts"
 import Player from "./player"
 import Transparency from "./transparency"
 import BlurEffect from "./blur-effect"
@@ -30,6 +31,7 @@ function Developer() {
         <div className="mx-auto mt-6 h-px w-full max-w-lg bg-foreground/10" />
       </section>
       <Theme />
+      <Fonts />
       <Player />
       <Transparency />
       <BlurEffect />

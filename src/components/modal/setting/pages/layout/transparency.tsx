@@ -46,7 +46,7 @@ function Transparency() {
             </Tooltip>
           </div>
         </div>
-        <CubeTransparentIcon weight="fill" className="size-6 translate-y-1.5" />
+        <CubeTransparentIcon weight="fill" className="size-6 little-font:translate-y-1.5" />
       </div>
       <RadioGroup
         className="mx-auto mt-2 w-full max-w-lg"
@@ -64,7 +64,7 @@ function Transparency() {
           <Field orientation="horizontal">
             <FieldContent>
               <FieldTitle className="text-base">
-                <ShapesIcon weight="bold" className="size-4 translate-y-0.5" />
+                <ShapesIcon weight="bold" className="size-4 little-font:translate-y-0.5" />
                 {language.data.app.setting.layout.transparency.enabled.title}
               </FieldTitle>
               <FieldDescription>
@@ -91,7 +91,7 @@ function Transparency() {
           <Field orientation="horizontal">
             <FieldContent>
               <FieldTitle className="text-base">
-                <ShapesIcon weight="fill" className="size-4 translate-y-0.5" />
+                <ShapesIcon weight="fill" className="size-4 little-font:translate-y-0.5" />
                 {language.data.app.setting.layout.transparency.disabled.title}
               </FieldTitle>
               <FieldDescription>

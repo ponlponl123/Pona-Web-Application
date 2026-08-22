@@ -39,7 +39,7 @@ function Pointer() {
             </h1>
           </div>
         </div>
-        <CursorIcon weight="fill" className="size-6 translate-y-1.5" />
+        <CursorIcon weight="fill" className="size-6 little-font:translate-y-1.5" />
       </div>
       <FieldGroup className="mx-auto w-full max-w-lg gap-2">
         <FieldLabel
@@ -54,7 +54,7 @@ function Pointer() {
                   <CursorClickIcon
                     size={16}
                     ref={CursorIconRef}
-                    className="-mr-0.5 size-4 translate-y-0.5"
+                    className="-mr-0.5 size-4 little-font:translate-y-0.5"
                   />
                   <h1>
                     {language.data.app.setting.layout.pointer.click_spark.title}

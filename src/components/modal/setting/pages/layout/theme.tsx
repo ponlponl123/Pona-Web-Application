@@ -66,7 +66,7 @@ function Theme() {
               {language.data.app.setting.layout.theme.description}
             </p>
           </div>
-          <HouseLineIcon weight="fill" className="size-6 translate-y-1.5" />
+          <HouseLineIcon weight="fill" className="size-6 little-font:translate-y-1.5" />
         </div>
         {theme !== "custom" && theme === "system" ? (
           <div className="mx-auto w-full max-w-lg rounded-4xl border-2 border-primary p-1">
@@ -231,29 +231,29 @@ function Theme() {
                     {osType?.name?.includes("Windows") ? (
                       <WindowsLogoIcon
                         weight="fill"
-                        className="-mr-0.5 size-4 translate-y-0.5"
+                        className="-mr-0.5 size-4 little-font:translate-y-0.5"
                       />
                     ) : osType?.name?.includes("macOS") ||
                       osType?.name?.includes("iOS") ||
                       osType?.name?.includes("iOS") ? (
                       <AppleLogoIcon
                         weight="fill"
-                        className="-mr-0.5 size-4 translate-y-0.5"
+                        className="-mr-0.5 size-4 little-font:translate-y-0.5"
                       />
                     ) : osType?.name?.includes("Android") ? (
                       <AndroidLogoIcon
                         weight="fill"
-                        className="-mr-0.5 size-4 translate-y-0.5"
+                        className="-mr-0.5 size-4 little-font:translate-y-0.5"
                       />
                     ) : osType?.name?.includes("Chrome") ? (
                       <GoogleChromeLogoIcon
                         weight="fill"
-                        className="-mr-0.5 size-4 translate-y-0.5"
+                        className="-mr-0.5 size-4 little-font:translate-y-0.5"
                       />
                     ) : osType?.is("Linux") ? (
                       <LinuxLogoIcon
                         weight="fill"
-                        className="-mr-0.5 size-4 translate-y-0.5"
+                        className="-mr-0.5 size-4 little-font:translate-y-0.5"
                       />
                     ) : (
                       <></>
@@ -301,7 +301,7 @@ function Theme() {
                   <div className="flex flex-wrap items-center gap-x-2">
                     <LightbulbIcon
                       weight={isAmoled ? "bold" : "fill"}
-                      className="-mr-0.5 size-4 translate-y-0.5"
+                      className="-mr-0.5 size-4 little-font:translate-y-0.5"
                     />
                     <h1>
                       {language.data.app.setting.layout.amoled_black.title}

@@ -27,7 +27,7 @@ function Animation() {
             {language.data.app.setting.layout.animation.title}
           </h1>
         </div>
-        <BirdIcon weight="fill" className="size-6 translate-y-1.5" />
+        <BirdIcon weight="fill" className="size-6 little-font:translate-y-1.5" />
       </div>
       <RadioGroup
         className="mx-auto mt-2 w-full max-w-lg"

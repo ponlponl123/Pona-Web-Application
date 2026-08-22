@@ -852,6 +852,26 @@
           "description": "ダークテーマを真の黒（ピッチブラック）に変更し、AMOLED画面のバッテリー消費を抑えます。",
           "warning": "この機能はダークテーマが有効な場合のみ使用できます。"
         },
+        "fonts": {
+          "title": "フォント設定",
+          "description": "アプリケーションで使用するフォントスタイルを選択します。",
+          "friendly": {
+            "title": "Friendly (OG)",
+            "description": "Ponlponl123 Article — コンパクトで親しみやすいオリジナルフォント。"
+          },
+          "business": {
+            "title": "Business",
+            "description": "Mona Sans & Pridi — 構造的で読みやすいビジネス向けフォント。"
+          },
+          "modern": {
+            "title": "Modern",
+            "description": "Figtree & Noto Sans Thai — 洗練されたモダンで幾何学的なフォント。"
+          },
+          "preview": {
+            "en": "The quick brown fox jumps over the lazy dog.",
+            "th": "สบายตา น่ารัก เป็นกันเอง • 0123456789"
+          }
+        },
         "player": {
           "title": "プレイヤーレイアウト",
           "description": "プレイヤーの視覚的なレイアウト。",
