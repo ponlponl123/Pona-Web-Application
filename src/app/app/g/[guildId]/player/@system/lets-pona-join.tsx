@@ -172,7 +172,7 @@ export default function LetsPonaJoin() {
 
   return (
     <motion.div
-      className='relative min-h-[calc(100dvh-6rem)] w-full flex flex-col gap-4 items-center justify-center bg-background/30 z-10 backdrop-blur-xl p-4 select-none'
+      className='relative min-h-[calc(100dvh-6rem)] w-full flex flex-col gap-4 items-center justify-center z-10 p-4 select-none'
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.48 }}
@@ -199,28 +199,28 @@ export default function LetsPonaJoin() {
         <CustomScrollArea className='w-full max-h-72 px-1 py-1 overflow-y-auto scrollbar-hide'>
           <AutoHeight>
             {isMemberInVC ? (
-            <JoinVoiceChannelButton voiceChannel={isMemberInVC} />
-          ) : (
-            <div className='flex flex-col gap-3 items-center justify-center py-6 px-4 text-center rounded-2xl bg-muted/20 border border-border/40'>
-              <div className='size-12 rounded-full bg-muted/40 flex items-center justify-center text-muted-foreground'>
-                <IslandIcon size={28} weight='duotone' />
+              <JoinVoiceChannelButton voiceChannel={isMemberInVC} />
+            ) : (
+              <div className='flex flex-col gap-3 items-center justify-center py-6 px-4 text-center rounded-2xl bg-muted/20 border border-border/40'>
+                <div className='size-12 rounded-full bg-muted/40 flex items-center justify-center text-muted-foreground'>
+                  <IslandIcon size={28} weight='duotone' />
+                </div>
+                <div className='flex flex-col gap-1'>
+                  <h2 className='text-base font-semibold text-foreground/80'>
+                    {
+                      language.data.app.guilds.player.ponaIsNotInVC.select.notfound
+                        .title
+                    }
+                  </h2>
+                  <p className='text-xs text-muted-foreground leading-normal'>
+                    {
+                      language.data.app.guilds.player.ponaIsNotInVC.select.notfound
+                        .description
+                    }
+                  </p>
+                </div>
               </div>
-              <div className='flex flex-col gap-1'>
-                <h2 className='text-base font-semibold text-foreground/80'>
-                  {
-                    language.data.app.guilds.player.ponaIsNotInVC.select.notfound
-                      .title
-                  }
-                </h2>
-                <p className='text-xs text-muted-foreground leading-normal'>
-                  {
-                    language.data.app.guilds.player.ponaIsNotInVC.select.notfound
-                      .description
-                  }
-                </p>
-              </div>
-            </div>
-          )}
+            )}
           </AutoHeight>
         </CustomScrollArea>
       </motion.div>

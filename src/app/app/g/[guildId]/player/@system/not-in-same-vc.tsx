@@ -13,7 +13,7 @@ export default function NotInSameVC() {
 
   return (
     <motion.div
-      className='relative min-h-[calc(100dvh-6rem)] w-full flex flex-col gap-4 items-center justify-center bg-background/30 z-10 backdrop-blur-xl p-4 select-none'
+      className='relative min-h-[calc(100dvh-6rem)] w-full flex flex-col gap-4 items-center justify-center z-10 p-4 select-none'
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.48 }}
