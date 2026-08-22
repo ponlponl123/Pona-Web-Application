@@ -804,11 +804,11 @@ const MobilePonaPlayerPanel = React.memo(function MobilePonaPlayerPanel({
               <CustomScrollArea
                 className="flex-1 min-h-0 border-0 outline-0"
                 classNames={{
-                  viewport: "relative rounded-none bg-linear-to-b from-default to-transparent",
+                  viewport: "relative rounded-none bg-linear-to-b from-[hsl(var(--pona-app-music-accent-color-500))] dark:from-[hsl(var(--pona-app-music-accent-color-900))] to-transparent",
                 }}
                 ref={setLyricsContainer}
               >
-                <div className="w-full border-b border-default-foreground/10 p-4 pt-6 flex bg-default sticky top-0 z-40">
+                <div className="w-full border-b border-default-foreground/10 p-4 pt-6 flex bg-[hsl(var(--pona-app-music-accent-color-500))] dark:bg-[hsl(var(--pona-app-music-accent-color-900))] sticky top-0 z-40">
                   <div className="w-full min-w-0 flex-1 pr-4">
                     <span className="text-default-foreground text-xl font-bold truncate block">
                       {language.data.app.guilds.player.tabs.lyrics}
@@ -869,10 +869,10 @@ const MobilePonaPlayerPanel = React.memo(function MobilePonaPlayerPanel({
               <CustomScrollArea
                 className="flex-1 min-h-0 border-0 outline-0"
                 classNames={{
-                  viewport: "pb-8 bg-linear-to-b from-default to-transparent",
+                  viewport: "pb-8 bg-linear-to-b from-[hsl(var(--pona-app-music-accent-color-500))] dark:from-[hsl(var(--pona-app-music-accent-color-900))] to-transparent",
                 }}
               >
-                <div className="w-full border-b border-default-foreground/10 p-4 pt-6 flex bg-default sticky top-0 z-40">
+                <div className="w-full border-b border-default-foreground/10 p-4 pt-6 flex bg-[hsl(var(--pona-app-music-accent-color-500))] dark:bg-[hsl(var(--pona-app-music-accent-color-900))] sticky top-0 z-40">
                   <div className="w-full min-w-0 flex-1 pr-4">
                     <span className="text-default-foreground text-xl font-bold truncate block">
                       {language.data.app.guilds.player.tabs.related}

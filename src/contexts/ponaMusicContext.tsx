@@ -56,12 +56,17 @@ export const PonaMusicProvider = ({
 
   const isMemberInVC = useAtomValue(isMemberInVCAtom)
   const ponaCommonState = useAtomValue(ponaCommonStateAtom)
+  const currentTrack = ponaCommonState?.current
+  const currentTrackId = currentTrack?.identifier
 
   useEffect(() => {
-    if (ponaCommonState?.current) {
-      applyTrackAccentColor(ponaCommonState.current)
+    if (currentTrack) {
+      applyTrackAccentColor(currentTrack)
+    } else {
+      applyTrackAccentColor(null)
     }
-  }, [ponaCommonState])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentTrackId])
 
   const [socket, setSocket] = useState<Socket | null>(null)
   const [isConnected, setIsConnected] = useState<boolean>(false)
@@ -151,12 +156,12 @@ export const PonaMusicProvider = ({
         }
 
         if (decodedState.current?.identifier) {
-          const newTrack = await makeTrack(decodedState.current)
+          const newTrack = makeTrack(decodedState.current)
           decodedState.current = newTrack
         }
 
         if (decodedState.originTrack?.identifier) {
-          const originTrack = await makeTrack(decodedState.originTrack)
+          const originTrack = makeTrack(decodedState.originTrack)
           decodedState.originTrack = originTrack
           setOriginTrack(originTrack)
         } else if (decodedState.originTrack) {
@@ -261,12 +266,12 @@ export const PonaMusicProvider = ({
       })
     })
 
-    iosocket.on("track_started", async (track: string) => {
+    iosocket.on("track_started", (track: string) => {
       let decodedTrack = JSON.parse(
         Buffer.from(track, "base64").toString("utf-8")
       ) as Track
       if (decodedTrack.identifier) {
-        const newTrack = await makeTrack(decodedTrack)
+        const newTrack = makeTrack(decodedTrack)
         decodedTrack = newTrack as Track
       }
       setPonaCommonState((value) => {
@@ -283,12 +288,12 @@ export const PonaMusicProvider = ({
       })
     })
 
-    iosocket.on("track_updated", async (track: string) => {
+    iosocket.on("track_updated", (track: string) => {
       let decodedTrack = JSON.parse(
         Buffer.from(track, "base64").toString("utf-8")
       ) as Track
       if (decodedTrack?.identifier) {
-        const newTrack = await makeTrack(decodedTrack)
+        const newTrack = makeTrack(decodedTrack)
         decodedTrack = newTrack as Track
       }
       setPonaCommonState((value) => {

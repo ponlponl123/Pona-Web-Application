@@ -538,7 +538,7 @@ const MobileQueueView = React.memo(function MobileQueueView({
     >
       <div className={cn(
         "w-full border-b border-transparent p-4 pt-6 flex items-center sticky top-0 z-40",
-        snapStage === 2 ? "bg-default border-default-foreground/10" : ""
+        snapStage === 2 ? "bg-[hsl(var(--pona-app-music-accent-color-500))] dark:bg-[hsl(var(--pona-app-music-accent-color-900))] border-default-foreground/10" : ""
       )}>
         <div className="w-full min-w-0 flex-1 pr-4">
           <p className="text-default-foreground/60 text-xs font-bold truncate block">
@@ -574,7 +574,7 @@ const MobileQueueView = React.memo(function MobileQueueView({
         className="flex-1 min-h-0 border-0 outline-0"
       >
         <div className={cn(
-          "pointer-events-none absolute top-0 left-0 w-full h-full bg-linear-to-b from-default to-transparent -z-10",
+          "pointer-events-none absolute top-0 left-0 w-full h-full bg-linear-to-b from-[hsl(var(--pona-app-music-accent-color-500))] dark:from-[hsl(var(--pona-app-music-accent-color-900))] to-transparent -z-10",
           snapStage === 2 ? "opacity-100" : "opacity-0"
         )} />
         <div className='w-full pt-2 pb-24'>

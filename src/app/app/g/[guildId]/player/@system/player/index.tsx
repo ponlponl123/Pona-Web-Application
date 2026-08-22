@@ -243,7 +243,7 @@ export default function PonaPlayer({ isMobileOverride }: { isMobileOverride?: bo
           >
             <motion.div
               style={{ opacity: dragProgress }}
-              className="absolute inset-0 z-0 bg-black pointer-events-none"
+              className="absolute inset-0 z-0 bg-white dark:bg-black pointer-events-none"
             />
 
             <motion.div
@@ -263,7 +263,7 @@ export default function PonaPlayer({ isMobileOverride }: { isMobileOverride?: bo
                 className="h-full w-full object-cover opacity-40"
                 id="pona-music-artwork"
               />
-              <div className="absolute inset-0 bg-linear-to-b from-transparent via-transparent to-black" />
+              <div className="absolute inset-0 bg-linear-to-b from-transparent via-transparent to-white dark:to-black" />
             </motion.div>
 
             <motion.div
