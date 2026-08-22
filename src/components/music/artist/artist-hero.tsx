@@ -99,7 +99,7 @@ export function ArtistHero({
       </div>
       <div
         className={cn(
-          'inset-0 absolute z-20 mask-b-from-0% transition-colors duration-700 pointer-events-none',
+          'inset-0 absolute z-20 mask-t-from-0% mask-b-from-60% transition-colors duration-700 pointer-events-none',
           isExpanded ? 'bg-black' : 'bg-transparent',
           !isBannerLoaded && 'opacity-0'
         )}

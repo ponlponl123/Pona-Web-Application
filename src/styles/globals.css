@@ -62,7 +62,7 @@
   html {
     @apply overflow-x-hidden font-mono overscroll-y-contain;
     scrollbar-width: thin;
-    scrollbar-color: hsl(var(--primary)) hsl(var(--background));
+    scrollbar-color: var(--primary) var(--background);
     transition: none !important;
   }
 

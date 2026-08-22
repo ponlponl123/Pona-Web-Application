@@ -25,6 +25,7 @@ import dynamic from 'next/dynamic';
 import DesktopPonaPlayer, { MobilePonaPlayer } from './@system/player';
 const DesktopPonaPlayerPanel = dynamic(() => import('./@system/player/panel/desktop'), { ssr: false });
 import CustomScrollArea from '@/components/ui/custom/scroll-area';
+import { cn } from '@/lib/utils';
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -36,7 +37,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   const { isConnected, socket } = useSocket();
 
   const isMobile = useAppStore((state) => state.isMobile);
-  const isSmallScreen = useMediaQuery({maxWidth: 768});
+  const isSmallScreen = useMediaQuery({ maxWidth: 768 });
   const language = useAppStore((state) => state.language);
   const userSetting = useAppStore((state) => state.userSetting);
 
@@ -116,7 +117,10 @@ export default function Providers({ children }: { children: React.ReactNode }) {
             viewport: "relative rounded-none w-full overflow-x-hidden",
           }}
         >
-          <div className='absolute w-full h-dvh top-0 left-0 z-1 opacity-40 overflow-hidden pointer-events-none mask-b-from-0%'>
+          <div className={cn(
+            'absolute w-full h-dvh top-0 left-0 z-1 opacity-40 overflow-hidden pointer-events-none mask-b-from-0% duration-1000',
+            pathname.includes("/player/c") && "opacity-0"
+          )}>
             {userSetting.transparency ? (
               <Image
                 src={`/api/proxy/image?r=${encodeURIComponent(

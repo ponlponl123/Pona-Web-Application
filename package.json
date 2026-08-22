@@ -67,6 +67,8 @@
     "zustand": "^5.0.14"
   },
   "devDependencies": {
+    "@csstools/postcss-color-mix-function": "^4.0.8",
+    "@csstools/postcss-oklab-function": "^5.0.8",
     "@eslint/eslintrc": "^3.3.6",
     "@tailwindcss/postcss": "^4.3.3",
     "@tailwindcss/typography": "^0.5.20",
