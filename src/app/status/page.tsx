@@ -46,9 +46,9 @@ function Status() {
   const [websocketStatus, setWebsocketStatus] = React.useState<boolean | null>(
     null
   )
-  const [lavalinkStatus, setLavalinkStatus] = React.useState<boolean | null>(
-    null
-  )
+  const [lavalinkStatus, setLavalinkStatus] = React.useState<
+    "operational" | "degraded" | "down" | null
+  >(null)
   const [clusterInfoStatus, setClusterInfoStatus] = React.useState<
     false | ClusterInfo | null
   >(null)
@@ -58,7 +58,7 @@ function Status() {
     ponlponl123api: boolean,
     redis: boolean,
     websocket: boolean,
-    lavalink: boolean,
+    lavalink: "operational" | "degraded" | "down",
     cluster: false | ClusterInfo
   ) {
     setHandshakeStatus(handshake)
@@ -72,11 +72,17 @@ function Status() {
       !ponlponl123api &&
       !redis &&
       !websocket &&
-      !lavalink &&
+      lavalink === "down" &&
       !cluster
     )
       return setOverallStatus("down")
-    if (!handshake || !ponlponl123api || !redis || !lavalink || !cluster)
+    if (
+      !handshake ||
+      !ponlponl123api ||
+      !redis ||
+      lavalink !== "operational" ||
+      !cluster
+    )
       return setOverallStatus("degraded")
     return setOverallStatus("operational")
   }
@@ -85,12 +91,21 @@ function Status() {
     if (fetching) return
     setFetching(true)
 
-    const handshakeReq = await handshake()
-    const ponlponl123api = await ponlponl123apiHandshake()
-    const redisReq = await redis()
-    const socketioReq = await socketio()
-    const lavalinkReq = await lavalink()
-    const clusterInfoReq = await clusterInfo()
+    const [
+      handshakeReq,
+      ponlponl123api,
+      redisReq,
+      socketioReq,
+      lavalinkReq,
+      clusterInfoReq,
+    ] = await Promise.all([
+      handshake(),
+      ponlponl123apiHandshake(),
+      redis(),
+      socketio(),
+      lavalink(),
+      clusterInfo(),
+    ])
 
     setOverallServiceStatus(
       handshakeReq,
@@ -168,7 +183,7 @@ function Status() {
               <div className="service-list">
                 <h1>Lavalink Connection</h1>
                 <div
-                  className={`service-status-badge ${lavalinkStatus ? "operational" : lavalinkStatus === null ? "unknown" : "down"}`}
+                  className={`service-status-badge ${lavalinkStatus ? lavalinkStatus : lavalinkStatus === null ? "unknown" : "down"}`}
                 ></div>
               </div>
               <div className="service-list">

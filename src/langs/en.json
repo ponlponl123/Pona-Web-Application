@@ -22,6 +22,8 @@
     "loading": "Loading",
     "friendly_loading": "Please wait, we are preparing the information for you...",
     "login_first": "Log in to continue",
+    "read_more": "Read more",
+    "show_less": "Show less",
     "enabled": "Enabled",
     "enabled_description": "This feature is currently active.",
     "disabled": "Disabled",

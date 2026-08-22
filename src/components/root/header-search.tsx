@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { usePathname, useRouter } from "next/navigation"
 import { AnimatePresence, motion } from "framer-motion"
 import { getCookie } from "cookies-next"

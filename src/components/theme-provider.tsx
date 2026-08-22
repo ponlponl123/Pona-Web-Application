@@ -100,7 +100,7 @@ function getLocalStorageValue(
 
 function ThemeProvider({
   children,
-  ...props
+  // ...props
 }: React.ComponentProps<typeof NextThemesProvider>) {
   const { resolvedTheme } = useTheme()
 

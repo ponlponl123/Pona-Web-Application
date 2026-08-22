@@ -22,6 +22,8 @@
     "loading": "読み込み中",
     "friendly_loading": "データを準備しています...",
     "login_first": "ログインして続ける",
+    "read_more": "続きを読む",
+    "show_less": "折りたたむ",
     "enabled": "有効",
     "enabled_description": "この機能は現在有効です。",
     "disabled": "無効",
