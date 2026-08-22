@@ -14,7 +14,7 @@ import {
 import { ArtistCard, PlaylistCard } from '@/components/music/card';
 import Track from '@/components/music/searchResult/track';
 import { Button } from '@/components/ui/button';
-import { Spinner } from '@/components/ui/spinner';
+import { RelatedSkeleton } from '@/components/music/skeleton';
 import { getSongRelated } from '@/lib/server-side-api/internal/search';
 import { useAppStore } from '@/store/coreStore';
 import { ponaCommonStateAtom } from '@/store/musicAtoms';
@@ -361,12 +361,15 @@ const Related = memo(({ videoId }: { videoId?: string }) => {
 
   if (isLoading && !currentCache) {
     return (
-      <div className='flex flex-col gap-4 items-center justify-center w-full h-full py-16'>
-        <Spinner className='text-[hsl(var(--pona-app-music-accent-color-800))] dark:text-[hsl(var(--pona-app-music-accent-color-500))]' />
-        <h1 className='text-2xl max-w-3xl text-center text-[hsl(var(--pona-app-music-accent-color-800)/0.64)] dark:text-[hsl(var(--pona-app-music-accent-color-500))/0.64]'>
-          {language.data.common.friendly_loading}
-        </h1>
-      </div>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.2 }}
+        className='w-full h-full'
+      >
+        <RelatedSkeleton />
+      </motion.div>
     );
   }
 

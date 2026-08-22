@@ -2,11 +2,11 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 
-function Shimmer({ className }: { className?: string }) {
+export function Shimmer({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        'animate-pulse rounded-3xl bg-foreground/8',
+        'relative overflow-hidden rounded-3xl bg-foreground/8 before:absolute before:inset-0 before:-translate-x-full before:animate-shimmer before:bg-gradient-to-r before:from-transparent before:via-foreground/15 before:to-transparent',
         className
       )}
     />
@@ -198,3 +198,92 @@ export function ChannelSkeleton({ className }: { className?: string }) {
     </div>
   );
 }
+
+export function RelatedTrackItemSkeleton({ className }: { className?: string }) {
+  return (
+    <div
+      className={cn(
+        'w-full flex items-center justify-between p-3 rounded-2xl gap-3.5',
+        className
+      )}
+    >
+      <div className='flex items-center gap-3 min-w-0 flex-1'>
+        <Shimmer className='size-12 rounded-xl flex-none' />
+        <div className='flex flex-col gap-2 flex-1 min-w-0'>
+          <Shimmer className='h-4 w-3/5 rounded-md' />
+          <Shimmer className='h-3 w-2/5 rounded-md' />
+        </div>
+      </div>
+      <Shimmer className='h-3.5 w-10 rounded-md flex-none' />
+    </div>
+  );
+}
+
+export function RelatedColumnSkeleton() {
+  return (
+    <div className='relative flex flex-col min-w-[77%] overflow-hidden'>
+      <RelatedTrackItemSkeleton />
+      <RelatedTrackItemSkeleton />
+      <RelatedTrackItemSkeleton />
+    </div>
+  );
+}
+
+export function RelatedSkeleton({ className }: { className?: string }) {
+  return (
+    <div
+      className={cn(
+        'flex flex-col gap-6 w-full mx-auto min-h-full max-md:py-6 max-md:px-3 md:py-2 md:px-6',
+        className
+      )}
+    >
+      <div className='flex flex-col gap-3 w-full'>
+        <div className='flex gap-4 items-center justify-between w-full p-1 -mt-2'>
+          <Shimmer className='h-7 w-48 md:w-64 rounded-xl' />
+          <div className='flex gap-2'>
+            <Shimmer className='size-9 rounded-full' />
+            <Shimmer className='size-9 rounded-full' />
+          </div>
+        </div>
+        <div className='flex gap-5 overflow-hidden w-full'>
+          <RelatedColumnSkeleton />
+          <RelatedColumnSkeleton />
+        </div>
+      </div>
+
+      <div className='flex flex-col gap-3 w-full mt-2'>
+        <div className='flex gap-4 items-center justify-between w-full p-1 -mt-2'>
+          <Shimmer className='h-7 w-44 md:w-56 rounded-xl' />
+          <div className='flex gap-2'>
+            <Shimmer className='size-9 rounded-full' />
+            <Shimmer className='size-9 rounded-full' />
+          </div>
+        </div>
+        <div className='flex gap-5 overflow-hidden w-full'>
+          <RelatedColumnSkeleton />
+          <RelatedColumnSkeleton />
+        </div>
+      </div>
+
+      <div className='flex flex-col gap-3 w-full mt-2'>
+        <div className='flex gap-4 items-center justify-between w-full p-1 -mt-2'>
+          <Shimmer className='h-7 w-52 md:w-60 rounded-xl' />
+          <div className='flex gap-2'>
+            <Shimmer className='size-9 rounded-full' />
+            <Shimmer className='size-9 rounded-full' />
+          </div>
+        </div>
+        <div className='flex gap-5 overflow-hidden w-full'>
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className='w-48 flex-none flex flex-col gap-3'>
+              <Shimmer className='aspect-square w-full rounded-2xl' />
+              <Shimmer className='h-4 w-3/4 rounded-lg' />
+              <Shimmer className='h-3 w-1/2 rounded-lg' />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+

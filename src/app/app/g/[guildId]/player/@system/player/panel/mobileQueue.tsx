@@ -857,7 +857,7 @@ const MobileQueueView = React.memo(function MobileQueueView({
                 <Button
                   variant="ghost"
                   size="lg"
-                  className="justify-start p-3 h-max border-0 text-default-foreground gap-3"
+                  className="justify-start p-3 h-max border-0 text-default-foreground hover:bg-default-foreground/5! gap-3"
                   onClick={() => {
                     handleSkipTo(actionTrackData.queueIndex!);
                     setActionTrackData(null);
@@ -874,7 +874,7 @@ const MobileQueueView = React.memo(function MobileQueueView({
                 <Button
                   variant="ghost"
                   size="lg"
-                  className="justify-start p-3 h-max border-0 text-default-foreground gap-3"
+                  className="justify-start p-3 h-max border-0 text-default-foreground hover:bg-default-foreground/5! gap-3"
                   onClick={() => handleMovePNPTToQueue(actionTrackData.track)}
                 >
                   <PlusIcon weight="bold" className="size-5" />
@@ -888,7 +888,7 @@ const MobileQueueView = React.memo(function MobileQueueView({
                 <Button
                   variant="ghost"
                   size="lg"
-                  className="justify-start p-3 h-max border-0 text-default-foreground gap-3"
+                  className="justify-start p-3 h-max border-0 text-default-foreground hover:bg-default-foreground/5! gap-3"
                   onClick={() => {
                     const artistId = actionTrackData.track.artist![0].id;
                     setActionTrackData(null);
@@ -910,7 +910,7 @@ const MobileQueueView = React.memo(function MobileQueueView({
                 <Button
                   variant="ghost"
                   size="lg"
-                  className="justify-start p-3 h-max border-0 text-danger hover:text-danger hover:bg-danger/10 gap-3"
+                  className="justify-start p-3 h-max border-0 text-default-foreground hover:bg-default-foreground/5! gap-3"
                   onClick={() => handleRemoveTrack(actionTrackData.track)}
                 >
                   <TrashIcon weight="bold" className="size-5" />

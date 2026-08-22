@@ -3,12 +3,7 @@
 import React, { useState } from 'react';
 import CountUp from 'react-countup';
 import { motion } from 'framer-motion';
-import {
-  PlugsIcon,
-  PlugsConnectedIcon,
-  WarningIcon,
-  ArrowClockwiseIcon,
-} from '@phosphor-icons/react/dist/ssr';
+import { ArrowClockwiseIcon } from '@phosphor-icons/react/dist/ssr';
 import { useAppStore } from '@/store/coreStore';
 import { useSocket } from '@/contexts/ponaMusicContext';
 import { Button } from '@/components/ui/button';
