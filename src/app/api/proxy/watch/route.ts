@@ -51,6 +51,7 @@ export async function GET(req: NextRequest) {
       headers: {
         "Content-Type": cachedImage.contentType,
         "Cache-Control": "public, max-age=604800, s-maxage=2592000, stale-while-revalidate=86400, immutable",
+        "Access-Control-Allow-Origin": "*",
       },
     })
   }
@@ -81,6 +82,7 @@ export async function GET(req: NextRequest) {
           headers: {
             "Content-Type": contentType,
             "Cache-Control": "public, max-age=604800, s-maxage=2592000, stale-while-revalidate=86400, immutable",
+            "Access-Control-Allow-Origin": "*",
             "X-Cache-Hit": "false",
           },
         })

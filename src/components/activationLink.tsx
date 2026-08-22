@@ -33,7 +33,7 @@ function ActivationLink({
 }: ActivationLinkProps) {
   const pathname = usePathname() || ""
 
-  const isHere = href && pathname === href
+  const isHere = Boolean(isActive || (href && pathname === href))
 
   const buttonContent = (
     <motion.button

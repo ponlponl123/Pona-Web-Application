@@ -324,7 +324,7 @@ export function TrackSearchResult({
         isMounted = false;
       };
     }
-  }, [isPlayableTrack, videoId, initialArtists.length, initialDuration, title, rawArtistName]);
+  }, [isPlayableTrack, videoId, initialArtists, initialDuration, title, rawArtistName]);
 
   const finalArtists = initialArtists.length > 0 ? initialArtists : fetchedMeta.artists || [];
   const duration = initialDuration || fetchedMeta.duration || '';

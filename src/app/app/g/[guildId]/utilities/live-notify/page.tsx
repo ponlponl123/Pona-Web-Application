@@ -35,7 +35,7 @@ function Page() {
         userInfo?.global_name || ""
       )
     )
-  }, [language])
+  }, [language, userInfo?.global_name])
 
   return (
     <main id="app-panel">

@@ -76,7 +76,7 @@ function Page(): React.ReactElement {
         if (isMounted) {
           setGuilds(res)
         }
-      } catch (err) {
+      } catch {
         if (isMounted) {
           setGuilds(false)
         }

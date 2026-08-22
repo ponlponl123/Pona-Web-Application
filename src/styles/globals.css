@@ -27,8 +27,15 @@
   @import "./animation.css";
 
   [data-default-transition="true"],
-  *:not([data-default-transition="false"]) {
+  button:not(.disable-default-transition, [data-default-transition="false"]),
+  a:not(.disable-default-transition, [data-default-transition="false"]),
+  input:not(.disable-default-transition, [data-default-transition="false"]),
+  select:not(.disable-default-transition, [data-default-transition="false"]),
+  textarea:not(.disable-default-transition, [data-default-transition="false"]),
+  [role="button"]:not(.disable-default-transition, [data-default-transition="false"]),
+  [data-slot="interactive"]:not(.disable-default-transition, [data-default-transition="false"]) {
     transition: 0.26s cubic-bezier(0.165, 0.84, 0.44, 1);
+    transition-property: color, background-color, border-color, opacity, box-shadow, transform;
   }
 
   :root {

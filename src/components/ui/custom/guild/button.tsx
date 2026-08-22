@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useMemo } from "react"
+import React from "react"
 import Link from "next/link"
 import { CaretRightIcon, UsersIcon } from "@phosphor-icons/react/dist/ssr"
 import { GuildInfo } from "@/lib/server-side-api/discord/fetchGuild"

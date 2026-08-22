@@ -2,7 +2,6 @@
 import React from "react"
 import { viewType } from "@/app/status/page"
 import {
-  ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,

@@ -10,10 +10,28 @@ const allowedServerActionOrigins = (
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: "standalone",
+  reactStrictMode: true,
+  compress: true,
+  compiler: {
+    removeConsole: process.env.NODE_ENV === "production" ? { exclude: ["error", "warn"] } : false,
+  },
   experimental: {
     serverActions: {
       allowedOrigins: allowedServerActionOrigins,
     },
+    optimizePackageImports: [
+      "@phosphor-icons/react",
+      "lucide-react",
+      "recharts",
+      "motion",
+      "@heroui/react",
+      "@heroui/styles",
+      "radix-ui",
+      "@dnd-kit/core",
+      "@dnd-kit/sortable",
+      "@dnd-kit/utilities",
+      "embla-carousel-react",
+    ],
   },
   env: {
     NEXT_PUBLIC_APP_VERSION: pkg.version,

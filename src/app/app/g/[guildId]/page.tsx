@@ -9,8 +9,6 @@ import {
   BarChart,
   CartesianGrid,
   Legend,
-  Line,
-  LineChart,
   Pie,
   PieChart,
   PolarAngleAxis,
@@ -20,7 +18,6 @@ import {
   RadarChart,
   ResponsiveContainer,
   XAxis,
-  YAxis,
 } from "recharts"
 
 import { getRandomColor } from "@/components/data/charts/service-status"
@@ -146,7 +143,7 @@ function Page() {
     }
 
     fetchActiveStats()
-  }, [guild?.id, token, tokenType])
+  }, [guild, token, tokenType])
 
   const channelColors = React.useMemo(() => {
     const colors: { [key: string]: string } = {}

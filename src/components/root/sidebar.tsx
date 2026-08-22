@@ -49,7 +49,7 @@ import { PanelLeftCloseIcon } from "../animate-ui/icons/panel-left-close"
 import { AnimateIcon } from "../animate-ui/icons/icon"
 
 interface SidebarProps {
-  userInfo: UserInfo
+  userInfo?: UserInfo
   nav?: boolean
   onPushLocation?: () => void
   canCollapsed: boolean
@@ -58,7 +58,6 @@ interface SidebarProps {
 }
 
 function Sidebar({
-  userInfo,
   nav = false,
   onPushLocation,
   canCollapsed = true,

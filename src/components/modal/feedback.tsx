@@ -53,7 +53,9 @@ function FeedbackModal() {
     try {
       const formData = new FormData()
       formData.set("message", textAreaValue)
-      isCanWeContactBack && formData.set("email", inputValue)
+      if (isCanWeContactBack) {
+        formData.set("email", inputValue)
+      }
       const response = await fetch(
         "https://api.ponlponl123.com/v1/services/pona/feedback",
         {
@@ -162,8 +164,8 @@ function FeedbackModal() {
                         className="min-h-0 flex-1 rounded-xl border-2 border-transparent bg-foreground/10! text-sm! tracking-wider hover:border-foreground/10 hover:bg-foreground/5!"
                         placeholder={language.data.modal.feedback.placeholder}
                         onChange={(e) => {
-                          ;(setTextAreaValue(e.target.value),
-                            setTextAreaError(""))
+                          setTextAreaValue(e.target.value)
+                          setTextAreaError("")
                         }}
                         disabled={isFormDisabled}
                         aria-invalid={textAreaError.length > 0}
@@ -208,8 +210,8 @@ function FeedbackModal() {
                             type="text"
                             placeholder={language.data.modal.feedback.email}
                             onChange={(e) => {
-                              ;(setInputValue(e.target.value),
-                                setInputError(""))
+                              setInputValue(e.target.value)
+                              setInputError("")
                             }}
                             value={inputValue}
                             fontStyle={{

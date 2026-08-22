@@ -9,7 +9,7 @@ import { useMediaQuery } from 'react-responsive';
 
 import { useSocket } from '@/contexts/ponaMusicContext';
 import { useAppStore } from '@/store/coreStore';
-import { playbackAtom, ponaCommonStateAtom } from '@/store/musicAtoms';
+import { ponaCommonStateAtom } from '@/store/musicAtoms';
 import { playerPopupAtom } from '@/store/uiAtoms';
 
 import { PlayerSeekBar } from './components/seekBar';
@@ -38,23 +38,17 @@ export default function PonaPlayer({ isMobileOverride }: { isMobileOverride?: bo
   const isSmallScreen = useMediaQuery({ maxWidth: 768 });
 
   const ponaCommonState = useAtomValue(ponaCommonStateAtom);
-  const playback = useAtomValue(playbackAtom);
   const [playerPopup, setPlayerPopup] = useAtom(playerPopupAtom);
   const { socket } = useSocket();
 
   const isMobile = isMobileOverride ?? (isMobileStore || isSmallScreen);
   const currentTrack = ponaCommonState?.current;
 
-  const [sliderValue, setSliderValue] = useState<number>(playback);
   const [beforeState, setBeforeState] = useState<'none' | 'playerPanel' | 'queuePanel'>('none');
   const [afterState, setAfterState] = useState<'none' | 'playerPanel' | 'queuePanel'>('none');
   const [trackFocus, setTrackFocus] = useState<boolean>(true);
 
   useWakeLock(playerPopup);
-
-  useEffect(() => {
-    setSliderValue(playback);
-  }, [playback]);
 
   useEffect(() => {
     setPlayerPopup(false);
@@ -81,10 +75,9 @@ export default function PonaPlayer({ isMobileOverride }: { isMobileOverride?: bo
   const maxLength = ponaCommonState?.pona.length || 100;
   const isPaused = Boolean(ponaCommonState?.pona.paused);
 
-  const [viewportH, setViewportH] = useState(800);
+  const [viewportH, setViewportH] = useState(() => (typeof window !== 'undefined' ? window.innerHeight : 800));
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    setViewportH(window.innerHeight);
     const onResize = () => setViewportH(window.innerHeight);
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);
@@ -126,6 +119,7 @@ export default function PonaPlayer({ isMobileOverride }: { isMobileOverride?: bo
 
   useEffect(() => {
     if (!playerPopup) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSnapStage(0);
       animate(dragProgress, 0, {
         type: 'spring',
@@ -282,9 +276,7 @@ export default function PonaPlayer({ isMobileOverride }: { isMobileOverride?: bo
               onClick={(e) => e.stopPropagation()}
             >
               <PlayerSeekBar
-                sliderValue={sliderValue}
                 maxLength={maxLength}
-                setSliderValue={setSliderValue}
                 onSeek={handleSeek}
                 isMobile
                 className='w-full h-0.5 absolute bottom-0 left-0 top-[unset] cursor-pointer group'
@@ -350,9 +342,7 @@ export default function PonaPlayer({ isMobileOverride }: { isMobileOverride?: bo
           )} />
 
           <PlayerSeekBar
-            sliderValue={sliderValue}
             maxLength={maxLength}
-            setSliderValue={setSliderValue}
             onSeek={handleSeek}
             className={
               userSetting.dev_pona_player_style === 'modern'
@@ -387,7 +377,6 @@ export default function PonaPlayer({ isMobileOverride }: { isMobileOverride?: bo
                 socket={socket}
                 language={language}
                 isPaused={isPaused}
-                playback={playback}
                 maxLength={maxLength}
               />
             </div>

@@ -13,8 +13,7 @@ function Page() {
   const { guild } = useDiscordGuildInfo()
   const language = useAppStore((state) => state.language)
   const [loading, setLoading] = React.useState<boolean>(true)
-  const [guildSettings, setGuildSettings] =
-    React.useState<GuildSettings | null>(null)
+  const [guildSettings] = React.useState<GuildSettings | null>(null)
 
   React.useEffect(() => {
     queueMicrotask(() => setLoading(false))

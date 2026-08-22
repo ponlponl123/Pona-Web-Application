@@ -13,6 +13,8 @@ import {
 import { Button } from '@/components/ui/button';
 import { msToTime } from '@/lib/utils';
 import { Language } from '@/lib/i18n';
+import { useAtomValue } from 'jotai';
+import { playbackAtom } from '@/store/musicAtoms';
 
 import { emitWithTimeout } from '@/lib/promiseWithTimeout';
 
@@ -27,11 +29,13 @@ export const PlayerControls = memo(function PlayerControls({
   socket: Socket | null;
   language: Language;
   isPaused: boolean;
-  playback: number;
+  playback?: number;
   maxLength: number;
   isMobile?: boolean;
 }) {
-  const formattedPlayback = React.useMemo(() => msToTime(playback), [playback]);
+  const livePlayback = useAtomValue(playbackAtom);
+  const currentPlayback = playback !== undefined ? playback : livePlayback;
+  const formattedPlayback = React.useMemo(() => msToTime(currentPlayback), [currentPlayback]);
   const formattedMaxLength = React.useMemo(() => msToTime(maxLength), [maxLength]);
 
   const handlePause = useCallback(() => socket?.emit('pause'), [socket]);

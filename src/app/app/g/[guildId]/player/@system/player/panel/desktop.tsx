@@ -62,7 +62,6 @@ import { Spinner } from '@/components/ui/spinner';
 import { useSocket } from '@/contexts/ponaMusicContext';
 import { useAppStore } from '@/store/coreStore';
 import {
-  playbackAtom,
   ponaCommonStateAtom,
   queueAtom,
 } from '@/store/musicAtoms';
@@ -91,16 +90,13 @@ export default function DesktopPonaPlayerPanel() {
   const userSetting = useAppStore((state) => state.userSetting);
 
   const ponaCommonState = useAtomValue(ponaCommonStateAtom);
-  const playback = useAtomValue(playbackAtom);
   const [ponaTrackQueue, setPonaTrackQueue] = useAtom(queueAtom);
   const [isFullscreenMode, setIsFullscreenMode] = useAtom(isFullscreenModeAtom);
   const playerPopup = useAtomValue(playerPopupAtom);
   const { socket } = useSocket();
 
   const currentTrack = ponaCommonState?.current;
-  const videoId = currentTrack?.identifier;
   const [lyricsContainer, setLyricsContainer] = useState<HTMLDivElement | null>(null);
-  const playerPos = playback;
   const [activeQueueTrack, setActiveQueueTrack] = useState<Track | UnresolvedTrack | null>(null);
 
   const playingNextQueue = useMemo(() => {
@@ -386,7 +382,6 @@ export default function DesktopPonaPlayerPanel() {
                             </div>
                           ) : currentTrack.lyrics.isTimestamp ? (
                             <LyricsDisplay
-                              playerPosition={playerPos}
                               currentTrack={currentTrack as Track}
                               lyricsProvider={lyricsContainer}
                               isPlaying={!ponaCommonState?.pona.paused}
@@ -425,7 +420,7 @@ export default function DesktopPonaPlayerPanel() {
                         viewport: "relative rounded-none pt-4 pr-2 mask-t-from-90% mask-b-from-90%",
                       }}
                     >
-                      <Related videoId={videoId} />
+                      <Related videoId={currentTrack?.identifier} />
                     </CustomScrollArea>
                   </TabsContent>
                 </TabsContents>

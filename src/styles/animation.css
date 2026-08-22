@@ -14,25 +14,24 @@ html.animation-disabled *:not([aria-label="Loading"],
   transition: none !important;
 }
 
-*:not(.animation-disabled, .animation-30fps, html, body) *:not([data-slot="popover"],
-  [data-slot="cursor"],
-  div[style],
-  .disable-default-transition,
-  .leaflet-pane .leaflet-marker-draggable),
 .apply-transition {
   transition: 0.24s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition-property: color, background-color, border-color, opacity, box-shadow, transform;
 }
 
 .apply-soft-transition {
-  transition: 0.16s cubic-bezier(0.39, 0.575, 0.565, 1);
+  transition: all 0.16s cubic-bezier(0.39, 0.575, 0.565, 1);
 }
 
 .apply-long-soft-transition {
-  transition: 0.32s cubic-bezier(0.075, 0.82, 0.165, 1);
+  transition: all 0.32s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
-*:not(.animation-disabled, .animation-30fps):active {
+button:not(.animation-disabled, .animation-30fps, .disable-default-transition):active,
+a:not(.animation-disabled, .animation-30fps, .disable-default-transition):active,
+[role="button"]:not(.animation-disabled, .animation-30fps, .disable-default-transition):active {
   transition: 0.024s cubic-bezier(0.19, 1, 0.22, 1);
+  transition-property: transform, opacity, background-color, color;
 }
 
 .animate.equalizer {

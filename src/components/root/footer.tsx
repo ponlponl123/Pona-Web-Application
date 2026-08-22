@@ -13,12 +13,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 import { Button } from "../ui/button"
 import { motion } from "motion/react"
 import Link from "next/link"
-import clsx from "clsx"
 import { cn } from "@/lib/utils"
 import { useAppStore } from "@/store/coreStore"
 import {
   isLanguageModalOpenAtom,
-  isSettingModalOpenAtom,
 } from "@/store/uiAtoms"
 import { useAtom } from "jotai"
 
@@ -33,7 +31,7 @@ function Footer() {
   return (
     <motion.footer
       layout
-      className={clsx(
+      className={cn(
         "pona-footer z-10 max-md:flex-col",
         isAppRoute ? "m-0" : "-mt-24"
       )}

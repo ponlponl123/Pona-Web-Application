@@ -289,8 +289,8 @@ export default function UserAccountDropdown({
                       className: cn(),
                       layoutId: "setting-modal-by-account-dropdown",
                       onClick: () => {
-                        ; (setSettingLayoutId("setting-modal-by-account-dropdown"),
-                          setIsSettingModalOpen(true))
+                        setSettingLayoutId("setting-modal-by-account-dropdown")
+                        setIsSettingModalOpen(true)
                       },
                       href: null,
                     },
@@ -332,7 +332,7 @@ export default function UserAccountDropdown({
                           transition={layoutTransition}
                           className={cn(dropdownBtnClassname, item.className)}
                           onClick={() => {
-                            item.onClick && item.onClick()
+                            item.onClick?.()
                             setIsActive(false)
                           }}
                           data-smooth-interaction="true"

@@ -4,10 +4,8 @@
 
 import React, {
   ReactNode,
-  ReactElement,
   MouseEvent,
   ComponentProps,
-  ElementType,
 } from "react"
 import confetti from "canvas-confetti"
 

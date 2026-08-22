@@ -2,6 +2,8 @@
 
 import { cn } from '@/lib/utils';
 import React, { memo, useCallback, useRef, useState } from 'react';
+import { useAtomValue } from 'jotai';
+import { playbackAtom } from '@/store/musicAtoms';
 
 export const PlayerSeekBar = memo(function PlayerSeekBar({
   sliderValue,
@@ -11,16 +13,18 @@ export const PlayerSeekBar = memo(function PlayerSeekBar({
   className,
   isMobile = false,
 }: {
-  sliderValue: number;
+  sliderValue?: number;
   maxLength: number;
-  setSliderValue: (val: number) => void;
+  setSliderValue?: (val: number) => void;
   onSeek: (val: number) => void;
   className?: string;
   isMobile?: boolean;
 }) {
+  const livePlayback = useAtomValue(playbackAtom);
+  const currentVal = sliderValue !== undefined ? sliderValue : livePlayback;
   const [seekValue, setSeekValue] = useState<number | null>(null);
   const isSeeking = seekValue !== null;
-  const activeValue = seekValue !== null ? seekValue : sliderValue;
+  const activeValue = seekValue !== null ? seekValue : currentVal;
   const progressPercent = maxLength > 0 ? Math.min(100, Math.max(0, (activeValue / maxLength) * 100)) : 0;
 
   const startTouchRef = useRef<{ x: number; y: number; initialVal: number } | null>(null);
@@ -54,7 +58,7 @@ export const PlayerSeekBar = memo(function PlayerSeekBar({
         if (dy > 8 && dy > dx) {
           isVerticalSwipeRef.current = true;
           setSeekValue(null);
-          setSliderValue(startTouchRef.current.initialVal);
+          setSliderValue?.(startTouchRef.current.initialVal);
           return;
         }
         if (dx > 5 && dx >= dy) {
@@ -64,7 +68,7 @@ export const PlayerSeekBar = memo(function PlayerSeekBar({
 
       if (isVerticalSwipeRef.current) {
         setSeekValue(null);
-        setSliderValue(startTouchRef.current.initialVal);
+        setSliderValue?.(startTouchRef.current.initialVal);
       }
     },
     [isSeeking, setSliderValue]
@@ -75,7 +79,7 @@ export const PlayerSeekBar = memo(function PlayerSeekBar({
       if (isVerticalSwipeRef.current) return;
       const val = Number(e.target.value);
       setSeekValue(val);
-      setSliderValue(val);
+      setSliderValue?.(val);
     },
     [setSliderValue]
   );
@@ -88,7 +92,7 @@ export const PlayerSeekBar = memo(function PlayerSeekBar({
     (e: React.TouchEvent<HTMLInputElement>) => {
       if (isVerticalSwipeRef.current) {
         if (startTouchRef.current) {
-          setSliderValue(startTouchRef.current.initialVal);
+          setSliderValue?.(startTouchRef.current.initialVal);
         }
         startTouchRef.current = null;
         isVerticalSwipeRef.current = false;

@@ -43,7 +43,6 @@ import { useSocket } from "@/contexts/ponaMusicContext"
 import { useAppStore } from "@/store/coreStore"
 import { playbackAtom, ponaCommonStateAtom } from "@/store/musicAtoms"
 import { playerPopupAtom, isQueueReorderingAtom } from "@/store/uiAtoms"
-import { msToTime } from "@/lib/utils"
 import { AnimateIcon } from "@/components/animate-ui/icons/icon"
 import CustomScrollArea from "@/components/ui/custom/scroll-area"
 import LyricsDisplay from "@/components/music/lyricsDisplay"
@@ -53,6 +52,21 @@ import { MobilePonaPlayerPanelAnimationState, PlayerSeekBar, PlayerControls } fr
 import MobileQueueView from "./mobileQueue"
 import { toast } from "sonner"
 import { emitWithTimeout } from "@/lib/promiseWithTimeout"
+import { msToTime } from "@/lib/utils"
+
+const MobileTimeDisplay = React.memo(function MobileTimeDisplay({ maxLength }: { maxLength: number }) {
+  const playback = useAtomValue(playbackAtom)
+  return (
+    <div className="mt-1 flex w-full flex-row items-center justify-between gap-2">
+      <span className="text-xs text-default-foreground/60">
+        {msToTime(playback)}
+      </span>
+      <span className="text-xs text-default-foreground/60">
+        {msToTime(maxLength)}
+      </span>
+    </div>
+  )
+})
 
 const MobilePonaPlayerPanel = React.memo(function MobilePonaPlayerPanel({
   dragProgress,
@@ -82,7 +96,6 @@ const MobilePonaPlayerPanel = React.memo(function MobilePonaPlayerPanel({
 
   const ponaCommonState = useAtomValue(ponaCommonStateAtom)
   const isQueueReordering = useAtomValue(isQueueReorderingAtom)
-  const playback = useAtomValue(playbackAtom)
   const [playerPopup, setPlayerPopup] = useAtom(playerPopupAtom)
   const { socket } = useSocket()
 
@@ -176,11 +189,6 @@ const MobilePonaPlayerPanel = React.memo(function MobilePonaPlayerPanel({
   const queueY = useTransform(progress, [1.0, 1.5, 2.0], [dimensions.height, queueMidY, 0])
   const queueOpacity = useTransform(progress, [1.05, 1.3, 2], [0, 1, 1])
   const queueVisibility = useTransform(progress, (v) => v < 1.05 ? 'hidden' : 'visible')
-  const [sliderValue, setSliderValue] = useState<number>(playback)
-
-  useEffect(() => {
-    setSliderValue(playback)
-  }, [playback])
 
   useEffect(() => {
     if (!currentTrack) {
@@ -553,7 +561,6 @@ const MobilePonaPlayerPanel = React.memo(function MobilePonaPlayerPanel({
                 socket={socket}
                 language={language}
                 isPaused={Boolean(ponaCommonState?.pona.paused)}
-                playback={playback}
                 maxLength={maxLength}
                 isMobile
               />
@@ -673,21 +680,12 @@ const MobilePonaPlayerPanel = React.memo(function MobilePonaPlayerPanel({
               onPointerDown={(e) => e.stopPropagation()}
             >
               <PlayerSeekBar
-                sliderValue={sliderValue}
                 maxLength={maxLength}
-                setSliderValue={setSliderValue}
                 onSeek={handleSeek}
                 isMobile
                 className="w-full mb-2.5 h-2 relative top-0 left-0 flex items-center group"
               />
-              <div className="mt-1 flex w-full flex-row items-center justify-between gap-2">
-                <span className="text-xs text-default-foreground/60">
-                  {msToTime(playback)}
-                </span>
-                <span className="text-xs text-default-foreground/60">
-                  {msToTime(ponaCommonState?.pona.length || 0)}
-                </span>
-              </div>
+              <MobileTimeDisplay maxLength={maxLength} />
             </motion.div>
 
             <motion.div
@@ -838,7 +836,6 @@ const MobilePonaPlayerPanel = React.memo(function MobilePonaPlayerPanel({
                         </div>
                       ) : currentTrack.lyrics.isTimestamp ? (
                         <LyricsDisplay
-                          playerPosition={playback}
                           currentTrack={currentTrack as Track}
                           lyricsProvider={lyricsContainer}
                           isPlaying={!ponaCommonState?.pona.paused}

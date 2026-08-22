@@ -43,7 +43,6 @@ import {
 } from "@/types/guild/permissions/music"
 import {
   Default_Payload,
-  Default_VoteToSkip,
 } from "@/consts/guild/permissions/music"
 import { Switch } from "@/components/ui/switch"
 import { Alert } from "@/components/ui/alert"
@@ -57,7 +56,7 @@ function Page() {
     React.useState<MusicPermissionsPayload>(Default_Payload)
   const prevPermSettingPayload =
     React.useRef<MusicPermissionsPayload>(Default_Payload)
-  const [loading, setLoading] = React.useState(false)
+  const [loading] = React.useState(false)
 
   const conditions: { label: string; value: meter }[] = [
     {

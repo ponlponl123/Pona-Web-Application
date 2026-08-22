@@ -26,7 +26,7 @@ import {
   Queue,
   Track,
 } from "@/types/ponaPlayer"
-import { makeTrack, proxyArtwork } from "@/lib/track"
+import { applyTrackAccentColor, makeTrack, proxyArtwork } from "@/lib/track"
 import { MemberVoiceChangedState } from "@/types/member"
 import { VoiceBasedChannel } from "discord.js"
 
@@ -56,6 +56,12 @@ export const PonaMusicProvider = ({
 
   const isMemberInVC = useAtomValue(isMemberInVCAtom)
   const ponaCommonState = useAtomValue(ponaCommonStateAtom)
+
+  useEffect(() => {
+    if (ponaCommonState?.current) {
+      applyTrackAccentColor(ponaCommonState.current)
+    }
+  }, [ponaCommonState])
 
   const [socket, setSocket] = useState<Socket | null>(null)
   const [isConnected, setIsConnected] = useState<boolean>(false)

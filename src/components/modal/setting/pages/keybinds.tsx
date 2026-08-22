@@ -72,7 +72,6 @@ function KeyBinds() {
   )
 
   const PreCalcCategoryDelays = animationData.result
-  const TOTAL_ANIMATION_DELAY = Number((animationData.time + 0.08).toFixed(3))
 
   return (
     <section

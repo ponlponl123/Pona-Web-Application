@@ -1,11 +1,10 @@
 "use client"
 
-import React, { useState } from "react"
+import React from "react"
 import Link from "next/link"
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import { ArrowLeftIcon, SparkleIcon } from "@phosphor-icons/react/dist/ssr"
 import { Button } from "../button"
-import confetti from "canvas-confetti"
 import { AnimateIcon } from "@/components/animate-ui/icons/icon"
 import { Forklift } from "@/components/animate-ui/icons/forklift"
 
@@ -30,7 +29,6 @@ export function ComingSoon({
   estimatedRelease = "Q3 2026",
   backUrl = "/app",
   backText,
-  onNotifySubmit,
 }: ComingSoonProps): React.ReactElement {
   const language = useAppStore((state) => state.language)
 
@@ -39,32 +37,6 @@ export function ComingSoon({
   const resolvedSubtitle = subtitle || language?.data?.app?.guilds?.comingsoon?.subtitle || "Something awesome is in the works"
   const resolvedBackText = backText || language?.data?.app?.guilds?.comingsoon?.back || "Back to Workspace"
   const targetLaunchText = language?.data?.app?.guilds?.comingsoon?.target_launch || "Target Launch:"
-
-  const [email, setEmail] = useState("")
-  const [isSubmitted, setIsSubmitted] = useState(false)
-  const [loading, setLoading] = useState(false)
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!email || !email.includes("@")) return
-
-    setLoading(true)
-    try {
-      if (onNotifySubmit) {
-        await onNotifySubmit(email)
-      }
-      setIsSubmitted(true)
-      confetti({
-        particleCount: 70,
-        spread: 80,
-        origin: { y: 0.6 },
-      })
-    } catch (err) {
-      console.error(err)
-    } finally {
-      setLoading(false)
-    }
-  }
 
   return (
     <div className="relative flex min-h-[calc(100vh-6rem)] w-full items-center justify-center overflow-hidden px-4 py-12 sm:px-6 lg:px-8">

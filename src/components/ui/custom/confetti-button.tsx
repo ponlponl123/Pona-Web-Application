@@ -1,4 +1,4 @@
-import React, { JSX, ReactElement } from "react"
+import React from "react"
 import confetti from "canvas-confetti"
 
 interface ConfettiButtonProps {

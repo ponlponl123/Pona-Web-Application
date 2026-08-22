@@ -1,4 +1,4 @@
-import { CollectedTheme, Themes } from "@/types/theme"
+import { CollectedTheme } from "@/types/theme"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../tooltip"
 import { MouseEventHandler } from "react"
 import { cn } from "@/lib/utils"

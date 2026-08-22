@@ -7,13 +7,14 @@ import React, {
   useMemo,
   useDeferredValue,
 } from "react"
-import { AnimatePresence, motion } from "framer-motion"
+import { AnimatePresence, motion } from "motion/react"
 import { ArrowsDownUpIcon } from "@phosphor-icons/react/dist/ssr"
 import { Lyric, TimestampLyrics } from "@/types/ponaPlayer"
 import { useAppStore } from "@/store/coreStore"
 import { useSocket } from "@/contexts/ponaMusicContext"
+import { useAtomValue } from "jotai"
+import { playbackAtom } from "@/store/musicAtoms"
 import { Button } from "@/components/ui/button"
-import { clsx } from "clsx"
 import { cn } from "@/lib/utils"
 
 interface Track {
@@ -22,8 +23,8 @@ interface Track {
 
 interface LyricsDisplayProps {
   currentTrack?: Track
-  playerPosition: number
-  lyricsProvider: HTMLElement
+  playerPosition?: number
+  lyricsProvider?: HTMLElement | null
   isPlaying?: boolean
   playbackLatencyMs?: number
 }
@@ -36,7 +37,6 @@ const LyricItem = React.memo(
     onSeek,
     className,
     isActive,
-    durationMs,
   }: {
     lyrics: TimestampLyrics
     index: number
@@ -45,13 +45,6 @@ const LyricItem = React.memo(
     isActive: boolean
     durationMs: number
   }) => {
-    const characters = useMemo(() => Array.from(lyrics.lyrics), [lyrics.lyrics])
-    const stagger = ((durationMs / 1000) * 0.7) / Math.max(characters.length, 1)
-    const characterDuration = Math.min(
-      0.45,
-      Math.max(0.16, (durationMs / 1000) * 0.35)
-    )
-
     return (
       <div
         key={index}
@@ -60,43 +53,17 @@ const LyricItem = React.memo(
         aria-current={isActive ? "true" : undefined}
         className={cn(
           className,
-          "group relative overflow-visible rounded-lg px-3 py-1.5 animation-disabled apply-long-soft-transition duration-1000",
-          isActive && "md:scale-[1.015]"
+          "group relative overflow-visible rounded-lg px-3 py-1.5 apply-long-soft-transition cursor-pointer select-none",
+          isActive && "md:scale-[1.015] font-semibold text-primary"
         )}
-        style={{ contentVisibility: "auto" }}
+        style={{ contentVisibility: "auto", containIntrinsicSize: "0 40px" }}
       >
-        {isActive && (
-          <span
-            key={`lyrics-highlight-${index}`}
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 max-w-full px-3 py-1.5 text-start whitespace-pre-wrap wrap-break-word tracking-[1.019] animation-disabled apply-long-soft-transition duration-1000"
-          >
-            {characters.map((character, characterIndex) => (
-              <motion.span
-                key={`${character}-${characterIndex}`}
-                initial={{
-                  opacity: 0.15,
-                  filter: "blur(0.18em)",
-                  textShadow: "0 0 0 transparent",
-                }}
-                animate={{
-                  opacity: 1,
-                  filter: "blur(0)",
-                  textShadow:
-                    "0 0 0.1rem currentColor, 0 0 0.48rem currentColor",
-                }}
-                transition={{
-                  duration: characterDuration,
-                  delay: characterIndex * stagger,
-                }}
-                className="will-change-[opacity,filter,text-shadow]"
-              >
-                {character}
-              </motion.span>
-            ))}
-          </span>
-        )}
-        <span className={cn("tracking-[1.019] animation-disabled apply-long-soft-transition duration-1000", isActive ? "opacity-35" : "opacity-100")}>
+        <span
+          className={cn(
+            "tracking-wide apply-long-soft-transition",
+            isActive ? "opacity-100 drop-shadow-sm" : "opacity-40 hover:opacity-75"
+          )}
+        >
           {lyrics.lyrics}
         </span>
       </div>
@@ -115,15 +82,17 @@ const LyricsDisplay: React.FC<LyricsDisplayProps> = ({
 }) => {
   const [activeIndex, setActiveIndex] = useState<number>(0)
   const [autoScrollEnabled, setAutoScrollEnabled] = useState<boolean>(true)
-  const [accuratePosition, setAccuratePosition] =
-    useState<number>(playerPosition)
   const deferredActiveIndex = useDeferredValue(activeIndex)
 
+  const livePlayback = useAtomValue(playbackAtom)
+  const effectivePosition = playerPosition !== undefined ? playerPosition : livePlayback
+
+  const accuratePositionRef = useRef<number>(effectivePosition)
   const isProgrammaticScrollRef = useRef<boolean>(false)
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-  const lyricsContainerRef = useRef<HTMLElement>(lyricsProvider)
+  const lyricsContainerRef = useRef<HTMLElement | null>(lyricsProvider || null)
   const millisecondCounterRef = useRef<NodeJS.Timeout | null>(null)
-  const lastServerPositionRef = useRef<number>(playerPosition)
+  const lastServerPositionRef = useRef<number>(effectivePosition)
   const lastCounterTimeRef = useRef<number | null>(null)
   const activeLyricElementRef = useRef<HTMLElement | null>(null)
   const lastEmittedIndexRef = useRef<number>(-1)
@@ -189,18 +158,23 @@ const LyricsDisplay: React.FC<LyricsDisplayProps> = ({
   )
 
   useEffect(() => {
-    lyricsContainerRef.current = lyricsProvider
+    lyricsContainerRef.current = lyricsProvider || null
   }, [lyricsProvider])
 
   // Millisecond counter for accurate position tracking between server updates
   useEffect(() => {
     const now = Date.now()
 
-    lastServerPositionRef.current = playerPosition
-    // This sync intentionally updates the live clock state from the prop-driven playback position.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setAccuratePosition(playerPosition)
+    lastServerPositionRef.current = effectivePosition
+    accuratePositionRef.current = effectivePosition
     lastCounterTimeRef.current = now
+
+    const initialIndex = findActiveLyricIndex(effectivePosition)
+    if (initialIndex !== -1 && initialIndex !== lastEmittedIndexRef.current) {
+      lastEmittedIndexRef.current = initialIndex
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setActiveIndex(initialIndex)
+    }
 
     // Destroy existing counter
     if (millisecondCounterRef.current) {
@@ -213,13 +187,19 @@ const LyricsDisplay: React.FC<LyricsDisplayProps> = ({
 
     millisecondCounterRef.current = setInterval(() => {
       const previousTime = lastCounterTimeRef.current ?? Date.now()
-      const now = Date.now()
-      const elapsedMs = now - previousTime
+      const currentNow = Date.now()
+      const elapsedMs = currentNow - previousTime
 
-      lastCounterTimeRef.current = now
+      lastCounterTimeRef.current = currentNow
       const newPosition = lastServerPositionRef.current + elapsedMs
       lastServerPositionRef.current = newPosition
-      setAccuratePosition(newPosition)
+      accuratePositionRef.current = newPosition
+
+      const newIndex = findActiveLyricIndex(newPosition)
+      if (newIndex !== -1 && newIndex !== lastEmittedIndexRef.current) {
+        lastEmittedIndexRef.current = newIndex
+        setActiveIndex(newIndex)
+      }
     }, 100) // Update every 100ms for smooth tracking
 
     return () => {
@@ -228,7 +208,7 @@ const LyricsDisplay: React.FC<LyricsDisplayProps> = ({
         millisecondCounterRef.current = null
       }
     }
-  }, [playerPosition, isPlaying, playbackLatencyMs])
+  }, [effectivePosition, isPlaying, playbackLatencyMs, findActiveLyricIndex])
 
   // Listen to manual user scroll/touch/wheel events to pause auto-scrolling
   useEffect(() => {
@@ -271,21 +251,6 @@ const LyricsDisplay: React.FC<LyricsDisplayProps> = ({
       container.removeEventListener("scrollend", handleScrollEnd)
     }
   }, [])
-
-  // Update current active lyric line index based on accurate playback position
-  useEffect(() => {
-    if (lyricsArray.length === 0) return
-
-    const newIndex = findActiveLyricIndex(accuratePosition)
-
-    // Only update if there's a genuine change (not just noise)
-    if (newIndex !== -1 && newIndex !== activeIndex) {
-      // The lyric index is derived from the live playback clock, so this sync is intentional.
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setActiveIndex(newIndex)
-      lastEmittedIndexRef.current = newIndex
-    }
-  }, [accuratePosition, lyricsArray.length, activeIndex, findActiveLyricIndex])
 
   // Smooth scroll container to active lyric line
   const scrollToActiveLine = useCallback(
@@ -387,7 +352,7 @@ const LyricsDisplay: React.FC<LyricsDisplayProps> = ({
         !isActive && !isNearActive && !isPast,
     }
 
-    return clsx(baseClasses, conditions)
+    return cn(baseClasses, conditions)
   }
   return (
     <div className="relative w-full max-lg:p-4 max-lg:pt-[12vh] max-lg:pb-[32vh] pb-[42vh] text-center">
