@@ -21,7 +21,8 @@ export async function GET(
 
   // Sanitize path parameters to prevent directory traversal
   const safeTag = path.basename(tag)
-  const safeVersion = path.basename(version)
+  const baseVersion = path.basename(version)
+  const safeVersion = baseVersion.endsWith(".md") ? baseVersion : `${baseVersion}.md`
   const filePath = path.join(process.cwd(), "docs", "patches", safeTag, safeVersion)
 
   try {
