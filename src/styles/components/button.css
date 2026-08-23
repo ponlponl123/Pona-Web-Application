@@ -1,0 +1,115 @@
+button {
+  @apply font-semibold tracking-wider;
+}
+
+[data-smooth-interaction="true"] {
+  transition: all 0.64s cubic-bezier(0, 0, 0.065, 1.55) !important;
+}
+[data-smooth-interaction="true"]:active {
+  transition: all 2s cubic-bezier(0.075, 0.82, 0.165, 1) !important;
+  @apply scale-90;
+}
+
+.handwritting-btn {
+  @apply relative mx-2 flex min-w-24 items-center justify-center active:opacity-90;
+}
+
+.handwritting-btn > svg {
+  @apply absolute h-full w-full object-fill select-none;
+  transform: scale(108%);
+  -webkit-user-drag: none;
+  -moz-window-dragging: no-drag;
+}
+
+.handwritting-btn > div {
+  @apply z-10 flex flex-row items-center justify-center gap-2 px-8 py-4 text-xl;
+}
+
+.handwritting-btn:active,
+.interactive:active {
+  transform: scale(96%);
+}
+
+.handwritting-btn.handwritting-btn-icon {
+  @apply min-w-4;
+}
+
+.handwritting-btn.handwritting-btn-icon > div {
+  @apply p-3;
+}
+
+.handwritting-btn.handwritting-btn-size-small > div {
+  @apply px-4 py-2 text-lg;
+}
+
+@media (max-width: 480px) {
+  .handwritting-btn.handwritting-btn-responsive > div {
+    @apply px-4 py-2 text-lg;
+  }
+}
+
+.handwritting-btn.handwritting-btn-size-large > div {
+  @apply px-8 py-3 text-2xl;
+}
+
+.handwritting-btn:not(.handwritting-btn-rounded) > div {
+  @apply px-6;
+}
+
+.handwritting-btn.handwritting-btn-normal > div,
+.handwritting-btn.handwritting-btn-primary > div {
+  color: var(--primary-foreground);
+}
+
+.handwritting-btn.handwritting-btn-invert > div {
+  color: var(--background);
+}
+
+.handwritting-btn.handwritting-btn-invert:hover > div {
+  color: var(--foreground);
+}
+
+.handwritting-btn.handwritting-btn-text > div,
+.handwritting-btn.handwritting-btn-border > div {
+  @apply text-primary;
+}
+
+.handwritting-btn.handwritting-btn-text > div > svg,
+.handwritting-btn.handwritting-btn-border > div > svg {
+  @apply fill-primary;
+}
+
+.handwritting-btn.handwritting-btn-normal > svg * {
+  fill: var(--primary);
+}
+
+.handwritting-btn.handwritting-btn-invert > svg * {
+  fill: var(--foreground);
+}
+
+.handwritting-btn.handwritting-btn-border > svg *,
+.handwritting-btn.handwritting-btn-primary > svg *,
+.handwritting-btn.handwritting-btn-text > svg * {
+  @apply fill-primary;
+}
+
+.handwritting-btn.handwritting-btn-text > svg * {
+  @apply opacity-0;
+}
+
+.handwritting-btn.handwritting-btn-normal:hover > svg * {
+  @apply fill-primary/80;
+}
+
+.handwritting-btn.handwritting-btn-invert:hover > svg * {
+  @apply fill-card;
+}
+
+.handwritting-btn.handwritting-btn-border:hover > svg *,
+.handwritting-btn.handwritting-btn-primary:hover > svg * {
+  @apply fill-primary;
+}
+
+.handwritting-btn.handwritting-btn-text:hover > svg * {
+  @apply opacity-25;
+}

@@ -1,27 +1,27 @@
-import { useLanguageContext } from '@/contexts/languageContext';
-import { usePonaMusicCacheContext } from '@/contexts/ponaMusicCacheContext';
-import subscribe, { unsubscribe } from '@/server-side-api/internal/channel';
-import {
-  Button,
-  ButtonProps,
-  Modal,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  useDisclosure,
-} from "@heroui/react";
-import { IconProps, type Icon } from '@phosphor-icons/react';
-import { clsx } from 'clsx';
+'use client';
+import React, { useState, useEffect } from 'react';
 import { getCookie } from 'cookies-next';
-import React from 'react';
+import { HeartBreakIcon, IconProps, type Icon } from '@phosphor-icons/react';
 
-export type PressEvent = Parameters<
-  NonNullable<React.ComponentProps<typeof Button>['onPress']>
->[0];
+import { useAppStore } from '@/store/coreStore';
+import { useMusicCacheStore } from '@/store/musicCacheStore';
+import subscribe, { unsubscribe } from '@/lib/server-side-api/internal/channel';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/animate-ui/components/radix/dialog';
+
+import { ThumbnailFull } from '@/types/youtube/ytmusic-api';
+import { cn } from '@/lib/utils';
 
 interface SubscribeButtonProps extends React.HTMLAttributes<HTMLDivElement> {
   channelId: string;
   artistName?: string;
+  artistThumbnails?: ThumbnailFull[];
   preset?: 'full' | 'minimal';
   unsubscribeConfirmation?: boolean;
   DynamicIcon?: Icon;
@@ -31,14 +31,13 @@ interface SubscribeButtonProps extends React.HTMLAttributes<HTMLDivElement> {
   startContent?: React.ReactNode;
   endContent?: React.ReactNode;
   triggerClassName?: string;
-  triggerProps?: ButtonProps;
 }
 
 function SubscribeButton({
   channelId,
   artistName,
+  artistThumbnails,
   triggerClassName,
-  triggerProps,
   children,
   DynamicIcon,
   DynamicIconAlign = 'left',
@@ -49,51 +48,36 @@ function SubscribeButton({
   preset,
   ...rest
 }: SubscribeButtonProps) {
-  const { language } = useLanguageContext();
-  const [isSubscribed, SetIsSubscribed] = React.useState(false);
-  const { GetSubscribeStateFromChannelId } = usePonaMusicCacheContext();
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const language = useAppStore((state) => state.language);
+  const getSubscribeState = useMusicCacheStore((state) => state.getSubscribeState);
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  React.useEffect(() => {
-    const fetchSubscribeState = async () => {
-      const state = await GetSubscribeStateFromChannelId(channelId);
-      SetIsSubscribed(state.state);
+  useEffect(() => {
+    let isMounted = true;
+    getSubscribeState(channelId).then((state) => {
+      if (isMounted) setIsSubscribed(state);
+    });
+    return () => {
+      isMounted = false;
     };
-    fetchSubscribeState();
-  }, [GetSubscribeStateFromChannelId, channelId]);
-
-  let overrideTriggerProps = triggerProps;
-
-  if (preset === 'full')
-    overrideTriggerProps = {
-      radius: 'full',
-      size: 'lg',
-      color: 'primary',
-      className:
-        'font-bold max-md:text-sm max-md:min-h-0 max-md:min-w-0 max-md:py-3 max-md:px-4 max-md:h-max',
-      variant: isSubscribed ? 'solid' : 'bordered',
-      ...triggerProps,
-    };
-  else if (preset === 'minimal')
-    overrideTriggerProps = {
-      color: 'default',
-      radius: 'full',
-      ...triggerProps,
-    };
+  }, [getSubscribeState, channelId]);
 
   return (
     <>
       <SubscribeButtonTrigger
         channelId={channelId}
+        artistName={artistName}
+        artistThumbnails={artistThumbnails}
         isSubscribed={isSubscribed}
-        props={overrideTriggerProps}
-        className={clsx('group', triggerClassName)}
+        className={cn('group', triggerClassName)}
         noUnsubscribe={unsubscribeConfirmation}
+        preset={preset}
         onPress={() => {
-          SetIsSubscribed(prevState => {
+          setIsSubscribed((prevState) => {
             const newState = !prevState;
             if (!newState && unsubscribeConfirmation) {
-              onOpen();
+              setIsModalOpen(true);
               return prevState;
             }
             return newState;
@@ -102,7 +86,7 @@ function SubscribeButton({
       >
         {children ?? (
           <div
-            className={clsx(
+            className={cn(
               'flex flex-row gap-2 items-center justify-center',
               isSubscribed && 'text-background'
             )}
@@ -132,10 +116,10 @@ function SubscribeButton({
         <UnSubscribeModal
           artistName={artistName}
           channelId={channelId}
-          isOpen={isOpen}
-          onOpenChange={onOpenChange}
+          isOpen={isModalOpen}
+          onOpenChange={setIsModalOpen}
           onSubmit={() => {
-            SetIsSubscribed(false);
+            setIsSubscribed(false);
           }}
         />
       )}
@@ -153,131 +137,138 @@ export function UnSubscribeModal({
   artistName?: string;
   channelId: string;
   isOpen: boolean;
-  onOpenChange: () => void;
-  onSubmit?: (e: PressEvent) => void;
+  onOpenChange: (open: boolean) => void;
+  onSubmit?: () => void;
 }) {
-  const { language } = useLanguageContext();
-  const { SetSubscribeStateCache } = usePonaMusicCacheContext();
+  const language = useAppStore((state) => state.language);
+  const removeSubscribedChannel = useMusicCacheStore((state) => state.removeSubscribedChannel);
+
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
-      <ModalContent>
-        {onClose => (
-          <>
-            <ModalHeader className='flex flex-col gap-1'>
-              {language.data.app.guilds.player.artist.unsubscribe_confirmation.replace(
-                '[artist_name]',
-                artistName || ''
-              )}
-            </ModalHeader>
-            <ModalFooter>
-              <Button color='default' variant='light' onPress={onClose}>
-                {language.data.common.no}
-              </Button>
-              <Button
-                color='danger'
-                variant='light'
-                onPress={async e => {
-                  if (onSubmit) onSubmit(e);
-                  const accessToken = getCookie('LOGIN_');
-                  const accessTokenType = getCookie('LOGIN_TYPE_');
-                  const resolvedAccessToken = await Promise.resolve(accessToken);
-                  const resolvedAccessTokenType = await Promise.resolve(accessTokenType);
-                  if (!resolvedAccessToken || !resolvedAccessTokenType) return onClose();
-                  unsubscribe(resolvedAccessTokenType as string, resolvedAccessToken as string, channelId);
-                  SetSubscribeStateCache(value => {
-                    return value
-                      .filter(item => item.channelId !== channelId)
-                      .concat({ channelId, state: false });
-                  });
-                  onClose();
-                }}
-              >
-                {language.data.app.guilds.player.artist.unsubscribe}
-              </Button>
-            </ModalFooter>
-          </>
-        )}
-      </ModalContent>
-    </Modal>
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+      <DialogContent className='sm:max-w-xs' showCloseButton={false}>
+        <DialogHeader>
+          <DialogTitle className='flex items-center gap-2'>
+            <HeartBreakIcon weight='fill' />
+            {language.data.app.guilds.player.artist.unsubscribe_confirmation.replace(
+              '[artist_name]',
+              artistName || ''
+            )}
+          </DialogTitle>
+        </DialogHeader>
+        <DialogFooter className='flex items-center gap-1 mt-2'>
+          <Button
+            variant='ghost'
+            className={"rounded-md"}
+            onClick={() => onOpenChange(false)}
+          >
+            {language.data.common.no}
+          </Button>
+          <Button
+            variant='destructive'
+            className={"rounded-md"}
+            onClick={async () => {
+              if (onSubmit) onSubmit();
+              const accessToken = getCookie('LOGIN_');
+              const accessTokenType = getCookie('LOGIN_TYPE_');
+              if (!accessToken || !accessTokenType) return onOpenChange(false);
+              unsubscribe(
+                accessTokenType as string,
+                accessToken as string,
+                channelId
+              );
+              removeSubscribedChannel(channelId);
+              onOpenChange(false);
+            }}
+          >
+            {language.data.app.guilds.player.artist.unsubscribe}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 
 export function SubscribeButtonTrigger({
   channelId,
+  artistName,
+  artistThumbnails,
   children,
   className,
-  props,
   onPress,
   noUnsubscribe,
   isSubscribed,
+  preset,
 }: {
   channelId: string;
+  artistName?: string;
+  artistThumbnails?: ThumbnailFull[];
   children: React.ReactNode;
   className?: string;
-  props?: ButtonProps;
-  onPress?: (e: PressEvent, state?: boolean) => void;
+  onPress?: (e: React.MouseEvent, state?: boolean) => void;
   noUnsubscribe?: boolean;
   isSubscribed?: boolean;
+  preset?: 'full' | 'minimal';
 }) {
   const accessToken = getCookie('LOGIN_');
   const accessTokenType = getCookie('LOGIN_TYPE_');
-  const {
-    subscribe_state_cache,
-    SetSubscribeStateCache,
-    GetSubscribeStateFromChannelId,
-  } = usePonaMusicCacheContext();
+  const getSubscribeState = useMusicCacheStore((state) => state.getSubscribeState);
+  const addSubscribedChannel = useMusicCacheStore((state) => state.addSubscribedChannel);
+  const removeSubscribedChannel = useMusicCacheStore((state) => state.removeSubscribedChannel);
+
+  const buttonVariant =
+    preset === 'full'
+      ? isSubscribed
+        ? 'default'
+        : 'outline'
+      : 'ghost';
+
+  const presetClassName =
+    preset === 'full'
+      ? 'rounded-full font-bold max-md:text-sm max-md:py-3 max-md:px-4 cursor-pointer'
+      : preset === 'minimal'
+        ? 'rounded-full cursor-pointer'
+        : className;
+
   return (
     <Button
+      size={"lg"}
       data-active={isSubscribed}
-      className={
-        !(props?.className || props?.style)
-          ? (className ??
-            'block bg-transparent p-0 m-0 min-w-0 min-h-0 max-h-none max-w-none rounded-none border-0')
-          : undefined
-      }
-      {...props}
-      onPress={async e => {
+      variant={buttonVariant}
+      className={presetClassName}
+      data-smooth-interaction="true"
+      onClick={async (e) => {
         if (!accessToken || !accessTokenType) {
           if (onPress) onPress(e);
           return;
         }
-        const currentState = await GetSubscribeStateFromChannelId(channelId);
-        if (onPress) onPress(e, currentState?.state);
+        const currentState = await getSubscribeState(channelId);
+        if (onPress) onPress(e, currentState);
         if (currentState) {
-          if (currentState.state) {
-            if (noUnsubscribe) return;
-            const resolvedAccessToken = await Promise.resolve(accessToken);
-            const resolvedAccessTokenType = await Promise.resolve(accessTokenType);
-            if (resolvedAccessToken && resolvedAccessTokenType) {
-              unsubscribe(resolvedAccessTokenType as string, resolvedAccessToken as string, channelId);
-            }
-            SetSubscribeStateCache(value => {
-              return value
-                .filter(item => item.channelId !== channelId)
-                .concat({ channelId, state: false });
-            });
-          } else {
-            const resolvedAccessToken = await Promise.resolve(accessToken);
-            const resolvedAccessTokenType = await Promise.resolve(accessTokenType);
-            if (resolvedAccessToken && resolvedAccessTokenType) {
-              subscribe(resolvedAccessTokenType as string, resolvedAccessToken as string, channelId);
-            }
-            SetSubscribeStateCache(value => {
-              return value
-                .filter(item => item.channelId !== channelId)
-                .concat({ channelId, state: true });
-            });
-          }
+          if (noUnsubscribe) return;
+          unsubscribe(
+            accessTokenType as string,
+            accessToken as string,
+            channelId
+          );
+          removeSubscribedChannel(channelId);
         } else {
-          const resolvedAccessToken = await Promise.resolve(accessToken);
-          const resolvedAccessTokenType = await Promise.resolve(accessTokenType);
-          if (resolvedAccessToken && resolvedAccessTokenType) {
-            subscribe(resolvedAccessTokenType as string, resolvedAccessToken as string, channelId);
-          }
-          SetSubscribeStateCache([
-            ...subscribe_state_cache,
-            { channelId, state: true },
-          ]);
+          subscribe(
+            accessTokenType as string,
+            accessToken as string,
+            channelId
+          );
+          addSubscribedChannel({
+            artistId: channelId,
+            info: {
+              v1: undefined,
+              v2: {
+                browseId: channelId,
+                name: artistName || '',
+                thumbnails: artistThumbnails || [],
+              },
+              user: undefined,
+            },
+          });
         }
       }}
     >

@@ -1,39 +1,42 @@
-'use client';
-import { useLanguageContext } from '@/contexts/languageContext';
+"use client"
+import React from "react"
+import confetti from "canvas-confetti"
+import { langs } from "@/lib/i18n"
+import { fonts_credits } from "@/consts/fonts-author"
+import Image from "next/image"
 import {
-  Article,
-  GitMerge,
-  Heart,
-  Package,
-  PottedPlant,
-  TextAa,
-} from '@phosphor-icons/react/dist/ssr';
-import React from 'react';
-
-import { Avatar, Image, Link } from "@heroui/react";
-import confetti from 'canvas-confetti';
-import { langs } from '@/utils/i18n';
-import { fonts_credits } from '@/data/fonts-author';
+  ArticleIcon,
+  GitMergeIcon,
+  HeartIcon,
+  PottedPlantIcon,
+  TextAaIcon,
+} from "@phosphor-icons/react/dist/ssr"
+import Link from "next/link"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { useAppStore } from "@/store/coreStore"
 
 function Page() {
-  const { language } = useLanguageContext();
+  const language = useAppStore((state) => state.language)
+  const heartFalled = React.useRef(false)
+
   React.useEffect(() => {
     const heart = confetti.shapeFromPath({
-      path: 'M167 72c19,-38 37,-56 75,-56 42,0 76,33 76,75 0,76 -76,151 -151,227 -76,-76 -151,-151 -151,-227 0,-42 33,-75 75,-75 38,0 57,18 76,56z',
-    });
+      path: "M167 72c19,-38 37,-56 75,-56 42,0 76,33 76,75 0,76 -76,151 -151,227 -76,-76 -151,-151 -151,-227 0,-42 33,-75 75,-75 38,0 57,18 76,56z",
+    })
 
-    const duration = 12 * 1000;
-    const animationEnd = Date.now() + duration;
-    let skew = 12;
+    const duration = 12 * 1000
+    const animationEnd = Date.now() + duration
+    let skew = 12
 
     const randomInRange = (min: number, max: number) =>
-      Math.random() * (max - min) + min;
+      Math.random() * (max - min) + min
 
-    (function frame() {
-      if (window.location.pathname !== '/community') return;
-      const timeLeft = animationEnd - Date.now();
-      const ticks = Math.max(64, 256 * (timeLeft / duration));
-      skew = Math.max(0.8, skew - 0.001);
+    ;(function frame() {
+      if (window.location.pathname !== "/community" || heartFalled.current)
+        return
+      const timeLeft = animationEnd - Date.now()
+      const ticks = Math.max(64, 256 * (timeLeft / duration))
+      skew = Math.max(0.8, skew - 0.001)
 
       confetti({
         particleCount: 1,
@@ -43,84 +46,97 @@ function Page() {
           x: Math.random(),
           y: Math.random() * skew - 0.2,
         },
-        colors: ['#fb6490'],
+        colors: ["#fb6490"],
         shapes: [heart],
         gravity: randomInRange(0.2, 0.6),
         scalar: randomInRange(0.4, 1.5),
         drift: randomInRange(-0.6, 0.6),
-      });
+      })
 
       if (timeLeft > 0) {
-        requestAnimationFrame(frame);
+        requestAnimationFrame(frame)
+      } else {
+        heartFalled.current = true
       }
-    })();
-  });
+    })()
+  }, [])
+
   return (
-    <main className='w-full min-h-screen relative'>
-      <Image
-        src={'/static/community-backdrop.png'}
-        alt='Pona! Community'
-        classNames={{
-          wrapper:
-            'w-full !max-w-none absolute overflow-hidden h-[48vh] z-[0] blur-3xl max-h-96 min-h-24 scale-[1.1] opacity-60',
-        }}
-        className='w-full object-cover'
-      />
-      <div className='relative flex flex-col grid-rows-[20px_1fr_20px] items-center min-h-screen p-8 pb-20 gap-8 sm:p-20 z-[1]'>
-        <div className='mt-12'></div>
-        <main className='w-full max-w-screen-lg flex flex-col justify-start gap-10 pb-12'>
-          <div className='flex flex-row items-center justify-between'>
-            <h1 className='text-5xl flex items-center gap-4'>
-              <PottedPlant alt='PottedPlant' />
+    <main className="relative min-h-dvh w-full">
+      <div className="absolute z-0 h-[48vh] max-h-96 min-h-24 w-full max-w-none! overflow-hidden opacity-60 blur-3xl">
+        <Image
+          src={"/static/community-backdrop.png"}
+          width={1920}
+          height={1080}
+          alt="Pona! Community"
+          className="w-full scale-[1.1] object-cover"
+        />
+      </div>
+      <div className="relative z-1 flex min-h-dvh grid-rows-[20px_1fr_20px] flex-col items-center gap-8 p-8 pb-20 sm:p-20">
+        <div className="mt-12"></div>
+        <main className="flex w-full max-w-5xl flex-col justify-start gap-10 pb-12">
+          <div className="flex flex-row items-center justify-between">
+            <h1 className="flex items-center gap-4 text-5xl">
+              <PottedPlantIcon alt="PottedPlant" />
               {language.data.community.title}
             </h1>
-            <div className='relative'>
-              <Heart
-                alt='By Pona!'
-                weight='fill'
-                className='text-rose-500 rotate-12'
+            <div className="relative">
+              <HeartIcon
+                alt="By Pona!"
+                weight="fill"
+                className="rotate-12 text-rose-500"
                 size={96}
               />
-              <Heart
-                alt='Loves!'
-                weight='fill'
-                className='text-rose-500 -rotate-12 absolute right-0 top-0 -translate-y-full'
+              <HeartIcon
+                alt="Loves!"
+                weight="fill"
+                className="absolute top-0 right-0 -translate-y-full -rotate-12 text-rose-500"
                 size={32}
               />
             </div>
           </div>
-          <h2 className='text-2xl -mt-12 font-bold'>
+          <h2 className="-mt-12 text-2xl font-bold">
             {language.data.community.description}
           </h2>
-          <section className='p-8 bg-foreground/5 border-2 border-foreground/5 rounded-3xl'>
-            <h2 className='text-4xl flex items-center gap-4 font-bold'>
-              <TextAa size={24} /> {language.data.community.fonts.title}
+          <section className="rounded-3xl border-2 border-foreground/5 bg-foreground/5 p-8">
+            <h2 className="flex items-center gap-4 text-4xl font-bold">
+              <TextAaIcon size={24} /> {language.data.community.fonts.title}
             </h2>
-            <div className='flex flex-col'>
+            <div className="flex flex-col">
               {fonts_credits.map((font, index) => (
-                <div key={index} className='p-4 flex flex-col gap-2'>
-                  <h4>
-                    {font.title} · {font.name} ·{' '}
-                    <Link target='_blank' href={font.link}>
+                <div key={index} className="flex flex-col gap-2 p-4">
+                  <h4 className="text-sm opacity-60">
+                    {font.title} · {font.name} ·{" "}
+                    <Link
+                      target="_blank"
+                      href={font.link}
+                      className="underline hover:text-primary"
+                    >
                       {font.author}
                     </Link>
                   </h4>
-                  <h1>{font.lorem}</h1>
+                  <h1
+                    className="text-lg leading-relaxed text-foreground/90"
+                    style={{ fontFamily: font.fontFamily }}
+                  >
+                    {font.lorem}
+                  </h1>
                 </div>
               ))}
             </div>
           </section>
-          <section className='p-8 bg-foreground/5 border-2 border-foreground/5 rounded-3xl'>
-            <h2 className='text-4xl flex items-center gap-4 font-bold'>
-              <Article size={24} /> {language.data.community.translator.title}
+          <section className="rounded-3xl border-2 border-foreground/5 bg-foreground/5 p-8">
+            <h2 className="flex items-center gap-4 text-4xl font-bold">
+              <ArticleIcon size={24} />{" "}
+              {language.data.community.translator.title}
             </h2>
-            <div className='flex flex-col'>
+            <div className="flex flex-col">
               {langs.map((lang, index) => (
-                <div key={index} className='p-4 flex flex-col gap-2'>
-                  <h4 className='text-sm'>{lang.label}</h4>
-                  <div className='flex flex-wrap gap-2'>
+                <div key={index} className="flex flex-col gap-2 p-4">
+                  <h4 className="text-sm">{lang.label}</h4>
+                  <div className="flex flex-wrap gap-2">
                     {lang.data.translators.map((translator, key) => (
-                      <h1 className='text-lg' key={key}>
+                      <h1 className="text-lg" key={key}>
                         {translator}
                       </h1>
                     ))}
@@ -129,251 +145,31 @@ function Page() {
               ))}
             </div>
           </section>
-          <section className='p-8 bg-foreground/5 border-2 border-foreground/5 rounded-3xl'>
-            <h2 className='text-4xl flex items-center gap-4 font-bold'>
-              <GitMerge size={24} />{' '}
+          <section className="rounded-3xl border-2 border-foreground/5 bg-foreground/5 p-8">
+            <h2 className="flex items-center gap-4 text-4xl font-bold">
+              <GitMergeIcon size={24} />{" "}
               {language.data.community.contributors.title}
             </h2>
-            <div className='flex flex-wrap mt-4 gap-2'>
+            <div className="mt-4 flex flex-wrap gap-2">
               <Link
-                className='w-max h-max'
-                href='https://github.com/Ponlponl123'
-                target='_blank'
+                className="h-max w-max"
+                href="https://github.com/Ponlponl123"
+                target="_blank"
               >
-                <Avatar
-                  src='https://github.com/Ponlponl123.png'
-                  name='Ponlponl123'
-                />
-              </Link>
-            </div>
-          </section>
-          <section className='p-8 bg-foreground/5 border-2 border-foreground/5 rounded-3xl'>
-            <h2 className='text-4xl flex items-center gap-4 font-bold'>
-              <Package size={24} /> {language.data.community.library.title}
-            </h2>
-            <div className='flex flex-wrap mt-4 gap-2'>
-              <Link
-                href='https://react.dev/'
-                target='_blank'
-                isBlock
-                showAnchorIcon
-              >
-                React
-              </Link>
-              <Link
-                href='https://nextjs.org/'
-                target='_blank'
-                isBlock
-                showAnchorIcon
-              >
-                Next.JS
-              </Link>
-              <Link
-                href='https://nextui.org/'
-                target='_blank'
-                isBlock
-                showAnchorIcon
-              >
-                NextUI
-              </Link>
-              <Link
-                href='https://github.com/discordjs'
-                target='_blank'
-                isBlock
-                showAnchorIcon
-              >
-                discord.js
-              </Link>
-              <Link
-                href='https://phosphoricons.com/'
-                target='_blank'
-                isBlock
-                showAnchorIcon
-              >
-                PhosphorIcons
-              </Link>
-              <Link
-                href='https://www.framer.com/motion/'
-                target='_blank'
-                isBlock
-                showAnchorIcon
-              >
-                Framer Motion
-              </Link>
-              <Link
-                href='https://github.com/davidjerleke/embla-carousel'
-                target='_blank'
-                isBlock
-                showAnchorIcon
-              >
-                embla-carousel
-              </Link>
-              <Link
-                href='https://github.com/shadcn-ui/ui'
-                target='_blank'
-                isBlock
-                showAnchorIcon
-              >
-                shadcn-ui
-              </Link>
-              <Link
-                href='https://github.com/axios/axios'
-                target='_blank'
-                isBlock
-                showAnchorIcon
-              >
-                axios
-              </Link>
-              <Link
-                href='https://github.com/catdad/canvas-confetti'
-                target='_blank'
-                isBlock
-                showAnchorIcon
-              >
-                Canvas Confetti
-              </Link>
-              <Link
-                href='https://github.com/andreizanik/cookies-next'
-                target='_blank'
-                isBlock
-                showAnchorIcon
-              >
-                Cookies Next
-              </Link>
-              <Link
-                href='https://github.com/lokesh/color-thief'
-                target='_blank'
-                isBlock
-                showAnchorIcon
-              >
-                Colorthief
-              </Link>
-              <Link
-                href='https://github.com/jimp-dev/jimp'
-                target='_blank'
-                isBlock
-                showAnchorIcon
-              >
-                jimp
-              </Link>
-              <Link
-                href='https://github.com/Leaflet/Leaflet'
-                target='_blank'
-                isBlock
-                showAnchorIcon
-              >
-                leaflet
-              </Link>
-              <Link
-                href='https://github.com/PaulLeCam/react-leaflet'
-                target='_blank'
-                isBlock
-                showAnchorIcon
-              >
-                react-leaflet
-              </Link>
-              <Link
-                href='https://github.com/openstreetmap'
-                target='_blank'
-                isBlock
-                showAnchorIcon
-              >
-                OpenStreetMap
-              </Link>
-              <Link
-                href='https://github.com/sibiraj-s/marked-react'
-                target='_blank'
-                isBlock
-                showAnchorIcon
-              >
-                marked-react
-              </Link>
-              <Link
-                href='https://github.com/mljs/kmeans'
-                target='_blank'
-                isBlock
-                showAnchorIcon
-              >
-                ml-kmeans
-              </Link>
-              <Link
-                href='https://github.com/recharts/recharts'
-                target='_blank'
-                isBlock
-                showAnchorIcon
-              >
-                recharts
-              </Link>
-              <Link
-                href='https://github.com/vercel/swr'
-                target='_blank'
-                isBlock
-                showAnchorIcon
-              >
-                swr
-              </Link>
-              <Link
-                href='https://github.com/TheSGJ/nextjs-toploader'
-                target='_blank'
-                isBlock
-                showAnchorIcon
-              >
-                nextjs-toploader
-              </Link>
-              <Link
-                href='https://github.com/glennreyes/react-countup'
-                target='_blank'
-                isBlock
-                showAnchorIcon
-              >
-                react-countup
-              </Link>
-              <Link
-                href='https://github.com/shukerullah/react-geocode'
-                target='_blank'
-                isBlock
-                showAnchorIcon
-              >
-                react-geocode
-              </Link>
-              <Link
-                href='https://github.com/timolins/react-hot-toast'
-                target='_blank'
-                isBlock
-                showAnchorIcon
-              >
-                react-hot-toast
-              </Link>
-              <Link
-                href='https://github.com/yocontra/react-responsive'
-                target='_blank'
-                isBlock
-                showAnchorIcon
-              >
-                react-responsive
-              </Link>
-              <Link
-                href='https://github.com/cahilfoley/react-snowfall'
-                target='_blank'
-                isBlock
-                showAnchorIcon
-              >
-                react-responsive
-              </Link>
-              <Link
-                href='https://www.npmjs.com/package/@euax/color-palette-generator'
-                target='_blank'
-                isBlock
-                showAnchorIcon
-              >
-                @euax/color-palette-generator
+                <Avatar>
+                  <AvatarImage
+                    src="https://github.com/Ponlponl123.png"
+                    alt="Ponlponl123"
+                  />
+                  <AvatarFallback>P</AvatarFallback>
+                </Avatar>
               </Link>
             </div>
           </section>
         </main>
       </div>
     </main>
-  );
+  )
 }
 
-export default Page;
+export default Page

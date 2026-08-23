@@ -1,0 +1,66 @@
+html.animation-30fps *,
+.animation-30fps * {
+  animation-timing-function: steps(30) !important;
+  transition-timing-function: steps(30) !important;
+}
+
+html.animation-disabled *:not([aria-label="Loading"],
+  .animate-spinner-ease-spin,
+  .animate-spinner-linear-spin),
+.animation-disabled *:not([aria-label="Loading"],
+  .animate-spinner-ease-spin,
+  .animate-spinner-linear-spin) {
+  animation: none !important;
+  transition: none !important;
+}
+
+.apply-transition {
+  transition: 0.24s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition-property: color, background-color, border-color, opacity, box-shadow, transform;
+}
+
+.apply-soft-transition {
+  transition: all 0.16s cubic-bezier(0.39, 0.575, 0.565, 1);
+}
+
+.apply-long-soft-transition {
+  transition: all 0.32s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+button:not(.animation-disabled, .animation-30fps, .disable-default-transition):active,
+a:not(.animation-disabled, .animation-30fps, .disable-default-transition):active,
+[role="button"]:not(.animation-disabled, .animation-30fps, .disable-default-transition):active {
+  transition: 0.024s cubic-bezier(0.19, 1, 0.22, 1);
+  transition-property: transform, opacity, background-color, color;
+}
+
+.animate.equalizer {
+  animation: equalizer 0.88s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
+}
+
+@keyframes equalizer {
+  0% {
+    height: 33%;
+  }
+
+  50% {
+    height: 66%;
+  }
+
+  100% {
+    height: 33%;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 1.8s infinite ease-in-out;
+}

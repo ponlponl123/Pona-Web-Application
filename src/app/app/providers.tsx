@@ -1,55 +1,79 @@
-'use client';
-import PageAnimatePresence from '@/components/HOC/PageAnimatePresence';
-import Scrollbar from '@/components/scrollbar';
-import { useDiscordUserInfo } from '@/contexts/discordUserInfo';
-import { Spinner } from "@heroui/react";
-import { usePathname } from 'next/navigation';
-import React from 'react';
-import RedirectOauth from './redirectOauth';
+"use client"
+import React from "react"
+import Sidebar from "@/components/root/sidebar"
+import PageAnimatePresence from "@/components/HOC/PageAnimatePresence"
+import { useDiscordUserInfo } from "@/contexts/discordUserInfo"
+import ScrollArea from "@/components/ui/custom/scroll-area"
+import { Spinner } from "@/components/ui/spinner"
+import { usePathname } from "next/navigation"
+import RedirectOauth from "./redirectOauth"
 
 function Providers({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname() || '';
-  const { userInfo, loading } = useDiscordUserInfo();
-  const appContent = React.useRef<HTMLElement>(null);
+  const pathname = usePathname() || ""
+  const { userInfo, loading } = useDiscordUserInfo()
+  const appContent = React.useRef<HTMLElement>(null)
 
   React.useEffect(() => {
     if (appContent.current) {
-      appContent.current.addEventListener('scroll', e => {
+      appContent.current.addEventListener("scroll", (e) => {
         if (e.target instanceof Element && e.target.scrollTop > 0) {
-          document.body.classList.add('app-scrolled');
+          document.body.classList.add("app-scrolled")
         } else {
-          document.body.classList.add('app-scrolled');
+          document.body.classList.add("app-scrolled")
         }
-      });
+      })
     }
-  }, [appContent]);
+  }, [appContent])
+
+  const isPlayerRoute = pathname.includes("/player")
+
+  const content = <div className="relative min-h-dvh">
+    <div className="pointer-events-none absolute top-0 left-0 z-0 h-full w-full bg-[radial-gradient(var(--foreground)_1px,transparent_1px)] bg-size-[16px_16px] opacity-6 dark:opacity-5" />
+    <div className="relative z-10 pb-6">
+      {isPlayerRoute ? (
+        children
+      ) : (
+        <PageAnimatePresence customKey={pathname} mode="wait">
+          {children}
+        </PageAnimatePresence>
+      )}
+    </div>
+  </div>
 
   return (
     <>
-      {pathname.startsWith('/app/callback') ? (
+      {pathname.startsWith("/app/callback") ? (
         children
       ) : loading ? (
-        <div className='w-full min-h-screen flex items-center justify-center'>
-          <Spinner color='current' />
+        <div className="flex min-h-dvh w-full items-center justify-center">
+          <Spinner />
         </div>
       ) : !userInfo ? (
         <RedirectOauth />
       ) : (
-        <main className='app flex bg-background'>
-          <Scrollbar canCollapsed={true} userInfo={userInfo} />
+        <main className="app flex bg-background w-screen overflow-x-hidden">
+          <Sidebar canCollapsed={true} userInfo={userInfo} />
           <main
             ref={appContent}
-            id='app-content'
-            className='w-full md:h-screen max-md:h-[calc(100vh_+_1rem)] md:rounded-l-3xl max-md:rounded-b-3xl relative overflow-y-auto overflow-x-hidden scrollbar-hide pb-6 bg-playground-background'
+            id="app-content"
+            className="scrollbar-hide w-full max-w-[100vw] flex-1 min-w-0 overflow-hidden bg-(--color-playground-background) max-md:h-[calc(100dvh+1rem)] max-md:rounded-b-xl md:h-dvh md:rounded-l-xl"
           >
-            <PageAnimatePresence customKey={pathname} mode='wait'>
-              {children}
-            </PageAnimatePresence>
+            {
+              pathname.includes("/player") ? content :
+                <ScrollArea
+                  className="h-full border-0 outline-0"
+                  classNames={{
+                    viewport: "relative rounded-none",
+                  }}
+                >
+                  {content}
+                </ScrollArea>
+            }
           </main>
         </main>
       )}
     </>
-  );
+  )
 }
 
-export default Providers;
+export default Providers

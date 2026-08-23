@@ -1,7 +1,7 @@
 import React from 'react';
 
 function Equalizing({
-  className,
+  className = '',
   steps = 3,
 }: {
   className?: string;
@@ -18,8 +18,8 @@ function Equalizing({
         <div
           key={i}
           style={{ animationDelay: `${0.12 * i}s` }}
-          className={`aspect-square__inner animate equalizer w-[2px] rounded-full h-1/2 bg-white`}
-        ></div>
+          className='aspect-square__inner animate-bounce w-[2px] rounded-full h-1/2 bg-white'
+        />
       ))}
     </div>
   );

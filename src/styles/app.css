@@ -1,0 +1,108 @@
+main#app {
+  width: 100%;
+  min-height: 100vh;
+}
+
+main.scrollbar>a,
+main.scrollbar>button,
+main.scrollbar>a>button {
+  @apply w-full;
+}
+
+main.scrollbar>div,
+main.scrollbar>div>main {
+  @apply flex w-full flex-col gap-2;
+}
+
+main.scrollbar>button,
+main.scrollbar>a>button,
+main.scrollbar>div>button,
+main.scrollbar>div>main>button {
+  @apply justify-start text-start;
+}
+
+main#app-workspace {
+  @apply mx-auto w-full max-lg:px-6 max-lg:pt-24 lg:max-w-7xl lg:px-12 lg:pt-16;
+}
+
+.main-bg {
+  background:
+    linear-gradient(0deg,
+      var(--background),
+      color-mix(in oklab, var(--background) 48%, transparent)),
+    url(/static/backdrop.png) center no-repeat;
+  background-size: cover;
+}
+
+.main-bg-2 {
+  background:
+    linear-gradient(0deg,
+      var(--background),
+      color-mix(in oklab, var(--background) 48%, transparent)),
+    url(/static/backdrop2025.png) center no-repeat;
+  background-size: cover;
+}
+
+.welcome-banner {
+  background:
+    linear-gradient(0deg,
+      var(--color-playground-background),
+      color-mix(in oklab, var(--color-playground-background) 24%, transparent)),
+    url(/static/welcome_banner.png) center no-repeat;
+  background-size: cover;
+}
+
+.apphome-banner.evening,
+.apphome-banner.morning {
+  background:
+    linear-gradient(0deg,
+      var(--color-playground-background),
+      color-mix(in oklab, var(--color-playground-background) 24%, transparent)),
+    url(/static/app/PonaWebViewMorning.png) center no-repeat;
+  background-size: cover;
+}
+
+.apphome-banner.afternoon {
+  background:
+    linear-gradient(0deg,
+      var(--color-playground-background),
+      color-mix(in oklab, var(--color-playground-background) 24%, transparent)),
+    url(/static/app/PonaWebViewAfternoon.png) center no-repeat;
+  background-size: cover;
+}
+
+.apphome-banner.night {
+  background:
+    linear-gradient(0deg,
+      var(--color-playground-background),
+      color-mix(in oklab, var(--color-playground-background) 24%, transparent)),
+    url(/static/app/PonaWebViewNight.png) center no-repeat;
+  background-size: cover;
+}
+
+section.c.section {
+  @apply w-full px-16 max-w-full flex flex-col gap-4 items-center justify-start max-lg:px-0;
+}
+
+@media not all and (max-width: 767px) {
+  .sidebar-collapsed header.pona-header>div>div h1>img {
+    @apply h-8 w-8 -translate-x-2;
+  }
+
+  .sidebar-collapsed header.pona-header>div>div h1>span {
+    @apply !hidden;
+  }
+}
+
+[data-slot="collapsible-content"] {
+  overflow: hidden;
+  transition: height 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), filter 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  height: var(--collapsible-panel-height, auto);
+}
+
+[data-slot="collapsible-content"][data-ending-style],
+[data-slot="collapsible-content"][data-starting-style] {
+  height: 0;
+  opacity: 0;
+  filter: blur(6px);
+}

@@ -1,0 +1,37 @@
+header.pona-header {
+  @apply absolute;
+}
+
+@media (max-width: 767px) {
+  header.pona-header nav.nav-opened-false {
+    @apply pointer-events-none invisible opacity-0;
+  }
+
+  header.pona-header nav>div:not(.header) {
+    @apply flex flex-col items-center gap-5;
+  }
+
+  header.pona-header nav>div:nth-child(2) {
+    @apply h-full;
+  }
+
+  header.pona-header nav>div {
+    @apply w-full items-stretch px-6;
+  }
+
+  header.pona-header nav button {
+    @apply w-full;
+  }
+
+  header.pona-header nav a {
+    @apply w-full;
+  }
+
+  header.pona-header nav {
+    @apply fixed top-0 left-0 flex h-dvh w-screen flex-col bg-background p-6 pt-0;
+  }
+
+  header.pona-header.nav-opened-true {
+    @apply fixed;
+  }
+}

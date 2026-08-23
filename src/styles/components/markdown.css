@@ -1,0 +1,10 @@
+.markdown * {
+  color: var(--foreground);
+}
+.markdown code {
+  @apply rounded-lg p-1;
+}
+.markdown code::before,
+.markdown code::after {
+  @apply hidden;
+}

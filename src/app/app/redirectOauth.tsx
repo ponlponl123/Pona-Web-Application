@@ -1,32 +1,32 @@
-'use client';
-import React from 'react';
-import Link from 'next/link';
-import { useLanguageContext } from '@/contexts/languageContext';
-import { Compass } from '@phosphor-icons/react/dist/ssr';
+"use client"
+import React from "react"
+import Link from "next/link"
+import { CompassIcon } from "@phosphor-icons/react/dist/ssr"
+import { useAppStore } from "@/store/coreStore"
 
 function RedirectOauth() {
-  const { language } = useLanguageContext();
-  const clientId = process.env['NEXT_PUBLIC_DISCORD_CLIENT_ID'];
+  const language = useAppStore((state) => state.language)
+  const clientId = process.env["NEXT_PUBLIC_DISCORD_CLIENT_ID"]
   const redirect_uri =
-    process.env['NEXT_PUBLIC_DISCORD_REDIRECT_ENDPOINT'] ||
-    'https://pona.ponlponl123.com/app/callback';
-  const login_oauth = `https://discord.com/oauth2/authorize?client_id=${clientId}&response_type=code&redirect_uri=${encodeURIComponent(redirect_uri)}&scope=identify+guilds+guilds.members.read+email`;
+    process.env["NEXT_PUBLIC_DISCORD_REDIRECT_ENDPOINT"] ||
+    "https://pona.ponlponl123.com/app/callback"
+  const login_oauth = `https://discord.com/oauth2/authorize?client_id=${clientId}&response_type=code&redirect_uri=${encodeURIComponent(redirect_uri)}&scope=identify+guilds+guilds.members.read+email`
 
   React.useEffect(() => {
-    window.location.replace(login_oauth);
-  });
+    window.location.replace(login_oauth)
+  })
 
   return (
-    <div className='w-full h-full min-h-screen flex'>
-      <div className='m-auto flex flex-col gap-2 text-center items-center'>
-        <Compass size={48} />
-        <strong className='text-3xl'>{language.data.redirect.title}</strong>
-        <p className='text-xl'>
+    <div className="flex h-full min-h-dvh w-full">
+      <div className="m-auto flex flex-col items-center gap-2 text-center">
+        <CompassIcon size={48} />
+        <strong className="text-3xl">{language.data.redirect.title}</strong>
+        <p className="text-xl">
           {language.data.redirect.description
-            .split('[clickme]')
+            .split("[clickme]")
             .map((part, index) =>
               index === 1 ? (
-                <Link key={index} className='underline' href={login_oauth}>
+                <Link key={index} className="underline" href={login_oauth}>
                   {language.data.redirect.clickme}
                 </Link>
               ) : (
@@ -36,7 +36,7 @@ function RedirectOauth() {
         </p>
       </div>
     </div>
-  );
+  )
 }
 
-export default RedirectOauth;
+export default RedirectOauth

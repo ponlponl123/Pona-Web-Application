@@ -1,10 +1,11 @@
-import { HttpStatusCode } from 'axios';
+import { NextResponse } from "next/server"
 
-export async function GET() {
-  return Response.json(
+export async function GET(): Promise<NextResponse> {
+  return NextResponse.json(
     {
-      message: 'BAD_REQUEST: Missing patch note tag',
+      message: "BAD_REQUEST: Missing patch note tag",
     },
-    { status: HttpStatusCode.BadRequest }
-  );
+    { status: 400 }
+  )
 }
+

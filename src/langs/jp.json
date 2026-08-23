@@ -3,7 +3,10 @@
   "label": "日本語",
   "country": "jp",
   "state": "dev",
-  "translators": ["Ponlponl123"],
+  "translators": [
+    "Ponlponl123"
+  ],
+  "looking_for_translator": true,
   "extensions": {
     "new": "新着",
     "beta": "ベータ版",
@@ -17,7 +20,48 @@
     "yes": "はい",
     "no": "いいえ",
     "loading": "読み込み中",
-    "friendly_loading": "データがあなたに届きます... 🏃💨"
+    "friendly_loading": "データを準備しています...",
+    "login_first": "ログインして続ける",
+    "read_more": "続きを読む",
+    "show_less": "折りたたむ",
+    "enabled": "有効",
+    "enabled_description": "この機能は現在有効です。",
+    "disabled": "無効",
+    "disabled_description": "この機能は現在無効になっています。",
+    "everyone": "全員",
+    "someone": "特定の誰か",
+    "noone": "なし",
+    "none": "なし",
+    "unknown": "未詳",
+    "everytime": "常時",
+    "sometime": "一時的",
+    "default": "デフォルト",
+    "apply": "適用",
+    "restore": "復元",
+    "member": "メンバー",
+    "role": {
+      "title": "ロール",
+      "owner": "オーナー",
+      "administrator": "管理者",
+      "moderator": "モデレーター",
+      "bot": "ボット"
+    },
+    "time": {
+      "today": "今日",
+      "yesterday": "昨日",
+      "tomorrow": "明日",
+      "weekend": "週末",
+      "day": {
+        "title": "曜日",
+        "monday": "月曜日",
+        "tuesday": "火曜日",
+        "wednesday": "水曜日",
+        "thursday": "木曜日",
+        "friday": "金曜日",
+        "saturday": "土曜日",
+        "sunday": "日曜日"
+      }
+    }
   },
   "cookie": {
     "title": "クッキー！",
@@ -32,8 +76,37 @@
       "signinas": "としてログイン中",
       "playground": "プレイグラウンド",
       "setting": "設定",
-      "support": "ヘルプ＆フィードバック",
+      "support": "サポート",
+      "feedback": "ご意見・ご要望",
       "logout": "ログアウト"
+    }
+  },
+  "modal": {
+    "language-selector": {
+      "title": "コミュニケーションに使用する言語を選択してください",
+      "description": "一番使いやすい言語を選んでください。この設定は後でいつでも変更できます。",
+      "looking_for_translator": "翻訳者を募集中です！",
+      "filter": "言語を検索...",
+      "not_found": "結果が見つかりませんでした"
+    },
+    "feedback": {
+      "title": "フィードバック",
+      "description": "最新アップデートについてどう思った？リクエスト、または...",
+      "can_we_contact_back": "もう少し詳しく聞くために、連絡してもいい？",
+      "placeholder": "一言だけでも、ただの愚痴でも全然OK...",
+      "email": "連絡先メールアドレス",
+      "sending": "紙飛行機にして、こっちに飛ばしているよ...",
+      "empty_textarea": "あれ？紙飛行機が空っぽだよ！何か一言書いてから飛ばしてね。",
+      "invalid_email": "ん？メールアドレスが少し違うみたい。もう一度確認してみて！",
+      "server_error": "うわっ、急な突風で紙飛行機が迷子になっちゃった！こっちのミスだよ、ごめんね。あとでもう一回飛ばしてみてくれる？",
+      "completed": {
+        "title": "イェーイ！無事に着陸！ 🛬",
+        "description": "教えてくれてありがとう！さっそく読ませてもらうね。"
+      },
+      "options": {
+        "cancel": "やめておく",
+        "submit": "送信"
+      }
     }
   },
   "home": {
@@ -114,6 +187,7 @@
   },
   "app": {
     "title": "アプリ",
+    "initializing": "アプリを初期化しています...",
     "welcome": {},
     "updates": {
       "name": "アップデート",
@@ -121,6 +195,8 @@
       "follow": "アップデートをフォロー",
       "read": "読む",
       "loading": "アップデートリストを読み込んでいます...",
+      "suspense": "パッチデータを読み込んでいます...",
+      "publish_by": "発行元",
       "subscription": {
         "title": "購読",
         "notify": {
@@ -132,6 +208,12 @@
           "checklist": "どこに通知しますか？",
           "body1": "新しいアップデートが利用可能になったら、受信トレイにメールを送信します！",
           "body2": "または、Githubで[link]にスターを付けると、コミットやプルリクエストなど、すべての更新情報を受け取ることができます！",
+          "options": {
+            "official_discord": {
+              "title": "Official Discord",
+              "description": "最新のアップデート情報をいち早くお届けします。開発チームとの交流もこちらから。"
+            }
+          },
           "repo": "Pona！リポジトリ",
           "notnow": "今はしない",
           "update": "更新",
@@ -155,6 +237,20 @@
     "home": {
       "name": "ホーム",
       "title": "おかえりなさい、[user]！",
+      "subtitle": "下からサーバーを選択して、音楽の再生制御、アクティブなキューの確認、ボイス設定の調整を行います。",
+      "servers_title": "あなたのDiscordサーバー",
+      "search_placeholder": "サーバーを検索...",
+      "search_no_results_title": "一致するサーバーが見つかりません",
+      "search_no_results_desc": "「[query]」に一致するDiscordサーバーが見つかりませんでした。検索をクリアしてみてください。",
+      "clear_search": "検索フィルターをクリア",
+      "feedback": {
+        "title": "フィードバックを送る",
+        "description": "Ponaをさらに良くするためにお手伝いください！ご提案やバグレポート、次に欲しい機能をお知らせください。"
+      },
+      "invite_card": {
+        "title": "新しいサーバーにPonaを追加",
+        "description": "Discordサーバーで高音質な音楽再生を楽しみたいですか？ワンクリックで簡単にPonaを招待できます。"
+      },
       "whatnew": {
         "title": "Pona! [version] の新機能",
         "description": "Pona! Appの最新機能と改善点をチェックしましょう。",
@@ -291,10 +387,24 @@
     "guilds": {
       "name": "ギルド",
       "title": "あなたとポナが一緒に参加しているサーバーです。",
+      "subtitle": "サーバーを選択して、音楽の再生管理、トラックのキュー追加、ボット権限の設定を行います。",
+      "search_placeholder": "サーバーを検索...",
+      "search_no_results_title": "一致するサーバーが見つかりません",
+      "search_no_results_desc": "「[query]」に一致するDiscordサーバーが見つかりませんでした。検索フィルターをクリアしてみてください。",
+      "clear_search": "検索フィルターをクリア",
       "loading": "ギルドを探しています...",
+      "you_are_here": "ここにいます！",
+      "connected": "接続済み",
       "not_found": {
         "title": "サーバーが見つかりません",
         "description": "まだパーティーが始まっていないようです。さあ、パーティーを始めましょう！"
+      },
+      "comingsoon": {
+        "badge": "近日公開",
+        "subtitle": "素晴らしい新機能を開発中です",
+        "description": "シームレスで安全、かつ強力な体験を構築しています。正式リリースをお楽しみに！",
+        "back": "ワークスペースに戻る",
+        "target_launch": "リリース予定:"
       },
       "stats": {
         "title": "統計",
@@ -305,10 +415,22 @@
         "usage": "使用状況",
         "genre": "音楽ジャンル",
         "top_artist": "最も多いアーティスト",
-        "analysis": "平均使用量"
+        "analysis": "平均使用量",
+        "average_usage": {
+          "title": "平均アクティビティ",
+          "trending_up": "今週は [percentage]% アップ！",
+          "trending_down": "今週は [percentage]% 落ち着いています",
+          "note": "過去7日間の利用状況のまとめです。"
+        },
+        "members_in_voice_channel": {
+          "title": "VCの参加メンバー",
+          "trending_up": "VCが盛り上がってます！ [percentage]% 増加",
+          "trending_down": "少し静かですね。[percentage]% 減少",
+          "note": "過去1週間にVCへ参加した総人数です。"
+        }
       },
       "player": {
-        "name": "Pona！ミュージック",
+        "name": "Pona！歌",
         "dev": "コーヒーを片手に、素敵な音楽を楽しみませんか？プレーヤーは現在開発中です。🎵🍵",
         "request_by": "リクエスト:",
         "full_screen_mode": {
@@ -323,6 +445,7 @@
           "connected": {},
           "connecting": {
             "title": "ソケットサービスに接続しようとしています..",
+            "description": "セキュアなリアルタイム音楽同期を確立中...",
             "chip": "接続中...",
             "sec": "秒"
           },
@@ -362,13 +485,27 @@
           "add_to_my_playlist": "プレイリストに追加",
           "goto_artist": "アーティストに移動",
           "goto_album": "アルバムに移動",
-          "rm_from_queue": "キューから削除"
+          "rm_from_queue": "キューから削除",
+          "move_to_queue": "キューに移動"
         },
         "tabs": {
           "next": "次へ",
           "lyrics": "歌詞",
           "related": "関連",
-          "open_queue": "もっと見る"
+          "open_queue": "もっと見る",
+          "now_playing": "再生中",
+          "playing_next": "次に再生",
+          "lyrics_provided_by": "歌詞提供: [provider]",
+          "no_lyrics_available": "歌詞が見つかりません",
+          "sync_lyrics": "歌詞を同期",
+          "fetching_lyrics": "歌詞を読み込み中...",
+          "pnpt_toggle_label": "自動再生",
+          "pnpt_toggle_description": "キューが少なくなったとき、おすすめの曲を自動追加します。",
+          "pnpt_queue_title": "次の候補（自動）",
+          "pnpt_auto_badge": "自動",
+          "pnpt_queue_repeat_incompatible": "自動再生はキューリピートと同時に使用できません。",
+          "playing_from": "再生元",
+          "mix_prefix": "ミックス - "
         },
         "related": {
           "videoId_not_provided": "バスは全然来ない…",
@@ -400,10 +537,31 @@
             "title": "履歴がありません",
             "description": "まだPona！ミュージックを試したことがありませんか？それなら、ここで最初の好きな曲を聴いてみましょう！",
             "get_started": "好きな曲を検索してみましょう！"
-          }
+          },
+          "mixes_for_you": "あなたへのミックス",
+          "curated_for_you": "厳選プレイリスト",
+          "new_daily_track": "今日のニュートラック",
+          "mv_for_you": "あなたへのミュージックビデオ",
+          "albums_for_you": "あなたへのアルバム",
+          "forgotten_favorites": "忘れていたお気に入り",
+          "trending_for_you": "あなたへのトレンド",
+          "heard_in_shorts": "Shortsで聴いた曲",
+          "new_releases": "新着",
+          "top_songs": "人気曲",
+          "trending": "急上昇",
+          "new_albums_singles": "新着アルバム＆シングル"
         },
         "browse": {
-          "title": "ブラウズ"
+          "title": "ブラウズ",
+          "mood_genre": "ムード＆ジャンル",
+          "charts": "チャート",
+          "top_songs": "人気曲",
+          "trending_artists": "急上昇アーティスト",
+          "hot_playlists": "人気プレイリスト",
+          "new_releases": "新着リリース",
+          "explore": "音楽を探索",
+          "coming_soon": "この機能は近日公開予定です。",
+          "coming_soon_desc": "できるだけ早くお届けできるよう準備を進めています。"
         },
         "playlist": {
           "title": "プレイリスト",
@@ -434,16 +592,67 @@
           }
         },
         "favorite": {
-          "title": "お気に入り"
+          "title": "お気に入り",
+          "subscribed_artists_title": "購読中のアーティスト",
+          "subscribed_artists_desc": "お気に入りの音楽クリエイターと登録チャンネル。",
+          "top_artists_this_month": "今月のトップアーティスト",
+          "top_artists_desc": "過去30日間に最もよく聴いたクリエイター。",
+          "favorite_tracks_coming_soon_title": "トラックのお気に入り機能はまもなく登場",
+          "favorite_tracks_coming_soon_desc": "パーソナライズされたトラックライブラリを準備中です。それまでの間、登録中のアーティストを以下で管理できます！",
+          "search_artists": "購読中のアーティストを検索...",
+          "sort_recent": "最近登録した順",
+          "sort_name": "名前順 (A-Z)",
+          "total_artists": "[count] 人のアーティスト",
+          "no_subscriptions_title": "まだ購読中のアーティストはいません",
+          "no_subscriptions_desc": "音楽を聴いている際にお気に入りのアーティストを登録して、ここに表示させましょう。",
+          "view_artist": "アーティストを表示",
+          "unsubscribed_toast": "[artist_name] の登録を解除しました",
+          "artist_badge": "アーティスト"
         },
         "history": {
-          "title": "履歴"
+          "title": "履歴",
+          "stats": {
+            "total_listened": "総再生回数",
+            "tracks_unit": "曲",
+            "listen_time": "総再生時間",
+            "top_artist_7d": "トップアーティスト (7日間)"
+          },
+          "pagination": {
+            "prev": "前へ",
+            "next": "次へ",
+            "tracks_summary": "[page] / [totalPages] ([total] 曲)"
+          },
+          "no_results": {
+            "title": "一致するトラックが見つかりません",
+            "description": "「[query]」の検索結果は見つかりませんでした。",
+            "clear_search": "検索をクリア"
+          }
         },
         "search": {
           "title": "検索",
+          "explore_title": "探索",
           "search_box": "曲、アルバム、アーティスト、ポッドキャストを検索",
           "result": "の検索結果",
+          "empty_mascot_badge": "Pona Radio 🛸",
+          "empty_hero_title": "今日はどんな音楽を聴く？",
+          "empty_hero_subtitle": "曲、アーティスト、アルバムを検索するか、気分に合わせて選んでみましょう。",
+          "moods_title": "おすすめのムード・ジャンル",
+          "mood_items": [
+            { "title": "Lo-Fi ビーツ", "query": "Lo-Fi Beats", "color": "from-purple-500/30 to-indigo-500/10", "accent": "bg-purple-500", "emoji": "🎧" },
+            { "title": "リラックス & チル", "query": "Chill Relaxing Music", "color": "from-blue-500/30 to-cyan-500/10", "accent": "bg-blue-500", "emoji": "☕" },
+            { "title": "ゲーム & EDM", "query": "Gaming EDM Music", "color": "from-emerald-500/30 to-teal-500/10", "accent": "bg-emerald-500", "emoji": "🎮" },
+            { "title": "ポップス ヒット", "query": "Top Pop Hits", "color": "from-pink-500/30 to-rose-500/10", "accent": "bg-pink-500", "emoji": "✨" },
+            { "title": "J-Pop & アニメ", "query": "J-Pop Anime OST", "color": "from-amber-500/30 to-orange-500/10", "accent": "bg-amber-500", "emoji": "🌸" },
+            { "title": "K-Pop トレンド", "query": "K-Pop Hits", "color": "from-violet-500/30 to-fuchsia-500/10", "accent": "bg-violet-500", "emoji": "🌟" },
+            { "title": "ロック & メタル", "query": "Rock Hits", "color": "from-red-500/30 to-rose-500/10", "accent": "bg-red-500", "emoji": "🎸" },
+            { "title": "集中 & 勉強", "query": "Deep Focus Study Music", "color": "from-teal-500/30 to-cyan-500/10", "accent": "bg-teal-500", "emoji": "💡" }
+          ],
           "notfound": "結果が見つかりませんでした",
+          "notfound_mascot_tag": "シグナル途絶 (º﹃º)",
+          "notfound_title": "「[query]」の音波が見つかりませんでした",
+          "notfound_subtitle": "エイリアンレーダーが音波を検知できませんでした。別のキーワードを試すか、おすすめを探索してみてください。",
+          "clear_search": "検索をリセット",
+          "try_popular": "人気を探索",
           "category": {
             "All": "全て",
             "Top result": "トップ結果",
@@ -496,9 +705,108 @@
           }
         }
       },
-      "live_notify": {
-        "name": "ライブ通知",
-        "dev": "ライブ通知は現在利用できません。ご心配なく、鋭意開発中です！💪✨"
+      "security": {
+        "title": "セキュリティ",
+        "multi_factor_auth": {
+          "title": "2FAメンバー"
+        },
+        "message": {
+          "title": "メッセージ"
+        }
+      },
+      "permissions": {
+        "title": "権限",
+        "music": {
+          "title": "Pona! ミュージック",
+          "selector": {
+            "who_can_manage_queue": {
+              "title": "キューの全般管理権限",
+              "description": "指定されたメンバーやロールは、トラックの [add]、[remove]、[move] を自由に行うことができます。"
+            },
+            "who_authorized_that_can_be_manage_queue_without_vote": {
+              "title": "投票の免除権限",
+              "description": "ここに設定されたユーザーは、多数決を必要とせず即座にキューを操作できます。"
+            },
+            "who_can_add_track": "トラックを追加できる権限",
+            "who_can_remove_track": "キューからトラックを削除できる権限",
+            "who_can_move_track": "キューのトラックを並び替えできる権限"
+          },
+          "everyone": {
+            "title": "全員の基本権限",
+            "description": "すべてのユーザーに適用されるキュー操作の基本設定です。"
+          },
+          "switch": {
+            "can_everyone_remove_own_track": {
+              "title": "自分のトラックの削除を全ユーザーに許可",
+              "description": "有効にすると、全ユーザーが自分が追加した曲を自由に削除できるようになります。"
+            },
+            "vote_to_skip": {
+              "title": "スキップ投票",
+              "description": "トラックをスキップする際に多数決を必須にします。",
+              "min": "スキップ投票の開始に必要な最小人数"
+            },
+            "vote_to_remove": {
+              "title": "削除投票",
+              "description": "キューからトラックを削除する際に多数決を必須にします。",
+              "min": "削除投票の開始に必要な最小人数"
+            },
+            "vote_to_add": {
+              "title": "追加投票",
+              "description": "トラックをキューに追加する前に多数決を必須にします。",
+              "min": "追加投票の開始に必要な最小人数"
+            }
+          },
+          "category": {
+            "votes": "投票設定",
+            "permissions": "権限管理",
+            "allowed": "許可設定"
+          },
+          "condition": {
+            "title": "条件設定",
+            "meter": "測定指標",
+            "constant": "固定値",
+            "ratio": "比率"
+          },
+          "access": {
+            "add": "追加",
+            "remove": "削除",
+            "remove_own": "削除（自分のトラックのみ）",
+            "move": "移動"
+          }
+        },
+        "commands": {
+          "title": "コマンド",
+          "builder": {
+            "who_can_use": "このコマンドを利用できる権限は？"
+          }
+        }
+      },
+      "utilities": {
+        "title": "ツール",
+        "live_notify": {
+          "name": "ライブ通知",
+          "dev": "ライブ通知はまだ準備中ですが、ご安心ください！現在、舞台裏で一生懸命開発しています 💪✨",
+          "presets": {
+            "title": "プリセット",
+            "description": "配信開始時に、指定したDiscordチャンネルへ自動で通知を送るためのシンプル設定ガイドです。"
+          },
+          "builder": {
+            "title": "メッセージビルダー",
+            "custom_webhook": "Ponaの代わりにカスタムWebhookを使用する",
+            "message": {
+              "title": "メッセージ内容",
+              "default": "@everyone 通知：{username} が配信を開始しました！"
+            },
+            "component": {
+              "title": "コンポーネント",
+              "add_embed": "埋め込みを追加",
+              "add_button": "ボタンを追加"
+            }
+          },
+          "preview": {
+            "title": "プレビュー"
+          }
+        }
       },
       "setting": {
         "name": "サーバー設定",
@@ -513,35 +821,68 @@
     "setting": {
       "name": "設定",
       "back": "アプリに戻る",
+      "category": {
+        "user_setting": "ユーザー設定",
+        "app_setting": "アプリ設定",
+        "developer": "開発者向け"
+      },
       "account": {
         "title": "アカウント",
         "announcement": "Discordに接続しました！",
         "display_name": "表示名",
-        "username": "ユーザー名"
+        "username": "ユーザー名",
+        "accent_color_tooltip": "あなたのアクセントカラー！"
       },
       "layout": {
         "title": "レイアウト",
+        "description": "インターフェースの視覚的な構造や配置をカスタマイズします。",
+        "appearance": "外観",
+        "locked": "現在準備中です",
         "theme": {
           "title": "テーマ",
-          "day": "昼テーマ",
-          "night": "夜テーマ"
+          "description": "アプリケーションの表示モードを選択します。",
+          "light": "ライト",
+          "dark": "ダーク",
+          "option": "テーマ設定"
         },
         "theme_sync": {
-          "title": "システムと同期",
-          "description": "システムのタイムゾーンに基づいてテーマを自動的に更新します"
+          "title": "システム設定に同期",
+          "description": "システムのテーマ設定に合わせて、ライトモードとダークモードを自動で切り替えます。"
         },
         "amoled_black": {
           "title": "AMOLEDブラック",
-          "description": "有効にすると、ダークテーマは真っ黒な背景を使用し、AMOLED画面で最大60％節約できます！ 🌙💡"
+          "description": "ダークテーマを真の黒（ピッチブラック）に変更し、AMOLED画面のバッテリー消費を抑えます。",
+          "warning": "この機能はダークテーマが有効な場合のみ使用できます。"
+        },
+        "fonts": {
+          "title": "フォント設定",
+          "description": "アプリケーションで使用するフォントスタイルを選択します。",
+          "friendly": {
+            "title": "Friendly (OG)",
+            "description": "Ponlponl123 Article — コンパクトで親しみやすいオリジナルフォント。"
+          },
+          "business": {
+            "title": "Business",
+            "description": "Mona Sans & Pridi — 構造的で読みやすいビジネス向けフォント。"
+          },
+          "modern": {
+            "title": "Modern",
+            "description": "Figtree & Noto Sans Thai — 洗練されたモダンで幾何学的なフォント。"
+          },
+          "preview": {
+            "en": "The quick brown fox jumps over the lazy dog.",
+            "th": "สบายตา น่ารัก เป็นกันเอง • 0123456789"
+          }
         },
         "player": {
           "title": "プレイヤーレイアウト",
+          "description": "プレイヤーの視覚的なレイアウト。",
           "preview": {
             "title": "プレビュー",
-            "description": "プレイヤーのレイアウトは以下のように表示されます。",
+            "description": "プレイヤーの表示例。",
             "component": {
               "artist": "アーティスト名",
-              "title": "トラック名"
+              "title": "曲名"
             }
           },
           "compact": {
@@ -562,6 +903,28 @@
           "disabled": {
             "title": "無効",
             "description": "透明効果を無効にすると、バッテリーを最大50％節約できます。"
+          }
+        },
+        "blur": {
+          "title": "アクリル効果",
+          "acrylics": {
+            "title": "アクリル",
+            "description": "半透明の質感を有効にし、UIをより美しくします。リソースの消費が増える場合があります。"
+          },
+          "blur": {
+            "title": "ブラー",
+            "description": "背景をぼかし、コンテンツを見やすくします。"
+          },
+          "disabled": {
+            "title": "無効",
+            "description": "透過効果をオフにして、パフォーマンスとバッテリー持ちを最優先します。"
+          }
+        },
+        "pointer": {
+          "title": "ポインター",
+          "click_spark": {
+            "title": "Click Spark",
+            "description": "クリック時にスパークエフェクトを表示し、操作を楽しくします。"
           }
         },
         "time_format": {
@@ -601,7 +964,7 @@
         }
       },
       "privacy": {
-        "title": "セキュリティとプライバシー",
+        "title": "プライバシー",
         "description": "プライバシー設定を管理し、アプリの権限を調整することで、より快適な利用体験が可能です。お客様のプライバシー情報はデバイス上に保存され、必要時以外にサーバーへ送信されることはありません。[read_privacypolicy]",
         "read_privacypolicy": "プライバシーポリシーの詳細はこちら",
         "cookie": {
@@ -635,15 +998,57 @@
           }
         }
       },
+      "language_time": {
+        "title": "言語と時刻",
+        "language": {
+          "title": "言語",
+          "description": "表示に使用する言語を選択します。"
+        },
+        "time": {
+          "title": "時刻形式",
+          "description": "時刻の表示形式を選択します。",
+          "options": {
+            "auto": "自動",
+            "12": "12時間制",
+            "24": "24時間制"
+          }
+        }
+      },
       "keybinds": {
         "title": "キーバインド",
-        "announcement": "キーバインド機能はまだ利用できませんが、ラボで開発中です！ご期待ください！",
-        "move": "移動"
+        "description": "操作を効率化するためにショートカットをカスタマイズします。",
+        "announcement": "キーバインド機能は現在開発中です（Lab内）。最高の体験をお届けするために準備中ですので、続報をお待ちください！",
+        "move": "移動",
+        "category": {
+          "appearance": "外観"
+        },
+        "readonly": "固定",
+        "readonly_description": "このキーバインドは変更できません。",
+        "disabled": "無効",
+        "disabled_description": "このショートカットは現在利用できません。",
+        "keys": {
+          "dark_light_toggle": {
+            "title": "テーマ切り替え",
+            "description": "ダークモードとライトモードを切り替えます。"
+          }
+        }
       },
       "dev_mode": {
-        "title": "開発者ゾーン"
+        "title": "デベロッパーゾーン",
+        "description": "実験的なツールや高度なデバッグ機能にアクセスします。",
+        "no_test_element": "現在、テスト要素は見つかりませんでした。"
       }
     }
+  },
+  "terms_asking": {
+    "title": "準備はいいですか？",
+    "description": "すべての機能のロックを解除する前に、{terms}のご確認をお願いします！",
+    "terms_label": "利用規約およびプライバシーポリシー",
+    "actions": {
+      "cancel": "あとにする",
+      "accept": "同意してはじめる！"
+    },
+    "cancel_tooltip": "ごめんなさい！システム上、どうしても先に同意いただく必要があるんです。"
   },
   "redirect": {
     "title": "リダイレクト中..",
@@ -701,6 +1106,7 @@
       "apidocs": "APIドキュメント",
       "support": "サポート",
       "status": "ステータス",
+      "updates": "パッチノート",
       "legal": "法的情報",
       "a_coffee": "コーヒーを贈る"
     },

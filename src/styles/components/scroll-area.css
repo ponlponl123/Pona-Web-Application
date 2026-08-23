@@ -1,0 +1,42 @@
+.scroll-mask {
+  overflow-y: auto;
+  --fade-size: 50px;
+
+  -webkit-mask-image:
+    linear-gradient(#000, #000), linear-gradient(#000, #000),
+    linear-gradient(
+      transparent,
+      #000 var(--fade-size),
+      #000 calc(100% - var(--fade-size)),
+      transparent
+    );
+
+  -webkit-mask-size:
+    100% var(--fade-size),
+    100% var(--fade-size),
+    100% 100%;
+
+  -webkit-mask-position: top, bottom, center;
+
+  -webkit-mask-attachment:
+    local,
+    local scroll;
+
+  -webkit-mask-repeat: no-repeat;
+
+  mask-image:
+    linear-gradient(#000, #000), linear-gradient(#000, #000),
+    linear-gradient(
+      transparent,
+      #000 var(--fade-size),
+      #000 calc(100% - var(--fade-size)),
+      transparent
+    );
+  mask-size:
+    100% var(--fade-size),
+    100% var(--fade-size),
+    100% 100%;
+  mask-position: top, bottom, center;
+  mask-attachment: local, local, scroll;
+  mask-repeat: no-repeat;
+}

@@ -1,0 +1,35 @@
+[data-theme="nextui"] {
+  --primary: oklab(56.715% -0.0437 -0.20492);
+  --secondary: oklab(57.674% 0.10728 -0.15888);
+  --success: oklab(73.296% -0.16892 0.09426);
+  --warning: oklab(78.187% 0.0481 0.15091);
+  --danger: oklab(61.922% 0.23722 0.04747);
+  --focus: oklab(56.715% -0.0437 -0.20492);
+  --foreground: oklab(6.884% 0 0);
+  --background: oklab(100% 0 0);
+  --color-playground-background: oklab(94.611% 0 -0.00011);
+  --card: oklab(100% 0 0);
+  --card-foreground: oklab(6.884% 0 0);
+  --popover: oklab(100% 0 0);
+  --popover-foreground: oklab(6.884% 0 0);
+  --muted: oklab(94% 0 0);
+  --border: oklab(88% 0 0);
+  --input: oklab(88% 0 0);
+}
+
+[data-theme="nextui"]:not(.light) {
+  &[data-theme].dark:not(.light),
+  & .dark:not(.light),
+  &:is(.dark:not(.light) *) {
+    --foreground: oklab(92.741% -0.00119 -0.00238);
+    --background: oklab(0% 0 0);
+    --card: oklab(8% 0 0);
+    --card-foreground: oklab(92.741% -0.00119 -0.00238);
+    --popover: oklab(8% 0 0);
+    --popover-foreground: oklab(92.741% -0.00119 -0.00238);
+    --muted: oklab(16% 0 0);
+    --border: oklab(24% 0 0);
+    --input: oklab(24% 0 0);
+    --color-playground-background: oklab(10.668% 0 0);
+  }
+}

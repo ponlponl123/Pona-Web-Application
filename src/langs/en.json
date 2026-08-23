@@ -3,7 +3,10 @@
   "label": "English",
   "country": "us",
   "state": "ready",
-  "translators": ["Ponlponl123"],
+  "translators": [
+    "Ponlponl123"
+  ],
+  "looking_for_translator": false,
   "extensions": {
     "new": "New",
     "beta": "Beta",
@@ -17,7 +20,48 @@
     "yes": "Yes",
     "no": "No",
     "loading": "Loading",
-    "friendly_loading": "Data is running to you... 🏃💨"
+    "friendly_loading": "Please wait, we are preparing the information for you...",
+    "login_first": "Log in to continue",
+    "read_more": "Read more",
+    "show_less": "Show less",
+    "enabled": "Enabled",
+    "enabled_description": "This feature is currently active.",
+    "disabled": "Disabled",
+    "disabled_description": "This feature is currently turned off.",
+    "everyone": "Everyone",
+    "someone": "Someone",
+    "noone": "No one",
+    "none": "None",
+    "unknown": "Unknown",
+    "everytime": "Always",
+    "sometime": "Occasionally",
+    "default": "Default",
+    "apply": "Apply",
+    "restore": "Restore",
+    "member": "Member",
+    "role": {
+      "title": "Role",
+      "owner": "Owner",
+      "administrator": "Administrator",
+      "moderator": "Moderator",
+      "bot": "Bot"
+    },
+    "time": {
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "tomorrow": "Tomorrow",
+      "weekend": "Weekend",
+      "day": {
+        "title": "Day",
+        "monday": "Monday",
+        "tuesday": "Tuesday",
+        "wednesday": "Wednesday",
+        "thursday": "Thursday",
+        "friday": "Friday",
+        "saturday": "Saturday",
+        "sunday": "Sunday"
+      }
+    }
   },
   "cookie": {
     "title": "Cookie!",
@@ -32,8 +76,37 @@
       "signinas": "Signed in as",
       "playground": "Playground",
       "setting": "Configurations",
-      "support": "Help & Feedback",
+      "support": "Help & Support",
+      "feedback": "Feedback",
       "logout": "Log Out"
+    }
+  },
+  "modal": {
+    "language-selector": {
+      "title": "What language do you use to communicate?",
+      "description": "Pick the language you're most comfortable with! You can change this later in your settings.",
+      "looking_for_translator": "Looking for a translator!",
+      "filter": "Search your language",
+      "not_found": "No results were found."
+    },
+    "feedback": {
+      "title": "Feedback",
+      "description": "What's on your mind about our latest update? Any suggestions, or...",
+      "can_we_contact_back": "Can we reach out to hear more from you?",
+      "placeholder": "Just a quick thought, a wild idea, or even a little complaint...",
+      "email": "Email address",
+      "sending": "Folding into a paper plane and tossing it our way...",
+      "empty_textarea": "Oops, the paper plane is empty! Jot down a little something first.",
+      "invalid_email": "Hmm, that email looks a bit off. Mind double-checking the spelling?",
+      "server_error": "Whoops, a sudden gust of wind blew your paper plane off course! Totally our fault. Mind trying again in a bit?",
+      "completed": {
+        "title": "Yay! It landed. 🛬",
+        "description": "Thanks for dropping a note! We really appreciate you sharing your thoughts."
+      },
+      "options": {
+        "cancel": "Never mind",
+        "submit": "Send"
+      }
     }
   },
   "home": {
@@ -110,6 +183,7 @@
   },
   "app": {
     "title": "App",
+    "initializing": "App is initializing...",
     "welcome": {},
     "updates": {
       "name": "Updates",
@@ -117,6 +191,8 @@
       "follow": "Follow the updates",
       "read": "Read",
       "loading": "Looking past updates...",
+      "suspense": "Loading patch data...",
+      "publish_by": "Published by",
       "subscription": {
         "title": "Subscribe",
         "notify": {
@@ -128,6 +204,12 @@
           "checklist": "Where can we notify you?",
           "body1": "You will be notified when there are new updates available. We will send you an email to your inbox!",
           "body2": "Or you can 🌟 starred[link]on github to get every updates such as commits, pull requests, and more!",
+          "options": {
+            "official_discord": {
+              "title": "Official Discord",
+              "description": "Stay updated in real-time and chat with the development team here."
+            }
+          },
           "repo": "Pona! Repository",
           "notnow": "Not now",
           "update": "Update and close",
@@ -151,6 +233,20 @@
     "home": {
       "name": "Home",
       "title": "Welcome back, [user]!",
+      "subtitle": "Select a server below to control music playback, view active queues, or adjust voice settings.",
+      "servers_title": "Your Discord Servers",
+      "search_placeholder": "Search servers...",
+      "search_no_results_title": "No matching servers found",
+      "search_no_results_desc": "No Discord server matching \"[query]\" was found. Try clearing your search.",
+      "clear_search": "Clear Search Filter",
+      "feedback": {
+        "title": "Give Us Feedback",
+        "description": "Help us make Pona even better! Share your suggestions, report issues, or tell us what feature you want next."
+      },
+      "invite_card": {
+        "title": "Add Pona to a New Server",
+        "description": "Want high-quality audio playback in your own Discord server? Invite Pona in seconds with a single click."
+      },
       "whatnew": {
         "title": "What's New in Pona! [version]?",
         "description": "Check out the latest features and improvements in Pona! App.",
@@ -287,10 +383,24 @@
     "guilds": {
       "name": "Guilds",
       "title": "The server you and Pona join together.",
+      "subtitle": "Select a server to manage music playback, queue tracks, or configure bot permissions.",
+      "search_placeholder": "Search servers...",
+      "search_no_results_title": "No matching servers found",
+      "search_no_results_desc": "No Discord server matching \"[query]\" was found. Try clearing your search filter.",
+      "clear_search": "Clear Search Filter",
       "loading": "Looking for guilds...",
+      "you_are_here": "You are Here!",
+      "connected": "Connected",
       "not_found": {
         "title": "Guilds not found",
         "description": "Or the party hasn't started yet!? Then let's make our party!"
+      },
+      "comingsoon": {
+        "badge": "Coming Soon",
+        "subtitle": "Something awesome is in the works",
+        "description": "We are crafting a seamless, secure, and powerful experience. Stay tuned for the official launch.",
+        "back": "Back to Workspace",
+        "target_launch": "Target Launch:"
       },
       "stats": {
         "title": "Statistics",
@@ -301,7 +411,19 @@
         "usage": "Usage",
         "genre": "Music genre",
         "top_artist": "Most artist",
-        "analysis": "Average usage"
+        "analysis": "Average usage",
+        "average_usage": {
+          "title": "Average Activity",
+          "trending_up": "Up by [percentage]% this week",
+          "trending_down": "Taking a breather, down by [percentage]%",
+          "note": "A quick look at activity over the past 7 days."
+        },
+        "members_in_voice_channel": {
+          "title": "Voice Channel Hangouts",
+          "trending_up": "Chats are buzzing! Up by [percentage]%",
+          "trending_down": "A bit quieter lately, down by [percentage]%",
+          "note": "Total listeners who tuned in over the last week."
+        }
       },
       "player": {
         "name": "Pona! Music",
@@ -319,6 +441,7 @@
           "connected": {},
           "connecting": {
             "title": "Trying to connect to socket service..",
+            "description": "Establishing secure real-time music sync...",
             "chip": "Connecting...",
             "sec": "s"
           },
@@ -358,13 +481,27 @@
           "add_to_my_playlist": "Add to my playlist",
           "goto_artist": "Go to artist",
           "goto_album": "Go to album",
-          "rm_from_queue": "Remove from queue"
+          "rm_from_queue": "Remove from queue",
+          "move_to_queue": "Move to Queue"
         },
         "tabs": {
           "next": "Next",
           "lyrics": "Lyrics",
           "related": "Related",
-          "open_queue": "Show More"
+          "open_queue": "Show More",
+          "now_playing": "Now Playing",
+          "playing_next": "Playing Next",
+          "lyrics_provided_by": "Lyrics provided by [provider]",
+          "no_lyrics_available": "No lyrics available",
+          "sync_lyrics": "Sync lyrics",
+          "fetching_lyrics": "Loading lyrics...",
+          "pnpt_toggle_label": "Auto-continue",
+          "pnpt_toggle_description": "Automatically add recommended tracks when the queue is nearly empty.",
+          "pnpt_queue_title": "Up Next (Auto)",
+          "pnpt_auto_badge": "Auto",
+          "pnpt_queue_repeat_incompatible": "Auto-continue is not compatible with Queue Repeat mode.",
+          "playing_from": "Playing from",
+          "mix_prefix": "My Mix - "
         },
         "related": {
           "videoId_not_provided": "The bus never comes...",
@@ -396,10 +533,31 @@
             "title": "There are no history",
             "description": "Haven't tried Pona! Music yet? Then start listening to your first favorite songs here!",
             "get_started": "Let's search my favorite songs!"
-          }
+          },
+          "mixes_for_you": "Mixes for You",
+          "curated_for_you": "Curated for You",
+          "new_daily_track": "New Daily Track",
+          "mv_for_you": "Music Videos for You",
+          "albums_for_you": "Albums for You",
+          "forgotten_favorites": "Forgotten Favorites",
+          "trending_for_you": "Trending for You",
+          "heard_in_shorts": "Heard in Shorts",
+          "new_releases": "New Releases",
+          "top_songs": "Top Songs",
+          "trending": "Trending",
+          "new_albums_singles": "New Albums & Singles"
         },
         "browse": {
-          "title": "Browse"
+          "title": "Browse",
+          "mood_genre": "Moods & Genres",
+          "charts": "Charts",
+          "top_songs": "Top Songs",
+          "trending_artists": "Trending Artists",
+          "hot_playlists": "Hot Playlists",
+          "new_releases": "New Releases",
+          "explore": "Explore",
+          "coming_soon": "This feature is coming soon.",
+          "coming_soon_desc": "We are working hard to bring it to you as soon as possible."
         },
         "playlist": {
           "title": "Playlist",
@@ -430,16 +588,67 @@
           }
         },
         "favorite": {
-          "title": "Favorite"
+          "title": "Favorite",
+          "subscribed_artists_title": "Subscribed Artists",
+          "subscribed_artists_desc": "Your favorite music creators and subscribed channels.",
+          "top_artists_this_month": "Top Artists This Month",
+          "top_artists_desc": "Creators you've listened to most over the past 30 days.",
+          "favorite_tracks_coming_soon_title": "Track Favorites Coming Soon",
+          "favorite_tracks_coming_soon_desc": "We are building a seamless personalized favorite track library. In the meantime, browse and manage your subscribed artists below!",
+          "search_artists": "Search subscribed artists...",
+          "sort_recent": "Recently Subscribed",
+          "sort_name": "Name (A-Z)",
+          "total_artists": "[count] Artists",
+          "no_subscriptions_title": "No subscribed artists yet",
+          "no_subscriptions_desc": "Subscribe to your favorite music artists while listening to quickly view them here.",
+          "view_artist": "View Artist",
+          "unsubscribed_toast": "Unsubscribed from [artist_name]",
+          "artist_badge": "Artist"
         },
         "history": {
-          "title": "History"
+          "title": "History",
+          "stats": {
+            "total_listened": "Total Listened",
+            "tracks_unit": "tracks",
+            "listen_time": "Listen Time",
+            "top_artist_7d": "Top Artist (7D)"
+          },
+          "pagination": {
+            "prev": "Prev",
+            "next": "Next",
+            "tracks_summary": "[page] / [totalPages] ([total] tracks)"
+          },
+          "no_results": {
+            "title": "No matching tracks found",
+            "description": "No results found for \"[query]\".",
+            "clear_search": "Clear Search"
+          }
         },
         "search": {
           "title": "Search",
+          "explore_title": "Explore",
           "search_box": "Search for songs, albums, artists, podcasts",
           "result": "Search results for",
+          "empty_mascot_badge": "Pona Radio 🛸",
+          "empty_hero_title": "What are we vibing to today?",
+          "empty_hero_subtitle": "Search any track, artist, album, or pick a mood to start listening.",
+          "moods_title": "Explore Moods & Genres",
+          "mood_items": [
+            { "title": "Lo-Fi Beats", "query": "Lo-Fi Beats", "color": "from-purple-500/30 to-indigo-500/10", "accent": "bg-purple-500", "emoji": "🎧" },
+            { "title": "Chill & Relax", "query": "Chill Relaxing Music", "color": "from-blue-500/30 to-cyan-500/10", "accent": "bg-blue-500", "emoji": "☕" },
+            { "title": "Gaming Energy", "query": "Gaming EDM Music", "color": "from-emerald-500/30 to-teal-500/10", "accent": "bg-emerald-500", "emoji": "🎮" },
+            { "title": "Pop Hits", "query": "Top Pop Hits", "color": "from-pink-500/30 to-rose-500/10", "accent": "bg-pink-500", "emoji": "✨" },
+            { "title": "J-Pop & Anime", "query": "J-Pop Anime OST", "color": "from-amber-500/30 to-orange-500/10", "accent": "bg-amber-500", "emoji": "🌸" },
+            { "title": "K-Pop Trends", "query": "K-Pop Hits", "color": "from-violet-500/30 to-fuchsia-500/10", "accent": "bg-violet-500", "emoji": "🌟" },
+            { "title": "Rock & Metal", "query": "Rock Hits", "color": "from-red-500/30 to-rose-500/10", "accent": "bg-red-500", "emoji": "🎸" },
+            { "title": "Deep Focus", "query": "Deep Focus Study Music", "color": "from-teal-500/30 to-cyan-500/10", "accent": "bg-teal-500", "emoji": "💡" }
+          ],
           "notfound": "Not Found",
+          "notfound_mascot_tag": "Transmission Lost (º﹃º)",
+          "notfound_title": "No tracks found for \"[query]\"",
+          "notfound_subtitle": "Alien radar detected zero audio signals. Try another keyword or browse moods below.",
+          "clear_search": "Reset Search",
+          "try_popular": "Explore Popular",
           "category": {
             "All": "All",
             "Top result": "Top result",
@@ -492,9 +701,108 @@
           }
         }
       },
-      "live_notify": {
-        "name": "Live Notify",
-        "dev": "Live Notify is currently not available, but don't worry! We're working on it 💪✨"
+      "security": {
+        "title": "Security",
+        "multi_factor_auth": {
+          "title": "2FA Members"
+        },
+        "message": {
+          "title": "Messages"
+        }
+      },
+      "permissions": {
+        "title": "Permissions",
+        "music": {
+          "title": "Pona! Music",
+          "selector": {
+            "who_can_manage_queue": {
+              "title": "Full Queue Management",
+              "description": "Selected members and roles gain full control to [add], [remove], or [move] tracks freely."
+            },
+            "who_authorized_that_can_be_manage_queue_without_vote": {
+              "title": "Bypass Voting Authority",
+              "description": "Members or roles with this permission can manage the queue immediately without needing a majority vote."
+            },
+            "who_can_add_track": "Who can add tracks?",
+            "who_can_remove_track": "Who can remove tracks from the queue?",
+            "who_can_move_track": "Who can reorder tracks in the queue?"
+          },
+          "everyone": {
+            "title": "Universal Permissions",
+            "description": "Configure basic queue management permissions for all users."
+          },
+          "switch": {
+            "can_everyone_remove_own_track": {
+              "title": "Allow users to remove their own tracks",
+              "description": "Enable this to allow members to remove songs they added without needing special permissions."
+            },
+            "vote_to_skip": {
+              "title": "Vote to Skip",
+              "description": "Require a community vote to skip the current track.",
+              "min": "Minimum listeners required to initiate a skip vote."
+            },
+            "vote_to_remove": {
+              "title": "Vote to Remove",
+              "description": "Require a community vote to remove a track from the queue.",
+              "min": "Minimum listeners required to initiate a removal vote."
+            },
+            "vote_to_add": {
+              "title": "Vote to Add",
+              "description": "Require a community vote before a track is added to the queue.",
+              "min": "Minimum listeners required to initiate an addition vote."
+            }
+          },
+          "category": {
+            "votes": "Voting Systems",
+            "permissions": "Access Control",
+            "allowed": "General Allowances"
+          },
+          "condition": {
+            "title": "Conditions",
+            "meter": "Metric",
+            "constant": "Fixed Value",
+            "ratio": "Ratio"
+          },
+          "access": {
+            "add": "Add",
+            "remove": "Remove",
+            "remove_own": "Remove (Own tracks only)",
+            "move": "Move"
+          }
+        },
+        "commands": {
+          "title": "Commands",
+          "builder": {
+            "who_can_use": "Who is authorized to use this command?"
+          }
+        }
+      },
+      "utilities": {
+        "title": "Utilities",
+        "live_notify": {
+          "name": "Live Notify",
+          "dev": "Live Notify isn't quite ready yet, but don't worry! We're working hard on it behind the scenes 💪",
+          "presets": {
+            "title": "Presets",
+            "description": "These presets provide automatic and simple setup for send a message on target text channel on your discord server when you're live!"
+          },
+          "builder": {
+            "title": "Message Builder",
+            "custom_webhook": "Custom Webhook instead of send by Pona!",
+            "message": {
+              "title": "Message",
+              "default": "Hey @everyone!, {username} is live right now!"
+            },
+            "component": {
+              "title": "Components",
+              "add_embed": "Add Embed",
+              "add_button": "Add Button"
+            }
+          },
+          "preview": {
+            "title": "Preview"
+          }
+        }
       },
       "setting": {
         "name": "Guild Settings",
@@ -509,29 +817,62 @@
     "setting": {
       "name": "Setting",
       "back": "Back to App",
+      "category": {
+        "user_setting": "User Settings",
+        "app_setting": "App Settings",
+        "developer": "For Developer"
+      },
       "account": {
-        "title": "Account",
+        "title": "My Account",
         "announcement": "Connected with Discord!",
         "display_name": "Display Name",
-        "username": "Username"
+        "username": "Username",
+        "accent_color_tooltip": "Your accent color!"
       },
       "layout": {
         "title": "Layout",
+        "description": "Customize the visual structure and arrangement of the interface.",
+        "appearance": "Appearance",
+        "locked": "Coming soon to the Lab",
         "theme": {
           "title": "Theme",
-          "day": "Day Theme",
-          "night": "Night Theme"
+          "description": "Choose your preferred appearance mode for the application.",
+          "light": "Light",
+          "dark": "Dark",
+          "option": "Theme Settings"
         },
         "theme_sync": {
           "title": "Sync with system",
-          "description": "Automatically updates the theme based on your system time zone"
+          "description": "Automatically switch between light and dark themes based on your system settings."
         },
         "amoled_black": {
-          "title": "Amoled Black",
-          "description": "When enabled, Dark theme uses a pitch-black background, which saves up to 60% on AMOLED screens! 🌙💡"
+          "title": "AMOLED Black",
+          "description": "Switch from dark gray to true black to save battery and enhance contrast on AMOLED displays.",
+          "warning": "This feature requires Dark Theme to be active."
+        },
+        "fonts": {
+          "title": "Typography",
+          "description": "Choose the application font style that best matches your vibe.",
+          "friendly": {
+            "title": "Friendly (OG)",
+            "description": "Ponlponl123 Article — Cozy, compact & playful original font."
+          },
+          "business": {
+            "title": "Business",
+            "description": "Mona Sans & Pridi — Clean, structured & professional typography."
+          },
+          "modern": {
+            "title": "Modern",
+            "description": "Figtree & Noto Sans Thai — Sleek, geometric & contemporary typography."
+          },
+          "preview": {
+            "en": "The quick brown fox jumps over the lazy dog.",
+            "th": "สบายตา น่ารัก เป็นกันเอง • 0123456789"
+          }
         },
         "player": {
           "title": "Player Layout",
+          "description": "Visual layout of the player.",
           "preview": {
             "title": "Preview",
             "description": "This is how the player layout looks like.",
@@ -558,6 +899,28 @@
           "disabled": {
             "title": "Disabled",
             "description": "Disables transparency effects, may save up to 50% on battery."
+          }
+        },
+        "blur": {
+          "title": "Acrylic Effects",
+          "acrylics": {
+            "title": "Acrylic",
+            "description": "Enable translucent textures for a premium look. Requires more system resources."
+          },
+          "blur": {
+            "title": "Blur",
+            "description": "Apply a simple blur effect to background elements for better focus."
+          },
+          "disabled": {
+            "title": "Disabled",
+            "description": "Turn off all transparency effects to maximize performance and battery life."
+          }
+        },
+        "pointer": {
+          "title": "Pointer",
+          "click_spark": {
+            "title": "Click Spark",
+            "description": "Pointer trail and click spark effect for a fun interaction."
           }
         },
         "time_format": {
@@ -597,7 +960,7 @@
         }
       },
       "privacy": {
-        "title": "Security & Privacy Vault",
+        "title": "Data & Privacy",
         "description": "You can manage your privacy yourself or grant some permissions to the app to make the application experience smoother and better. We promise that your security and privacy information will be kept on your device and no data will be sent to the cloud or server unless necessary. [read_privacypolicy]",
         "read_privacypolicy": "Read on to learn more about our privacy policy",
         "cookie": {
@@ -631,15 +994,57 @@
           }
         }
       },
+      "language_time": {
+        "title": "Language & Time",
+        "language": {
+          "title": "Language",
+          "description": "Select your preferred language for the interface."
+        },
+        "time": {
+          "title": "Time Format",
+          "description": "Choose how you want the time to be displayed.",
+          "options": {
+            "auto": "Auto",
+            "12": "12-hour",
+            "24": "24-hour"
+          }
+        }
+      },
       "keybinds": {
         "title": "Keybinds",
-        "announcement": "Keybinds feature is not available yet, but it is in development in Lab! Stay tuned!",
-        "move": "Move"
+        "description": "Customize your shortcuts for a faster workflow.",
+        "announcement": "Keybind customization is currently in the Lab! We're fine-tuning the experience—stay tuned for updates.",
+        "move": "Move",
+        "category": {
+          "appearance": "Appearance"
+        },
+        "readonly": "Locked",
+        "readonly_description": "This keybinding is fixed and cannot be changed.",
+        "disabled": "Disabled",
+        "disabled_description": "This shortcut is currently inactive.",
+        "keys": {
+          "dark_light_toggle": {
+            "title": "Toggle Theme",
+            "description": "Switch between dark and light appearance modes."
+          }
+        }
       },
       "dev_mode": {
-        "title": "Dev Zone"
+        "title": "Dev Zone",
+        "description": "Access experimental tools and advanced debugging features.",
+        "no_test_element": "No active test elements found in this environment."
       }
     }
+  },
+  "terms_asking": {
+    "title": "Ready to dive in?",
+    "description": "Just a quick look at our {terms} before you unlock the full experience!",
+    "terms_label": "Terms of Service & Privacy Policy",
+    "actions": {
+      "cancel": "Maybe later",
+      "accept": "Agree & Let's go!"
+    },
+    "cancel_tooltip": "Sorry! We wish we could skip this too, but it's required before we can let you in."
   },
   "redirect": {
     "title": "Redirecting..",
@@ -697,6 +1102,7 @@
       "apidocs": "API Docs",
       "support": "Support",
       "status": "Pona! Status",
+      "updates": "Patch Notes",
       "legal": "Legal",
       "a_coffee": "A Coffee?"
     },

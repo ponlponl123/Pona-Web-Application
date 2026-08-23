@@ -1,74 +1,74 @@
-'use client';
-import React from 'react';
-import { authorizeUserAccessToken } from '@/server-side-api/discord/fetchUser';
-import { MagicWand, Confetti } from '@phosphor-icons/react/dist/ssr';
-import { useLanguageContext } from '@/contexts/languageContext';
-import { useSearchParams } from 'next/navigation';
-import { Spinner } from "@heroui/spinner";
-import MyButton from '@/components/button';
-import { setCookie } from 'cookies-next';
-import confetti from 'canvas-confetti';
-import Link from 'next/link';
+"use client"
+import React from "react"
+import { authorizeUserAccessToken } from "@/lib/server-side-api/discord/fetchUser"
+import { MagicWandIcon, ConfettiIcon } from "@phosphor-icons/react/dist/ssr"
+import MyButton from "@/components/ui/custom/button"
+import { useSearchParams } from "next/navigation"
+import { Spinner } from "@/components/ui/spinner"
+import { setCookie } from "cookies-next"
+import confetti from "canvas-confetti"
+import Link from "next/link"
+import { useAppStore } from "@/store/coreStore"
 
 function Authorize() {
-  const params = useSearchParams();
-  const code = params && params.get('code');
-  const redirectFrom = params && params.get('from');
-  const { language } = useLanguageContext();
-  const initialized = React.useRef<boolean>(false);
+  const params = useSearchParams()
+  const code = params && params.get("code")
+  const redirectFrom = params && params.get("from")
+  const language = useAppStore((state) => state.language)
+  const initialized = React.useRef<boolean>(false)
   const confetti_colors = React.useRef<string[]>([
-    '#ff69b4',
-    '#ff8c00',
-    '#90ee90',
-    '#3cb371',
-    '#008000',
-    '#00ffff',
-    '#4169e1',
-    '#8a2be2',
-    '#a52a2a',
-    '#deb887',
-    '#ffdead',
-    '#f5f5f5',
-    '#ffffff',
-  ]);
+    "#ff69b4",
+    "#ff8c00",
+    "#90ee90",
+    "#3cb371",
+    "#008000",
+    "#00ffff",
+    "#4169e1",
+    "#8a2be2",
+    "#a52a2a",
+    "#deb887",
+    "#ffdead",
+    "#f5f5f5",
+    "#ffffff",
+  ])
   const [authenticatedState, setAuthenticatedState] = React.useState<
-    'success' | 'processing' | 'failed' | 'unknown'
-  >('processing');
+    "success" | "processing" | "failed" | "unknown"
+  >("processing")
 
   React.useEffect(() => {
     if (!initialized.current) {
-      initialized.current = true;
+      initialized.current = true
       if (code && code.length > 0) {
         async function auth(code: string) {
           const authorized = await authorizeUserAccessToken(
             code,
-            redirectFrom ? 'invite' : 'auth_only'
-          );
+            redirectFrom ? "invite" : "auth_only"
+          )
           if (authorized) {
-            setAuthenticatedState('success');
-            setCookie('LOGIN_', authorized.key);
-            setCookie('LOGIN_TYPE_', authorized.type);
-          } else setAuthenticatedState('failed');
+            setAuthenticatedState("success")
+            setCookie("LOGIN_", authorized.key)
+            setCookie("LOGIN_TYPE_", authorized.type)
+          } else setAuthenticatedState("failed")
         }
-        auth(code as string);
-      } else setAuthenticatedState('unknown');
+        auth(code as string)
+      } else setAuthenticatedState("unknown")
     }
-  }, [code, redirectFrom]);
+  }, [code, redirectFrom])
 
-  return authenticatedState === 'success' ? (
+  return authenticatedState === "success" ? (
     <>
-      <Confetti
+      <ConfettiIcon
         size={48}
-        id='confettieffectorigin'
-        ref={confettiElement => {
-          const boundingClientRect = confettiElement?.getBoundingClientRect();
+        id="confettieffectorigin"
+        ref={(confettiElement) => {
+          const boundingClientRect = confettiElement?.getBoundingClientRect()
           if (boundingClientRect) {
             const originX =
               (boundingClientRect.left + 0.5 * boundingClientRect.width) /
-              window.innerWidth;
+              window.innerWidth
             const originY =
               (boundingClientRect.top + 0.5 * boundingClientRect.height) /
-              window.innerHeight;
+              window.innerHeight
             confetti({
               origin: {
                 x: originX,
@@ -81,49 +81,49 @@ function Authorize() {
               angle: 45,
               colors: confetti_colors.current,
             })?.then(() => {
-              if (redirectFrom === 'invite') {
-                window.location.replace('/app/welcome');
+              if (redirectFrom === "invite") {
+                window.location.replace("/app/welcome")
               } else {
-                window.location.replace('/app');
+                window.location.replace("/app")
               }
-            });
+            })
           }
         }}
       />
-      <strong className='text-3xl'>
+      <strong className="text-3xl">
         {language.data.callback.success.title}
       </strong>
-      <p className='text-xl'>{language.data.callback.success.description}</p>
+      <p className="text-xl">{language.data.callback.success.description}</p>
     </>
-  ) : authenticatedState === 'processing' ? (
+  ) : authenticatedState === "processing" ? (
     <>
-      <MagicWand size={48} />
-      <strong className='text-3xl'>
+      <MagicWandIcon size={48} />
+      <strong className="text-3xl">
         {language.data.callback.processing.title}
       </strong>
-      <p className='text-xl'>{language.data.callback.processing.description}</p>
+      <p className="text-xl">{language.data.callback.processing.description}</p>
       <br />
-      <Spinner color='current' />
+      <Spinner color="current" />
     </>
-  ) : authenticatedState === 'failed' ? (
+  ) : authenticatedState === "failed" ? (
     <>
-      <strong className='text-3xl'>
+      <strong className="text-3xl">
         {language.data.callback.failed.title}
       </strong>
-      <p className='text-xl'>{language.data.callback.failed.description}</p>
+      <p className="text-xl">{language.data.callback.failed.description}</p>
       <br />
-      <Link href='/app'>
+      <Link href="/app">
         <MyButton>{language.data.callback.failed.actions.tryagain}</MyButton>
       </Link>
     </>
   ) : (
     <>
-      <strong className='text-3xl'>
+      <strong className="text-3xl">
         {language.data.callback.unknown.title}
       </strong>
-      <p className='text-xl'>{language.data.callback.unknown.description}</p>
+      <p className="text-xl">{language.data.callback.unknown.description}</p>
     </>
-  );
+  )
 }
 
-export default Authorize;
+export default Authorize

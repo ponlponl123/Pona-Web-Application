@@ -1,0 +1,36 @@
+footer.pona-footer {
+  @apply relative flex min-h-24 w-full items-center justify-center gap-6 p-6;
+}
+
+footer.pona-footer a {
+  @apply flex items-center gap-2;
+}
+
+footer.pona-footer > div:not(:nth-child(2)) {
+  @apply row-start-3 flex w-full flex-wrap items-center justify-center gap-2;
+}
+
+footer.pona-footer .div {
+  @apply row-start-3 flex w-full flex-wrap items-center justify-center gap-6;
+}
+
+footer.pona-footer > div:first-child,
+footer.pona-footer > div:last-child {
+  @apply w-1/4;
+}
+
+footer.pona-footer > div:first-child {
+  @apply justify-start;
+}
+
+footer.pona-footer > div:last-child {
+  @apply justify-end;
+}
+
+@media (max-width: 767px) {
+  footer.pona-footer > div:first-child,
+  footer > div {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+}

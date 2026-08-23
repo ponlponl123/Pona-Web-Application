@@ -1,57 +1,90 @@
-'use client';
-import { usePathname } from 'next/navigation';
+"use client"
+import { usePathname, useRouter } from "next/navigation"
 import {
   BasicGuildInfo,
   fetchBasicGuildInfo,
-} from '@/server-side-api/discord/fetchGuild';
-import { useContext, createContext, useState, useEffect } from 'react';
-import { getCookie } from 'cookies-next';
+} from "@/lib/server-side-api/discord/fetchGuild"
+import {
+  useContext,
+  createContext,
+  useState,
+  useEffect,
+  useMemo,
+  useCallback,
+} from "react"
+import { getCookie } from "cookies-next"
 
-const discordGuildInfo = createContext<{
-  guild: BasicGuildInfo | undefined;
-  setCurrentGuild: (guild: BasicGuildInfo) => void;
-}>({
-  guild: undefined,
-  setCurrentGuild: () => {},
-});
+interface GuildContextType {
+  guild: BasicGuildInfo | undefined
+  setCurrentGuild: (guild: BasicGuildInfo | undefined) => void
+}
+
+const DiscordGuildInfoContext = createContext<GuildContextType | undefined>(
+  undefined
+)
 
 export const DiscordGuildInfoProvider = ({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) => {
-  const [guild, setGuild] = useState<BasicGuildInfo | undefined>(undefined);
-  const pathname = usePathname() || '';
+  const [guild, setGuild] = useState<BasicGuildInfo | undefined>(undefined)
+  const pathname = usePathname()
+  const router = useRouter()
+
+  const updateGuild = useCallback((newGuild: BasicGuildInfo | undefined) => {
+    setGuild(newGuild)
+  }, [])
 
   useEffect(() => {
-    const currentAccessToken = getCookie('LOGIN_');
-    const currentAccessTokenType = getCookie('LOGIN_TYPE_');
-    if (pathname.startsWith('/app/g/')) {
-      const guildId = pathname.split('/')[3];
+    const currentAccessToken = getCookie("LOGIN_")
+    const currentAccessTokenType = getCookie("LOGIN_TYPE_")
+
+    const match = pathname?.match(/\/app\/g\/([^/]+)/)
+    const guildIdFromUrl = match ? match[1] : null
+
+    if (!guildIdFromUrl) {
+      if (guild !== undefined) {
+        requestAnimationFrame(() => setGuild(undefined))
+      }
+      return
+    }
+
+    if (guildIdFromUrl && guild?.id !== guildIdFromUrl) {
       fetchBasicGuildInfo(
         String(currentAccessToken),
         String(currentAccessTokenType),
-        guildId
+        guildIdFromUrl
       )
-        .then(value => {
-          if (!value) return window.location.replace('/app/guilds');
-          setGuild(value);
+        .then((value) => {
+          if (!value) {
+            router.replace("/app/guilds")
+            return
+          }
+          setGuild(value)
         })
-        .catch(console.error);
-    } else setGuild(undefined);
-  }, [pathname]);
+        .catch(console.error)
+    }
+  }, [pathname, guild?.id, router, guild])
 
-  const setCurrentGuild = (guild: BasicGuildInfo | undefined) => {
-    setGuild(guild);
-  };
+  const value = useMemo(
+    () => ({
+      guild,
+      setCurrentGuild: updateGuild,
+    }),
+    [guild, updateGuild]
+  )
 
   return (
-    <discordGuildInfo.Provider value={{ guild, setCurrentGuild }}>
+    <DiscordGuildInfoContext.Provider value={value}>
       {children}
-    </discordGuildInfo.Provider>
-  );
-};
+    </DiscordGuildInfoContext.Provider>
+  )
+}
 
-export const useDiscordGuildInfo = () => useContext(discordGuildInfo);
-
-export default discordGuildInfo;
+export const useDiscordGuildInfo = () => {
+  const context = useContext(DiscordGuildInfoContext)
+  if (!context)
+    throw new Error("useDiscordGuildInfo must be used within Provider")
+  return context
+}

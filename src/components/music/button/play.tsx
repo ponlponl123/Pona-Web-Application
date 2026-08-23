@@ -1,54 +1,46 @@
-import { useGlobalContext } from '@/contexts/globalContext';
-import { useLanguageContext } from '@/contexts/languageContext';
-import { usePonaMusicContext } from '@/contexts/ponaMusicContext';
-import { getSong } from '@/server-side-api/internal/search';
-import {
-  Button,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  useDisclosure,
-} from '@heroui/react';
-import { Play } from '@phosphor-icons/react/dist/ssr';
+'use client';
+import { useState } from 'react';
+import { PlayIcon, SpinnerIcon } from '@phosphor-icons/react/dist/ssr';
 import { getCookie } from 'cookies-next';
-import React from 'react';
-import toast from 'react-hot-toast';
-import { twMerge } from 'tailwind-merge';
+import { toast } from 'sonner';
+import { useAtomValue } from 'jotai';
+
+import { useSocket } from '@/contexts/ponaMusicContext';
+import { ponaCommonStateAtom } from '@/store/musicAtoms';
+import { isSameVCAtom } from '@/store/uiAtoms';
+import { useAppStore } from '@/store/coreStore';
+import { getSong } from '@/lib/server-side-api/internal/search';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/animate-ui/components/radix/dialog';
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerFooter,
+} from '@/components/ui/drawer';
+import { useMediaQuery } from '@heroui/react';
 import PlayPauseButton from './playPause';
 
-export interface PlayDetail {
-  title: string;
-  author: string;
-  uri: string;
-  resultType?: string;
-  sourceName: string;
-  identifier: string;
-}
+import {
+  PlayButtonClassNames,
+  PlayButtonProps,
+  PlayDetail,
+  PlaylistDetail,
+} from '@/types/ponaPlayer';
+import { AnimateIcon } from '@/components/animate-ui/icons/icon';
+import { Plus } from '@/components/animate-ui/icons/plus';
+import { cn } from '@/lib/utils';
+import { emitWithTimeout } from '@/lib/promiseWithTimeout';
+export type { PlayButtonClassNames, PlayButtonProps, PlayDetail, PlaylistDetail };
 
-export interface PlaylistDetail {
-  title: string;
-  author: string;
-  thumbnails: string[];
-  tracks: PlayDetail[];
-}
 
-export interface PlayButtonProps<T extends 'song' | 'playlist' = 'song'> {
-  s?: number;
-  type?: T;
-  iconSize?: number;
-  className?: string;
-  classNames?: PlayButtonClassNames;
-  detail: T extends 'playlist' ? PlaylistDetail : PlayDetail;
-  children?: React.ReactNode;
-  style?: React.CSSProperties;
-  playPause?: boolean;
-}
-
-export interface PlayButtonClassNames {
-  playpause?: string;
-}
 
 function PlayButton<T extends 'song' | 'playlist' = 'song'>({
   s,
@@ -61,30 +53,30 @@ function PlayButton<T extends 'song' | 'playlist' = 'song'>({
   style,
   playPause,
 }: PlayButtonProps<T>) {
-  const { socket } = usePonaMusicContext();
-  const { language } = useLanguageContext();
-  const { isSameVC, ponaCommonState } = useGlobalContext();
-  const [loading, setLoading] = React.useState<boolean>(false);
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const {
-    isOpen: isDuplicatedTrackOpen,
-    onOpen: onDuplicatedTrackOpen,
-    onOpenChange: onDuplicatedTrackOpenChange,
-  } = useDisclosure();
+  const { socket } = useSocket();
+  const language = useAppStore((state) => state.language);
+  const isMobileStore = useAppStore((state) => state.isMobile);
+  const isSmallScreen = useMediaQuery('(max-width: 760px)');
+  const isMobile = isMobileStore || isSmallScreen;
+  const isSameVC = useAtomValue(isSameVCAtom);
+  const ponaCommonState = useAtomValue(ponaCommonStateAtom);
+
+  const [loading, setLoading] = useState<boolean>(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isDuplicateModalOpen, setIsDuplicateModalOpen] = useState<boolean>(false);
+
   const addToQueue = () => {
     if (socket && socket.connected && isSameVC) {
       setLoading(true);
       toast.promise(
-        new Promise<void>(async (resolve, reject) => {
+        emitWithTimeout(async (resolve, reject) => {
           const oauth_type = getCookie('LOGIN_TYPE_');
           const oauth_token = getCookie('LOGIN_');
           if (type === 'playlist') {
             const playlistDetail = detail as PlaylistDetail;
             socket.emit(
               'add-playlist',
-              playlistDetail.tracks.map(track => {
-                return track.uri;
-              }),
+              playlistDetail.tracks.map((track) => track.uri),
               {
                 title: playlistDetail.title,
                 author: playlistDetail.author,
@@ -134,13 +126,11 @@ function PlayButton<T extends 'song' | 'playlist' = 'song'>({
             .replace('[track_name]', detail.title.slice(0, 32))
             .replace('[artist]', detail.author.slice(0, 32)),
           error: language.data.app.guilds.player.toast.add_track.error,
-        },
-        {
-          position: 'bottom-left',
         }
       );
     }
   };
+
   return (
     <>
       {playPause ? (
@@ -150,18 +140,17 @@ function PlayButton<T extends 'song' | 'playlist' = 'song'>({
         />
       ) : (
         <Button
-          className={twMerge(
-            'absolute top-0 left-0 w-full h-full z-10 rounded-3xl group-hover:opacity-100 opacity-0 ' +
-              className,
-            classNames?.playpause
+          variant='ghost'
+          size='icon'
+          disabled={loading}
+          className={cn(
+            'absolute top-0 left-0 w-full h-full z-10 rounded-xl group-hover:opacity-100 opacity-0 bg-black/40 text-white hover:bg-black/60 cursor-pointer backdrop-blur-xs apply-soft-transition',
+            classNames?.playpause,
+            className,
           )}
-          isIconOnly
-          variant='flat'
-          isLoading={loading}
-          isDisabled={loading}
-          onPress={() => {
+          data-smooth-interaction="true"
+          onClick={() => {
             if (socket && socket.connected && isSameVC) {
-              // Check if detail is a playlist (has tracks array)
               const isPlaylist =
                 'tracks' in detail &&
                 Array.isArray((detail as PlaylistDetail).tracks);
@@ -169,137 +158,204 @@ function PlayButton<T extends 'song' | 'playlist' = 'song'>({
               let hasDuplicates = false;
 
               if (isPlaylist) {
-                // Check if any track in the playlist is duplicated in the queue
                 const playlistDetail = detail as PlaylistDetail;
-                hasDuplicates = playlistDetail.tracks.some(track => {
-                  // Check if track is currently playing
-                  if (
-                    ponaCommonState?.current?.identifier === track.identifier
-                  ) {
+                hasDuplicates = playlistDetail.tracks.some((track) => {
+                  if (ponaCommonState?.current?.identifier === track.identifier) {
                     return true;
                   }
-                  // Check if track is in the queue
                   const findDuplicatedTrack = ponaCommonState?.queue.filter(
-                    refTrack => refTrack.identifier === track.identifier
+                    (refTrack) => refTrack.identifier === track.identifier
                   );
-                  return findDuplicatedTrack && findDuplicatedTrack.length > 0;
+                  return Boolean(findDuplicatedTrack && findDuplicatedTrack.length > 0);
                 });
               } else {
-                // Single track check (existing logic)
                 const singleDetail = detail as PlayDetail;
                 const findDuplicatedTrack = ponaCommonState?.queue.filter(
-                  refTrack => refTrack.identifier === singleDetail.identifier
+                  (refTrack) => refTrack.identifier === singleDetail.identifier
                 );
-                hasDuplicates = !!(
+                hasDuplicates = Boolean(
                   ponaCommonState &&
                   ponaCommonState.current &&
-                  (ponaCommonState.current.identifier ===
-                    singleDetail.identifier ||
+                  (ponaCommonState.current.identifier === singleDetail.identifier ||
                     (findDuplicatedTrack && findDuplicatedTrack.length > 0))
                 );
               }
 
-              if (hasDuplicates) onDuplicatedTrackOpen();
-              else if (ponaCommonState?.current) onOpen();
+              if (hasDuplicates) setIsDuplicateModalOpen(true);
+              else if (ponaCommonState?.current) setIsModalOpen(true);
               else addToQueue();
             }
           }}
           style={{ width: s, height: s, ...style }}
         >
-          {children ? children : <Play weight='fill' size={iconSize || 32} />}
+          {loading ? (
+            <SpinnerIcon className='animate-spin' size={iconSize || 32} />
+          ) : children ? (
+            children
+          ) : (
+            <PlayIcon weight='fill' size={iconSize || 32} />
+          )}
         </Button>
       )}
-      <Modal
-        isOpen={isOpen}
-        onOpenChange={onOpenChange}
-        size='xs'
-        hideCloseButton
-      >
-        <ModalContent>
-          {onClose => (
-            <>
-              <ModalHeader className='flex flex-col gap-1'>
-                {
-                  language.data.app.guilds.player.music_card.action.add_to_queue
-                    .title
-                }
-              </ModalHeader>
-              <ModalBody>
-                <h1>{detail.title}</h1>
-                <span className='text-xs text-foreground/40'>
-                  {detail.author}
-                </span>
-              </ModalBody>
-              <ModalFooter>
-                <Button color='default' variant='light' onPress={onClose}>
-                  {
-                    language.data.app.guilds.player.music_card.action
-                      .add_to_queue.close
-                  }
+
+      {isMobile ? (
+        <>
+          <Drawer
+            open={isModalOpen}
+            onOpenChange={setIsModalOpen}
+            modal
+            showSwipeHandle
+            swipeDirection="down"
+          >
+            <DrawerContent className="border-none bg-overlay backdrop-blur-xl">
+              <DrawerHeader className="py-4 mb-2 border-b border-default-foreground/10">
+                <DrawerTitle className="flex items-center gap-2">
+                  <AnimateIcon animate>
+                    <Plus className="size-5" />
+                  </AnimateIcon>
+                  {language.data.app.guilds.player.music_card.action.add_to_queue.title}
+                </DrawerTitle>
+              </DrawerHeader>
+              <div className="flex flex-col gap-1 px-4 py-2">
+                <h1 className="font-medium text-foreground">{detail.title}</h1>
+                <span className="text-xs text-muted-foreground">{detail.author}</span>
+              </div>
+              <DrawerFooter className="flex flex-row items-center justify-end gap-2 p-4 pt-2">
+                <Button
+                  variant="outline"
+                  onClick={() => setIsModalOpen(false)}
+                  className="rounded-xl flex-1"
+                >
+                  {language.data.app.guilds.player.music_card.action.add_to_queue.close}
                 </Button>
                 <Button
-                  color='primary'
-                  onPress={() => {
+                  onClick={() => {
                     addToQueue();
-                    onClose();
+                    setIsModalOpen(false);
                   }}
+                  className="rounded-xl flex-1"
                 >
-                  {
-                    language.data.app.guilds.player.music_card.action
-                      .add_to_queue.add
-                  }
+                  {language.data.app.guilds.player.music_card.action.add_to_queue.add}
                 </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
-      <Modal
-        isOpen={isDuplicatedTrackOpen}
-        onOpenChange={onDuplicatedTrackOpenChange}
-        size='xs'
-        hideCloseButton
-      >
-        <ModalContent>
-          {onClose => (
-            <>
-              <ModalHeader className='flex flex-col gap-1'>
-                {
-                  language.data.app.guilds.player.music_card.action
-                    .add_duplicated_track_to_queue.title
-                }
-              </ModalHeader>
-              <ModalBody>
-                <h1>{detail.title}</h1>
-                <span className='text-xs text-foreground/40'>
-                  {detail.author}
-                </span>
-              </ModalBody>
-              <ModalFooter>
-                <Button color='default' variant='light' onPress={onClose}>
-                  {
-                    language.data.app.guilds.player.music_card.action
-                      .add_duplicated_track_to_queue.close
-                  }
+              </DrawerFooter>
+            </DrawerContent>
+          </Drawer>
+
+          <Drawer
+            open={isDuplicateModalOpen}
+            onOpenChange={setIsDuplicateModalOpen}
+            modal
+            swipeDirection="down"
+          >
+            <DrawerContent className="rounded-t-3xl border-t border-border bg-background/95 backdrop-blur-xl">
+              <DrawerHeader className="pt-4 text-left">
+                <DrawerTitle className="flex items-center gap-2">
+                  <AnimateIcon animate>
+                    <Plus className="size-5" />
+                  </AnimateIcon>
+                  {language.data.app.guilds.player.music_card.action.add_duplicated_track_to_queue.title}
+                </DrawerTitle>
+              </DrawerHeader>
+              <div className="flex flex-col gap-1 px-4 py-2">
+                <h1 className="font-medium text-foreground">{detail.title}</h1>
+                <span className="text-xs text-muted-foreground">{detail.author}</span>
+              </div>
+              <DrawerFooter className="flex flex-row items-center justify-end gap-2 p-4 pt-2">
+                <Button
+                  variant="outline"
+                  onClick={() => setIsDuplicateModalOpen(false)}
+                  className="rounded-xl flex-1"
+                >
+                  {language.data.app.guilds.player.music_card.action.add_duplicated_track_to_queue.close}
                 </Button>
                 <Button
-                  color='danger'
-                  variant='light'
-                  onPress={() => {
+                  variant="destructive"
+                  onClick={() => {
                     addToQueue();
-                    onClose();
+                    setIsDuplicateModalOpen(false);
                   }}
+                  className="rounded-xl flex-1"
                 >
-                  {
-                    language.data.app.guilds.player.music_card.action
-                      .add_duplicated_track_to_queue.add
-                  }
+                  {language.data.app.guilds.player.music_card.action.add_duplicated_track_to_queue.add}
                 </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
+              </DrawerFooter>
+            </DrawerContent>
+          </Drawer>
+        </>
+      ) : (
+        <>
+          <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+            <DialogContent className='sm:max-w-xs' showCloseButton={false}>
+              <DialogHeader>
+                <DialogTitle className='flex items-center gap-2'>
+                  <AnimateIcon animate>
+                    <Plus className={"size-5"} />
+                  </AnimateIcon>
+                  {language.data.app.guilds.player.music_card.action.add_to_queue.title}
+                </DialogTitle>
+              </DialogHeader>
+              <div className='flex flex-col gap-1 py-2'>
+                <h1 className='font-medium text-foreground'>{detail.title}</h1>
+                <span className='text-xs text-muted-foreground'>{detail.author}</span>
+              </div>
+              <DialogFooter className='flex items-center gap-1 mt-2'>
+                <Button
+                  variant='outline'
+                  onClick={() => setIsModalOpen(false)}
+                  className={"rounded-md"}
+                >
+                  {language.data.app.guilds.player.music_card.action.add_to_queue.close}
+                </Button>
+                <Button
+                  onClick={() => {
+                    addToQueue();
+                    setIsModalOpen(false);
+                  }}
+                  className={"rounded-md"}
+                >
+                  {language.data.app.guilds.player.music_card.action.add_to_queue.add}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          <Dialog open={isDuplicateModalOpen} onOpenChange={setIsDuplicateModalOpen}>
+            <DialogContent className='sm:max-w-xs' showCloseButton={false}>
+              <DialogHeader>
+                <DialogTitle className='flex items-center gap-2'>
+                  <AnimateIcon animate>
+                    <Plus className={"size-5"} />
+                  </AnimateIcon>
+                  {language.data.app.guilds.player.music_card.action.add_duplicated_track_to_queue.title}
+                </DialogTitle>
+              </DialogHeader>
+              <div className='flex flex-col gap-1 py-2'>
+                <h1 className='font-medium text-foreground'>{detail.title}</h1>
+                <span className='text-xs text-muted-foreground'>{detail.author}</span>
+              </div>
+              <DialogFooter className='flex items-center gap-1 mt-2'>
+                <Button
+                  variant='outline'
+                  onClick={() => setIsDuplicateModalOpen(false)}
+                  className={"rounded-md"}
+                >
+                  {language.data.app.guilds.player.music_card.action.add_duplicated_track_to_queue.close}
+                </Button>
+                <Button
+                  variant='destructive'
+                  onClick={() => {
+                    addToQueue();
+                    setIsDuplicateModalOpen(false);
+                  }}
+                  className={"rounded-md"}
+                >
+                  {language.data.app.guilds.player.music_card.action.add_duplicated_track_to_queue.add}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </>
+      )}
     </>
   );
 }

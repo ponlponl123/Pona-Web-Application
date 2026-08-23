@@ -1,0 +1,86 @@
+import pkg from "./package.json" with { type: "json" }
+
+const allowedServerActionOrigins = (
+  process.env.NEXT_SERVER_ACTIONS_ALLOWED_ORIGINS ?? ""
+)
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean)
+
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  output: "standalone",
+  reactStrictMode: true,
+  compress: true,
+  compiler: {
+    removeConsole: process.env.NODE_ENV === "production" ? { exclude: ["error", "warn"] } : false,
+  },
+  experimental: {
+    serverActions: {
+      allowedOrigins: allowedServerActionOrigins,
+    },
+    optimizePackageImports: [
+      "@phosphor-icons/react",
+      "lucide-react",
+      "recharts",
+      "motion",
+      "@heroui/react",
+      "@heroui/styles",
+      "radix-ui",
+      "@dnd-kit/core",
+      "@dnd-kit/sortable",
+      "@dnd-kit/utilities",
+      "embla-carousel-react",
+    ],
+  },
+  env: {
+    NEXT_PUBLIC_APP_VERSION: pkg.version,
+    NEXT_PUBLIC_DISCORD_CLIENT_ID: process.env["NEXT_PUBLIC_DISCORD_CLIENT_ID"],
+    NEXT_PUBLIC_DISCORD_OWNER_ID: process.env["NEXT_PUBLIC_DISCORD_OWNER_ID"],
+    NEXT_PUBLIC_DISCORD_REDIRECT_ENDPOINT:
+      process.env["NEXT_PUBLIC_DISCORD_REDIRECT_ENDPOINT"],
+  },
+  cacheComponents: true,
+  images: {
+    localPatterns: [
+      {
+        pathname: '/api/proxy/image/**',
+      },
+      {
+        pathname: '/static/**',
+      },
+      {
+        pathname: '/**',
+      },
+    ],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "cdn.discordapp.com",
+      },
+      {
+        protocol: "https",
+        hostname: "nextui.org",
+      },
+      {
+        protocol: "https",
+        hostname: "static.ponlponl123.com",
+      },
+    ],
+  },
+  async rewrites() {
+    const host = process.env.PONA_APPLICATION_ENDPOINT_HOST
+    const port =
+      process.env.PONA_APPLICATION_WEBSOCKET_PORT ??
+      process.env.NEXT_PUBLIC_PONA_APPLICATION_WS_ENDPOINT_PORT ??
+      String(Number(process.env.PONA_APPLICATION_ENDPOINT_PORT) + 1)
+    return [
+      {
+        source: "/socket.io/:path*",
+        destination: `http://${host}:${port}/socket.io/:path*`,
+      },
+    ]
+  },
+}
+
+export default nextConfig

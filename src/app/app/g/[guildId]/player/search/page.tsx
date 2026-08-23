@@ -1,68 +1,202 @@
 'use client';
-import nextuiColorPalette from '@/../themes/utils/nextui-color-palette-gen.ts';
-import PlayButton from '@/components/music/button/play';
-import Track, {
-  combineArtistName,
-} from '@/components/music/searchResult/track';
-import SubscribeButton from '@/components/music/subscribe';
-import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo';
-import { useGlobalContext } from '@/contexts/globalContext';
-import { useLanguageContext } from '@/contexts/languageContext';
-import {
-  SearchResult as HTTP_SearchResult,
-  TopResults,
-} from '@/interfaces/ytmusic-api';
-import fetchSearchResult from '@/server-side-api/internal/search';
-import { getAccentHEXColorFromUrl } from '@/utils/colorUtils';
-import {
-  Button,
-  Chip,
-  Image,
-  Link,
-  Progress,
-  ScrollShadow,
-  Tab,
-  Tabs,
-  Tooltip,
-} from '@heroui/react';
-import {
-  CaretRight,
-  Cloud,
-  FlyingSaucer,
-  Heart,
-  MagnifyingGlass,
-  ShareFat,
-} from '@phosphor-icons/react/dist/ssr';
+
+import React, { useState, useEffect, useMemo } from 'react';
+import Image from 'next/image';
+import { useSearchParams, useRouter, useParams } from 'next/navigation';
 import { getCookie } from 'cookies-next';
 import { motion } from 'framer-motion';
-import { useRouter, useSearchParams } from 'next/navigation';
-import React, { Key } from 'react';
+import {
+  FlyingSaucerIcon,
+  MagnifyingGlassIcon,
+  PlayIcon,
+  SparkleIcon,
+  ArrowClockwiseIcon,
+  MusicNotesSimpleIcon,
+} from '@phosphor-icons/react/dist/ssr';
 
-function Page() {
+import PlayButton from '@/components/music/button/play';
+import Track, { combineArtistName, extractArtistsFromItem } from '@/components/music/searchResult/track';
+import SubscribeButton from '@/components/music/subscribe';
+import { Button } from '@/components/ui/button';
+import { useAppStore } from '@/store/coreStore';
+import { SearchResult as HTTP_SearchResult, TrackResultItem } from '@/types/youtube/ytmusic-api';
+import fetchSearchResult from '@/lib/server-side-api/internal/search';
+import { SearchResultSkeleton } from '@/components/music/skeleton';
+import { cn } from '@/lib/utils';
+import { useMediaQuery } from 'react-responsive';
+import useEmblaCarousel from 'embla-carousel-react';
+import HeaderSearch from '@/components/root/header-search';
+
+const ORDERED_KEYS = [
+  'Top result',
+  'More from YouTube',
+  'Songs',
+  'Videos',
+  'Albums',
+  'Community playlists',
+  'Artists',
+  'Podcasts',
+  'Episodes',
+  'Profiles',
+];
+
+interface TopResultCardProps {
+  track: TrackResultItem;
+}
+
+function TopResultCard({ track }: TopResultCardProps) {
   const router = useRouter();
-  const { guild } = useDiscordGuildInfo();
-  const [searchResult, setSearchResult] = React.useState<{
-    [key: string]: HTTP_SearchResult[];
-  } | null>(null);
-  const [loading, setLoading] = React.useState<boolean>(true);
-  const [filter, setFilter] = React.useState<Key | false>(false);
+  const params = useParams();
+  const guildId = typeof params?.guildId === 'string' ? params.guildId : '';
+  const trackTitle = track.title || track.name || '';
+  const type = track.resultType?.toLowerCase();
+  const isArtist = type === 'artist';
+  const trackRecord = track as unknown as Record<string, unknown>;
+  const finalArtists = extractArtistsFromItem(trackRecord);
+  const browseId = [track.browseId, trackRecord.playlistId, trackRecord.albumId, trackRecord.id]
+    .find((id): id is string => typeof id === 'string');
+  const targetUrl = isArtist && track.artists?.[0]?.id
+    ? `/app/g/${guildId}/player/c?c=${track.artists[0].id}`
+    : (type === 'album' || type === 'single') && browseId
+      ? `/app/g/${guildId}/player/playlist?list=${browseId.endsWith('abm') ? browseId : `${browseId}abm`}`
+      : type === 'playlist' && browseId
+        ? `/app/g/${guildId}/player/playlist?list=${browseId}`
+        : null;
 
-  const handleFilterChange = (key: Key | null) => {
-    setFilter(key || false);
-  };
-  const { ponaCommonState } = useGlobalContext();
-  const { language } = useLanguageContext();
+  function handleClick(event: React.MouseEvent<HTMLDivElement>) {
+    if (targetUrl && !(event.target as HTMLElement).closest('a, button')) {
+      router.push(targetUrl);
+    }
+  }
+
+  return (
+    <div
+      onClick={handleClick}
+      className={cn(
+        'relative group/result-card w-full rounded-3xl p-4 backdrop-blur-lg bg-card/10 overflow-hidden text-card-foreground flex flex-col gap-4 items-start z-10',
+        targetUrl && 'cursor-pointer',
+      )}
+    >
+      <div className='flex gap-4 items-center w-full'>
+        <div className={cn(
+          "relative size-24 object-cover pointer-events-none select-none overflow-hidden",
+          isArtist
+            ? 'rounded-full'
+            : 'rounded-2xl'
+        )}>
+          {track.thumbnails?.[0]?.url && (
+            <Image
+              src={`/api/proxy/image?r=${encodeURIComponent(track.thumbnails[0].url)}&s=192`}
+              alt={trackTitle}
+              width={256}
+              height={256}
+              unoptimized
+              className={"size-full"}
+            />
+          )}
+          {!isArtist && track.videoId && (
+            <div className='group-hover/result-card:opacity-100 opacity-0 size-full rounded-2xl absolute inset-0 flex items-center justify-center bg-black/20 backdrop-blur-[2px] duration-200 cursor-pointer z-10'>
+              <PlayIcon weight='fill' className='text-default-foreground' size={32} />
+            </div>
+          )}
+        </div>
+        <div className='flex gap-8 items-center flex-1 min-w-0'>
+          <div className='flex flex-col items-start flex-1 min-w-0'>
+            <h3 className='text-3xl font-bold truncate w-full text-start'>
+              {trackTitle || combineArtistName(finalArtists)}
+            </h3>
+            <div className='text-sm text-muted-foreground flex gap-1 items-center z-20'>
+              {!isArtist && finalArtists.length > 0 ? (
+                <>
+                  {combineArtistName(finalArtists, true, router)}
+                  <span>•</span>
+                </>
+              ) : null}
+              <span className='capitalize'>{track.resultType || 'Result'}</span>
+            </div>
+            <div className='flex gap-3 items-center justify-end w-full mt-2'>
+              {!isArtist && track.videoId && (
+                <PlayButton
+                  detail={{
+                    author: combineArtistName(finalArtists),
+                    identifier: track.videoId,
+                    sourceName: 'youtube music',
+                    resultType: track.resultType || 'song',
+                    title: trackTitle,
+                    uri: `https://music.youtube.com/watch?v=${track.videoId}`,
+                  }}
+                />
+              )}
+            </div>
+          </div>
+          <div className='ml-auto z-10'>
+            {isArtist && (track.artists?.[0]?.id) && (
+              <SubscribeButton
+                channelId={track.artists[0].id}
+                artistName={track.artists[0].name}
+                className='text-sm'
+                triggerClassName='bg-secondary/10! rounded-full font-bold py-2 px-4'
+                preset='minimal'
+              />
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const getTrackKey = (item: HTTP_SearchResult, idx: number): string => {
+  const itemObj = item as unknown as Record<string, unknown>;
+  if (typeof itemObj.videoId === 'string') return itemObj.videoId;
+  if (typeof itemObj.id === 'string') return itemObj.id;
+  if (typeof itemObj.browseId === 'string') return itemObj.browseId;
+  if (typeof itemObj.title === 'string') return `${itemObj.title}-${idx}`;
+  if (typeof itemObj.name === 'string') return `${itemObj.name}-${idx}`;
+  return `search-item-${idx}`;
+};
+
+export function Page() {
+  const router = useRouter();
+  const params = useParams();
+  const guildId = typeof params?.guildId === 'string' ? params.guildId : '';
+  const language = useAppStore((state) => state.language);
   const searchParams = useSearchParams();
   const search = searchParams ? searchParams.get('q') : '';
-  const filterNormallize =
-    filter.toString() === 'playlists'
-      ? 'Community playlists'
-      : filter
-        ? filter.toString()[0].toUpperCase() +
-          filter.toString().slice(1, filter.toString().length)
-        : filter.toString();
 
-  React.useEffect(() => {
+  const [searchResult, setSearchResult] = useState<{
+    [key: string]: HTTP_SearchResult[];
+  } | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [filter, setFilter] = useState<string>('all');
+
+  const [prevSearch, setPrevSearch] = useState<string | null>(null);
+  const [prevFilter, setPrevFilter] = useState<string>('all');
+
+  const isMobileStore = useAppStore((state) => state.isMobile);
+  const isSmallScreen = useMediaQuery({ maxWidth: 768 });
+
+  const [categoriesEmblaRef] = useEmblaCarousel({
+    dragFree: true,
+    containScroll: 'trimSnaps',
+  });
+
+  if (search !== prevSearch || filter !== prevFilter) {
+    setPrevSearch(search);
+    setPrevFilter(filter);
+    setLoading(true);
+    setSearchResult(null);
+  }
+
+  const filterNormalize = useMemo(() => {
+    if (filter === 'playlists') return 'Community playlists';
+    if (filter !== 'all') return filter[0].toUpperCase() + filter.slice(1);
+    return filter;
+  }, [filter]);
+
+  useEffect(() => {
+    let active = true;
+
     const letSearch = async () => {
       const accessTokenType = String(getCookie('LOGIN_TYPE_'));
       const accessToken = String(getCookie('LOGIN_'));
@@ -73,26 +207,54 @@ function Page() {
         accessTokenType === 'undefined' ||
         !accessToken ||
         accessToken === 'undefined'
-      )
-        return setLoading(false);
+      ) {
+        if (active) setLoading(false);
+        return;
+      }
+
       setLoading(true);
-      const searchResult = await fetchSearchResult(
+      const res = await fetchSearchResult(
         accessTokenType,
         accessToken,
         search,
-        filter === 'all' || !filter ? undefined : filter.toString()
+        filter === 'all' ? undefined : filter
       );
-      if (!searchResult) {
+
+      if (!active) return;
+
+      if (!res || !res.result) {
         setSearchResult(null);
         setLoading(false);
         return;
       }
-      const sortedResult = searchResult.result.reduce(
-        (
-          acc: { [key: string]: HTTP_SearchResult[] },
-          item: HTTP_SearchResult
-        ) => {
-          const type = item.category || 'OTHER';
+
+      const categoryMap: { [key: string]: string } = {
+        top_result: 'Top result',
+        'top result': 'Top result',
+        songs: 'Songs',
+        song: 'Songs',
+        videos: 'Videos',
+        video: 'Videos',
+        albums: 'Albums',
+        album: 'Albums',
+        playlists: 'Community playlists',
+        playlist: 'Community playlists',
+        community_playlists: 'Community playlists',
+        artists: 'Artists',
+        artist: 'Artists',
+        podcasts: 'Podcasts',
+        podcast: 'Podcasts',
+        episodes: 'Episodes',
+        episode: 'Episodes',
+        profiles: 'Profiles',
+        profile: 'Profiles',
+      };
+
+      const sortedResult = res.result.reduce(
+        (acc: { [key: string]: HTTP_SearchResult[] }, item: HTTP_SearchResult) => {
+          const itemAny = item as unknown as Record<string, unknown>;
+          const rawCategory = (typeof item.category === 'string' ? item.category : undefined) || (itemAny.resultType ? categoryMap[String(itemAny.resultType).toLowerCase()] : null) || 'Other';
+          const type = categoryMap[rawCategory.toLowerCase()] || rawCategory;
           if (!acc[type]) acc[type] = [];
           acc[type].push(item);
           return acc;
@@ -100,517 +262,336 @@ function Page() {
         {}
       );
 
-      const orderedKeys = [
-        'Top result',
-        'More from YouTube',
-        'Songs',
-        'Videos',
-        'Albums',
-        'Community playlists',
-        'Artists',
-        'Podcasts',
-        'Episodes',
-        'Profiles',
-      ];
-      const orderedResult = orderedKeys.reduce(
-        (
-          acc: { [key in (typeof orderedKeys)[number]]: HTTP_SearchResult[] },
-          key
-        ) => {
-          if (sortedResult[key]) {
-            acc[key] = sortedResult[key];
-          }
-          return acc;
-        },
-        {}
-      );
-
-      try {
-        if (orderedResult['Top result']) {
-          const topResult = orderedResult[
-            'Top result'
-          ][0] as unknown as TopResults;
-          if (
-            topResult.resultType === 'artist' ||
-            topResult.resultType === 'artist-detail'
-          ) {
-            const accentColor = await getAccentHEXColorFromUrl(
-              '/api/proxy/image?r=' + topResult.thumbnails[0].url
-            );
-            const colorPalette = nextuiColorPalette({
-              name: 'content1',
-              baseColor: accentColor,
-            });
-            if (accentColor) {
-              const newTopResult = {
-                ...topResult,
-                accentColor: accentColor,
-                colorPalette: colorPalette,
-              };
-              orderedResult['Top result'][0] = newTopResult;
-            }
-          }
+      const orderedResult: { [key: string]: HTTP_SearchResult[] } = {};
+      ORDERED_KEYS.forEach((key) => {
+        if (sortedResult[key] && sortedResult[key].length > 0) {
+          orderedResult[key] = sortedResult[key];
         }
-      } catch (err) {
-        console.error('Error fetching accent color:', err);
-      }
+      });
+
+      Object.keys(sortedResult).forEach((key) => {
+        if (!orderedResult[key] && sortedResult[key] && sortedResult[key].length > 0) {
+          orderedResult[key] = sortedResult[key];
+        }
+      });
 
       setSearchResult(orderedResult);
       setLoading(false);
     };
 
     letSearch();
+
+    return () => {
+      active = false;
+    };
   }, [filter, search]);
 
+  const categories = useMemo(
+    () => [
+      { key: 'all', label: language.data.app.guilds.player.search.category.All },
+      { key: 'songs', label: language.data.app.guilds.player.search.category.Songs },
+      { key: 'videos', label: language.data.app.guilds.player.search.category.Videos },
+      { key: 'albums', label: language.data.app.guilds.player.search.category.Albums },
+      { key: 'playlists', label: language.data.app.guilds.player.search.category['Community playlists'] },
+      { key: 'artists', label: language.data.app.guilds.player.search.category.Artists },
+      { key: 'podcasts', label: language.data.app.guilds.player.search.category.Podcasts },
+      { key: 'episodes', label: language.data.app.guilds.player.search.category.Episodes },
+      { key: 'profiles', label: language.data.app.guilds.player.search.category.Profiles },
+    ],
+    [language.data.app.guilds.player.search.category]
+  );
+
+  const moodItems = useMemo(() => {
+    const searchObj = language.data.app.guilds.player.search as unknown as Record<string, unknown>;
+    if (Array.isArray(searchObj.mood_items)) {
+      return searchObj.mood_items as Array<{
+        title: string;
+        query: string;
+        color?: string;
+        accent?: string;
+        emoji?: string;
+      }>;
+    }
+    return [
+      { title: 'Lo-Fi Beats', query: 'Lo-Fi Beats', color: 'from-purple-500/30 to-indigo-500/10', accent: 'bg-purple-500', emoji: '🎧' },
+      { title: 'Chill & Relax', query: 'Chill Relaxing Music', color: 'from-blue-500/30 to-cyan-500/10', accent: 'bg-blue-500', emoji: '☕' },
+      { title: 'Gaming Energy', query: 'Gaming EDM Music', color: 'from-emerald-500/30 to-teal-500/10', accent: 'bg-emerald-500', emoji: '🎮' },
+      { title: 'Pop Hits', query: 'Top Pop Hits', color: 'from-pink-500/30 to-rose-500/10', accent: 'bg-pink-500', emoji: '✨' },
+      { title: 'J-Pop & Anime', query: 'J-Pop Anime OST', color: 'from-amber-500/30 to-orange-500/10', accent: 'bg-amber-500', emoji: '🌸' },
+      { title: 'K-Pop Trends', query: 'K-Pop Hits', color: 'from-violet-500/30 to-fuchsia-500/10', accent: 'bg-violet-500', emoji: '🌟' },
+      { title: 'Rock & Metal', query: 'Rock Hits', color: 'from-red-500/30 to-rose-500/10', accent: 'bg-red-500', emoji: '🎸' },
+      { title: 'Deep Focus', query: 'Deep Focus Study Music', color: 'from-teal-500/30 to-cyan-500/10', accent: 'bg-teal-500', emoji: '💡' },
+    ];
+  }, [language.data.app.guilds.player.search]);
+
+  const handleGenreClick = (genre: string) => {
+    router.push(`/app/g/${guildId}/player/search?q=${encodeURIComponent(genre)}`);
+  };
+
+  const handleClearSearch = () => {
+    router.push(`/app/g/${guildId}/player/search`);
+  };
+
+  const searchObj = language.data.app.guilds.player.search as unknown as Record<string, unknown>;
+  const notFoundTitle = typeof searchObj.notfound_title === 'string'
+    ? searchObj.notfound_title.replace('[query]', search || '')
+    : `${language.data.app.guilds.player.search.notfound || 'Not Found'}: "${search}"`;
+
   return (
-    <div className='w-full max-w-screen-md mx-auto mt-24 gap-4 flex flex-col items-center justify-center text-center pb-[16vh]'>
+    <div className='w-full max-w-4xl mx-auto md:mt-24 gap-6 flex flex-col items-center justify-center text-center pb-[16vh]'>
       <div className='w-full flex gap-5'>
         <div className='flex flex-col items-start justify-center w-full'>
-          <h1 className='text-5xl flex gap-4 items-center'>
-            <MagnifyingGlass size={32} weight='bold' />{' '}
-            {language.data.app.guilds.player.search.result}
+          <h1 className='text-4xl md:text-5xl flex gap-3.5 items-center font-bold tracking-tight'>
+            {search ? (
+              <>
+                <MagnifyingGlassIcon size={32} weight='bold' className='shrink-0' />{' '}
+                {language.data.app.guilds.player.search.result}
+              </>
+            ) : (
+              <>
+                <MusicNotesSimpleIcon size={32} weight='bold' className='shrink-0' />{' '}
+                {language.data.app.guilds.player.search.title}
+              </>
+            )}
           </h1>
-          <h3 className='text-2xl text-start'>{search}</h3>
-          <ScrollShadow
-            orientation='vertical'
-            hideScrollBar
-            className='w-full relative'
-          >
-            <div className='w-max flex flex-row items-start justify-center gap-2'>
-              <Tabs
-                aria-label='Filters'
-                className='my-4'
-                radius='full'
-                variant='light'
-                isDisabled={loading}
-                onSelectionChange={handleFilterChange}
-              >
-                <Tab
-                  key='all'
-                  title={language.data.app.guilds.player.search.category.All}
-                />
-                <Tab
-                  key='songs'
-                  title={language.data.app.guilds.player.search.category.Songs}
-                />
-                <Tab
-                  key='videos'
-                  title={language.data.app.guilds.player.search.category.Videos}
-                />
-                <Tab
-                  key='albums'
-                  title={language.data.app.guilds.player.search.category.Albums}
-                />
-                <Tab
-                  key='playlists'
-                  title={
-                    language.data.app.guilds.player.search.category[
-                      'Community playlists'
-                    ]
-                  }
-                />
-                <Tab
-                  key='artists'
-                  title={
-                    language.data.app.guilds.player.search.category.Artists
-                  }
-                />
-                <Tab
-                  key='profiles'
-                  title={
-                    language.data.app.guilds.player.search.category.Profiles
-                  }
-                />
-              </Tabs>
-            </div>
-          </ScrollShadow>
-          {loading && (
-            <Progress
-              isIndeterminate
-              aria-label='Loading...'
-              className='w-full mt-2'
-              size='sm'
+
+          {(isSmallScreen || isMobileStore) && (
+            <HeaderSearch
+              className='w-full mt-2.5 z-50'
+              containerClassName='max-md:w-full max-md:max-w-none md:hidden max-md:relative max-md:translate-0! max-md:translate-x-0! max-md:top-0! max-md:left-0!'
+              navOpened={false}
             />
+          )}
+
+          {search ? (
+            <h2 className='max-md:hidden text-2xl text-start mt-1 text-muted-foreground font-normal break-all'>
+              {search}
+            </h2>
+          ) : null}
+
+          {search ? (
+            <div className='w-full overflow-hidden my-4' ref={categoriesEmblaRef}>
+              <div className='flex gap-2 touch-pan-y select-none' role='tablist'>
+                {categories.map((cat) => (
+                  <div key={cat.key} className='shrink-0'>
+                    <Button
+                      variant={filter === cat.key ? 'default' : 'outline'}
+                      size='sm'
+                      className='rounded-full whitespace-nowrap'
+                      onClick={() => setFilter(cat.key)}
+                    >
+                      {cat.label}
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
+          {loading && search && (
+            <div className='w-full py-4'>
+              <SearchResultSkeleton />
+            </div>
           )}
         </div>
       </div>
-      <div id='pona-search-result' className='w-full flex flex-col gap-12 mt-4'>
-        {!loading && (!filter || filter === 'all') && searchResult ? (
-          Object.keys(searchResult).map(
-            (category, index) =>
-              !(
-                category === 'Top result' &&
-                (searchResult['Top result'][0] as unknown as TopResults)
-                  .resultType === ('episode' as TopResults['resultType'])
-              ) && (
-                <div key={index} className='w-full'>
-                  <h2 className='text-3xl text-start flex flex-row gap-4 items-center my-4'>
-                    <span className='min-w-max'>
-                      {language.data.app.guilds.player.search.category[
-                        category as keyof typeof language.data.app.guilds.player.search.category
-                      ]
-                        ? language.data.app.guilds.player.search.category[
-                            category as keyof typeof language.data.app.guilds.player.search.category
-                          ]
-                        : category}
+
+      <div className='w-full gap-4 flex flex-col items-center justify-center text-center'>
+        {!search ? (
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.25 }}
+            className='w-full flex flex-col items-start gap-8 my-2'
+          >
+            <div className='relative w-full flex flex-col md:flex-row items-start md:items-center justify-between gap-6'>
+              <div className='flex items-center gap-4 z-10'>
+                <motion.div
+                  animate={{ y: [0, -4, 0], rotate: [0, 2, -2, 0] }}
+                  transition={{ repeat: Infinity, duration: 4, ease: 'easeInOut' }}
+                  className='size-14 rounded-2xl flex items-center justify-center shrink-0'
+                >
+                  <FlyingSaucerIcon weight='fill' size={30} className='text-primary' />
+                </motion.div>
+
+                <div className='flex flex-col text-start gap-1'>
+                  <div className='flex items-center gap-2'>
+                    <span className='text-xs font-semibold px-2.5 py-0.5 rounded-md bg-primary/10 text-primary'>
+                      {String(searchObj.empty_mascot_badge || 'Pona Radio 🛸')}
                     </span>
-                    <div className='w-full h-[2px] bg-foreground/10'></div>
+                    <span className='text-xs text-muted-foreground font-mono'>( ੭ ˙ᗜ˙ )੭</span>
+                  </div>
+                  <h2 className='text-xl md:text-2xl font-bold tracking-tight text-foreground'>
+                    {String(searchObj.empty_hero_title || 'What are we vibing to today?')}
+                  </h2>
+                  <p className='text-xs md:text-sm text-muted-foreground'>
+                    {String(searchObj.empty_hero_subtitle || 'Search any track, artist, album, or pick a mood to start listening.')}
+                  </p>
+                </div>
+              </div>
+
+              <div className='w-full md:w-80 max-md:hidden z-10'>
+                <HeaderSearch
+                  className='w-full'
+                  containerClassName='w-full relative max-w-none top-0! left-0! translate-0! translate-x-0!'
+                  navOpened={false}
+                />
+              </div>
+            </div>
+
+            <div className='w-full flex flex-col gap-4 text-start mt-6'>
+              <div className='flex items-center justify-between w-full px-1'>
+                <div className='flex items-center gap-2 text-sm font-semibold tracking-tight text-foreground'>
+                  <SparkleIcon size={16} weight='fill' />
+                  <span>{String(searchObj.moods_title || 'Explore Moods & Genres')}</span>
+                </div>
+              </div>
+
+              <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 w-full'>
+                {moodItems.map((mood, idx) => (
+                  <motion.button
+                    key={mood.query}
+                    type='button'
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: Math.min(idx * 0.03, 0.3), ease: 'easeOut' }}
+                    onClick={() => handleGenreClick(mood.query)}
+                    className={cn(
+                      'group relative h-20 rounded-xl overflow-hidden cursor-pointer',
+                      'flex items-center justify-between p-3.5 text-left bg-card/40 hover:bg-card/70 transition-all backdrop-blur-sm'
+                    )}
+                    data-smooth-interaction="true"
+                  >
+                    <div
+                      className={cn(
+                        'absolute w-1 m-1.75 h-[calc(100%-14px)] rounded-full blur-sm top-0 left-0 transition-all group-hover:w-2',
+                        mood.accent || 'bg-primary'
+                      )}
+                    />
+                    <div
+                      className={cn(
+                        'absolute inset-0 bg-linear-to-r opacity-20 group-hover:opacity-40 transition-opacity',
+                        mood.color || 'from-primary/20 to-transparent'
+                      )}
+                    />
+
+                    <div className='relative z-10 pl-2.5 flex flex-col gap-0.5 min-w-0 flex-1'>
+                      <span className='font-semibold text-sm text-default-foreground/60 truncate group-hover:text-default-foreground transition-colors'>
+                        {mood.title}
+                      </span>
+                      <span className='text-[10px] text-muted-foreground/60 font-mono truncate'>
+                        {mood.query}
+                      </span>
+                    </div>
+
+                    <span className='text-xl ml-2 shrink-0 group-hover:scale-110 transition-transform grayscale opacity-30'>
+                      {mood.emoji || '🎵'}
+                    </span>
+                  </motion.button>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        ) : !loading &&
+          searchResult &&
+          (!filter || filter === 'all') &&
+          Object.keys(searchResult).length > 0 ? (
+          Object.keys(searchResult).map(
+            (category) =>
+              searchResult[category] &&
+              searchResult[category].length > 0 && (
+                <div
+                  key={category}
+                  className='w-full flex flex-col gap-4 items-start justify-center my-2'
+                >
+                  <h2 className='text-xl text-start font-bold'>
+                    {language.data.app.guilds.player.search.category[
+                      category as keyof typeof language.data.app.guilds.player.search.category
+                    ] || category}
                   </h2>
                   <motion.div
-                    initial={{ opacity: 0, y: 12 }}
+                    initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -12 }}
-                    transition={{ delay: 0.1 * index }}
-                    key={category}
-                    className='flex flex-col gap-4 w-full'
+                    className='w-full flex flex-col gap-2 items-center justify-start'
                   >
-                    {category === 'Top result'
-                      ? (() => {
-                          const track = searchResult[
-                            'Top result'
-                          ][0] as TopResults & {
-                            colorPalette?: {
-                              content1?: {
-                                DEFAULT?: string;
-                                foreground?: string;
-                              };
-                            };
-                            accentColor?: string;
-                          };
-                          const textcolor_class = `${track?.colorPalette?.content1 ? `text-[${track?.colorPalette?.content1?.foreground}] [html.dark_&]:text-[${track?.colorPalette?.content1?.DEFAULT}]` : undefined}`;
-                          const trackTitle =
-                            track.resultType === 'song' ||
-                            track.resultType === 'video' ||
-                            track.resultType === 'album'
-                              ? track.title
-                              : track.resultType === 'artist'
-                                ? track.artists[0].name
-                                : track.resultType === 'artist-detail'
-                                  ? track.artist
-                                  : '';
-                          return (
-                            <>
-                              <div className='flex gap-6 p-6 max-md:p-4 bg-foreground/5 rounded-3xl relative overflow-hidden'>
-                                <Image
-                                  src={`/api/proxy/image?r=${track.thumbnails[0].url}`}
-                                  alt='backdrop'
-                                  classNames={{
-                                    wrapper:
-                                      'w-full h-full absolute !max-w-none top-0 left-0 blur-3xl scale-125 [html.dark_&]:saturate-150 [html.dark_&]:brightness-75 [html.light_&]:saturate-200 [html.light_&]:brightness-200',
-                                  }}
-                                  className='w-full h-full object-cover'
-                                />
-                                <div className='w-28 h-28 md:min-w-28 md:min-h-28 max-md:h-16 max-md:w-16 max-md:min-w-16 max-md:min-h-16 relative overflow-hidden flex-[0 1 auto]'>
-                                  <Image
-                                    src={`/api/proxy/image?r=${track.thumbnails[track.thumbnails.length - 1].url}`}
-                                    alt={trackTitle}
-                                    classNames={{
-                                      wrapper: 'max-w-none',
-                                      img:
-                                        track.resultType === 'artist' ||
-                                        track.resultType === 'artist-detail'
-                                          ? 'rounded-full'
-                                          : undefined,
-                                    }}
-                                    className='w-28 h-28 max-md:w-16 max-md:h-16 object-cover select-none'
-                                  />
-                                  {(track.resultType === 'song' ||
-                                    track.resultType === 'video') &&
-                                  track?.videoId ? (
-                                    <PlayButton
-                                      playPause={
-                                        ponaCommonState?.current?.identifier ===
-                                        track.videoId
-                                      }
-                                      className={
-                                        'rounded-xl absolute top-0 left-0 w-full h-full z-10 ' +
-                                        ` ${ponaCommonState?.current?.identifier === track.videoId ? '' : 'group-hover:opacity-100 opacity-0'}`
-                                      }
-                                      iconSize={12}
-                                      classNames={{
-                                        playpause:
-                                          'rounded-xl text-sm absolute top-0 left-0 w-full h-full z-10 bg-black/32',
-                                      }}
-                                      detail={{
-                                        author: combineArtistName(
-                                          track?.artists
-                                        ),
-                                        identifier: track?.videoId,
-                                        sourceName: 'youtube music',
-                                        resultType: track?.resultType,
-                                        title: trackTitle,
-                                        uri: `https://music.youtube.com/watch?v=${track?.videoId}`,
-                                      }}
-                                    />
-                                  ) : track.resultType === 'album' &&
-                                    track?.browseId ? (
-                                    <Link
-                                      className='cursor-pointer absolute top-0 left-0 w-full h-full z-10'
-                                      onPress={() => {
-                                        router.push(
-                                          `/app/g/${guild?.id}/player/playlist?list=${track?.browseId}abm`
-                                        );
-                                      }}
-                                    />
-                                  ) : (
-                                    track.resultType === 'artist' &&
-                                    track?.artists[0].id && (
-                                      <Link
-                                        className='cursor-pointer absolute top-0 left-0 w-full h-full z-10'
-                                        onPress={() => {
-                                          router.push(
-                                            `/app/g/${guild?.id}/player/c?c=${track?.artists[0].id}`
-                                          );
-                                        }}
-                                      />
-                                    )
-                                  )}
-                                </div>
-                                <div className='flex flex-col gap-1 items-start justify-center z-10 w-0 min-w-0 flex-1'>
-                                  {track.resultType === 'artist' &&
-                                    track.artists[0].id ===
-                                      'UCsuWLo_X3E2c31LUI0nZK-w' && (
-                                      <Chip
-                                        size='sm'
-                                        className='tracking-wider bg-[#a7b9df]'
-                                        startContent={
-                                          <Cloud
-                                            size={12}
-                                            className='mx-1'
-                                            weight='fill'
-                                          />
-                                        }
-                                      >
-                                        {language.data.spacial.little_angel}
-                                      </Chip>
-                                    )}
-                                  {track.resultType === 'song' ||
-                                  track.resultType === 'video' ? (
-                                    <Tooltip content='More info'>
-                                      <h1
-                                        className={
-                                          'max-w-full cursor-pointer text-start text-2xl overflow-hidden overflow-ellipsis whitespace-nowrap ' +
-                                          textcolor_class
-                                        }
-                                      >
-                                        {trackTitle}
-                                      </h1>
-                                    </Tooltip>
-                                  ) : track.resultType === 'artist' ? (
-                                    <Link
-                                      className='cursor-pointer'
-                                      onPress={() => {
-                                        router.push(
-                                          `/app/g/${guild?.id}/player/c?c=${track?.artists[0].id}`
-                                        );
-                                      }}
-                                    >
-                                      <h1
-                                        className={
-                                          'max-w-full text-start text-2xl overflow-hidden overflow-ellipsis whitespace-nowrap ' +
-                                          textcolor_class
-                                        }
-                                      >
-                                        {trackTitle}
-                                      </h1>
-                                    </Link>
-                                  ) : (
-                                    <h1 className='max-w-full text-start text-foreground text-2xl overflow-hidden overflow-ellipsis whitespace-nowrap'>
-                                      {trackTitle}
-                                    </h1>
-                                  )}
-                                  <div className='flex flex-row w-[calc(100%_-_2rem)] gap-1 items-center justify-start z-10 min-w-0'>
-                                    <span
-                                      className={
-                                        'flex-initial ' + textcolor_class
-                                      }
-                                    >
-                                      {language.data.app.guilds.player.search
-                                        .category[
-                                        (track.resultType[0].toUpperCase() +
-                                          track.resultType.slice(
-                                            1,
-                                            track.resultType.length
-                                          ) +
-                                          's') as keyof typeof language.data.app.guilds.player.search.category
-                                      ]
-                                        ? language.data.app.guilds.player.search
-                                            .category[
-                                            (track.resultType[0].toUpperCase() +
-                                              track.resultType.slice(
-                                                1,
-                                                track.resultType.length
-                                              ) +
-                                              's') as keyof typeof language.data.app.guilds.player.search.category
-                                          ]
-                                        : track.resultType.toLocaleUpperCase()}
-                                    </span>
-                                    {track.resultType !== 'artist' &&
-                                      track.resultType !== 'artist-detail' && (
-                                        <>
-                                          {' '}
-                                          ·{' '}
-                                          <span
-                                            className={
-                                              'max-w-full text-start text-foreground overflow-hidden overflow-ellipsis whitespace-nowrap flex-initial ' +
-                                              textcolor_class
-                                            }
-                                          >
-                                            {combineArtistName(
-                                              track.artists,
-                                              true,
-                                              router
-                                            )}
-                                          </span>
-                                        </>
-                                      )}
-                                    {(track.resultType === 'song' ||
-                                      track.resultType === 'video') && (
-                                      <>
-                                        {' '}
-                                        ·{' '}
-                                        <span className='flex-initial'>
-                                          {track.duration}
-                                        </span>
-                                      </>
-                                    )}
-                                    {track.resultType === 'artist' && (
-                                      <>
-                                        {' '}
-                                        ·{' '}
-                                        <span
-                                          className={`flex-initial ${textcolor_class}`}
-                                        >
-                                          {
-                                            language.data.app.guilds.player
-                                              .artist.subscriber
-                                          }{' '}
-                                          {track.subscribers}
-                                        </span>
-                                      </>
-                                    )}
-                                  </div>
-                                  <div className='flex flex-row gap-3 items-center justify-start w-full mt-1'>
-                                    {(track.resultType === 'song' ||
-                                      track.resultType === 'video') &&
-                                    track?.videoId ? (
-                                      <>
-                                        <PlayButton
-                                          playPause={
-                                            ponaCommonState?.current
-                                              ?.identifier === track.videoId
-                                          }
-                                          className={
-                                            'rounded-full relative !opacity-100 p-2 w-max'
-                                          }
-                                          iconSize={12}
-                                          classNames={{
-                                            playpause:
-                                              'relative !opacity-100 p-2 w-max bg-default/40 !h-10',
-                                          }}
-                                          detail={{
-                                            author: combineArtistName(
-                                              track?.artists
-                                            ),
-                                            identifier: track?.videoId,
-                                            sourceName: 'youtube music',
-                                            resultType: track?.resultType,
-                                            title: trackTitle,
-                                            uri: `https://music.youtube.com/watch?v=${track?.videoId}`,
-                                          }}
-                                        />
-                                        <Button
-                                          color='default'
-                                          className='bg-default/40'
-                                          radius='full'
-                                          isIconOnly
-                                        >
-                                          <Heart weight='bold' />
-                                        </Button>
-                                        <Button
-                                          color='default'
-                                          className='bg-default/40'
-                                          radius='full'
-                                          isIconOnly
-                                        >
-                                          <ShareFat weight='fill' />
-                                        </Button>
-                                      </>
-                                    ) : (
-                                      track.resultType === 'artist' && (
-                                        <>
-                                          {track.artists[0].id && (
-                                            <SubscribeButton
-                                              channelId={track.artists[0].id}
-                                              artistName={track.artists[0].name}
-                                              preset='minimal'
-                                              triggerProps={{
-                                                style:
-                                                  track.accentColor &&
-                                                  track.colorPalette
-                                                    ? {
-                                                        background:
-                                                          track.accentColor,
-                                                        color:
-                                                          track.colorPalette
-                                                            ?.content1
-                                                            ?.foreground,
-                                                      }
-                                                    : undefined,
-                                              }}
-                                              DynamicIcon={Heart}
-                                            />
-                                          )}
-                                          <Button
-                                            href={`/app/g/${guild?.id}/player/c?c=${track?.artists[0].id}`}
-                                            size='sm'
-                                            onPress={() => {
-                                              router.push(
-                                                `/app/g/${guild?.id}/player/c?c=${track?.artists[0].id}`
-                                              );
-                                            }}
-                                            color='default'
-                                            className='bg-default/40'
-                                            radius='full'
-                                            isIconOnly
-                                          >
-                                            <CaretRight weight='bold' />
-                                          </Button>
-                                        </>
-                                      )
-                                    )}
-                                  </div>
-                                </div>
-                              </div>
-                            </>
-                          );
-                        })()
-                      : searchResult[category].map((result, idx) => (
-                          <Track key={idx} data={result} />
+                    {category === 'Top result' ? (
+                      <>
+                        <TopResultCard track={searchResult[category][0] as TrackResultItem} />
+                        {searchResult[category].slice(1).map((result, idx) => (
+                          <Track key={getTrackKey(result, idx + 1)} result={result} />
                         ))}
+                      </>
+                    ) : (
+                      searchResult[category].map((result, idx) => (
+                        <Track key={getTrackKey(result, idx)} result={result} />
+                      ))
+                    )}
                   </motion.div>
                 </div>
               )
           )
         ) : !loading &&
-          filter &&
+          filter !== 'all' &&
           searchResult &&
-          searchResult[filterNormallize] &&
-          searchResult[filterNormallize].length > 0 ? (
-          <div className='w-full flex flex-col gap-4 items-center justify-start'>
-            {searchResult[filterNormallize].map((result, idx) => (
-              <Track key={idx} data={result} />
+          searchResult[filterNormalize] &&
+          searchResult[filterNormalize].length > 0 ? (
+          <div className='w-full flex flex-col gap-2 items-center justify-start'>
+            {searchResult[filterNormalize].map((result, idx) => (
+              <Track key={getTrackKey(result, idx)} result={result} />
             ))}
           </div>
         ) : (
           !loading && (
-            <div className='w-full min-h-[36vh] flex flex-col gap-4 items-center justify-center'>
-              <FlyingSaucer weight='fill' size={74} />
-              <h1 className='text-lg tracking-wider'>
-                {language.data.app.guilds.player.search.notfound}
-              </h1>
-              <h4 className='text-sm tracking-wider'>＼（〇_ｏ）／</h4>
-            </div>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.2 }}
+              className='w-full max-w-lg mx-auto my-8 p-8 flex flex-col items-center text-center gap-5'
+            >
+              <div className='relative flex flex-col items-center gap-2'>
+                <motion.div
+                  animate={{ y: [0, -6, 0], rotate: [0, 3, -3, 0] }}
+                  transition={{ repeat: Infinity, duration: 3.5, ease: 'easeInOut' }}
+                  className='size-16 flex items-center justify-center'
+                >
+                  <FlyingSaucerIcon weight='fill' size={36} className='text-muted-foreground' />
+                </motion.div>
+                <span className='text-xs font-mono text-muted-foreground'>
+                  {String(searchObj.notfound_mascot_tag || 'Transmission Lost (º﹃º)')}
+                </span>
+              </div>
+
+              <div className='flex flex-col gap-1.5'>
+                <h2 className='text-lg md:text-xl font-bold tracking-tight text-foreground break-all'>
+                  {notFoundTitle}
+                </h2>
+                <p className='text-xs md:text-sm text-muted-foreground max-w-md'>
+                  {String(searchObj.notfound_subtitle || 'Alien radar detected zero audio signals. Try another keyword or browse moods below.')}
+                </p>
+              </div>
+
+              <div className='flex flex-wrap items-center justify-center gap-2.5 mt-1'>
+                <Button
+                  onClick={handleClearSearch}
+                  variant='default'
+                  size='lg'
+                  className='rounded-full px-4 gap-2 font-medium cursor-pointer shadow-sm'
+                >
+                  <ArrowClockwiseIcon size={16} weight='bold' />
+                  <span>{String(searchObj.clear_search || 'Reset Search')}</span>
+                </Button>
+
+                <Button
+                  onClick={() => handleGenreClick('Top Hits')}
+                  variant='outline'
+                  size='lg'
+                  className='rounded-full px-4 gap-2 font-medium cursor-pointer'
+                >
+                  <SparkleIcon size={14} weight='fill' />
+                  <span>{String(searchObj.try_popular || 'Explore Popular')}</span>
+                </Button>
+              </div>
+            </motion.div>
           )
         )}
       </div>

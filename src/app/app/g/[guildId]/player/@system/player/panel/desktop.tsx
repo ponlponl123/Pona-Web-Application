@@ -1,54 +1,18 @@
 'use client';
-import { useGlobalContext } from '@/contexts/globalContext';
-import { useLanguageContext } from '@/contexts/languageContext';
-import { usePlaybackContext } from '@/contexts/playbackContext';
-import { usePonaMusicContext } from '@/contexts/ponaMusicContext';
-import { useUserSettingContext } from '@/contexts/userSettingContext';
+
+import React, { useEffect, useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
+import Image from 'next/image';
+import { useParams, usePathname, useRouter } from 'next/navigation';
 import { AnimatePresence, HTMLMotionProps, motion } from 'framer-motion';
-import React from 'react';
-
-import { msToTime } from '@/utils/time';
-
-import LyricsDisplay from '@/components/music/lyricsDisplay';
-import { Track, UnresolvedTrack } from '@/interfaces/ponaPlayer';
-import {
-  Button,
-  Chip,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownSection,
-  DropdownTrigger,
-  Image,
-  ScrollShadow,
-  Skeleton,
-  Spinner,
-  Tab,
-  Tabs,
-} from '@heroui/react';
-import {
-  DotsThreeVertical,
-  Heart,
-  MonitorPlay,
-  PersonSimple,
-  PictureInPicture,
-  Play,
-  Trash,
-} from '@phosphor-icons/react/dist/ssr';
-
-import {
-  ContextMenu,
-  ContextMenuContent,
-  ContextMenuItem,
-  ContextMenuLabel,
-  ContextMenuTrigger,
-} from '@/components/context-menu';
-import Equalizing from '@/components/equalizing';
-import { combineArtistName } from '@/components/music/searchResult/track';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { toast } from 'sonner';
 import {
   closestCenter,
   DndContext,
   DragEndEvent,
+  DragOverlay,
+  DragStartEvent,
   KeyboardSensor,
   PointerSensor,
   useSensor,
@@ -62,44 +26,119 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { useRouter } from 'next/navigation';
-import toast from 'react-hot-toast';
-import Related from './related';
+import {
+  DotsThreeVerticalIcon,
+  HeartIcon,
+  MonitorPlayIcon,
+  PersonSimpleIcon,
+  PictureInPictureIcon,
+  PlayIcon,
+  PlusIcon,
+  SpinnerIcon,
+  TrashIcon,
+} from '@phosphor-icons/react/dist/ssr';
 
-function DesktopPonaPlayerPanel() {
-  const { language } = useLanguageContext();
-  const {
-    ponaCommonState,
-    ponaTrackQueue,
-    setPonaTrackQueue,
-    isFullscreenMode,
-    setIsFullscreenMode,
-  } = useGlobalContext();
-  const { playback } = usePlaybackContext();
-  const { userSetting } = useUserSettingContext();
-  const { socket, playerPopup } = usePonaMusicContext();
+import LyricsDisplay from '@/components/music/lyricsDisplay';
+import { combineArtistName } from '@/components/music/searchResult/track';
+import { Button } from '@/components/ui/button';
+import { emitWithTimeout } from '@/lib/promiseWithTimeout';
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuLabel,
+  ContextMenuTrigger,
+} from '@/components/ui/context-menu';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Spinner } from '@/components/ui/spinner';
+
+import { useSocket } from '@/contexts/ponaMusicContext';
+import { useAppStore } from '@/store/coreStore';
+import {
+  ponaCommonStateAtom,
+  queueAtom,
+} from '@/store/musicAtoms';
+import { isFullscreenModeAtom, playerPopupAtom } from '@/store/uiAtoms';
+import { Track, UnresolvedTrack } from '@/types/ponaPlayer';
+import { cn } from '@/lib/utils';
+import Related from './related';
+import PNPTQueueSection from '@/components/player/pnptQueue';
+import CustomScrollArea from '@/components/ui/custom/scroll-area';
+import { Tabs, TabsContent, TabsContents, TabsList, TabsTrigger } from '@/components/animate-ui/components/animate/tabs';
+import { AnimateIcon } from '@/components/animate-ui/icons/icon';
+import { AudioLines } from '@/components/animate-ui/icons/audio-lines';
+import { Bot } from '@/components/animate-ui/icons/bot';
+
+
+export default function DesktopPonaPlayerPanel() {
+  const pathname = usePathname();
+  const setPlayerPopup = useSetAtom(playerPopupAtom);
+
+  useEffect(() => {
+    setPlayerPopup(false);
+    document.body.classList.remove('pona-player-focused');
+  }, [pathname, setPlayerPopup]);
+
+  const language = useAppStore((state) => state.language);
+  const userSetting = useAppStore((state) => state.userSetting);
+
+  const ponaCommonState = useAtomValue(ponaCommonStateAtom);
+  const [ponaTrackQueue, setPonaTrackQueue] = useAtom(queueAtom);
+  const [isFullscreenMode, setIsFullscreenMode] = useAtom(isFullscreenModeAtom);
+  const playerPopup = useAtomValue(playerPopupAtom);
+  const { socket } = useSocket();
+
   const currentTrack = ponaCommonState?.current;
-  const videoId = currentTrack?.identifier;
-  const lyricsContainerRef = React.useRef<HTMLElement>(null);
-  const playerPos = playback;
+  const [lyricsContainer, setLyricsContainer] = useState<HTMLDivElement | null>(null);
+  const [activeQueueTrack, setActiveQueueTrack] = useState<Track | UnresolvedTrack | null>(null);
+
+  const playingNextQueue = useMemo(() => {
+    const queue = ponaTrackQueue?.queue;
+    const currentUniqueId = currentTrack?.uniqueId;
+    if (!queue) return [];
+    return queue.filter((track) => track.uniqueId !== currentUniqueId);
+  }, [ponaTrackQueue, currentTrack]);
+
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 5,
+      },
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
 
+  function handleDragStart(event: DragStartEvent) {
+    const { active } = event;
+    const track = playingNextQueue.find(
+      (t, idx) => (t.uniqueId || `track-${idx + 1}`) === active.id
+    );
+    if (track) {
+      setActiveQueueTrack(track);
+    }
+  }
+
   function handleDragEnd(event: DragEndEvent) {
+    setActiveQueueTrack(null);
     if (!ponaTrackQueue) return;
     const { active, over } = event;
     if (over && active.id !== over.id) {
-      setPonaTrackQueue(value => {
+      setPonaTrackQueue((value) => {
         if (!value.queue) return value;
         const oldIndex = value.queue.findIndex(
-          track => track.uniqueId === active.id
+          (track) => track.uniqueId === active.id
         );
         const newIndex = value.queue.findIndex(
-          track => track.uniqueId === over.id
+          (track) => track.uniqueId === over.id
         );
         socket?.emit('move', oldIndex, newIndex);
         return {
@@ -110,299 +149,391 @@ function DesktopPonaPlayerPanel() {
     }
   }
 
+  function handleDragCancel() {
+    setActiveQueueTrack(null);
+  }
+
   return (
-    <>
-      <AnimatePresence>
-        {currentTrack && playerPopup && (
-          <motion.div
-            className={
+    <AnimatePresence>
+      {currentTrack && playerPopup && (
+        <motion.div
+          className={
+            cn(
               (userSetting.dev_pona_player_style === 'modern'
-                ? 'absolute z-40 left-2 p-8 bottom-[6.1rem] max-lg:bottom-[5.3rem] max-lg:h-[calc(100vh_-_5.8rem)] max-md:rounded-lg rounded-3xl w-[calc(100%_-_1rem)] h-[calc(100vh_-_6.6rem)] transition-all ease-out duration-250 overflow-hidden'
-                : 'absolute z-40 left-2 p-8 bottom-[6.4rem] max-lg:bottom-[5.3rem] max-lg:h-[calc(100vh_-_6rem)] max-md:rounded-lg rounded-3xl w-[calc(100%_-_1rem)] h-[calc(100vh_-_6.8rem)] transition-all ease-out duration-250 overflow-hidden') +
+                ? 'absolute z-40 left-2 p-8 bottom-[6.1rem] max-lg:bottom-[5.3rem] max-lg:h-[calc(100vh-5.8rem)] rounded-lg w-[calc(100%-1rem)] h-[calc(100vh-6.6rem)] transition-all ease-out duration-250 overflow-hidden'
+                : 'absolute z-40 left-2 p-8 bottom-[6.4rem] max-lg:bottom-[5.3rem] max-lg:h-[calc(100vh-6rem)] rounded-lg w-[calc(100%-1rem)] h-[calc(100vh-6.8rem)] transition-all ease-out duration-250 overflow-hidden') +
               (userSetting.transparency
                 ? ' to-playground-background/100'
-                : ' [html.light_&]:!from-[hsl(var(--pona-app-music-accent-color-200))] [html.light_&]:!to-[hsl(var(--pona-app-music-accent-color-50))] [html.dark_&]:!to-[hsl(var(--pona-app-music-accent-color-800))] [html.dark_&]:!from-[hsl(var(--pona-app-music-accent-color-400))]')
+                : ' [html.light_&]:from-[hsl(var(--pona-app-music-accent-color-200))]! [html.light_&]:to-[hsl(var(--pona-app-music-accent-color-50))]! [html.dark_&]:to-[hsl(var(--pona-app-music-accent-color-800))]! [html.dark_&]:from-[hsl(var(--pona-app-music-accent-color-400))]!'),
+              'disable-default-transition'
+            )
+          }
+          id='pona-player-panel'
+          transition={{ duration: 0.12 }}
+          initial={{ opacity: 0, pointerEvents: 'none', translateY: 32 }}
+          animate={{ opacity: 1, pointerEvents: 'auto', translateY: 0 }}
+          exit={{ opacity: 0, pointerEvents: 'none', translateY: 64 }}
+        >
+          {userSetting.transparency && (
+            <Image
+              src={`/api/proxy/image?r=${encodeURIComponent(
+                currentTrack?.proxyArtworkUrl ||
+                '/static/Ponlponl123 (1459).png'
+              )}&s=160&blur=28&saturation=96&contrast=16&brightness=24`}
+              alt={currentTrack ? currentTrack?.title : 'Backdrop'}
+              fill
+              unoptimized
+              className='absolute -z-10 scale-[2] w-full h-full top-0 left-0 object-cover [html.dark_&]:brightness-36 contrast-125 [html.light_&]:contrast-75 [html.light_&]:brightness-140 [html.dark_&]:saturate-150 transform-gpu'
+            />
+          )}
+          <div
+            className={
+              cn('absolute -z-10 w-full h-full top-0 left-0 mask-t-from-0 mask-t-to-30%',
+                userSetting.transparency
+                  ? ' bg-linear-to-t [html.light_&]:from-[hsl(var(--pona-app-music-accent-color-50))]! [html.dark_&]:from-[hsl(var(--pona-app-music-accent-color-900))]!'
+                  : '[html.light_&]:bg-[hsl(var(--pona-app-music-accent-color-50))]! [html.dark_&]:bg-[hsl(var(--pona-app-music-accent-color-900))]!'
+              )
             }
-            id='pona=player-panel'
-            transition={{
-              duration: 0.12,
-            }}
-            initial={{ opacity: 0, pointerEvents: 'none', translateY: 32 }}
-            animate={{ opacity: 1, pointerEvents: 'auto', translateY: 0 }}
-            exit={{ opacity: 0, pointerEvents: 'none', translateY: 64 }}
-          >
-            {userSetting.transparency && (
-              <Image
-                src={
-                  `/api/proxy/image?r=` +
-                  encodeURIComponent(
-                    currentTrack?.proxyArtworkUrl ||
-                      '/static/Ponlponl123 (1459).png'
-                  ) +
-                  '&s=512&blur=16&saturation=96&contrast=12'
-                }
-                alt={currentTrack ? currentTrack?.title : 'Backdrop'}
-                className='absolute -z-10 scale-[2] w-full h-full top-0 left-0 object-cover [html.dark_&]:brightness-50 [html.light_&]:brightness-200 [html.dark_&]:saturate-150'
-                classNames={{ wrapper: 'contents' }}
-              />
-            )}
-            <div
-              className={
-                'absolute -z-10 w-full h-full top-0 left-0 ' +
-                (userSetting.transparency
-                  ? ' bg-gradient-to-t [html.light_&]:!from-[hsl(var(--pona-app-music-accent-color-50))] [html.dark_&]:!from-[hsl(var(--pona-app-music-accent-color-900))]'
-                  : '[html.light_&]:!bg-[hsl(var(--pona-app-music-accent-color-50))] [html.dark_&]:!bg-[hsl(var(--pona-app-music-accent-color-900))]')
-              }
-            ></div>
-            <div className='w-full h-full flex gap-12 justify-between items-center pt-16'>
-              <motion.div
-                layoutId='pona-music-panel-artwork'
-                className='m-auto flex flex-col items-center gap-6 max-lg:[body:not(.sidebar-collapsed)_&]:hidden'
-              >
-                <div className='flex flex-wrap max-xl:flex-col gap-4 items-center justify-center -mt-12'>
-                  <Button
-                    color='default'
-                    variant='ghost'
-                    radius='full'
-                    className='w-fit'
-                    isDisabled
-                    onPress={() => {
-                      setIsFullscreenMode(value => !value);
-                    }}
-                  >
-                    {!isFullscreenMode ? (
-                      <>
-                        <MonitorPlay />
-                        {language.data.app.guilds.player.full_screen_mode.enter}
-                      </>
-                    ) : (
-                      <Spinner size='sm' />
-                    )}
-                  </Button>
-                  <Button
-                    color='default'
-                    variant='ghost'
-                    radius='full'
-                    className='w-fit'
-                    isDisabled
-                  >
-                    <PictureInPicture />
-                    {language.data.app.guilds.player.picinpic_mode.enter}
-                  </Button>
-                </div>
-                <div className='w-[56vh] max-2xl:w-[42vh] max-xl:w-[28vh] max-xl:[body:not(.sidebar-collapsed)_&]:w-[20vh] max-lg:w-[12vh] aspect-square relative flex group hover:scale-[1.032] active:scale-[1.016]'>
-                  <Image
-                    src={
-                      currentTrack
-                        ? currentTrack?.proxyHighResArtworkUrl ||
-                          currentTrack?.proxyArtworkUrl
-                        : '/static/Ponlponl123 (1459).png'
-                    }
-                    alt={currentTrack ? currentTrack?.title : 'Artwork'}
-                    className={
-                      'w-full h-full object-cover select-none rounded-2xl'
-                    }
-                    loading='lazy'
-                    shadow='lg'
-                    id='pona-music-artwork'
-                  />
-                  <div className='absolute top-0 left-0 z-14 w-full h-full bg-gradient-to-t to-transparent rounded-2xl [html.light_&]:from-white/40 [html.dark_&]:from-black/40 opacity-0 group-hover:opacity-100 pointer-events-none'></div>
-                </div>
-              </motion.div>
-              <div
-                className='flex-1 min-w-0 h-full max-w-3xl'
-                id='pona-music-queue'
-              >
-                <Tabs
-                  aria-label='Options'
-                  variant='underlined'
-                  size='lg'
-                  radius='full'
-                  fullWidth
-                  classNames={{
-                    tabContent:
-                      '[html.dark_&]:!text-[hsl(var(--pona-app-music-accent-color-300))] [html.light_&]:!text-[hsl(var(--pona-app-music-accent-color-700))]',
-                    cursor:
-                      '[html.dark_&]:bg-[hsl(var(--pona-app-music-accent-color-300))] [html.light_&]:bg-[hsl(var(--pona-app-music-accent-color-700))]',
-                    panel: 'h-full max-h-full',
-                  }}
+          />
+          <div className='w-full h-full flex gap-6 justify-between items-center pt-16'>
+            <motion.div
+              layoutId='pona-music-panel-artwork'
+              className='m-auto flex flex-1 min-w-0 flex-col items-center gap-6 max-lg:[body:not(.sidebar-collapsed)_&]:hidden'
+            >
+              <div className='flex flex-wrap max-xl:flex-col gap-4 items-center justify-center -mt-12'>
+                <Button
+                  variant='ghost'
+                  disabled
+                  className='rounded-full'
+                  onClick={() => setIsFullscreenMode((value) => !value)}
                 >
-                  <Tab
-                    key='next'
-                    title={language.data.app.guilds.player.tabs.next}
-                  >
-                    <ScrollShadow
-                      className='overflow-x-hidden h-full pr-2 pb-4 relative'
-                      style={{
-                        scrollbarWidth: 'thin',
-                        scrollbarColor:
-                          'hsl(var(--pona-app-music-accent-color-500)) transparent',
-                      }}
-                    >
-                      <div className='flex flex-col gap-2 px-3 py-1'>
-                        {ponaTrackQueue &&
-                          ponaTrackQueue.queue &&
-                          ponaTrackQueue.queue[0] && (
-                            <TrackQueue
-                              active={
-                                currentTrack?.uniqueId ===
-                                ponaTrackQueue.queue[0].uniqueId
-                              }
-                              index={0}
-                              track={ponaTrackQueue.queue[0]}
-                            />
-                          )}
-                        {ponaTrackQueue && ponaTrackQueue.queue && (
-                          <DndContext
-                            sensors={sensors}
-                            collisionDetection={closestCenter}
-                            onDragEnd={handleDragEnd}
-                            autoScroll
-                          >
-                            <SortableContext
-                              items={ponaTrackQueue.queue
-                                .filter(track => track.uniqueId !== undefined)
-                                .map(track => track.uniqueId as string)}
-                              strategy={verticalListSortingStrategy}
-                            >
-                              {ponaTrackQueue.queue
-                                .slice(1)
-                                .map((track, index) => {
-                                  const isThisTrack =
-                                    currentTrack?.uniqueId === track.uniqueId;
-                                  return (
-                                    <DraggableTrack
-                                      isLoading={ponaTrackQueue.updating}
-                                      active={isThisTrack}
-                                      index={index + 1}
-                                      key={track.uniqueId}
-                                      track={track}
-                                    />
-                                  );
-                                })}
-                            </SortableContext>
-                          </DndContext>
-                        )}
-                      </div>
-                    </ScrollShadow>
-                  </Tab>
-                  <Tab
-                    key='lyrics'
-                    title={
-                      <>
-                        {language.data.app.guilds.player.tabs.lyrics}
-                        <Chip size='sm' className='mx-3'>
-                          {language.data.extensions.beta}
-                        </Chip>
-                      </>
-                    }
-                    isDisabled={
-                      !(
-                        currentTrack?.lyrics &&
-                        currentTrack?.lyrics?.lyrics?.length > 0
-                      )
-                    }
-                  >
-                    <ScrollShadow
-                      className='h-full pr-2 pt-4 pb-12'
-                      style={{
-                        scrollbarWidth: 'thin',
-                        scrollbarColor:
-                          'hsl(var(--pona-app-music-accent-color-500)) transparent',
-                      }}
-                      ref={lyricsContainerRef}
-                    >
-                      {lyricsContainerRef.current &&
-                        (currentTrack?.lyrics?.isTimestamp ? (
-                          <LyricsDisplay
-                            playerPosition={playerPos}
-                            currentTrack={currentTrack as Track}
-                            lyricsProvider={lyricsContainerRef.current}
-                          />
-                        ) : (
-                          currentTrack?.lyrics?.lyrics &&
-                          currentTrack?.lyrics?.lyrics?.length > 0 &&
-                          (currentTrack?.lyrics?.lyrics as string[]).map(
-                            (lyric, index) => (
-                              <div
-                                key={index}
-                                className='flex items-center gap-2'
-                              >
-                                <span className='text-2xl [html.dark_&]:brightness-125 my-4 text-[hsl(var(--pona-app-music-accent-color-500))]'>
-                                  {lyric}
-                                </span>
-                              </div>
-                            )
-                          )
-                        ))}
-                    </ScrollShadow>
-                  </Tab>
-                  <Tab
-                    key='related'
-                    title={language.data.app.guilds.player.tabs.related}
-                    className='w-full max-w-full'
-                  >
-                    <ScrollShadow
-                      className='h-full pr-2 overflow-y-scroll'
-                      style={{
-                        scrollbarWidth: 'thin',
-                        scrollbarColor:
-                          'hsl(var(--pona-app-music-accent-color-500)) transparent',
-                      }}
-                    >
-                      <Related videoId={videoId} />
-                    </ScrollShadow>
-                  </Tab>
-                </Tabs>
+                  {!isFullscreenMode ? (
+                    <>
+                      <MonitorPlayIcon className='size-4 mr-2' />
+                      {language.data.app.guilds.player.full_screen_mode.enter}
+                    </>
+                  ) : (
+                    <Spinner className='size-4' />
+                  )}
+                </Button>
+                <Button variant='ghost' disabled className='rounded-full'>
+                  <PictureInPictureIcon className='size-4 mr-2' />
+                  {language.data.app.guilds.player.picinpic_mode.enter}
+                </Button>
               </div>
+              <div className='w-[56vh] max-2xl:w-[42vh] max-xl:w-[28vh] max-xl:[body:not(.sidebar-collapsed)_&]:w-[20vh] max-lg:w-[12vh] aspect-square relative flex group hover:scale-[1.032] active:scale-[1.016] transition-transform'>
+                <Image
+                  src={
+                    (currentTrack
+                      ? currentTrack?.proxyHighResArtworkUrl ||
+                      currentTrack?.proxyArtworkUrl
+                      : '/static/Ponlponl123 (1459).png') || '/static/Ponlponl123 (1459).png'
+                  }
+                  alt={currentTrack ? currentTrack?.title : 'Artwork'}
+                  fill
+                  unoptimized
+                  className='w-full h-full object-cover select-none rounded-2xl shadow-xl'
+                  id='pona-music-artwork'
+                />
+                <div className='absolute top-0 left-0 z-14 w-full h-full bg-linear-to-t to-transparent rounded-2xl [html.light_&]:from-white/40 [html.dark_&]:from-black/40 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity' />
+              </div>
+            </motion.div>
+            <div
+              className='w-lg h-full flex max-w-3xl justify-end'
+              id='pona-music-queue'
+            >
+              <Tabs defaultValue='next' className='w-lg h-full flex flex-col'>
+                <TabsList className='w-lg max-w-lg justify-start rounded-none bg-transparent p-0 gap-4' highlightClassname='border-none!'>
+                  <TabsTrigger
+                    value='next'
+                    data-smooth-interaction="true"
+                    className='rounded-none data-[state=active]:bg-transparent data-[state=active]:text-[hsl(var(--pona-app-music-accent-color-500))]'
+                  >
+                    {language.data.app.guilds.player.tabs.next}
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value='lyrics'
+                    data-smooth-interaction="true"
+                    className='rounded-none data-[state=active]:bg-transparent data-[state=active]:text-[hsl(var(--pona-app-music-accent-color-500))]'
+                  >
+                    {language.data.app.guilds.player.tabs.lyrics}
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value='related'
+                    data-smooth-interaction="true"
+                    className='rounded-none data-[state=active]:bg-transparent data-[state=active]:text-[hsl(var(--pona-app-music-accent-color-500))]'
+                  >
+                    {language.data.app.guilds.player.tabs.related}
+                  </TabsTrigger>
+                </TabsList>
+                <TabsContents className='min-h-0 flex-1 max-h-full w-full flex'>
+                  <TabsContent value='next'
+                    className='flex-1 w-lg flex min-h-0 max-h-full'
+                  >
+                    <CustomScrollArea
+                      className="min-h-0 flex-1 border-0 outline-0"
+                      classNames={{
+                        viewport: "relative rounded-none pt-4 pb-12 pr-2 mask-t-from-90% mask-b-from-90%",
+                      }}
+                    >
+                      <div className='flex flex-col gap-3 px-3 py-1'>
+                        {currentTrack && (
+                          <div className='flex flex-col gap-1.5'>
+                            <span className='text-xs font-semibold text-[hsl(var(--pona-app-music-accent-color-500)/0.48)] uppercase tracking-wider px-2'>
+                              {language.data.app.guilds.player.tabs.now_playing}
+                            </span>
+                            <AnimatePresence mode='popLayout'>
+                              <TrackQueue
+                                key={currentTrack.uniqueId || 'now-playing'}
+                                active={true}
+                                index={0}
+                                track={currentTrack}
+                                params={{
+                                  layout: 'position',
+                                  initial: { opacity: 0, y: 12, scale: 0.98 },
+                                  animate: { opacity: 1, y: 0, scale: 1 },
+                                  exit: {
+                                    opacity: 0,
+                                    y: -10,
+                                    scale: 0.96,
+                                    filter: 'blur(4px)',
+                                    transition: { duration: 0.2 },
+                                  },
+                                  transition: {
+                                    type: 'spring',
+                                    stiffness: 400,
+                                    damping: 32,
+                                    mass: 0.6,
+                                  },
+                                  whileHover: { scale: 1.008, transition: { duration: 0.15 } },
+                                  whileTap: { scale: 0.985 },
+                                }}
+                              />
+                            </AnimatePresence>
+                          </div>
+                        )}
+
+                        {playingNextQueue.length > 0 && (
+                          <div className='flex flex-col gap-1.5 mt-2'>
+                            <span className='text-xs font-semibold text-[hsl(var(--pona-app-music-accent-color-500)/0.48)] uppercase tracking-wider px-2'>
+                              {language.data.app.guilds.player.tabs.playing_next}
+                            </span>
+                            <DndContext
+                              sensors={sensors}
+                              collisionDetection={closestCenter}
+                              onDragStart={handleDragStart}
+                              onDragEnd={handleDragEnd}
+                              onDragCancel={handleDragCancel}
+                              autoScroll
+                            >
+                              <SortableContext
+                                items={playingNextQueue
+                                  .map((track: Track | UnresolvedTrack, idx: number) => track.uniqueId || `track-${idx + 1}`)}
+                                strategy={verticalListSortingStrategy}
+                              >
+                                {playingNextQueue.map((track: Track | UnresolvedTrack, targetIdx: number) => (
+                                  <DraggableTrack
+                                    isLoading={ponaTrackQueue.updating}
+                                    active={false}
+                                    index={targetIdx + 1}
+                                    queueIndex={targetIdx}
+                                    key={track.uniqueId || targetIdx}
+                                    track={track}
+                                  />
+                                ))}
+                              </SortableContext>
+                              <TrackDragOverlay track={activeQueueTrack} />
+                            </DndContext>
+                          </div>
+                        )}
+
+                        <PNPTQueueSection />
+                      </div>
+                    </CustomScrollArea>
+                  </TabsContent>
+                  <TabsContent
+                    value='lyrics'
+                    className='flex-1 w-lg flex min-h-0 max-h-full'
+                  >
+                    <CustomScrollArea
+                      className="max-h-full flex-1 border-0 outline-0"
+                      classNames={{
+                        viewport: "relative rounded-none pt-4 pb-12 pr-2 mask-t-from-90% mask-b-from-90%",
+                      }}
+                      ref={setLyricsContainer}
+                    >
+                      {lyricsContainer && (
+                        <>
+                          {!currentTrack?.lyrics ? (
+                            <div className='flex flex-col items-center justify-center py-20 gap-3 text-muted-foreground'>
+                              <SpinnerIcon className='size-8 animate-spin text-[hsl(var(--pona-app-music-accent-color-500))]' />
+                              <span className='text-sm font-medium'>
+                                {(language.data.app.guilds.player.tabs as Record<string, string>).fetching_lyrics || 'Loading lyrics...'}
+                              </span>
+                            </div>
+                          ) : currentTrack.lyrics.error || !currentTrack.lyrics.lyrics || currentTrack.lyrics.lyrics.length === 0 ? (
+                            <div className='text-center py-16 flex flex-col justify-center items-center gap-3 text-[hsl(var(--pona-app-music-accent-color-800))] dark:text-[hsl(var(--pona-app-music-accent-color-500))]'>
+                              <AnimateIcon animate loop loopDelay={1200}>
+                                <Bot size={48} />
+                              </AnimateIcon>
+                              <strong>
+                                {language.data.app.guilds.player.tabs.no_lyrics_available || 'No lyrics available'}
+                              </strong>
+                            </div>
+                          ) : currentTrack.lyrics.isTimestamp ? (
+                            <LyricsDisplay
+                              currentTrack={currentTrack as Track}
+                              lyricsProvider={lyricsContainer}
+                              isPlaying={!ponaCommonState?.pona.paused}
+                            />
+                          ) : (
+                            <div className='w-full text-center pb-[8vh]'>
+                              {(currentTrack.lyrics.lyrics as string[]).map(
+                                (lyric, index) => (
+                                  <div key={index} className='flex items-center justify-center gap-2'>
+                                    <span className='text-2xl my-4 text-[hsl(var(--pona-app-music-accent-color-800))] dark:text-[hsl(var(--pona-app-music-accent-color-500))] font-medium'>
+                                      {lyric}
+                                    </span>
+                                  </div>
+                                )
+                              )}
+                              {currentTrack.lyrics.source && (
+                                <div className='mt-12 mb-4 text-xs text-[hsl(var(--pona-app-music-accent-color-500)/0.5)] font-semibold tracking-wider uppercase text-center'>
+                                  {(
+                                    language.data.app.guilds.player.tabs.lyrics_provided_by ||
+                                    'Lyrics provided by [provider]'
+                                  ).replace('[provider]', currentTrack.lyrics.source)}
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </>
+                      )}
+                    </CustomScrollArea>
+                  </TabsContent>
+                  <TabsContent value='related'
+                    className='flex-1 w-lg flex min-h-0 max-h-full'
+                  >
+                    <CustomScrollArea
+                      className="min-h-0 flex-1 w-lg border-0 outline-0"
+                      classNames={{
+                        viewport: "relative rounded-none pt-4 pr-2 mask-t-from-90% mask-b-from-90%",
+                      }}
+                    >
+                      <Related videoId={currentTrack?.identifier} />
+                    </CustomScrollArea>
+                  </TabsContent>
+                </TabsContents>
+              </Tabs>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
 
 export function DraggableTrack({
   index,
+  queueIndex,
   track,
   active,
   isLoading,
+  showPNPTBadge,
 }: {
   index: number;
+  queueIndex?: number;
   track: Track | UnresolvedTrack;
   active: boolean;
   isLoading?: boolean;
+  showPNPTBadge?: boolean;
 }) {
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id: track.uniqueId as string });
+  const trackId = track.uniqueId || `${showPNPTBadge ? 'pnpt' : 'track'}-${index}`;
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
+    useSortable({
+      id: trackId,
+    });
 
-  const style = {
+  const style: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
-    transition,
+    transition: transition || undefined,
+    opacity: isDragging ? 0.35 : 1,
   };
+
   return (
     <TrackQueue
-      ref={setNodeRef}
       active={active}
       index={index}
+      queueIndex={queueIndex}
+      ref={setNodeRef}
       track={track}
       isLoading={isLoading}
+      showPNPTBadge={showPNPTBadge}
       params={{
-        layout: true,
-        initial: false,
-        whileTap: {
-          outline: '2px hsl(var(--pona-app-music-accent-color-500)) solid',
-          // backdropFilter: 'blur(12px)',
-          userSelect: 'none',
-          zIndex: 24,
-        },
         style,
+        whileHover: isDragging ? undefined : { scale: 1.008, transition: { duration: 0.15 } },
+        whileTap: isDragging ? undefined : { scale: 0.985 },
         ...attributes,
         ...listeners,
       }}
-      key={index}
+      key={trackId}
     />
+  );
+}
+
+export function TrackDragPreview({
+  track,
+  showPNPTBadge,
+}: {
+  track: Track | UnresolvedTrack;
+  showPNPTBadge?: boolean;
+}) {
+  return (
+    <div className='flex size-full box-border items-center gap-4 rounded-xl bg-[hsl(var(--pona-app-music-accent-color-100))] p-1 pl-2 shadow-2xl ring-2 ring-[hsl(var(--pona-app-music-accent-color-500))] opacity-95 dark:bg-[hsl(var(--pona-app-music-accent-color-900))]'>
+      <div className='size-10 shrink-0 overflow-hidden rounded-lg'>
+        <Image
+          src={track.proxyArtworkUrl || track.artworkUrl || (track.identifier ? `/api/proxy/watch?v=${track.identifier}&s=md` : '/static/Ponlponl123 (1459).png')}
+          alt=''
+          height={40}
+          width={40}
+          unoptimized
+          className='size-10 object-cover'
+        />
+      </div>
+      <div className='min-w-0 flex-1'>
+        <p className='truncate text-sm font-medium text-[hsl(var(--pona-app-music-accent-color-800))] dark:text-[hsl(var(--pona-app-music-accent-color-500))]'>
+          {track.title}
+        </p>
+        <p className='truncate text-xs text-[hsl(var(--pona-app-music-accent-color-800))]/60 dark:text-[hsl(var(--pona-app-music-accent-color-500))]/60'>
+          {track.author}
+        </p>
+      </div>
+      {showPNPTBadge && <span className='mr-2 text-[10px] font-semibold text-[hsl(var(--pona-app-music-accent-color-500))]'>Auto</span>}
+    </div>
+  );
+}
+
+export function TrackDragOverlay({
+  track,
+  showPNPTBadge,
+}: {
+  track: Track | UnresolvedTrack | null;
+  showPNPTBadge?: boolean;
+}) {
+  if (typeof document === 'undefined') return null;
+
+  return createPortal(
+    <DragOverlay
+      adjustScale={false}
+      zIndex={1000}
+      dropAnimation={{
+        duration: 200,
+        easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)',
+      }}
+    >
+      {track ? <TrackDragPreview track={track} showPNPTBadge={showPNPTBadge} /> : null}
+    </DragOverlay>,
+    document.body,
   );
 }
 
@@ -412,24 +543,49 @@ export function TrackQueueContextFunction({
   track: Track | UnresolvedTrack;
 }) {
   const router = useRouter();
-  const { language } = useLanguageContext();
-  const { ponaCommonState } = useGlobalContext();
-  const { socket } = usePonaMusicContext();
+  const language = useAppStore((state) => state.language);
+  const ponaCommonState = useAtomValue(ponaCommonStateAtom);
+  const { socket } = useSocket();
+
   return (
     <>
       <ContextMenuLabel>{track.title}</ContextMenuLabel>
-      <ContextMenuItem className='contents' disabled>
-        <Button fullWidth variant='light' className='justify-start' isDisabled>
-          <Heart weight='bold' />{' '}
-          {language.data.app.guilds.player.context_menu.add_to_favorite}
-        </Button>
+      <ContextMenuItem disabled>
+        <HeartIcon className='size-4 mr-2' />
+        {language.data.app.guilds.player.context_menu.add_to_favorite}
       </ContextMenuItem>
-      {ponaCommonState?.current?.uniqueId !== track.uniqueId && (
+      {track._isPNPT && (
         <ContextMenuItem
-          className='contents'
           onClick={() => {
             toast.promise(
-              new Promise<void>((resolve, reject) => {
+              emitWithTimeout((resolve, reject) => {
+                socket?.emit('move_pnpt_to_queue', track.uniqueId, (error: unknown) => {
+                  if (error && (error as { status?: string }).status !== 'ok') {
+                    reject(error);
+                  } else {
+                    resolve();
+                  }
+                });
+              }),
+              {
+                loading: (language.data.app.guilds.player.toast?.rm_track?.loading || 'Moving...')
+                  .replace('[track_name]', track.title)
+                  .replace('[artist]', String(track.author)),
+                success: (language.data.app.guilds.player.context_menu?.move_to_queue || 'ย้ายไปคิว') + `: ${track.title}`,
+                error: 'Error moving track to queue',
+              }
+            );
+          }}
+        >
+          <PlusIcon className='size-4 mr-2' />
+          {language.data.app.guilds.player.context_menu?.move_to_queue || 'ย้ายไปคิว'}
+        </ContextMenuItem>
+      )}
+      {ponaCommonState?.current?.uniqueId !== track.uniqueId && (
+        <ContextMenuItem
+          onClick={() => {
+            toast.promise(
+              emitWithTimeout((resolve, reject) => {
                 socket?.emit('rm', track.uniqueId, (error: unknown) => {
                   if (error && (error as { status?: string }).status !== 'ok') {
                     reject(error);
@@ -446,31 +602,29 @@ export function TrackQueueContextFunction({
                   .replace('[track_name]', track.title)
                   .replace('[artist]', String(track.author)),
                 error: language.data.app.guilds.player.toast.rm_track.error,
-              },
-              {
-                position: 'top-center',
               }
             );
           }}
+
         >
-          <Button fullWidth variant='light' className='justify-start'>
-            <Trash weight='bold' />{' '}
-            {language.data.app.guilds.player.context_menu.rm_from_queue}
-          </Button>
+          <TrashIcon className='size-4 mr-2' />
+          {language.data.app.guilds.player.context_menu.rm_from_queue}
         </ContextMenuItem>
       )}
       <ContextMenuItem
-        className='contents'
         disabled={!track?.artist}
         onClick={() => {
-          if (track?.artist && track?.artist[0])
-            router.push('player/c?c=' + track?.artist[0].id);
+          if (track?.artist && track?.artist[0]) {
+            const currentPath = window.location.pathname;
+            const basePath = currentPath.includes('/player')
+              ? currentPath.split('/player')[0] + '/player'
+              : currentPath;
+            router.push(`${basePath}/c?c=${track.artist[0].id}`);
+          }
         }}
       >
-        <Button fullWidth variant='light' className='justify-start'>
-          <PersonSimple weight='bold' />{' '}
-          {language.data.app.guilds.player.context_menu.goto_artist}
-        </Button>
+        <PersonSimpleIcon className='size-4 mr-2' />
+        {language.data.app.guilds.player.context_menu.goto_artist}
       </ContextMenuItem>
     </>
   );
@@ -478,280 +632,277 @@ export function TrackQueueContextFunction({
 
 export function TrackQueue({
   index,
+  queueIndex,
   track,
   active,
   isLoading,
+  showPNPTBadge,
   ref,
   params,
 }: {
   index: number;
+  queueIndex?: number;
   track: Track | UnresolvedTrack;
   active: boolean;
   isLoading?: boolean;
-  ref?: React.LegacyRef<HTMLDivElement>;
+  showPNPTBadge?: boolean;
+  ref?: React.Ref<HTMLDivElement>;
   params?: HTMLMotionProps<'div'>;
 }) {
   const router = useRouter();
-  const { ponaCommonState } = useGlobalContext();
-  const { socket } = usePonaMusicContext();
+  const routeParams = useParams();
+  const guildId = routeParams?.guildId;
+  const ponaCommonState = useAtomValue(ponaCommonStateAtom);
+  const { socket } = useSocket();
   const paused = ponaCommonState?.pona?.paused || false;
-  const { language } = useLanguageContext();
+  const language = useAppStore((state) => state.language);
 
   return (
-    <ContextMenu modal={false}>
+    <ContextMenu>
       <ContextMenuTrigger>
         <motion.div
           ref={ref}
-          className={`w-full py-2 px-2.5 flex gap-4 items-center rounded-3xl group ${
-            active
-              ? '[.light_&]:bg-[hsl(var(--pona-app-music-accent-color-100))] [.dark_&]:bg-[hsl(var(--pona-app-music-accent-color-800))] active'
-              : ''
-          } ${isLoading ? 'pointer-events-none' : ''}`}
-          key={index}
+          className={`w-full p-1 pl-2 flex gap-4 items-center rounded-xl group relative transition-colors ${active
+            ? 'in-[.light]:bg-[hsl(var(--pona-app-music-accent-color-100))] in-[.dark]:bg-[hsl(var(--pona-app-music-accent-color-900)/.64)] active'
+            : 'hover:bg-[hsl(var(--pona-app-music-accent-color-500)/0.06)]'
+            } ${isLoading ? 'pointer-events-none' : ''}`}
+          key={track.uniqueId || index}
           {...params}
         >
-          <div className='flex-[0 1 auto] w-11 h-11 select-none relative overflow-hidden rounded-2xl'>
-            <Skeleton isLoaded={!isLoading}>
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            transition={{ duration: 0.15 }}
+            className='flex-[0 1 auto] size-10 select-none relative overflow-hidden rounded-lg'
+          >
+            {!isLoading ? (
               <Image
-                src={track?.proxyArtworkUrl}
+                src={
+                  track?.proxyArtworkUrl ||
+                  track?.artworkUrl ||
+                  (track?.identifier
+                    ? `/api/proxy/watch?v=${track.identifier}&s=md`
+                    : '/static/Ponlponl123 (1459).png')
+                }
                 alt={track.title}
-                height={44}
-                width={44}
+                height={40}
+                width={40}
+                unoptimized
                 className={
-                  'object-cover rounded-lg z-0 ' +
+                  'object-cover rounded-lg z-0 size-10 ' +
                   (!paused && active
                     ? 'brightness-50 saturate-0'
-                    : 'group-hover:brightness-50 group-hover:saturate-0')
+                    : 'group-hover:brightness-75 transition-all')
                 }
               />
-            </Skeleton>
+            ) : (
+              <Skeleton className='w-full h-full rounded-lg' />
+            )}
             <div
               className={
-                'absolute top-0 left-0 w-full h-full bg-background/35 z-[5] ' +
+                'absolute top-0 left-0 w-full h-full bg-background/35 z-5 ' +
                 (!paused && active
                   ? 'opacity-100'
                   : 'group-hover:opacity-100 opacity-0')
               }
-            ></div>
+            />
             {!paused && active ? (
               <Button
-                className='absolute z-10 top-0 left-0 w-full h-full opacity-100'
-                variant='light'
-                radius='md'
-                isIconOnly
-                onPress={() => {
+                variant='ghost'
+                size='icon'
+                className='absolute z-10 top-0 left-0 w-full h-full opacity-100 backdrop-blur-[1px]'
+                onClick={(e) => {
+                  e.stopPropagation();
                   socket?.emit('pause');
                 }}
               >
-                <Equalizing steps={3} />
+                <AnimateIcon animate loop>
+                  <AudioLines className='text-[hsl(var(--pona-app-music-accent-color-200))] dark:text-[hsl(var(--pona-app-music-accent-color-500))] size-4' />
+                </AnimateIcon>
               </Button>
             ) : (
               <Button
-                className='absolute z-10 top-0 left-0 w-full h-full group-hover:opacity-100 opacity-0'
-                variant='light'
-                radius='md'
-                isIconOnly
-                onPress={() => {
+                variant='ghost'
+                size='icon'
+                className='absolute z-20 top-0 left-0 w-full h-full group-hover:opacity-100 opacity-0 pointer-events-auto backdrop-blur-[2px]'
+                onPointerDown={(e) => e.stopPropagation()}
+                onClick={(e) => {
+                  e.stopPropagation();
                   if (active) socket?.emit('play');
-                  else if (index - 1 === 0) socket?.emit('next');
-                  else socket?.emit('skipto', index - 1);
+                  else if (typeof queueIndex === 'number')
+                    socket?.emit('skipto', queueIndex);
                 }}
               >
-                <Play className='text-white' weight='fill' />
+                <PlayIcon className='text-[hsl(var(--pona-app-music-accent-color-500))] size-5' weight='fill' />
               </Button>
             )}
-          </div>
+          </motion.div>
           <div
-            className={`w-0 min-w-0 flex-1 ${isLoading ? 'flex flex-col gap-1' : ''}`}
+            className={`w-0 min-w-0 flex-1 ${isLoading ? 'flex flex-col gap-1' : ''
+              }`}
           >
-            <Skeleton
-              className={
-                isLoading ? 'rounded-full h-5' : 'h-max' + ' max-w-full'
-              }
-              isLoaded={!isLoading}
-              classNames={{
-                content: 'whitespace-nowrap overflow-hidden overflow-ellipsis',
-              }}
-            >
-              <h1 className='max-w-full [div.active_&]:text-[hsl(var(--pona-app-music-accent-color-500))]'>
-                {track.title}
-              </h1>
-            </Skeleton>
-            <Skeleton
-              className={
-                isLoading
-                  ? 'rounded-full h-3 w-2/5'
-                  : 'h-max -mt-1' + ' max-w-full'
-              }
-              isLoaded={!isLoading}
-              classNames={{
-                content: 'whitespace-nowrap overflow-hidden overflow-ellipsis',
-              }}
-            >
-              {track.artist ? (
-                <div className='max-w-full text-xs text-foreground/40 [div.active_&]:text-[hsl(var(--pona-app-music-accent-color-500)/0.4)]'>
-                  {combineArtistName(track.artist, true, router, {
-                    className:
-                      'text-foreground/40 [div.active_&]:text-[hsl(var(--pona-app-music-accent-color-500)/0.4)] text-sm',
-                  })}{' '}
-                  <span className='text-foreground/40 [div.active_&]:text-[hsl(var(--pona-app-music-accent-color-500)/0.4)] text-xs'>
-                    (
-                    {track.requester?.displayName ||
-                      '@' + track.requester?.username}
+            {!isLoading ? (
+              <>
+                <h1 className='max-w-full text-[hsl(var(--pona-app-music-accent-color-800))] dark:text-[hsl(var(--pona-app-music-accent-color-500))] text-sm truncate font-medium'>
+                  {track.title}
+                </h1>
+                {track.artist ? (
+                  <div className='max-w-full text-xs text-[hsl(var(--pona-app-music-accent-color-800))]/60 dark:text-[hsl(var(--pona-app-music-accent-color-500))]/60 truncate'>
+                    {combineArtistName(track.artist, true, router, {
+                      className: 'text-[hsl(var(--pona-app-music-accent-color-800))]/60! dark:text-[hsl(var(--pona-app-music-accent-color-500))]/60! text-xs',
+                    })}{' '}
+                    <span className='text-[hsl(var(--pona-app-music-accent-color-800))]/60 dark:text-[hsl(var(--pona-app-music-accent-color-500))]/60 text-xs'>
+                      (
+                      {track._isPNPT || (!track.requester?.displayName && !track.requester?.username)
+                        ? ((language.data.app.guilds.player.tabs as Record<string, string>)?.pnpt_auto_badge || 'อัตโนมัติ')
+                        : (track.requester?.displayName || '@' + track.requester?.username)}
+                      )
+                    </span>
+                  </div>
+                ) : (
+                  <span className='max-w-full text-xs text-[hsl(var(--pona-app-music-accent-color-800))]/60 dark:text-[hsl(var(--pona-app-music-accent-color-500))]/60 truncate'>
+                    {track.author} (
+                    {track._isPNPT || (!track.requester?.displayName && !track.requester?.username)
+                      ? ((language.data.app.guilds.player.tabs as Record<string, string>)?.pnpt_auto_badge || 'อัตโนมัติ')
+                      : (track.requester?.displayName || '@' + track.requester?.username)}
                     )
                   </span>
-                </div>
-              ) : (
-                <span className='max-w-full text-xs text-foreground/40 [div.active_&]:text-[hsl(var(--pona-app-music-accent-color-500)/0.4)]'>
-                  {track.author} (
-                  {track.requester?.displayName ||
-                    '@' + track.requester?.username}
-                  )
-                </span>
-              )}
-            </Skeleton>
+                )}
+              </>
+            ) : (
+              <>
+                <Skeleton className='h-4 w-3/4 rounded' />
+                <Skeleton className='h-3 w-1/2 rounded' />
+              </>
+            )}
           </div>
-          <div
-            className={`flex-[0 1 auto] ml-auto relative w-12 h-12 flex items-center justify-center ${isLoading ? 'opacity-0 pointer-events-none' : ''}`}
-          >
-            <span className='[div.active_&]:text-[hsl(var(--pona-app-music-accent-color-500)/0.64)] group-hover:opacity-0 opacity-100 pointer-events-none'>
-              {msToTime(track.duration || 0)}
+
+          {showPNPTBadge && (
+            <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-[hsl(var(--pona-app-music-accent-color-500)/0.15)] text-[hsl(var(--pona-app-music-accent-color-500))] select-none">
+              {(language.data.app.guilds.player.tabs as Record<string, string>)?.pnpt_auto_badge || 'Auto'}
             </span>
-            <Dropdown
-              shouldBlockScroll={false}
-              className='bg-content1/90 backdrop-blur-lg backdrop-brightness-200 backdrop-saturate-200 w-64 rounded-2xl p-[2px] border-2 border-content1-foreground/5 flex flex-col gap-[2px]'
-            >
-              <DropdownTrigger>
-                <Button
-                  className='absolute z-10 top-0 left-0 w-full h-full group-hover:opacity-100 opacity-0'
-                  variant='light'
-                  radius='full'
-                  isIconOnly
-                >
-                  <DotsThreeVertical weight='bold' />
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                classNames={{
-                  base: 'p-0',
-                }}
-              >
-                <DropdownSection
-                  title={track.title}
-                  classNames={{
-                    heading:
-                      'mb-2 opacity-100 text-foreground mx-2 mb-1 mt-2 text-sm max-h-none block',
-                    base: 'm-0',
-                  }}
-                >
-                  <DropdownItem
-                    className='p-0 rounded-xl hover:!bg-default/40'
-                    key='add_to_fav'
-                  >
-                    <Button
-                      isDisabled
-                      fullWidth
-                      variant='light'
-                      className='justify-start !bg-transparent'
-                    >
-                      <Heart weight='bold' />{' '}
-                      {
-                        language.data.app.guilds.player.context_menu
-                          .add_to_favorite
-                      }
-                    </Button>
-                  </DropdownItem>
-                  {!active ? (
-                    <DropdownItem
-                      className='p-0 rounded-xl hover:!bg-default/40'
-                      key='rm_from_queue'
-                    >
-                      <Button
-                        fullWidth
-                        variant='light'
-                        className='justify-start !bg-transparent'
-                        onPress={() => {
-                          toast.promise(
-                            new Promise<void>((resolve, reject) => {
-                              socket?.emit(
-                                'rm',
-                                track.uniqueId,
-                                (error: unknown) => {
-                                  if (
-                                    error &&
-                                    (error as { status?: string }).status !==
-                                      'ok'
-                                  ) {
-                                    reject(error);
-                                  } else {
-                                    resolve();
-                                  }
-                                }
-                              );
-                            }),
-                            {
-                              loading:
-                                language.data.app.guilds.player.toast.rm_track.loading
-                                  .replace('[track_name]', track.title)
-                                  .replace('[artist]', String(track.author)),
-                              success:
-                                language.data.app.guilds.player.toast.rm_track.success
-                                  .replace('[track_name]', track.title)
-                                  .replace('[artist]', String(track.author)),
-                              error:
-                                language.data.app.guilds.player.toast.rm_track
-                                  .error,
-                            },
-                            {
-                              position: 'top-center',
+          )}
+
+          <div
+            className={`flex-[0 1 auto] ml-auto relative w-12 h-12 flex items-center justify-center ${isLoading ? 'opacity-0 pointer-events-none' : ''
+              }`}
+          >
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                render={
+                  <Button variant='ghost' size='icon' className='rounded-full'>
+                    <DotsThreeVerticalIcon className='size-5' />
+                  </Button>
+                }
+              />
+              <DropdownMenuContent align='end' className='w-56 rounded-lg'>
+                <DropdownMenuLabel>{track.title}</DropdownMenuLabel>
+                <DropdownMenuItem disabled>
+                  <HeartIcon className='size-4 mr-2' />
+                  {
+                    language.data.app.guilds.player.context_menu
+                      .add_to_favorite
+                  }
+                </DropdownMenuItem>
+                {track._isPNPT && (
+                  <DropdownMenuItem
+                    onClick={() => {
+                      toast.promise(
+                        emitWithTimeout((resolve, reject) => {
+                          socket?.emit(
+                            'move_pnpt_to_queue',
+                            track.uniqueId,
+                            (error: unknown) => {
+                              if (
+                                error &&
+                                (error as { status?: string }).status !== 'ok'
+                              ) {
+                                reject(error);
+                              } else {
+                                resolve();
+                              }
                             }
                           );
-                        }}
-                      >
-                        <Trash weight='bold' />{' '}
+                        }),
                         {
-                          language.data.app.guilds.player.context_menu
-                            .rm_from_queue
+                          loading: (language.data.app.guilds.player.toast?.rm_track?.loading || 'Moving...')
+                            .replace('[track_name]', track.title)
+                            .replace('[artist]', String(track.author)),
+                          success: (language.data.app.guilds.player.context_menu?.move_to_queue || 'ย้ายไปคิว') + `: ${track.title}`,
+                          error: 'Error moving track to queue',
                         }
-                      </Button>
-                    </DropdownItem>
-                  ) : null}
-                  <DropdownItem
-                    className='p-0 rounded-xl hover:!bg-default/40'
-                    key='goto_artist'
+                      );
+                    }}
                   >
-                    <Button
-                      fullWidth
-                      variant='light'
-                      className='justify-start !bg-transparent'
-                      isDisabled={!track.artist}
-                      onPress={() => {
-                        if (track?.artist && track?.artist[0])
-                          router.push('player/c?c=' + track?.artist[0].id);
-                      }}
-                    >
-                      <PersonSimple weight='bold' />{' '}
-                      {language.data.app.guilds.player.context_menu.goto_artist}
-                    </Button>
-                  </DropdownItem>
-                </DropdownSection>
-              </DropdownMenu>
-            </Dropdown>
+                    <PlusIcon className='size-4 mr-2' />
+                    {language.data.app.guilds.player.context_menu?.move_to_queue || 'ย้ายไปคิว'}
+                  </DropdownMenuItem>
+                )}
+                {ponaCommonState?.current?.uniqueId !== track.uniqueId && (
+                  <DropdownMenuItem
+                    onClick={() => {
+                      toast.promise(
+                        emitWithTimeout((resolve, reject) => {
+                          socket?.emit(
+                            'rm',
+                            track.uniqueId,
+                            (error: unknown) => {
+                              if (
+                                error &&
+                                (error as { status?: string }).status !== 'ok'
+                              ) {
+                                reject(error);
+                              } else {
+                                resolve();
+                              }
+                            }
+                          );
+                        }),
+                        {
+                          loading:
+                            language.data.app.guilds.player.toast.rm_track.loading
+                              .replace('[track_name]', track.title)
+                              .replace('[artist]', String(track.author)),
+                          success:
+                            language.data.app.guilds.player.toast.rm_track.success
+                              .replace('[track_name]', track.title)
+                              .replace('[artist]', String(track.author)),
+                          error:
+                            language.data.app.guilds.player.toast.rm_track
+                              .error,
+                        }
+                      );
+                    }}
+                  >
+                    <TrashIcon className='size-4 mr-2' />
+                    {language.data.app.guilds.player.context_menu.rm_from_queue}
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuItem
+                  disabled={!track.artist}
+                  onClick={() => {
+                    if (track?.artist && track?.artist[0]) {
+                      const currentPath = window.location.pathname;
+                      const basePath = currentPath.includes('/player')
+                        ? currentPath.split('/player')[0] + '/player'
+                        : `/app/g/${guildId}/player`;
+                      router.push(`${basePath}/c?c=${track.artist[0].id}`);
+                    }
+                  }}
+                >
+                  <PersonSimpleIcon className='size-4 mr-2' />
+                  {language.data.app.guilds.player.context_menu.goto_artist}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </motion.div>
       </ContextMenuTrigger>
-      <ContextMenuContent className='z-50 contents'>
-        <motion.div
-          initial={{ opacity: 0, y: -6, x: -6 }}
-          animate={{ opacity: 1, y: 0, x: 0 }}
-          exit={{ opacity: 0, y: 12 }}
-          className='bg-content1/90 backdrop-blur-lg backdrop-brightness-200 backdrop-saturate-200 w-64 rounded-2xl p-[2px] border-2 border-content1-foreground/5 flex flex-col gap-[2px]'
-        >
-          <TrackQueueContextFunction track={track} />
-        </motion.div>
+
+      <ContextMenuContent className='w-56 rounded-lg'>
+        <TrackQueueContextFunction track={track} />
       </ContextMenuContent>
     </ContextMenu>
   );
 }
 
-export default DesktopPonaPlayerPanel;

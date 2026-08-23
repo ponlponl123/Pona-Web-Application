@@ -1,62 +1,45 @@
-import { HttpStatusCode } from 'axios';
-import fs from 'fs';
-import { NextRequest } from 'next/server';
-const patch_notes_path = './docs/patches';
+import { NextRequest, NextResponse } from "next/server"
+import { readFile, access } from "node:fs/promises"
+import path from "node:path"
 
+/**
+ * Next.js API Route Handler for fetching specific patch note file.
+ * Refactored to standard Node.js runtime (fs/promises) for universal compatibility.
+ */
 export async function GET(
   _: NextRequest,
   { params }: { params: Promise<{ tag: string; version: string }> }
-) {
-  const parameter = await params;
-  const tag = parameter.tag;
-  const version = parameter.version;
-  if (!tag)
-    return Response.json(
-      {
-        message: 'BAD_REQUEST: Missing patch note tag parameter',
+): Promise<NextResponse> {
+  const { tag, version } = await params
+
+  if (!tag || !version) {
+    return NextResponse.json(
+      { message: "BAD_REQUEST: Missing parameters" },
+      { status: 400 }
+    )
+  }
+
+  // Sanitize path parameters to prevent directory traversal
+  const safeTag = path.basename(tag)
+  const safeVersion = path.basename(version)
+  const filePath = path.join(process.cwd(), "docs", "patches", safeTag, safeVersion)
+
+  try {
+    await access(filePath)
+    const content = await readFile(filePath, "utf-8")
+
+    return new NextResponse(content, {
+      status: 200,
+      headers: {
+        "Content-Type": "text/plain; charset=utf-8",
+        "Cache-Control": "public, max-age=3600, stale-while-revalidate=86400",
       },
-      { status: HttpStatusCode.BadRequest }
-    );
-
-  if (!version)
-    return Response.json(
-      {
-        message: 'BAD_REQUEST: Missing patch note version parameter',
-      },
-      { status: HttpStatusCode.BadRequest }
-    );
-
-  const tags = fs.readdirSync(patch_notes_path);
-  const findTag = tags.find(patch => patch === tag);
-
-  if (!findTag || findTag?.length === 0)
-    return Response.json(
-      {
-        message: `NOT_FOUND: Patch note tag ${tag} is not found`,
-        available_tags: tags,
-      },
-      { status: HttpStatusCode.NotFound }
-    );
-
-  const patch_notes = fs.readdirSync(`${patch_notes_path}/${tag}`);
-  const findPatchNotes = patch_notes.find(notes => notes === version);
-  if (!findPatchNotes || findPatchNotes?.length === 0)
-    return Response.json(
-      {
-        message: `NOT_FOUND: Patch note version ${version} is not found`,
-        available_tags: patch_notes,
-      },
-      { status: HttpStatusCode.NotFound }
-    );
-
-  const readNote = fs.readFileSync(
-    `${patch_notes_path}/${tag}/${version}`,
-    'utf-8'
-  );
-  return new Response(readNote, {
-    headers: {
-      'Content-Type': 'text/plain',
-    },
-    status: HttpStatusCode.Ok,
-  });
+    })
+  } catch {
+    return NextResponse.json(
+      { message: "NOT_FOUND: Patch note not found" },
+      { status: 404 }
+    )
+  }
 }
+

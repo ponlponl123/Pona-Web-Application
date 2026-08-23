@@ -1,34 +1,38 @@
-'use client';
-import React from 'react';
-import { Confetti, FishSimple, Plant } from '@phosphor-icons/react/dist/ssr';
-import { useLanguageContext } from '@/contexts/languageContext';
-import MyButton from '@/components/button';
-import Link from 'next/link';
+"use client"
+import React from "react"
+import {
+  ConfettiIcon,
+  FishSimpleIcon,
+  PlantIcon,
+} from "@phosphor-icons/react/dist/ssr"
+import MyButton from "@/components/ui/custom/button"
+import Link from "next/link"
+import { useAppStore } from "@/store/coreStore"
 
 function NotFound() {
-  const { language } = useLanguageContext();
+  const language = useAppStore((state) => state.language)
   return (
-    <main className='w-full min-h-screen'>
-      <div className='grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20'>
-        <main className='w-full max-w-screen-sm flex flex-row max-sm:flex-col gap-10 row-start-2 items-center justify-center'>
-          <FishSimple fontSize={64} />
-          <div className='flex flex-col gap-2 max-w-screen-md items-center sm:items-start'>
-            <h1 className='font-bold text-3xl max-sm:text-center'>
+    <main className="min-h-dvh w-full">
+      <div className="grid min-h-dvh grid-rows-[20px_1fr_20px] items-center justify-items-center gap-16 p-8 pb-20 sm:p-20">
+        <main className="row-start-2 flex w-full max-w-screen-sm flex-row items-center justify-center gap-10 max-sm:flex-col">
+          <FishSimpleIcon fontSize={64} />
+          <div className="flex max-w-3xl flex-col items-center gap-2 sm:items-start">
+            <h1 className="text-3xl font-bold max-sm:text-center">
               {language.data.not_found.title}
             </h1>
-            <p className='text-lg max-sm:text-center'>
+            <p className="text-lg max-sm:text-center">
               {language.data.not_found.description}
             </p>
-            <div className='flex flex-wrap sm:gap-3 max-sm:justify-center'>
-              <Link href={'/app'} className='mt-4'>
-                <MyButton variant='invert' size='medium'>
-                  <Confetti />
+            <div className="flex flex-wrap max-sm:justify-center sm:gap-3">
+              <Link href={"/app"} className="mt-4">
+                <MyButton variant="invert" size="medium">
+                  <ConfettiIcon />
                   {language.data.not_found.actions.app}
                 </MyButton>
               </Link>
-              <Link href={'/'} className='mt-4'>
-                <MyButton variant='invert' size='medium'>
-                  <Plant />
+              <Link href={"/"} className="mt-4">
+                <MyButton variant="invert" size="medium">
+                  <PlantIcon />
                   {language.data.not_found.actions.home}
                 </MyButton>
               </Link>
@@ -37,7 +41,7 @@ function NotFound() {
         </main>
       </div>
     </main>
-  );
+  )
 }
 
-export default NotFound;
+export default NotFound

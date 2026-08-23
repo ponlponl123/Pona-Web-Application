@@ -1,0 +1,35 @@
+[data-theme="winter"] {
+  --primary: oklab(52.571% -0.01031 -0.06085);
+  --secondary: oklab(69.374% -0.01287 -0.04621);
+  --success: oklab(60.196% -0.02927 -0.04583);
+  --warning: oklab(79.196% 0.00764 -0.01139);
+  --danger: oklab(30.669% 0.01235 -0.05336);
+  --focus: oklab(52.571% -0.01031 -0.06085);
+  --foreground: oklab(23.805% -0.00372 -0.01531);
+  --background: oklab(97.178% -0.00246 -0.01021);
+  --color-playground-background: oklab(97.178% -0.00246 -0.01021);
+  --card: oklab(100% -0.001 -0.005);
+  --card-foreground: oklab(23.805% -0.00372 -0.01531);
+  --popover: oklab(100% -0.001 -0.005);
+  --popover-foreground: oklab(23.805% -0.00372 -0.01531);
+  --muted: oklab(91% -0.001 -0.005);
+  --border: oklab(83% -0.001 -0.005);
+  --input: oklab(83% -0.001 -0.005);
+}
+
+[data-theme="winter"]:not(.light) {
+  &[data-theme].dark:not(.light),
+  & .dark:not(.light),
+  &:is(.dark:not(.light) *) {
+    --foreground: oklab(97.178% -0.00246 -0.01021);
+    --background: oklab(8.668% -0.00119 -0.00687);
+    --card: oklab(13% -0.001 -0.005);
+    --card-foreground: oklab(97.178% -0.00246 -0.01021);
+    --popover: oklab(13% -0.001 -0.005);
+    --popover-foreground: oklab(97.178% -0.00246 -0.01021);
+    --muted: oklab(21% 0 -0.003);
+    --border: oklab(29% 0 -0.003);
+    --input: oklab(29% 0 -0.003);
+    --color-playground-background: oklab(21.373% -0.00195 -0.01126);
+  }
+}

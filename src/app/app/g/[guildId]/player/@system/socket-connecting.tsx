@@ -1,100 +1,111 @@
 'use client';
-import React from 'react';
+
+import React, { useState } from 'react';
 import CountUp from 'react-countup';
 import { motion } from 'framer-motion';
-import { Chip, Progress } from "@heroui/react";
-import { Plugs, Warning } from '@phosphor-icons/react/dist/ssr';
-import { useLanguageContext } from '@/contexts/languageContext';
+import { ArrowClockwiseIcon } from '@phosphor-icons/react/dist/ssr';
+import { useAppStore } from '@/store/coreStore';
+import { useSocket } from '@/contexts/ponaMusicContext';
+import { Button } from '@/components/ui/button';
+import { AnimateIcon } from '@/components/animate-ui/icons/icon';
+import { Unplug } from '@/components/animate-ui/icons/unplug';
+import { CloudRainWind } from '@/components/animate-ui/icons/cloud-rain-wind';
 
-function SocketConnecting() {
-  const { language } = useLanguageContext();
-  const [timedOut, setTimedOut] = React.useState<boolean>(false);
+export default function SocketConnecting() {
+  const language = useAppStore((state) => state.language);
+  const { socket } = useSocket();
+  const [timedOut, setTimedOut] = useState<boolean>(false);
+  const [isRetrying, setIsRetrying] = useState<boolean>(false);
+
+  const handleRetry = () => {
+    setIsRetrying(true);
+    setTimedOut(false);
+    if (socket) {
+      socket.connect();
+    } else {
+      window.location.reload();
+    }
+    setTimeout(() => {
+      setIsRetrying(false);
+    }, 1500);
+  };
+
   return (
     <motion.div
-      className='absolute w-full h-full top-0 left-0 flex flex-col gap-3 items-center justify-center bg-background/20'
+      className='relative min-h-[calc(100dvh-6rem)] w-full flex flex-col gap-6 items-center justify-center z-10 p-4 select-none'
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 0.48, delay: 1 }}
+      transition={{ duration: 0.48 }}
     >
       {timedOut ? (
-        <>
-          <motion.div
-            className='relative bg-primary/10 border-2 border-primary/10 rounded-3xl p-8 overflow-hidden w-full max-w-96 flex flex-col gap-4 items-center justify-center'
-            initial={{ opacity: 0, scale: 1.32 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{
-              duration: 0.48,
-              delay: 1.24,
-              type: 'spring',
-            }}
-          >
-            <Warning size={32} />
-            <h1 className='text-2xl text-center'>
+        <motion.div
+          className='relative bg-card/50 backdrop-blur-2xl rounded-3xl p-8 overflow-hidden w-full max-w-xs flex flex-col gap-5 items-center justify-center shadow-2xl text-center'
+          initial={{ opacity: 0, scale: 0.9, y: 12 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.48, type: 'spring', bounce: 0.2 }}
+        >
+          <AnimateIcon animate>
+            <CloudRainWind className='size-12' />
+          </AnimateIcon>
+
+          <div className='flex flex-col gap-2'>
+            <h1 className='text-2xl font-extrabold tracking-tight text-foreground'>
               {language.data.app.guilds.player.socket.failed.title}
             </h1>
-            <h3 className='text-lg text-center'>
+            <p className='text-sm text-muted-foreground leading-relaxed px-2'>
               {language.data.app.guilds.player.socket.failed.description}
-            </h3>
-          </motion.div>
-        </>
-      ) : (
-        <>
-          <motion.div
-            initial={{ opacity: 0, scale: 0.64, y: 24 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{
-              duration: 0.48,
-              delay: 1.96,
-              type: 'spring',
-            }}
+            </p>
+          </div>
+
+          <Button
+            onClick={handleRetry}
+            disabled={isRetrying}
+            className='w-full mt-2 gap-2 font-semibold bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg transition-all active:scale-[0.98] rounded-2xl'
+            size='lg'
           >
-            <Chip
-              color='primary'
-              variant='shadow'
-              startContent={<Plugs size={14} weight='fill' className='mx-1' />}
-            >
-              {' '}
-              {language.data.app.guilds.player.socket.connecting.chip} (
-              <CountUp
-                start={0}
-                end={300}
-                duration={1000}
-                useEasing={false}
-                onEnd={() => {
-                  setTimedOut(true);
-                }}
-              />
-              {language.data.app.guilds.player.socket.connecting.sec})
-            </Chip>
-          </motion.div>
-          <motion.div
-            className='relative bg-primary/10 border-2 border-primary/10 rounded-3xl p-8 overflow-hidden w-full max-w-96 flex flex-col gap-4 items-center justify-center'
-            initial={{ opacity: 0, scale: 1.32 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{
-              duration: 0.48,
-              delay: 1.24,
-              type: 'spring',
-            }}
-          >
-            <Progress
-              isIndeterminate
-              aria-label='Loading...'
-              className='w-full absolute top-0 left-0'
-              size='sm'
-              radius='full'
-              classNames={{
-                track: 'bg-transparent',
-              }}
+            <ArrowClockwiseIcon
+              size={18}
+              className={isRetrying ? 'animate-spin' : ''}
             />
-            <h1 className='text-2xl text-center'>
-              {language.data.app.guilds.player.socket.connecting.title}
-            </h1>
+            <span>{isRetrying ? 'Reconnecting...' : 'Retry Connection'}</span>
+          </Button>
+        </motion.div>
+      ) : (
+        <div className='flex flex-col gap-4 items-center justify-center w-full max-w-sm'>
+          <motion.div
+            className='relative bg-card/40 border border-primary/20 backdrop-blur-2xl rounded-3xl p-8 overflow-hidden w-full flex flex-col gap-6 items-center justify-center shadow-2xl text-center'
+            initial={{ opacity: 0, scale: 0.92, y: 16 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.48, type: 'spring', bounce: 0.2 }}
+          >
+            <AnimateIcon animate="default-loop" loopDelay={1000} loop >
+              <Unplug size={40} className={"size-12"} />
+            </AnimateIcon>
+
+            <div className='flex flex-col gap-1.5'>
+              <h1 className='text-2xl font-bold tracking-tight text-foreground'>
+                {language.data.app.guilds.player.socket.connecting.title}
+              </h1>
+              <p className='text-xs text-muted-foreground'>
+                {language.data.app.guilds.player.socket.connecting.description}
+              </p>
+              <span className='text-xs text-muted-foreground mt-4'>
+                <CountUp
+                  start={0}
+                  end={300}
+                  duration={1000}
+                  useEasing={false}
+                  onEnd={() => {
+                    setTimedOut(true);
+                  }}
+                />
+                {language.data.app.guilds.player.socket.connecting.sec}</span>
+            </div>
           </motion.div>
-        </>
+        </div>
       )}
     </motion.div>
   );
 }
 
-export default SocketConnecting;
+

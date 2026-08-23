@@ -1,0 +1,44 @@
+"use client"
+import { ShapesIcon } from "@phosphor-icons/react"
+import Theme from "./theme"
+import Fonts from "./fonts"
+import Player from "./player"
+import Transparency from "./transparency"
+import BlurEffect from "./blur-effect"
+import { useAppStore } from "@/store/coreStore"
+import Pointer from "./pointer"
+
+function Developer() {
+  const language = useAppStore((state) => state.language)
+  return (
+    <>
+      <section
+        className="mx-auto flex w-full max-w-lg flex-col gap-2 p-6"
+        id="layout"
+        data-section
+      >
+        <div className="flex w-full gap-2 max-md:flex-col-reverse md:items-center md:justify-between">
+          <div className="flex min-w-0 flex-1 flex-col gap-2">
+            <h1 className="m-0 text-2xl">
+              {language.data.app.setting.layout.title}
+            </h1>
+            <p className="text-foreground/40">
+              {language.data.app.setting.layout.description}
+            </p>
+          </div>
+          <ShapesIcon weight="fill" className="size-12 translate-y-1.5" />
+        </div>
+        <div className="mx-auto mt-6 h-px w-full max-w-lg bg-foreground/10" />
+      </section>
+      <Theme />
+      <Fonts />
+      <Player />
+      <Transparency />
+      <BlurEffect />
+      <Pointer />
+      <div className="my-12" />
+    </>
+  )
+}
+
+export default Developer

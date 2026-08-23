@@ -1,235 +1,299 @@
 'use client';
-import { Track } from '@/interfaces/ponaPlayer';
-import { ArtistDetailed, PlaylistDetailed } from '@/interfaces/ytmusic';
-import { AlbumDetailed, VideoDetailed } from '@/interfaces/ytmusic-api';
-import { proxyArtwork } from '@/utils/track';
-import { Button, Image } from '@heroui/react';
+import React from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import PlayButton from './button/play';
-import NextLink from "next/link";
-import { combineArtistName } from './searchResult/track';
 
-function MusicCard({ track }: { track: Track }) {
+import { Track } from '@/types/ponaPlayer';
+import { ArtistDetailed, PlaylistDetailed } from '@/types/youtube/ytmusic';
+import { AlbumDetailed, VideoDetailed } from '@/types/youtube/ytmusic-api';
+import { proxyArtwork } from '@/lib/track';
+import { resolveThumbnailUrl } from '@/lib/image';
+import { combineArtistName } from '@/lib/artist';
+import { Button } from '@/components/ui/button';
+import { useDiscordGuildInfo } from '@/contexts/discordGuildInfo';
+import { cn } from '@/lib/utils';
+import PlayButton from './button/play';
+
+export interface MusicCardProps {
+  track: Track;
+  className?: string;
+}
+
+function MusicCard({ track, className }: MusicCardProps) {
   const router = useRouter();
-  if (!track?.proxyArtworkUrl) {
+  if (!track?.proxyHighResArtworkUrl) {
     const resolvedTrack = proxyArtwork(track);
-    if (resolvedTrack?.proxyArtworkUrl) {
+    if (resolvedTrack?.proxyHighResArtworkUrl) {
       track = resolvedTrack as Track;
     }
   }
+  const artworkUrl = track?.proxyHighResArtworkUrl || track?.proxyArtworkUrl || track?.artworkUrl;
+
   return (
-    <>
-      <div className='music-card w-48' aria-label={track?.title}>
-        <div className='flex flex-col items-start justify-start gap-3 w-full'>
-          <div className='overflow-hidden aspect-square w-full group rounded-3xl relative'>
+    <div className={cn('music-card w-48', className)} aria-label={track?.title}>
+      <div className='flex flex-col items-start justify-start gap-3 w-full'>
+        <div className='overflow-hidden aspect-square w-full group rounded-3xl relative bg-muted'>
+          {artworkUrl ? (
             <Image
-              className='object-cover w-full h-full group-hover:scale-110'
-              classNames={{
-                wrapper: 'w-full h-full',
-              }}
-              src={track?.proxyArtworkUrl}
-              alt={track?.title}
+              className='object-cover w-full h-full group-hover:scale-110 transition-transform duration-300'
+              src={artworkUrl}
+              alt={track?.title || 'Track artwork'}
+              fill
+              unoptimized
             />
-            <PlayButton
-              detail={{
-                author: track?.author,
-                identifier: track?.identifier,
-                sourceName: track?.sourceName,
-                resultType: 'track',
-                title: track?.title,
-                uri: track?.uri,
-              }}
-            />
-          </div>
-          <h1 className='w-full text-lg whitespace-nowrap overflow-hidden overflow-ellipsis text-start'>
-            {track?.title}
-          </h1>
+          ) : (
+            <div className='w-full h-full bg-muted flex items-center justify-center text-muted-foreground' />
+          )}
+          <PlayButton
+            detail={{
+              author: track?.author || '',
+              identifier: track?.identifier || '',
+              sourceName: track?.sourceName || '',
+              resultType: 'track',
+              title: track?.title || '',
+              uri: track?.uri || '',
+            }}
+            className='rounded-3xl'
+          />
+        </div>
+        <h1 className='w-full text-lg whitespace-nowrap overflow-hidden text-ellipsis text-start font-medium'>
+          {track?.title}
+        </h1>
+        <div className='flex gap-y-0.5 gap-x-1 min-w-0 flex-1 w-full max-w-full'>
           {track?.artist && track?.artist.length > 0 ? (
             combineArtistName(track?.artist, true, router, {
               className:
-                'opacity-30 hover:opacity-70 active:opacity-40 text-start min-w-0 w-full max-w-full block flex-1 whitespace-nowrap overflow-hidden overflow-ellipsis !no-underline',
+                'opacity-60 hover:opacity-100 text-start block w-max min-w-0 max-w-full whitespace-nowrap overflow-hidden text-ellipsis !no-underline transition-opacity',
             })
           ) : (
-            <span className='w-full text-xs text-foreground/40 whitespace-nowrap overflow-hidden overflow-ellipsis text-start'>
-              {track?.author}
+            <span className='w-full text-xs text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis text-start'>
+              {track?.author ? track.author.replace(/\s*-\s*Topic\s*$/i, '').trim() : ''}
             </span>
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 }
 
-export function VideoCard({ video }: { video: VideoDetailed }) {
+export interface VideoCardProps {
+  video: VideoDetailed;
+  className?: string;
+}
+
+export function VideoCard({ video, className }: VideoCardProps) {
+  const router = useRouter();
+  const thumbnail = resolveThumbnailUrl(video);
+  const formattedArtists = (video.artists || []).map((a) => ({
+    name: a.name,
+    id: a.id || (a as { browseId?: string }).browseId || null,
+  }));
+
   return (
-    <>
-      <div className='music-card w-64 min-w-64' aria-label={video?.title}>
-        <div className='flex flex-col items-start justify-start gap-3 w-full'>
-          <div className='overflow-hidden aspect-video w-full group rounded-3xl relative'>
+    <div className={cn('music-card w-64 min-w-64', className)} aria-label={video?.title}>
+      <div className='flex flex-col items-start justify-start gap-3 w-full'>
+        <div className='overflow-hidden aspect-video w-full group rounded-3xl relative bg-muted'>
+          {thumbnail ? (
             <Image
-              className='object-cover w-full h-full group-hover:scale-110'
-              classNames={{
-                wrapper: 'w-full h-full min-w-full',
-              }}
-              src={
-                '/api/proxy/image?r=' +
-                video?.thumbnails[video?.thumbnails.length - 1].url
-              }
-              alt={video?.title}
+              className='object-cover w-full h-full group-hover:scale-110 transition-transform duration-300'
+              src={thumbnail}
+              alt={video?.title || 'Video thumbnail'}
+              fill
+              unoptimized
             />
-            <PlayButton
-              detail={{
-                author: combineArtistName(video.artists),
-                identifier: video?.videoId,
-                sourceName: 'youtube music',
-                resultType: 'track',
-                title: video?.title,
-                uri: `https://youtu.be/${video.videoId}`,
-              }}
-            />
-          </div>
-          <h1 className='w-full text-lg whitespace-nowrap overflow-hidden overflow-ellipsis text-start'>
-            {video?.title}
-          </h1>
-          <span className='w-full text-xs text-foreground/40 whitespace-nowrap overflow-hidden overflow-ellipsis text-start'>
-            {combineArtistName(video.artists)}
-          </span>
+          ) : (
+            <div className='w-full h-full bg-muted flex items-center justify-center text-muted-foreground' />
+          )}
+          <PlayButton
+            detail={{
+              author: combineArtistName(video.artists || []),
+              identifier: video?.videoId,
+              sourceName: 'youtube music',
+              resultType: 'track',
+              title: video?.title,
+              uri: `https://youtu.be/${video.videoId}`,
+            }}
+          />
+        </div>
+        <h1 className='w-full text-lg whitespace-nowrap overflow-hidden text-ellipsis text-start font-medium'>
+          {video?.title}
+        </h1>
+        <div className='w-full text-xs text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis text-start'>
+          {combineArtistName(formattedArtists, true, router, {
+            className: 'text-muted-foreground',
+          })}
         </div>
       </div>
-    </>
+    </div>
   );
 }
 
-export function AlbumCard({ album }: { album: AlbumDetailed }) {
+export interface AlbumCardProps {
+  album: AlbumDetailed;
+  className?: string;
+}
+
+export function AlbumCard({ album, className }: AlbumCardProps) {
   const router = useRouter();
-  const href =
-    window.location.pathname.split('/player')[0] +
-    '/player/playlist?list=' +
-    album.browseId +
-    'abm';
+  const { guild } = useDiscordGuildInfo();
+  const href = guild?.id ? `/app/g/${guild.id}/player/playlist?list=${album.browseId}abm` : '#';
+  const thumbnail = resolveThumbnailUrl(album);
+  const formattedArtists = (album.artists || []).map((a) => ({
+    name: a.name,
+    id: a.id || (a as { browseId?: string }).browseId || null,
+  }));
+
   return (
-    <>
-      <Button
-        className='min-h-max min-w-max w-max h-max p-4 rounded-[2rem] bg-transparent'
-        href={href}
-        onPress={() => {
-          router.push(href);
-        }}
-      >
-        <div className='music-card w-48' aria-label={album?.title}>
-          <div className='flex flex-col items-start justify-start gap-3 w-full'>
-            <div className='overflow-hidden aspect-square w-full group rounded-3xl relative'>
+    <div
+      className={cn('min-h-max min-w-max w-max h-max p-4 rounded-[2rem] hover:bg-muted/50 transition-colors', className)}
+    >
+      <div className='music-card w-48' aria-label={album?.title}>
+        <div className='flex flex-col items-start justify-start gap-3 w-full'>
+          <div
+            className='overflow-hidden aspect-square w-full group rounded-3xl relative bg-muted cursor-pointer'
+            onClick={() => {
+              if (href && href !== '#') router.push(href);
+            }}
+          >
+            {thumbnail ? (
               <Image
-                className='object-cover w-full h-full group-hover:scale-110'
-                classNames={{
-                  wrapper: 'w-full h-full',
-                }}
-                src={
-                  '/api/proxy/image?r=' +
-                  album?.thumbnails[album?.thumbnails.length - 1].url
-                }
-                alt={album?.title}
+                className='object-cover w-full h-full group-hover:scale-110 transition-transform duration-300'
+                src={thumbnail}
+                alt={album?.title || 'Album artwork'}
+                fill
+                unoptimized
               />
-            </div>
-            <div className='flex flex-col p-2 max-w-full'>
-              <h1 className='w-full text-lg whitespace-nowrap overflow-hidden overflow-ellipsis text-start'>
-                {album?.title}
-              </h1>
-              <span className='w-full text-xs text-foreground/40 whitespace-nowrap overflow-hidden overflow-ellipsis text-start'>
-                {combineArtistName(album?.artists)}
-              </span>
+            ) : (
+              <div className='w-full h-full bg-muted flex items-center justify-center text-muted-foreground' />
+            )}
+          </div>
+          <div className='flex flex-col p-2 max-w-full text-left'>
+            <h1
+              className='w-full text-lg whitespace-nowrap overflow-hidden text-ellipsis text-start font-medium cursor-pointer'
+              onClick={() => {
+                if (href && href !== '#') router.push(href);
+              }}
+            >
+              {album?.title}
+            </h1>
+            <div className='w-full text-xs text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis text-start'>
+              {combineArtistName(formattedArtists, true, router, {
+                className: 'text-muted-foreground',
+              })}
             </div>
           </div>
         </div>
-      </Button>
-    </>
+      </div>
+    </div>
   );
 }
 
-export function PlaylistCard({ playlist }: { playlist: PlaylistDetailed }) {
+export interface PlaylistCardProps {
+  playlist: PlaylistDetailed;
+  className?: string;
+}
+
+export function PlaylistCard({ playlist, className }: PlaylistCardProps) {
   const router = useRouter();
-  const href =
-    window.location.pathname.split('/player')[0] +
-    '/player/playlist?list=' +
-    playlist.playlistId;
+  const { guild } = useDiscordGuildInfo();
+  const href = guild?.id ? `/app/g/${guild.id}/player/playlist?list=${playlist.playlistId}` : '#';
+  const thumbnail = resolveThumbnailUrl(playlist);
+  const artistItem = playlist.artist
+    ? [{ name: playlist.artist.name, id: playlist.artist.artistId || null }]
+    : [];
+
   return (
-    <>
-      <Button
-        className='min-h-max min-w-max w-max h-max p-4 rounded-[2rem] bg-transparent'
-        href={href}
-        onPress={() => {
-          router.push(href);
-        }}
-      >
-        <div className='music-card w-48' aria-label={playlist?.name}>
-          <div className='flex flex-col items-start justify-start gap-3 w-full'>
-            <div className='overflow-hidden aspect-square w-full group rounded-3xl relative'>
+    <div
+      className={cn('min-h-max min-w-max w-max h-max p-4 rounded-[2rem] hover:bg-muted/50 transition-colors', className)}
+    >
+      <div className='music-card w-48' aria-label={playlist?.name}>
+        <div className='flex flex-col items-start justify-start gap-3 w-full'>
+          <div
+            className='overflow-hidden aspect-square w-full group rounded-3xl relative bg-muted cursor-pointer'
+            onClick={() => {
+              if (href && href !== '#') router.push(href);
+            }}
+          >
+            {thumbnail ? (
               <Image
-                className='object-cover w-full h-full group-hover:scale-110'
-                classNames={{
-                  wrapper: 'w-full h-full',
-                }}
-                src={
-                  '/api/proxy/image?r=' +
-                  playlist?.thumbnails[playlist?.thumbnails.length - 1].url
-                }
-                alt={playlist?.name}
+                className='object-cover w-full h-full group-hover:scale-110 transition-transform duration-300'
+                src={thumbnail}
+                alt={playlist?.name || 'Playlist artwork'}
+                fill
+                unoptimized
               />
-            </div>
-            <div className='flex flex-col p-2 max-w-full'>
-              <h1 className='w-full text-lg whitespace-nowrap overflow-hidden overflow-ellipsis text-start'>
-                {playlist?.name}
-              </h1>
-              <span className='w-full text-xs text-foreground/40 whitespace-nowrap overflow-hidden overflow-ellipsis text-start'>
-                {playlist?.artist.name}
-              </span>
+            ) : (
+              <div className='w-full h-full bg-muted flex items-center justify-center text-muted-foreground' />
+            )}
+          </div>
+          <div className='flex flex-col p-2 max-w-full text-left'>
+            <h1
+              className='w-full text-lg whitespace-nowrap overflow-hidden text-ellipsis text-start font-medium cursor-pointer'
+              onClick={() => {
+                if (href && href !== '#') router.push(href);
+              }}
+            >
+              {playlist?.name}
+            </h1>
+            <div className='w-full text-xs text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis text-start'>
+              {combineArtistName(artistItem, true, router, {
+                className: 'text-muted-foreground',
+              })}
             </div>
           </div>
         </div>
-      </Button>
-    </>
+      </div>
+    </div>
   );
 }
 
-export function ArtistCard({ artist }: { artist: ArtistDetailed }) {
-  const router = useRouter();
-  const href =
-    window.location.pathname.split('/player')[0] +
-    '/player/c?c=' +
-    artist.artistId;
+export interface ArtistCardProps {
+  artist: ArtistDetailed;
+  guildId?: string;
+  className?: string;
+}
+
+export function ArtistCard({ artist, guildId, className }: ArtistCardProps) {
+  const { guild } = useDiscordGuildInfo();
+  const targetGuildId = guildId || guild?.id;
+  const href = targetGuildId ? `/app/g/${targetGuildId}/player/c?c=${artist.artistId}` : '#';
+
+  const thumbnail = resolveThumbnailUrl(artist);
+
   return (
-    <>
+    <Link href={href} className='no-underline block group'>
       <Button
-        as={NextLink}
-        className='min-h-max min-w-max w-max h-max p-4 rounded-[2rem] bg-transparent'
-        href={href}
+        variant='ghost'
+        className={cn('min-h-max min-w-max w-max h-max p-4 rounded-[2rem] hover:bg-muted/50 cursor-pointer group-hover:scale-[1.02] transition-transform duration-200', className)}
+        data-smooth-interaction="true"
       >
         <div className='music-card w-48' aria-label={artist?.name}>
-          <div className='flex flex-col items-start justify-start gap-3 w-full'>
-            <div className='overflow-hidden aspect-square w-full group rounded-full relative'>
-              <Image
-                className='object-cover w-full h-full group-hover:scale-110 opacity-100'
-                classNames={{
-                  wrapper: 'w-full h-full',
-                }}
-                src={
-                  artist?.thumbnails.length
-                    ? '/api/proxy/image?r=' +
-                      artist?.thumbnails[artist?.thumbnails.length - 1]?.url
-                    : undefined
-                }
-                alt={artist?.name}
-              />
+          <div className='flex flex-col items-center justify-center gap-3 w-full'>
+            <div className='overflow-hidden aspect-square w-full rounded-full relative bg-muted/60 border-2 border-transparent group-hover:border-primary/40 transition-colors shadow-sm'>
+              {thumbnail ? (
+                <Image
+                  className='object-cover w-full h-full group-hover:scale-110 transition-transform duration-300'
+                  src={thumbnail}
+                  alt={artist?.name || 'Artist avatar'}
+                  fill
+                  unoptimized
+                />
+              ) : (
+                <div className='w-full h-full flex items-center justify-center bg-primary/10 text-primary text-3xl font-bold'>
+                  {artist?.name?.[0]?.toUpperCase() || '?'}
+                </div>
+              )}
             </div>
             <div className='flex flex-col w-full justify-center p-2'>
-              <h1 className='w-full text-lg whitespace-nowrap overflow-hidden overflow-ellipsis text-center'>
-                {artist?.name}
+              <h1 className='w-full text-lg whitespace-nowrap overflow-hidden text-ellipsis text-center font-medium text-foreground group-hover:text-primary transition-colors'>
+                {artist?.name || 'Artist'}
               </h1>
             </div>
           </div>
         </div>
       </Button>
-    </>
+    </Link>
   );
 }
 
