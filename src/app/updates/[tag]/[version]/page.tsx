@@ -1,5 +1,8 @@
 import { Metadata } from "next"
 import { Suspense } from "react"
+import { notFound } from "next/navigation"
+import { readFile, access } from "node:fs/promises"
+import path from "node:path"
 import { PatchNoteParser } from "@/lib/parser"
 import SuspenseFallback from "./suspense-fallback"
 import { default as PageClient } from "./page-client"
@@ -11,6 +14,20 @@ interface GenerateMetadataProps {
   }>
 }
 
+async function getPatchNoteContent(tag: string, version: string): Promise<string | null> {
+  const safeTag = path.basename(tag)
+  const baseVersion = path.basename(version)
+  const safeVersion = baseVersion.endsWith(".md") ? baseVersion : `${baseVersion}.md`
+  const filePath = path.join(process.cwd(), "docs", "patches", safeTag, safeVersion)
+
+  try {
+    await access(filePath)
+    return await readFile(filePath, "utf-8")
+  } catch {
+    return null
+  }
+}
+
 async function PatchNoteData({
   tag,
   version,
@@ -20,10 +37,10 @@ async function PatchNoteData({
 }) {
   "use cache"
 
-  const fetchnote = await fetch(
-    `http://localhost:3000/api/patchnote/${tag}/${version}.md`
-  )
-  const note = await fetchnote.text()
+  const note = await getPatchNoteContent(tag, version)
+  if (!note) {
+    notFound()
+  }
 
   return <PageClient tag={tag} version={version} note={note} />
 }
@@ -34,11 +51,14 @@ export async function generateMetadata({
   "use cache"
 
   const { tag, version } = await params
+  const note = await getPatchNoteContent(tag, version)
 
-  const fetchnote = await fetch(
-    `http://localhost:3000/api/patchnote/${tag}/${version}.md`
-  )
-  const note = await fetchnote.text()
+  if (!note) {
+    return {
+      title: "Patch Note Not Found - Pona!",
+    }
+  }
+
   const parsedPatchNote = PatchNoteParser(note, true)
 
   return {

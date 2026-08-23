@@ -19,7 +19,7 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Build-time Public ARGs (for CI/CD pipelines & local baking)
+# Build-time Public ARGs (for CI/CD pipelines when build-args are used)
 ARG NEXT_PUBLIC_DISCORD_CLIENT_ID
 ARG NEXT_PUBLIC_DISCORD_OWNER_ID
 ARG NEXT_PUBLIC_DISCORD_REDIRECT_ENDPOINT
@@ -28,18 +28,13 @@ ARG NEXT_PUBLIC_PONA_APPLICATION_WS_ENDPOINT_PORT
 ARG NEXT_PUBLIC_APP_VERSION
 ARG NEXT_SERVER_ACTIONS_ALLOWED_ORIGINS
 
-ENV NEXT_PUBLIC_DISCORD_CLIENT_ID=$NEXT_PUBLIC_DISCORD_CLIENT_ID \
-    NEXT_PUBLIC_DISCORD_OWNER_ID=$NEXT_PUBLIC_DISCORD_OWNER_ID \
-    NEXT_PUBLIC_DISCORD_REDIRECT_ENDPOINT=$NEXT_PUBLIC_DISCORD_REDIRECT_ENDPOINT \
-    NEXT_PUBLIC_PONA_APPLICATION_WS_ENDPOINT=$NEXT_PUBLIC_PONA_APPLICATION_WS_ENDPOINT \
-    NEXT_PUBLIC_PONA_APPLICATION_WS_ENDPOINT_PORT=$NEXT_PUBLIC_PONA_APPLICATION_WS_ENDPOINT_PORT \
-    NEXT_PUBLIC_APP_VERSION=$NEXT_PUBLIC_APP_VERSION \
-    NEXT_SERVER_ACTIONS_ALLOWED_ORIGINS=$NEXT_SERVER_ACTIONS_ALLOWED_ORIGINS \
-    NEXT_TELEMETRY_DISABLED=1 \
+ENV NEXT_TELEMETRY_DISABLED=1 \
     NODE_ENV=production
 
-# Build optimized Next.js standalone bundle (supports build-args and optional .env secret mount)
-RUN --mount=type=secret,id=env,target=.env.production.local,required=false bun run build
+# Build optimized Next.js standalone bundle (copies mounted secret env if present)
+RUN --mount=type=secret,id=env,target=/tmp/.env \
+    if [ -f /tmp/.env ]; then cp /tmp/.env .env.production.local; fi && \
+    bun run build
 
 # ========================
 # Stage 3: Minimal Production Runner
@@ -58,6 +53,7 @@ RUN addgroup --system --gid 1001 nodejs && \
 
 # Copy static assets and standalone bundle
 COPY --from=builder /app/public ./public
+COPY --from=builder /app/docs ./docs
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
