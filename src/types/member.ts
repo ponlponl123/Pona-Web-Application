@@ -1,6 +1,7 @@
 import { VoiceBasedChannel } from 'discord.js';
 
 export interface MemberVoiceChangedState {
+  memberId?: string;
   oldVC: VoiceBasedChannel | null;
   newVC: VoiceBasedChannel | null;
   isUserJoined: boolean;

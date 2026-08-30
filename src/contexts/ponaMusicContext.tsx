@@ -352,24 +352,18 @@ export const PonaMusicProvider = ({
     })
 
     iosocket.on("member_state_updated", (memberVoiceState: string) => {
-      const decodedMemberVoiceState = JSON.parse(
-        Buffer.from(memberVoiceState, "base64").toString("utf-8")
-      ) as MemberVoiceChangedState
-      if (
-        decodedMemberVoiceState.isUserJoined &&
-        decodedMemberVoiceState.newVC
-      )
-        setIsMemberInVC(decodedMemberVoiceState.newVC)
-      else if (
-        decodedMemberVoiceState.isUserSwitched ||
-        (decodedMemberVoiceState.oldVC && decodedMemberVoiceState.newVC)
-      )
-        setIsMemberInVC(decodedMemberVoiceState.newVC)
-      else if (
-        decodedMemberVoiceState.isUserLeaved ||
-        !decodedMemberVoiceState.newVC
-      )
-        setIsMemberInVC(null)
+      try {
+        const decodedMemberVoiceState = JSON.parse(
+          Buffer.from(memberVoiceState, "base64").toString("utf-8")
+        ) as MemberVoiceChangedState
+        if (decodedMemberVoiceState.newVC) {
+          setIsMemberInVC(decodedMemberVoiceState.newVC)
+        } else {
+          setIsMemberInVC(null)
+        }
+      } catch (err) {
+        console.error("Error decoding member_state_updated:", err)
+      }
     })
 
     iosocket
