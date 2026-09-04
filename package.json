@@ -1,6 +1,6 @@
 {
   "name": "pona-webapp",
-  "version": "0.2.5",
+  "version": "0.2.5-hotfix-1",
   "type": "module",
   "private": true,
   "scripts": {
